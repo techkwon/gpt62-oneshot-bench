@@ -12,17 +12,21 @@ subprocess.run(['python3', f'{B}/scripts/tally.py'], check=True, capture_output=
 MODELS = {
  'astra': {'name': 'GPT-6.2 Astra', 'maker': 'OpenAI', 'harness': 'Codex CLI 0.169, reasoning high, default Codex config (image tool, MCP, skills on)'},
  'sol': {'name': 'GPT-6.2 Sol', 'maker': 'OpenAI', 'harness': 'Codex CLI 0.169, reasoning high, default Codex config (image tool, MCP, skills on)'},
- 'astra-fair': {'name': 'GPT-6.2 Astra (fair)', 'maker': 'OpenAI', 'harness': 'Codex CLI, reasoning high, image generation / apps / memories / web search off, user config ignored'},
- 'sol-fair': {'name': 'GPT-6.2 Sol (fair)', 'maker': 'OpenAI', 'harness': 'Codex CLI, reasoning high, image generation / apps / memories / web search off, user config ignored'},
+ 'astra-fair': {'name': 'GPT-6.2 Astra (fair)', 'maker': 'OpenAI', 'harness': 'Codex CLI, reasoning high, image generation / apps / memories / web search off, --ignore-user-config (but ~/.codex/AGENTS.md and installed skills still loaded)'},
+ 'sol-fair': {'name': 'GPT-6.2 Sol (fair)', 'maker': 'OpenAI', 'harness': 'Codex CLI, reasoning high, image generation / apps / memories / web search off, --ignore-user-config (but ~/.codex/AGENTS.md and installed skills still loaded)'},
  'fable': {'name': 'Claude Fable 5.2', 'maker': 'Anthropic', 'harness': 'claude -p, effort high, tools Write/Edit/Read only, no settings/MCP'},
  'opus': {'name': 'Claude Opus 5.5', 'maker': 'Anthropic', 'harness': 'claude -p, effort high, tools Write/Edit/Read only, no settings/MCP'},
+ 'fable-r3': {'name': 'Claude Fable 5.2 (round 3)', 'maker': 'Anthropic', 'harness': 'claude -p, effort high, tools Write/Edit/Read/Bash/Skill/Glob/Grep, same develop-web-game skill as Codex, no user instructions, no image generation'},
+ 'opus-r3': {'name': 'Claude Opus 5.5 (round 3)', 'maker': 'Anthropic', 'harness': 'claude -p, effort high, tools Write/Edit/Read/Bash/Skill/Glob/Grep, same develop-web-game skill as Codex, no user instructions, no image generation'},
  'gpt61': {'name': 'GPT-6.1 Sol', 'maker': 'OpenAI', 'harness': 'ep.7 run (Codex CLI) reused from the Fable 5.2 video'},
 }
 SETS = {
  'plain': {'title': 'Round 1 - just use it', 'tasks': ['racing', 'pinball', 'colosseum', 'camper', 'deck'], 'models': ['astra', 'sol', 'fable', 'opus'],
            'note': 'GPT ran in Codex with the default setup, so it could call the built-in image generator (racing-astra and both camper sites used it).'},
  'fair': {'title': 'Round 2 - fair (GPT image tool off)', 'tasks': ['racing', 'pinball', 'colosseum', 'camper', 'deck'], 'models': ['astra-fair', 'sol-fair', 'fable', 'opus'],
-          'note': 'GPT rerun with image generation, apps, memories, web search and user config off. Claude runs are the same as round 1.'},
+          'note': 'GPT rerun with image generation, apps, memories and web search off. Claude runs are the same as round 1. GPT could still run commands, screenshot its page in a browser (29 of 30 GPT runs looked at their own screenshots) and use the installed develop-web-game skill; it also still read ~/.codex/AGENTS.md (autonomy + sub-agent directive).'},
+ 'equal': {'title': 'Round 3 - equal tools (Claude gets a shell and a browser)', 'tasks': ['racing', 'pinball', 'colosseum', 'camper', 'deck'], 'models': ['astra-fair', 'sol-fair', 'fable-r3', 'opus-r3'],
+          'note': 'Claude rerun with the same abilities GPT had in round 2: shell, headless browser screenshots, the same develop-web-game skill. GPT results are the round 2 ones (not rerun).'},
  'ep7': {'title': 'Rematch - the 5 prompts from the Fable 5.2 video', 'tasks': ['motion', 'physics', 'svg', 'three', 'game'], 'models': ['astra', 'sol', 'fable', 'opus', 'gpt61'],
          'note': 'GPT-6.2 runs use the fair flags. Fable 5.2, Opus 5.5 and GPT-6.1 Sol outputs are the ones from the earlier video.'},
 }
@@ -33,6 +37,8 @@ tally = json.load(open(f'{B}/tally.json'))
 
 def src(st, t, m):
     if st == 'plain': return f'{B}/runs/{t}/{m}'
+    if st == 'equal' and m.endswith('-r3'): return f'{B}/runs-r3/{t}/{m[:-3]}'
+    if st == 'equal': return f'{B}/runs-fair/{t}/{m.replace("-fair", "")}'
     if st == 'fair': return f'{B}/runs-fair/{t}/{m.replace("-fair", "")}' if m.endswith('-fair') else f'{B}/runs/{t}/{m}'
     return os.path.realpath(f'{B}/runs/ep7-{t}/{m}')
 
@@ -52,7 +58,7 @@ for st, info in SETS.items():
             d = src(st, t, m); fn = 'index.svg' if os.path.exists(f'{d}/index.svg') else 'index.html'
             dst = f'{S}/results/{st}/{t}/{m}'; os.makedirs(dst, exist_ok=True)
             shutil.copy(f'{d}/{fn}', dst)
-            c = cost.get((st, t, m)) or cost.get(('plain', t, m)) or {}
+            c = cost.get((st, t, m)) or cost.get(('fair', t, m)) or cost.get(('plain', t, m)) or {}
             rec = f'ep7-{t}-{m}.mp4' if st == 'ep7' else f'{t}-{m}.mp4'
             runs.append({'model': m, 'file': f'results/{st}/{t}/{m}/{fn}', 'bytes': os.path.getsize(f'{d}/{fn}'), 'video': f'rec/{rec}' if os.path.exists(f'{S}/rec/{rec}') else None,
                          'seconds': int(float(c['seconds'])) if c.get('seconds') else None,
@@ -87,7 +93,8 @@ data['official'] = {'url': 'https://openai.com/index/introducing-gpt-6-2-astra-s
   'prices_per_1M': {'gpt-6.2-astra': {'input': 8, 'cached': 0.4, 'output': 40}, 'gpt-6.2-sol': {'input': 2, 'cached': 0.1, 'output': 10}}}
 data['method'] = [
  'Each model got the same prompt once (one shot, no follow-up). Prompts adapt the official example briefs; the ep.7 prompts are reused unchanged.',
- 'GPT can run shell commands and test in a browser inside Codex; Claude was limited to Write/Edit/Read. This favours GPT and is the same setup as the earlier video.',
+ 'Rounds 1-2 and ep.7: GPT could run shell commands and test in a browser inside Codex; Claude was limited to Write/Edit/Read. This favours GPT. Round 3 gives Claude the same shell, browser and skill.',
+ 'Recording fix: the first ep.7 three/game recordings did not play Astra\'s games (the start-button rule hit "How to play"; R was pressed on a timer). Both tasks were re-recorded for all five models with one rule (skip help/restart buttons, press R only on a game-over screen) and re-judged.',
  'Every result was recorded in the same browser (Ego Lite, 1280x800) with the same scripted keyboard/mouse input for all models.',
  'Judges saw one image sheet per task with 6 frames per result, labels shuffled, model names hidden. The four contestants (Astra, Sol, Fable, Opus) judged; GPT-6.1 Sol did not.',
  'Score = Borda points (1st gets N-1 ... last 0). "noself" drops each judge\'s points for its own model.',

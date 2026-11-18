@@ -6,7 +6,8 @@ from PIL import Image, ImageDraw, ImageFont
 B = '${BENCH_DIR:-.}'
 st, task = sys.argv[1], sys.argv[2]; n = int(sys.argv[3]) if len(sys.argv) > 3 else 6
 models = {'plain': ['astra', 'sol', 'fable', 'opus'], 'fair': ['astra-fair', 'sol-fair', 'fable', 'opus'],
-          'ep7': ['astra', 'sol', 'fable', 'opus', 'gpt61']}[st]
+          'ep7': ['astra', 'sol', 'fable', 'opus', 'gpt61'],
+          'equal': ['astra-fair', 'sol-fair', 'fable-r3', 'opus-r3']}[st]
 rec = (lambda m: f'{B}/rec/ep7-{task}-{m}.mp4') if st == 'ep7' else (lambda m: f'{B}/rec/{task}-{m}.mp4')
 rnd = random.Random(f'gpt62-{st}-{task}'); order = models[:]; rnd.shuffle(order)
 LAB = 'ABCDE'[:len(order)]

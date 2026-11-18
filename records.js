@@ -33,12 +33,13 @@ function costSection(data) {
   const intro = '<p>라운드를 펼치면 과제마다 결과가 나오기까지 걸린 시간과 비용을 볼 수 있어요. 금액은 미국 달러 기준이에요.</p>';
   const reuseNotes = {
     fair: 'Claude는 첫 라운드 결과를 그대로 심사했어요. 표에 다시 적은 시간과 비용은 첫 실행의 기록이에요.',
+    equal: 'GPT-6.2 Astra와 Sol은 2라운드 결과와 실행 기록을 그대로 가져왔어요.',
     ep7: 'Claude Fable 5.2, Claude Opus 5.5, GPT-6.1 Sol은 이전 강의에서 사용한 결과와 실행 기록을 가져왔어요.',
   };
   const tables = Object.entries(data.sets).map(([key, round]) => {
     const body = round.tasks.map(task => `<tbody>${task.runs.map((run, index) => {
       const taskHeading = index === 0 ? `<th scope="rowgroup" rowspan="${task.runs.length}">${taskLabels[task.id]}</th>` : '';
-      return `<tr>${taskHeading}<th scope="row">${escape(data.models[run.model].name.replace(' (fair)', ''))}</th>
+      return `<tr>${taskHeading}<th scope="row">${escape(data.models[run.model].name.replace(' (fair)', '').replace(' (round 3)', ''))}</th>
         <td>${duration(run.seconds)}</td><td>${money(run.usd)}</td></tr>`;
     }).join('')}</tbody>`).join('');
     const reuse = reuseNotes[key] ? `<p>${reuseNotes[key]}</p>` : '';
@@ -85,7 +86,7 @@ function officialSection(data) {
     const [model, points] = Object.entries(round.tally.total).sort((a, b) => b[1] - a[1])[0];
     const runs = round.tasks.flatMap(task => task.runs.filter(run => run.model === model));
     const cost = runs.every(run => Number.isFinite(run.usd)) ? money(runs.reduce((sum, run) => sum + run.usd, 0)) : '기록 없음';
-    return `<li><strong>${roundLabels[key]}</strong><p>${escape(data.models[model].name.replace(' (fair)', ''))}의 보르다 총점이 ${points}점으로 가장 높았어요. 이 모델의 과제 비용 합계는 ${cost}예요.</p></li>`;
+    return `<li><strong>${roundLabels[key]}</strong><p>${escape(data.models[model].name.replace(' (fair)', '').replace(' (round 3)', ''))}의 보르다 총점이 ${points}점으로 가장 높았어요. 이 모델의 과제 비용 합계는 ${cost}예요.</p></li>`;
   }).join('');
   const priceRows = Object.entries(data.official.prices_per_1M).map(([id, price]) => {
     const model = Object.values(data.models).find(item => item.name.toLowerCase().replaceAll(' ', '-') === id);

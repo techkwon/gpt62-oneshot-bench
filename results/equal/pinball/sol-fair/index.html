@@ -1,0 +1,1396 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#090e1a">
+<title>Solar Flare Pinball</title>
+<style>
+:root {
+  color-scheme: dark;
+  --ink: #f7efe2;
+  --muted: #acb4c5;
+  --line: #ffffff24;
+  --amber: #ff9858;
+  --mint: #7ce5d9;
+  --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-family: "Avenir Next", Avenir, system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html { min-height: 100%; }
+body {
+  min-width: 300px;
+  margin: 0;
+  color: var(--ink);
+  background:
+    radial-gradient(ellipse at 66% 44%, #233352 0%, transparent 62%),
+    radial-gradient(ellipse at 95% 100%, #231a2b 0%, transparent 54%),
+    #090e1a;
+}
+button { font: inherit; }
+button:focus-visible { outline: 2px solid var(--mint); outline-offset: 4px; }
+.shell {
+  width: min(100% - 100px, 1312px);
+  min-height: 100svh;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+}
+.topbar, .footer { display: flex; justify-content: space-between; align-items: center; }
+.topbar { min-height: 75px; border-bottom: 1px solid var(--line); }
+.wordmark { display: flex; align-items: center; gap: 11px; font-weight: 850; letter-spacing: .16em; font-size: 13px; }
+.wordmark svg { color: var(--amber); }
+.tools { display: flex; gap: 9px; }
+.icon-button {
+  color: #c5cddd;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #1118279e;
+  cursor: pointer;
+}
+.icon-button:hover { color: var(--ink); border-color: #f7efe280; }
+.icon-button[aria-pressed="true"] { color: var(--amber); }
+main { flex: 1; display: grid; grid-template-columns: minmax(290px, .87fr) minmax(0, 2fr); align-items: center; }
+.console { position: relative; z-index: 1; padding: 25px 0 30px clamp(0px, 2.4vw, 36px); }
+.eyebrow, .micro {
+  font: 650 11px/1.25 var(--mono);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+.eyebrow { display: flex; align-items: center; gap: 11px; color: var(--amber); margin: 0 0 23px 2px; }
+.eyebrow::before { content: ""; width: 23px; height: 1px; background: currentColor; }
+h1 {
+  display: grid;
+  justify-items: start;
+  margin: 0;
+  font-family: "Arial Black", "Avenir Next", system-ui, sans-serif;
+  font-size: clamp(64px, 7.65vw, 115px);
+  font-weight: 1000;
+  font-style: italic;
+  line-height: .81;
+  letter-spacing: -.092em;
+  text-transform: uppercase;
+}
+h1 span { display: block; transform: skewX(-5deg) scaleX(.92); transform-origin: left; }
+h1 span:last-child {
+  color: #ff8a55;
+  background: linear-gradient(174deg, #ffbe76 12%, #ff965e 52%, #f36c43 92%);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  padding-right: .13em;
+  margin-top: .06em;
+}
+.objective { margin: 25px 0 27px 2px; color: var(--muted); font-size: 14px; }
+.readout {
+  width: min(100%, 340px);
+  padding: 5px;
+  background: linear-gradient(135deg, #424451, #222938 66%, #383642);
+  border: 1px solid #76738160;
+  border-radius: 10px;
+  box-shadow: 0 13px 36px #0006, inset 0 0 0 2px #121721;
+}
+.readout-inner {
+  border: 1px solid #090910;
+  border-radius: 6px;
+  padding: 14px 15px 13px;
+  background: radial-gradient(ellipse at 35% 0%, #311b23 0%, #131017 75%);
+  box-shadow: inset 0 2px 8px #0009;
+}
+.score-label { color: #ffb58a; }
+.score-number {
+  display: block;
+  margin: 5px 0 10px -2px;
+  color: #ff9b62;
+  font: 650 clamp(34px, 4.1vw, 54px)/1 var(--mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .035em;
+  text-shadow: 0 0 19px #ff713b79, 0 0 3px #ff7044;
+}
+.ball-row { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #ffd5bb28; padding-top: 10px; }
+.ball-row .micro { color: #dfc1b9; letter-spacing: .13em; }
+.ball-lights { display: flex; gap: 7px; }
+.ball-lights i { width: 8px; height: 8px; border-radius: 50%; background: #4b302f; box-shadow: inset 0 0 0 1px #795047; }
+.ball-lights .current { background: #ff9a60; box-shadow: 0 0 9px #ff885e; }
+.ball-lights .remaining { background: #ae6344; box-shadow: inset 0 0 0 1px #dc855b80; }
+.controls { width: min(100%, 340px); margin-top: 23px; display: grid; gap: 9px; }
+.flipper-keys { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 36px;
+  background: #131c2c;
+  color: #e2e6ed;
+  border: 1px solid #ffffff2b;
+  border-radius: 6px;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  font-size: 12px;
+  font-weight: 650;
+}
+.control:hover { border-color: #ffffff65; }
+.control.held { border-color: var(--mint); color: var(--mint); }
+kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  min-height: 22px;
+  padding: 0 5px;
+  border: 1px solid #ffffff33;
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  color: var(--ink);
+  background: #ffffff0c;
+  font: 650 11px/1 var(--mono);
+}
+.launch {
+  --charge: 0%;
+  min-height: 45px;
+  background: linear-gradient(90deg, #ffc58c var(--charge), #ffa572 var(--charge));
+  color: #261311;
+  border-color: #ffc59a;
+}
+.launch kbd { color: inherit; background: #6b34191b; border-color: #71391963; }
+.launch .touch-label, .touch .desktop-label { display: none; }
+.touch .launch .touch-label { display: inline; }
+.launch:hover { border-color: #fff0d9; filter: brightness(1.06); }
+.launch.held { color: #261311; border-color: #ffe0bd; }
+.launch:disabled { color: #bec8d5; background: #131c2c; border-color: #ffffff30; cursor: default; filter: none; }
+.launch:disabled kbd { border-color: #ffffff38; background: #ffffff0a; }
+.stage {
+  position: relative;
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+  height: min(790px, calc(100svh - 125px));
+  min-height: 530px;
+}
+.stage::before {
+  content: "";
+  position: absolute;
+  inset: 3% 0 6%;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse, #4c71993d, transparent 67%),
+    radial-gradient(circle, #9ebadc49 1px, transparent 1.3px) 4px 13px / 27px 27px;
+  mask-image: radial-gradient(ellipse, #000 29%, #0008 60%, transparent 79%);
+}
+canvas { display: block; width: 100%; height: 100%; min-height: 0; }
+.status {
+  position: absolute;
+  bottom: 1.25%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  color: #c7e1e5;
+  letter-spacing: .14em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+.status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 9px var(--mint); }
+.status[data-state="over"]::before { background: var(--amber); box-shadow: 0 0 9px var(--amber); }
+.end-screen {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(ellipse at center, #080a17cf 20%, #080a1773 48%, transparent 74%);
+}
+.end-screen[hidden] { display: none; }
+.end-panel {
+  width: min(86%, 365px);
+  padding: 32px 26px 28px;
+  text-align: center;
+  border: 1px solid #a28172;
+  background: linear-gradient(145deg, #231d2c, #101827 75%);
+  border-radius: 10px;
+  box-shadow: 0 22px 70px #000c;
+  animation: arrive .24s ease-out both;
+}
+@keyframes arrive { from { transform: translateY(10px); opacity: 0; } }
+.end-panel h2 { margin: 0 0 18px; font-size: clamp(32px, 5vw, 49px); letter-spacing: -.06em; line-height: 1; }
+.end-panel .score-number { font-size: 45px; margin: 8px 0 20px; }
+.end-panel .launch { width: 100%; font-size: 14px; }
+.footer { min-height: 49px; border-top: 1px solid var(--line); color: #aab3c6; }
+.footer .micro { letter-spacing: .12em; font-size: 10px; }
+.footer .legend { display: flex; align-items: center; gap: 7px; }
+.footer .legend::before { content: "✦"; color: var(--amber); font-size: 13px; }
+@media (min-width: 761px) and (max-height: 770px) {
+  .topbar { min-height: 58px; }
+  .footer { min-height: 39px; }
+  .stage { height: calc(100svh - 98px); }
+  h1 { font-size: clamp(64px, 11.3vh, 94px); }
+}
+@media (max-width: 1020px) {
+  .shell { width: calc(100% - 52px); }
+  main { grid-template-columns: minmax(248px, .85fr) minmax(0, 1.65fr); }
+  .console { padding-left: 0; }
+}
+@media (max-width: 760px) {
+  .shell { width: calc(100% - 28px); }
+  .topbar { min-height: 51px; }
+  .wordmark { font-size: 11px; }
+  .wordmark svg { width: 24px; }
+  .icon-button { width: 30px; height: 30px; }
+  main { display: contents; }
+  .console { display: contents; }
+  .identity { order: 1; display: flex; align-items: center; justify-content: space-between; margin: 12px 0 9px; }
+  h1 { display: flex; gap: .12em; font-size: clamp(27px, 7.3vw, 53px); letter-spacing: -.08em; }
+  h1 span:last-child { margin: 0; }
+  .eyebrow { order: 1; font-size: 9px; letter-spacing: .1em; margin: 0; }
+  .eyebrow::before, .objective { display: none; }
+  .readout { order: 2; width: 100%; border-radius: 7px; padding: 3px; }
+  .readout-inner { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 7px 9px; border-radius: 4px; }
+  .score-group { display: flex; align-items: center; gap: 8px; }
+  .score-number { font-size: clamp(23px, 6.4vw, 34px); margin: 0; }
+  .ball-row { border: 0; padding: 0; gap: 8px; }
+  .readout .micro { font-size: 9px; letter-spacing: .06em; }
+  .ball-lights { gap: 4px; }
+  .ball-lights i { width: 5px; height: 5px; }
+  .stage { order: 3; height: min(114vw, max(238px, calc(100svh - 262px))); min-height: 0; }
+  .status { bottom: 1%; font-size: 9px; }
+  .controls { order: 4; width: 100%; margin: 7px 0 13px; gap: 6px; }
+  .flipper-keys { gap: 6px; }
+  .control { min-height: 33px; }
+  .launch { min-height: 38px; }
+  .touch .control { min-height: 44px; }
+  .touch .launch { min-height: 46px; }
+  .footer { order: 5; margin-top: auto; min-height: 33px; }
+  .footer .micro { font-size: 8px; }
+}
+@media (max-width: 360px) { .ball-lights { display: none; } }
+@media (prefers-reduced-motion: reduce) { .end-panel { animation: none; } }
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="topbar">
+    <div class="wordmark">
+      <svg width="32" height="27" viewBox="0 0 32 27" fill="none" aria-hidden="true">
+        <circle cx="16" cy="13.5" r="6.8" stroke="currentColor" stroke-width="1.5"/>
+        <ellipse cx="16" cy="13.5" rx="15" ry="5.5" transform="rotate(-30 16 13.5)" stroke="currentColor" stroke-width="1.4"/>
+        <circle cx="24.5" cy="5.7" r="1.8" fill="#ffe5b8"/>
+      </svg>
+      ORBIT ARCADE
+    </div>
+    <div class="tools">
+      <button class="icon-button" id="sound" aria-label="Mute sound" aria-pressed="false" title="Mute sound">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 9h4l5-4v14l-5-4H3z"/><path id="sound-waves" d="M16 9a4 4 0 0 1 0 6m3-9a8 8 0 0 1 0 12"/>
+        </svg>
+      </button>
+      <button class="icon-button" id="fullscreen" aria-label="Toggle fullscreen" aria-pressed="false" title="Fullscreen (F)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 4H4v5m11-5h5v5M4 15v5h5m11-5v5h-5"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+  <main>
+    <section class="console" aria-label="Pinball controls and score">
+      <div class="identity">
+        <p class="eyebrow">Arcade Pinball</p>
+        <h1><span>Solar</span> <span>Flare</span></h1>
+        <p class="objective">Hit the bumpers. Shoot the orbit lane.</p>
+      </div>
+      <div class="readout">
+        <div class="readout-inner">
+          <div class="score-group">
+            <div class="micro score-label" id="score-label">Score</div>
+            <output class="score-number" id="score" aria-labelledby="score-label">000000</output>
+          </div>
+          <div class="ball-row">
+            <div class="micro" id="ball-label">Ball 01 / 03</div>
+            <div class="ball-lights" aria-hidden="true"><i class="current"></i><i class="remaining"></i><i class="remaining"></i></div>
+          </div>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="control launch" id="launch" aria-label="Hold and release to launch" aria-keyshortcuts="Space" title="Hold and release Space to launch">
+          <kbd class="desktop-label">SPACE</kbd>
+          <span class="desktop-label">Hold &amp; release to launch</span>
+          <span class="touch-label">Hold &amp; release to launch</span>
+        </button>
+        <div class="flipper-keys">
+          <button class="control" id="left" aria-keyshortcuts="ArrowLeft">
+            <kbd aria-hidden="true">←</kbd> Left flipper
+          </button>
+          <button class="control" id="right" aria-keyshortcuts="ArrowRight">
+            <kbd aria-hidden="true">→</kbd> Right flipper
+          </button>
+        </div>
+      </div>
+    </section>
+    <section class="stage" aria-label="Solar Flare pinball machine">
+      <canvas id="table" aria-label="3D pinball playfield. Press and release Space to launch, then use the arrow keys to flip."></canvas>
+      <div class="status micro" id="status" role="status">Ready to launch</div>
+      <div class="end-screen" id="end-screen" hidden>
+        <div class="end-panel" role="dialog" aria-labelledby="end-title" aria-describedby="final-score">
+          <h2 id="end-title">Game over</h2>
+          <div class="micro score-label">Final score</div>
+          <output class="score-number" id="final-score">000000</output>
+          <button class="control launch" id="restart">Play again</button>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="footer">
+    <span class="legend micro">Solar Flare Pinball</span>
+    <span class="micro">Single player &nbsp; / &nbsp; 3 balls</span>
+  </footer>
+</div>
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+const canvas = $("table");
+const ctx = canvas.getContext("2d");
+const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+document.body.classList.toggle("touch", matchMedia("(pointer: coarse)").matches);
+
+const W = 760;
+const H = 738;
+const TAU = Math.PI * 2;
+const DT = 1 / 240;
+const BALL_RADIUS = .195;
+const clamp = (value, lo, hi) => Math.max(lo, Math.min(hi, value));
+const mix = (a, b, amount) => a + (b - a) * amount;
+const radians = degrees => degrees * Math.PI / 180;
+
+const bumpers = [
+  { x: -1.99, z: 4.58, color: "#ff755a", pale: "#fff2bb", dark: "#9c2b37", value: 250, light: 0 },
+  { x: 1.61, z: 4.48, color: "#68edda", pale: "#dcfff1", dark: "#157274", value: 250, light: 0 },
+  { x: -.15, z: 6.45, color: "#ffc45e", pale: "#fff4c5", dark: "#a0482e", value: 250, light: 0 },
+];
+const slings = [
+  { a: [-3.69, 9.55], b: [-2.36, 12.03], c: [-3.78, 11.92], color: "#ff8160", shadow: "#7c3c47", light: 0 },
+  { a: [2.91, 9.55], b: [1.73, 12.03], c: [3.02, 11.92], color: "#73e9d6", shadow: "#226175", light: 0 },
+];
+const targets = [-1.62, -.28, 1.06].map(x => ({ x, z: 8.72, light: 0 }));
+const flippers = [
+  { x: -2.26, z: 13.34, rest: radians(23), up: radians(-30), angle: radians(23), color: "#ff9467", shadow: "#9c3444" },
+  { x: 1.62, z: 13.34, rest: radians(157), up: radians(210), angle: radians(157), color: "#81ebd9", shadow: "#287386" },
+];
+
+const backWall = [[-4.47, 3.23], [-4.27, 2.07], [-3.77, 1.19], [-2.99, .65], [-1.9, .42],
+  [1.48, .42], [2.4, .58], [3.12, 1.08], [3.66, 2.03], [3.69, 3.46]];
+const leftWall = [[-4.47, 3.23], [-4.47, 12.1], [-4.23, 12.49], [-2.06, 13.16]];
+const rightWall = [[3.69, 3.46], [3.69, 12.1], [3.49, 12.49], [1.42, 13.16]];
+const leftOrbit = [[-3.18, 7.62], [-3.27, 5.62], [-3.52, 4.1]];
+const drainWalls = [[[-4.47, 12], [-4.47, 15.95]], [[3.69, 12.1], [3.69, 15.95]]];
+const wallSegments = [backWall, leftWall, rightWall, leftOrbit, ...drainWalls]
+  .flatMap(line => line.slice(1).map((point, index) => [line[index], point]));
+
+const launchX = 4.17;
+const launchZ = 14.76;
+const flipperLength = 1.68;
+const ball = { x: launchX, z: launchZ, vx: 0, vz: 0 };
+const input = { left: new Set(), right: new Set(), launch: new Set() };
+const state = { mode: "ready", score: 0, number: 1, charge: 0, bonus: "", bonusTime: 0 };
+const trail = [];
+let accumulator = 0;
+let lastFrame = 0;
+let manualClock = false;
+let drainTimer = 0;
+let launchProgress = 0;
+let launchSpeed = 0;
+let orbitLight = 0;
+let audio = null;
+let muted = false;
+let pixels = 1;
+let scale = 1;
+let offsetX = 0;
+let offsetY = 0;
+let artDirty = true;
+const cabinet = document.createElement("canvas");
+
+function syncHUD() {
+  const score = String(state.score).padStart(6, "0");
+  $("score").value = score;
+  $("ball-label").textContent = `Ball 0${state.number} / 03`;
+  document.querySelectorAll(".ball-lights i").forEach((light, index) => {
+    light.className = state.mode === "over" || index < state.number - 1 ? "" :
+      index === state.number - 1 ? "current" : "remaining";
+  });
+  $("launch").disabled = state.mode !== "ready";
+  $("status").dataset.state = state.mode;
+  const status = state.bonusTime > 0 && state.mode === "playing" ? state.bonus : ({
+    ready: input.launch.size ? "Charging plunger" : "Ready to launch",
+    launching: "Ball in play",
+    playing: "Ball in play",
+    draining: "Ball drained",
+    over: "Game over",
+  })[state.mode];
+  if ($("status").textContent !== status) $("status").textContent = status;
+  if (state.mode === "over") $("final-score").value = score;
+}
+
+function setMode(mode) {
+  state.mode = mode;
+  $("end-screen").hidden = mode !== "over";
+  syncHUD();
+  if (mode === "over") $("restart").focus({ preventScroll: true });
+}
+
+function sound(frequencies, type = "sine", duration = .14, volume = .07) {
+  if (muted) return;
+  const Audio = window.AudioContext || window.webkitAudioContext;
+  if (!Audio) return;
+  try {
+    audio ||= new Audio();
+    if (audio.state === "suspended") audio.resume().catch(() => {});
+    const start = audio.currentTime;
+    frequencies.forEach((frequency, index) => {
+      const oscillator = audio.createOscillator();
+      const gain = audio.createGain();
+      const time = start + index * .037;
+      oscillator.type = type;
+      oscillator.frequency.setValueAtTime(frequency, time);
+      oscillator.frequency.exponentialRampToValueAtTime(frequency * .65, time + duration);
+      gain.gain.setValueAtTime(.0001, time);
+      gain.gain.exponentialRampToValueAtTime(volume, time + .009);
+      gain.gain.exponentialRampToValueAtTime(.0001, time + duration);
+      oscillator.connect(gain).connect(audio.destination);
+      oscillator.start(time);
+      oscillator.stop(time + duration);
+    });
+  } catch { /* Audio is optional when the browser disables it. */ }
+}
+
+function award(amount, label) {
+  state.score += amount;
+  state.bonus = `${label}  +${amount.toLocaleString("en-US")}`;
+  state.bonusTime = 1.05;
+  syncHUD();
+}
+
+function prepareBall() {
+  Object.assign(ball, { x: launchX, z: launchZ, vx: 0, vz: 0 });
+  state.charge = 0;
+  state.bonusTime = 0;
+  trail.length = 0;
+  setMode("ready");
+}
+
+function reset() {
+  for (const keys of Object.values(input)) keys.clear();
+  state.score = 0;
+  state.number = 1;
+  orbitLight = 0;
+  for (const piece of [...bumpers, ...targets, ...slings]) piece.light = 0;
+  for (const flipper of flippers) flipper.angle = flipper.rest;
+  prepareBall();
+  $("launch").focus({ preventScroll: true });
+}
+
+function launch() {
+  if (state.mode !== "ready") return;
+  launchProgress = 0;
+  launchSpeed = mix(15, 33, state.charge);
+  setMode("launching");
+  sound([117, 239], "triangle", .16);
+}
+
+function drain() {
+  drainTimer = .72;
+  setMode("draining");
+  sound(state.number === 3 ? [331, 247, 149] : [163, 89], "triangle", .24);
+}
+
+function setInput(name, source, pressed, canceled = false) {
+  const keys = input[name];
+  const wasDown = keys.size > 0;
+  if (pressed) {
+    if (name === "launch" && state.mode !== "ready") return;
+    keys.add(source);
+  } else {
+    keys.delete(source);
+  }
+  const isDown = keys.size > 0;
+  if (wasDown === isDown) return;
+  if (name === "launch") {
+    if (isDown) {
+      state.charge = 0;
+      sound([89], "triangle", .09, .034);
+      syncHUD();
+    } else if (canceled) {
+      state.charge = 0;
+      syncHUD();
+    } else launch();
+  } else {
+    $(name).classList.toggle("held", isDown);
+    if (isDown && state.mode !== "over") sound([110], "triangle", .055, .040);
+  }
+}
+
+const keyMap = {
+  ArrowLeft: "left", KeyA: "left", ShiftLeft: "left",
+  ArrowRight: "right", KeyD: "right", ShiftRight: "right", Space: "launch",
+};
+window.addEventListener("keydown", event => {
+  if (event.metaKey || event.ctrlKey || event.altKey) return;
+  if (state.mode === "over" && event.code === "Enter") {
+    event.preventDefault();
+    if (!event.repeat) reset();
+    return;
+  }
+  if (event.code === "KeyF" && !event.repeat) {
+    toggleFullscreen();
+    return;
+  }
+  if (event.code === "Space" && state.mode === "over") return;
+  const name = keyMap[event.code];
+  if (!name) return;
+  event.preventDefault();
+  if (!event.repeat) setInput(name, event.code, true);
+});
+window.addEventListener("keyup", event => {
+  const name = keyMap[event.code];
+  if (!name || !input[name].has(event.code)) return;
+  event.preventDefault();
+  setInput(name, event.code, false);
+});
+window.addEventListener("blur", () => {
+  for (const [name, keys] of Object.entries(input)) {
+    for (const source of keys) setInput(name, source, false, true);
+  }
+});
+for (const name of Object.keys(input)) {
+  const button = $(name);
+  button.addEventListener("pointerdown", event => {
+    if (event.button !== 0) return;
+    event.preventDefault();
+    button.setPointerCapture(event.pointerId);
+    setInput(name, event.pointerId, true);
+  });
+  button.addEventListener("pointerup", event => setInput(name, event.pointerId, false));
+  for (const type of ["pointercancel", "lostpointercapture"]) {
+    button.addEventListener(type, event => setInput(name, event.pointerId, false, true));
+  }
+  button.addEventListener("click", event => {
+    if (event.detail || state.mode === "over") return;
+    if (name === "launch") launch();
+  });
+}
+$("sound").addEventListener("click", () => {
+  muted = !muted;
+  const label = muted ? "Unmute sound" : "Mute sound";
+  $("sound").setAttribute("aria-pressed", muted);
+  $("sound").setAttribute("aria-label", label);
+  $("sound").title = label;
+  $("sound-waves").setAttribute("d", muted ? "m16 9 5 6m0-6-5 6" : "M16 9a4 4 0 0 1 0 6m3-9a8 8 0 0 1 0 12");
+});
+function toggleFullscreen() {
+  const request = document.fullscreenElement ? document.exitFullscreen?.() : document.documentElement.requestFullscreen?.();
+  request?.catch(() => {});
+}
+$("fullscreen").addEventListener("click", toggleFullscreen);
+document.addEventListener("fullscreenchange", () => {
+  $("fullscreen").setAttribute("aria-pressed", Boolean(document.fullscreenElement));
+});
+$("restart").addEventListener("click", reset);
+
+function nearest(x, z, a, b) {
+  const dx = b[0] - a[0];
+  const dz = b[1] - a[1];
+  const t = clamp(((x - a[0]) * dx + (z - a[1]) * dz) / (dx * dx + dz * dz), 0, 1);
+  return { x: a[0] + t * dx, z: a[1] + t * dz, t };
+}
+
+function collide(x, z, radius, elasticity, kick = 0, vx = 0, vz = 0) {
+  const dx = ball.x - x;
+  const dz = ball.z - z;
+  const distance = Math.hypot(dx, dz);
+  const limit = radius + BALL_RADIUS;
+  if (distance >= limit) return false;
+  const nx = distance > .000001 ? dx / distance : 0;
+  const nz = distance > .000001 ? dz / distance : 1;
+  ball.x = x + nx * (limit + .001);
+  ball.z = z + nz * (limit + .001);
+  const approach = (ball.vx - vx) * nx + (ball.vz - vz) * nz;
+  if (approach >= 0) return false;
+  const impulse = Math.max(-(1 + elasticity) * approach, kick - approach);
+  ball.vx += nx * impulse;
+  ball.vz += nz * impulse;
+  return true;
+}
+
+function flipperTip(flipper) {
+  return [flipper.x + Math.cos(flipper.angle) * flipperLength,
+    flipper.z + Math.sin(flipper.angle) * flipperLength];
+}
+
+function tick(dt) {
+  for (const item of [...bumpers, ...slings, ...targets]) item.light = Math.max(0, item.light - dt);
+  orbitLight = Math.max(0, orbitLight - dt);
+  if (state.bonusTime > 0) {
+    state.bonusTime -= dt;
+    if (state.bonusTime <= 0) syncHUD();
+  }
+
+  flippers.forEach((flipper, index) => {
+    const held = input[index ? "right" : "left"].size && state.mode !== "over";
+    const desired = held ? flipper.up : flipper.rest;
+    const movement = clamp(desired - flipper.angle, -dt * (held ? 19 : 10), dt * (held ? 19 : 10));
+    flipper.angle += movement;
+    flipper.speed = movement / dt;
+  });
+
+  if (state.mode === "ready") {
+    if (input.launch.size) state.charge = Math.min(1, state.charge + dt * 1.25);
+    ball.z = launchZ + state.charge * .45;
+    return;
+  }
+  if (state.mode === "over") return;
+  if (state.mode === "draining") {
+    ball.z += dt * 3;
+    if ((drainTimer -= dt) > 0) return;
+    if (state.number === 3) setMode("over");
+    else {
+      state.number++;
+      prepareBall();
+    }
+    return;
+  }
+
+  if (state.mode === "launching") {
+    launchProgress += dt * launchSpeed;
+    const straight = launchZ + state.charge * .45 - 2.62;
+    if (launchProgress < straight) {
+      ball.z = launchZ + state.charge * .45 - launchProgress;
+    } else {
+      const t = clamp((launchProgress - straight) / 5.25, 0, 1);
+      const q = 1 - t;
+      ball.x = q * q * q * launchX + 3 * q * q * t * launchX + 3 * q * t * t * 3.18 + t * t * t * 1.50;
+      ball.z = q * q * q * 2.62 + 3 * q * q * t * .88 + 3 * q * t * t * .57 + t * t * t * .91;
+      if (t === 1) {
+        ball.vx = -mix(3.6, 8.7, state.charge);
+        ball.vz = mix(2.45, 3.45, state.charge);
+        setMode("playing");
+      }
+    }
+    return;
+  }
+
+  const previousZ = ball.z;
+  const friction = 1 - dt * .23;
+  ball.vx *= friction;
+  ball.vz = ball.vz * friction + 7.6 * dt;
+  const speed = Math.hypot(ball.vx, ball.vz);
+  if (speed > 35) {
+    ball.vx *= 35 / speed;
+    ball.vz *= 35 / speed;
+  }
+  ball.x += ball.vx * dt;
+  ball.z += ball.vz * dt;
+
+  for (const [a, b] of wallSegments) {
+    const point = nearest(ball.x, ball.z, a, b);
+    collide(point.x, point.z, .055, .76);
+  }
+  for (const bumper of bumpers) {
+    if (collide(bumper.x, bumper.z, .59, 1.15, 10.7)) {
+      bumper.light = .34;
+      award(bumper.value, "Bumper");
+      sound([bumper === bumpers[1] ? 580 : 412, 776], "triangle", .12);
+    }
+  }
+  for (const sling of slings) {
+    const edge = nearest(ball.x, ball.z, sling.a, sling.b);
+    const kick = sling.light ? 0 : 5.8;
+    if (collide(edge.x, edge.z, .105, .60, kick) && kick) {
+      sling.light = .25;
+      award(100, "Slingshot");
+      sound([210, 326], "triangle", .12);
+    }
+    for (const [a, b] of [[sling.b, sling.c], [sling.c, sling.a]]) {
+      const point = nearest(ball.x, ball.z, a, b);
+      collide(point.x, point.z, .075, .58);
+    }
+  }
+
+  for (const flipper of flippers) {
+    const tip = flipperTip(flipper);
+    const point = nearest(ball.x, ball.z, [flipper.x, flipper.z], tip);
+    const radius = mix(.246, .126, point.t);
+    const vx = -(point.z - flipper.z) * flipper.speed;
+    const vz = (point.x - flipper.x) * flipper.speed;
+    collide(point.x, point.z, radius, .62, 0, vx, vz);
+  }
+
+  if (ball.x < -3.58 && previousZ >= 5.65 && ball.z < 5.65 && orbitLight === 0) {
+    orbitLight = 1.25;
+    award(1000, "Orbit lane");
+    sound([390, 490, 650, 820], "sine", .20);
+  }
+  for (const target of targets) {
+    if (!target.light && Math.hypot(ball.x - target.x, ball.z - target.z) < .34) {
+      target.light = .95;
+      award(75, "Rollover");
+      sound([628], "sine", .13, .05);
+    }
+  }
+
+  if (ball.z > 15.25) drain();
+}
+
+// Perspective camera. X spans the cabinet, Z runs toward the player, and height
+// rises above the playfield. The same world coordinates drive collision and art.
+function project(x, z, height = 0) {
+  const depth = z - 7.75;
+  const factor = 1105 / (24.8 - depth * .725 - height * .689);
+  return { x: 380 + x * factor, y: 331 + (depth * .689 - height * .725) * factor, factor };
+}
+
+function polygon(context, points, fill, stroke, width = 1) {
+  context.beginPath();
+  points.forEach((point, index) => {
+    if (index === 0) context.moveTo(point.x, point.y);
+    else context.lineTo(point.x, point.y);
+  });
+  context.closePath();
+  if (fill) {
+    context.fillStyle = fill;
+    context.fill();
+  }
+  if (stroke) {
+    context.lineWidth = width;
+    context.strokeStyle = stroke;
+    context.stroke();
+  }
+}
+function face(context, vertices, fill, stroke, width) {
+  polygon(context, vertices.map(vertex => project(...vertex)), fill, stroke, width);
+}
+function strokePath(context, points, color, width) {
+  context.beginPath();
+  points.forEach((p, index) => {
+    if (index === 0) context.moveTo(p.x, p.y);
+    else context.lineTo(p.x, p.y);
+  });
+  context.strokeStyle = color;
+  context.lineWidth = width;
+  context.lineCap = "round";
+  context.lineJoin = "round";
+  context.stroke();
+}
+function worldLine(context, path, height, color, width) {
+  strokePath(context, path.map(([x, z]) => project(x, z, height)), color, width);
+}
+function disc(context, x, z, height, radius, fill, stroke, width) {
+  const ring = Array.from({ length: 30 }, (_, i) => {
+    const angle = i * TAU / 30;
+    return [x + Math.cos(angle) * radius, z + Math.sin(angle) * radius, height];
+  });
+  face(context, ring, fill, stroke, width);
+}
+function cylinder(context, x, z, low, high, radius, side, top, edge) {
+  const vertices = [[x + radius, z, high], [x + radius, z, low]];
+  for (let i = 1; i <= 15; i++) {
+    const angle = i * Math.PI / 15;
+    vertices.push([x + Math.cos(angle) * radius, z + Math.sin(angle) * radius, low]);
+  }
+  for (let i = 15; i > 0; i--) {
+    const angle = i * Math.PI / 15;
+    vertices.push([x + Math.cos(angle) * radius, z + Math.sin(angle) * radius, high]);
+  }
+  face(context, vertices, side);
+  disc(context, x, z, high, radius, top, edge, .8);
+}
+function gradient(context, x1, y1, x2, y2, stops) {
+  const paint = context.createLinearGradient(x1, y1, x2, y2);
+  for (const [offset, color] of stops) paint.addColorStop(offset, color);
+  return paint;
+}
+function glow(context, x, y, radius, color, strength) {
+  const paint = context.createRadialGradient(x, y, 0, x, y, radius);
+  paint.addColorStop(0, color);
+  paint.addColorStop(1, color.slice(0, 7) + "00");
+  context.save();
+  context.globalAlpha = strength;
+  context.fillStyle = paint;
+  context.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+  context.restore();
+}
+function random(seed) {
+  return () => {
+    seed = (Math.imul(1664525, seed) + 1013904223) >>> 0;
+    return seed / 4294967296;
+  };
+}
+function star(context, x, y, size, color, thin = .27) {
+  polygon(context, [
+    { x, y: y - size }, { x: x + size * thin, y: y - size * thin }, { x: x + size, y },
+    { x: x + size * thin, y: y + size * thin }, { x, y: y + size },
+    { x: x - size * thin, y: y + size * thin }, { x: x - size, y }, { x: x - size * thin, y: y - size * thin },
+  ], color);
+}
+function makeTexture(width, height, paint) {
+  const texture = document.createElement("canvas");
+  texture.width = width;
+  texture.height = height;
+  paint(texture.getContext("2d"), width, height);
+  return texture;
+}
+
+const floor = makeTexture(950, 1595, (art, width, height) => {
+  art.fillStyle = gradient(art, 0, 0, 0, height, [
+    [0, "#151c39"], [.23, "#172d49"], [.52, "#121e37"], [.82, "#10182d"], [1, "#181529"],
+  ]);
+  art.fillRect(0, 0, width, height);
+  const rng = random(21);
+  for (let i = 0; i < 430; i++) {
+    art.fillStyle = i % 5 ? "#b6dafa47" : "#ffe3b27c";
+    const size = rng() * 2.4 + .55;
+    art.fillRect(rng() * width, rng() * height, size, size);
+  }
+
+  const artPolygon = (points, color, stroke, lineWidth) =>
+    polygon(art, points.map(([x, y]) => ({ x, y })), color, stroke, lineWidth);
+  artPolygon([[0, 305], [110, 155], [263, 96], [182, 220], [54, 382], [0, 550]], "#547c9738");
+  artPolygon([[720, 0], [950, 0], [950, 720], [841, 626], [807, 271]], "#1b717e4a");
+  artPolygon([[0, 448], [74, 603], [114, 861], [212, 1011], [318, 1184], [0, 1030]], "#79385167");
+  artPolygon([[950, 583], [784, 658], [704, 781], [665, 922], [556, 1107], [950, 1010]], "#1e527773");
+  artPolygon([[0, 1050], [244, 1156], [424, 1340], [0, 1220]], "#a54b4966");
+  artPolygon([[950, 999], [705, 1140], [530, 1329], [950, 1218]], "#1c8b8c63");
+  artPolygon([[0, 1103], [185, 1175], [331, 1291], [0, 1192]], "#ea795558");
+  artPolygon([[950, 1070], [755, 1159], [606, 1280], [950, 1188]], "#42baba47");
+
+  // The printed solar disc and its rings are part of the cabinet artwork.
+  const sx = 441;
+  const sy = 692;
+  const radius = 253;
+  art.save();
+  art.beginPath();
+  art.arc(sx, sy, radius, 0, TAU);
+  art.clip();
+  art.fillStyle = gradient(art, 0, sy - radius, 0, sy + radius, [
+    [0, "#ffec9b"], [.26, "#ffc06b"], [.55, "#ff8b57"], [1, "#ad3a56"],
+  ]);
+  art.fillRect(sx - radius, sy - radius, radius * 2, radius * 2);
+  for (let i = 0; i < 11; i++) {
+    art.fillStyle = i % 3 === 0 ? "#492644" : "#6f3451";
+    art.fillRect(sx - radius, sy - 48 + i * 29, radius * 2, 3 + i * 1.44);
+  }
+  for (let i = 0; i < 1150; i++) {
+    art.fillStyle = i % 2 ? "#7e314425" : "#fff4ba36";
+    art.fillRect(sx - radius + rng() * radius * 2, sy - radius + rng() * radius * 2, 2, 2);
+  }
+  art.restore();
+  art.save();
+  art.translate(sx, sy);
+  art.rotate(-.53);
+  for (const [rx, ry, color, size, start, finish] of [
+    [350, 136, "#ffe1a8c9", 5, 0, Math.PI],
+    [370, 151, "#ed885c", 2, .06, 3.43],
+    [380, 162, "#ffc07664", 1.5, 0, TAU],
+    [350, 136, "#ffc97b64", 3, Math.PI, TAU],
+    [292, 110, "#fce3bb80", 2, .04, Math.PI - .04],
+    [431, 184, "#6be9d37e", 2, 3.2, 5.5],
+  ]) {
+    art.beginPath();
+    art.ellipse(0, 0, rx, ry, 0, start, finish);
+    art.strokeStyle = color;
+    art.lineWidth = size;
+    art.stroke();
+  }
+  star(art, 355, 15, 23, "#fff1c9");
+  star(art, -355, -53, 14, "#9cf5e7");
+  art.restore();
+
+  for (const [x, y, size, color] of [[275, 310, 26, "#ffcf8e"], [578, 311, 13, "#ffebc2"], [721, 278, 25, "#8de4da"],
+    [153, 535, 14, "#e6b88d"], [746, 615, 14, "#f8e4a5"], [225, 901, 20, "#ffe1ba"], [661, 906, 26, "#71e3d6"],
+    [543, 1036, 15, "#fed389"], [320, 1121, 13, "#7bcacc"], [96, 979, 10, "#ffad98"]]) star(art, x, y, size, color);
+  for (let i = 0; i < 5; i++) {
+    const inset = i * 10;
+    const color = i % 2 ? "#8fe3d571" : "#5bb5c98f";
+    artPolygon([[55+inset, 738], [80+inset, 735], [103+inset, 415], [92+inset, 379]], color);
+  }
+  const trackX = 889;
+  art.fillStyle = "#15263a";
+  art.fillRect(830, 129, 91, 1352);
+  for (const x of [843, 852, 905, 914]) {
+    art.fillStyle = x % 2 ? "#ff90634d" : "#7de0d471";
+    art.fillRect(x, 148, 2, 1308);
+  }
+  for (let y = 420; y < 1400; y += 104) {
+    strokePath(art, [{ x: trackX - 12, y: y + 11 }, { x: trackX, y: y - 1 }, { x: trackX + 12, y: y + 11 }], "#ffb97aa9", 3);
+  }
+
+  art.textAlign = "center";
+  art.textBaseline = "middle";
+  art.fillStyle = "#eff8dc";
+  art.font = "900 32px system-ui, sans-serif";
+  art.save();
+  art.translate(95, 590);
+  art.rotate(-Math.PI / 2);
+  art.fillText("O R B I T", 0, 0);
+  art.font = "700 18px monospace";
+  art.fillStyle = "#98f9e1";
+  art.fillText("1,000", 0, 31);
+  art.restore();
+
+  art.fillStyle = "#eedbc8";
+  art.font = "750 20px monospace";
+  art.fillText("S O L A R   O R B I T", 437, 986);
+  art.fillStyle = "#96afbf";
+  art.font = "650 14px monospace";
+  art.fillText("R O L L O V E R S   /   7 5", 437, 1021);
+
+  artPolygon([[24, 1437], [258, 1393], [349, 1417], [418, 1452], [525, 1452], [606, 1415],
+    [702, 1389], [823, 1426], [823, 1530], [24, 1530]], "#100f20", "#53617a", 3);
+  artPolygon([[23, 1477], [270, 1452], [338, 1472], [805, 1472], [823, 1494], [24, 1525]], "#171b30");
+  for (const x of [80, 106, 765, 791]) {
+    art.beginPath();
+    art.arc(x, 1490, 4, 0, TAU);
+    art.fillStyle = "#7ba8b0";
+    art.fill();
+  }
+  art.fillStyle = "#8097a9";
+  art.font = "700 17px monospace";
+  art.fillText("S O L A R   F L A R E", 435, 1500);
+});
+
+const glass = makeTexture(960, 190, (art, width, height) => {
+  art.fillStyle = gradient(art, 0, 0, width, height, [[0, "#372849"], [.35, "#1b2941"], [.73, "#172c43"], [1, "#18434d"]]);
+  art.fillRect(0, 0, width, height);
+  art.fillStyle = "#ff9d5a";
+  art.beginPath();
+  art.arc(180, 135, 118, 0, TAU);
+  art.fill();
+  art.save();
+  art.clip();
+  art.fillStyle = "#9c4e5a";
+  for (let y = 92; y < height; y += 17) art.fillRect(50, y, 260, 6);
+  art.restore();
+  art.save();
+  art.translate(176, 132);
+  art.rotate(-.29);
+  for (const [offset, color] of [[0, "#fff0b8"], [10, "#fbcd91"], [21, "#d898729c"]]) {
+    art.beginPath();
+    art.ellipse(0, 0, 150 + offset, 43 + offset * .52, 0, 0, TAU);
+    art.strokeStyle = color;
+    art.lineWidth = offset ? 2 : 5;
+    art.stroke();
+  }
+  art.restore();
+  const rng = random(12);
+  for (let i = 0; i < 80; i++) {
+    art.fillStyle = "#dbfff094";
+    const size = .6 + rng() * 2.5;
+    art.fillRect(rng() * width, rng() * height, size, size);
+  }
+  star(art, 317, 52, 22, "#fff0bb");
+  star(art, 868, 59, 35, "#a0f2e0");
+  star(art, 907, 112, 12, "#8accc6");
+  star(art, 801, 130, 11, "#f5b779");
+  art.textAlign = "left";
+  art.textBaseline = "middle";
+  art.font = "italic 1000 92px Arial Black, system-ui, sans-serif";
+  const titleSize = art.measureText("SOLAR FLARE").width;
+  art.save();
+  art.translate(360, 94);
+  art.scale(414 / titleSize, 1);
+  art.lineWidth = 7;
+  art.strokeStyle = "#1b243b";
+  art.strokeText("SOLAR FLARE", 0, 0);
+  art.fillStyle = "#fff1d6";
+  art.fillText("SOLAR FLARE", 0, 0);
+  art.restore();
+  strokePath(art, [{ x: 369, y: 148 }, { x: 766, y: 148 }], "#ebaa7d", 3);
+  strokePath(art, [{ x: 369, y: 154 }, { x: 700, y: 154 }], "#76e2cf93", 2);
+});
+
+// Project each horizontal texture strip into a trapezoid. Cabinet faces
+// are symmetric about the camera axis, so no horizontal shear is needed.
+function texturePlane(context, image, left, right, rowPoint, slices) {
+  for (let row = 0; row < slices; row++) {
+    const top = row / slices;
+    const bottom = (row + 1) / slices;
+    const a = project(...rowPoint(left, top));
+    const b = project(...rowPoint(left, bottom));
+    const c = project(...rowPoint(right, (top + bottom) / 2));
+    const x = (a.x + b.x) / 2;
+    context.drawImage(image, 0, image.height * top, image.width, image.height / slices,
+      x, a.y, c.x - x, b.y - a.y + .32);
+  }
+}
+
+function screw(context, x, z, y, size = .065) {
+  const p = project(x, z, y);
+  const radius = size * p.factor;
+  context.beginPath();
+  context.ellipse(p.x, p.y, radius, radius * .66, 0, 0, TAU);
+  context.fillStyle = "#a7b8ba";
+  context.fill();
+  context.strokeStyle = "#131f2c";
+  context.lineWidth = 1.2;
+  context.stroke();
+  strokePath(context, [{ x: p.x - radius * .5, y: p.y + radius * .19 },
+    { x: p.x + radius * .5, y: p.y - radius * .23 }], "#414d5e", .85);
+}
+
+function rail(context, points, height = .27, tint = "#738292", bright = "#dee4d6", size = 1) {
+  worldLine(context, points, height - .135, "#050d19d9", 8 * size);
+  worldLine(context, points, height, "#222c3c", 6.5 * size);
+  worldLine(context, points, height, tint, 3.85 * size);
+  worldLine(context, points, height + .029, bright, 1.2 * size);
+}
+
+function paintCabinet() {
+  const context = cabinet.getContext("2d");
+  context.setTransform(pixels, 0, 0, pixels, 0, 0);
+  context.clearRect(0, 0, cabinet.width / pixels, cabinet.height / pixels);
+  context.translate(offsetX, offsetY);
+  context.scale(scale, scale);
+
+  context.save();
+  context.translate(380, 645);
+  context.scale(1, .30);
+  glow(context, 0, 0, 347, "#01040d", .95);
+  glow(context, -200, -23, 155, "#f75f42", .22);
+  glow(context, 197, -27, 151, "#46cdbb", .23);
+  context.restore();
+
+  const near = 16.2;
+  const far = -.48;
+  const width = 5.05;
+  const leftSide = gradient(context, 102, 555, 231, 525, [[0, "#492739"], [.5, "#31324b"], [1, "#131827"]]);
+  const rightSide = gradient(context, 598, 507, 660, 537, [[0, "#153842"], [.55, "#284854"], [1, "#151e2c"]]);
+  face(context, [[-width, far, -.68], [-width, near, -.68], [-width, near, .34], [-width, far, .34]], leftSide, "#101420");
+  face(context, [[width, far, -.68], [width, near, -.68], [width, near, .34], [width, far, .34]], rightSide, "#101420");
+  face(context, [[-width, far, .02], [width, far, .02], [width, near, .02], [-width, near, .02]], "#0f192a", "#080f18", 2);
+  texturePlane(context, floor, -4.72, 4.72, (x, t) => [x, mix(-.20, 15.75, t), .028], 255);
+
+  // Backglass, dark housing and illuminated playfield-side trim.
+  const back = -.33;
+  const glowFrame = gradient(context, 178, 0, 590, 0, [[0, "#b55a4f"], [.28, "#ebaf82"], [.52, "#7d888a"], [1, "#72c1c3"]]);
+  face(context, [[-5.03, back - .53, .35], [5.03, back - .53, .35], [5.03, back - .53, 2.71], [-5.03, back - .53, 2.71]], "#171c2e", "#101520", 3);
+  face(context, [[-5.03, back - .53, 2.71], [5.03, back - .53, 2.71], [5.03, back, 2.55], [-5.03, back, 2.55]], "#59616b", "#263340", 1.25);
+  face(context, [[-5.04, back, .24], [5.04, back, .24], [5.04, back, 2.55], [-5.04, back, 2.55]], "#22293a", "#080e19", 3);
+  face(context, [[-4.83, back + .015, .51], [4.83, back + .015, .51], [4.83, back + .015, 2.36], [-4.83, back + .015, 2.36]], glowFrame, "#161c2b", 1);
+  texturePlane(context, glass, -4.72, 4.72, (x, t) => [x, back + .022, mix(2.24, .63, t)], 82);
+  face(context, [[-4.77, back + .027, .60], [4.77, back + .027, .60], [4.77, back + .027, 2.28], [-4.77, back + .027, 2.28]], null, "#171d2c", 1.35);
+  worldLine(context, [[-4.72, back + .04], [4.72, back + .04]], .38, "#b8c4b9", 1);
+  worldLine(context, [[-4.78, back + .06], [-2.65, back + .06]], .32, "#ff9874", 2);
+  worldLine(context, [[2.65, back + .06], [4.78, back + .06]], .32, "#85edda", 2);
+
+  const leftTrim = gradient(context, 0, 126, 0, 620, [[0, "#9d6969"], [.4, "#e48472"], [.66, "#a44c5b"], [1, "#fba07e"]]);
+  const rightTrim = gradient(context, 0, 126, 0, 620, [[0, "#63b5b0"], [.4, "#9fefe0"], [.66, "#457d8d"], [1, "#83d9d1"]]);
+  for (const [side, trim, edge] of [[-1, leftTrim, "#ffb186"], [1, rightTrim, "#95f8e4"]]) {
+    face(context, [[side * 4.72, far, .045], [side * 4.72, near, .045], [side * 4.72, near, .36], [side * 4.72, far, .36]], "#233446", "#0a1424", 1);
+    face(context, [[side * 4.72, far, .36], [side * width, far, .36], [side * width, near, .36], [side * 4.72, near, .36]], trim, "#0e1a2a", 1.8);
+    worldLine(context, [[side * 4.88, far + .15], [side * 4.88, near - .15]], .367, edge, 1.1);
+    worldLine(context, [[side * 4.71, far + .1], [side * 4.71, 14.79]], .17, "#c5c7b78c", 1);
+    for (const z of [.24, 3.75, 8.19, 12.55, 15.78]) screw(context, side * 4.89, z, .38);
+  }
+
+  const chrome = "#c8d4d3";
+  rail(context, backWall, .29, "#a2adb1", chrome);
+  rail(context, leftWall, .25, "#a9b3b1", chrome);
+  rail(context, rightWall, .25, "#b4babc", "#f3e9cf");
+  rail(context, leftOrbit, .24, "#538ba2", "#9cf6e4", .87);
+  rail(context, [[4.56, 1.66], [4.56, 14.63]], .25, "#978884", "#ffc99b", .78);
+  rail(context, [[3.69, 12.1], [3.69, 15.1]], .26, "#a19b9b", "#fff0d5", .9);
+
+  const orbitalRail = [[4.51, 3.76], [4.48, 2.16], [4.23, 1.35], [3.68, .80], [2.95, .39], [1.98, .25], [.92, .27]];
+  rail(context, orbitalRail, .46, "#92a8ae", "#f7edce", .92);
+  for (const [x, z] of [...leftOrbit, orbitalRail[0], orbitalRail[2], orbitalRail[4], orbitalRail[6]]) {
+    cylinder(context, x, z, .04, .38, .069, "#465c69", "#cad8c9");
+    screw(context, x, z, .389, .038);
+  }
+
+  for (const [side, color] of [[-1, "#f47861"], [1, "#69dace"]]) {
+    const x = side === -1 ? -4.27 : 3.49;
+    for (const z of [3.48, 4.1, 4.72, 5.34, 5.96, 6.58, 7.20, 7.82]) {
+      disc(context, x, z, .05, .095, "#091926", "#c3d2bd74", 1);
+      disc(context, x, z, .059, .060, color);
+    }
+  }
+
+  const front = gradient(context, 0, 614, 0, 712, [[0, "#46596b"], [.37, "#252c40"], [.75, "#181c2b"], [1, "#0c1423"]]);
+  face(context, [[-width, near, .36], [width, near, .36], [width, near, -.65], [-width, near, -.65]], front, "#0a1422", 2.2);
+  face(context, [[-width, 15.73, .37], [width, 15.73, .37], [width, near, .36], [-width, near, .36]], "#455667", "#182635", 1.15);
+  worldLine(context, [[-4.99, 15.79], [4.99, 15.79]], .38, "#b3c4c4", 1.45);
+  worldLine(context, [[-4.97, near], [4.97, near]], .33, "#8099aa", 1);
+  worldLine(context, [[-4.89, near + .006], [-1.55, near + .006]], -.40, "#df735e", 2.1);
+  worldLine(context, [[1.55, near + .006], [4.89, near + .006]], -.40, "#68bcb9", 2.1);
+  worldLine(context, [[-4.89, near + .008], [-2.12, near + .008]], -.50, "#c47c6c6c", 1);
+  worldLine(context, [[2.12, near + .008], [4.89, near + .008]], -.50, "#78aab474", 1);
+  for (const x of [-4.82, 4.82]) screw(context, x, 15.97, .39, .075);
+
+  const plate = project(0, near + .018, -.15);
+  context.fillStyle = "#d5ddd6";
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+  context.font = "700 8px monospace";
+  context.fillText("O R B I T   A R C A D E", plate.x, plate.y + 2);
+}
+
+function drawBumper(piece, index) {
+  const { x, z, color, pale, dark } = piece;
+  const base = project(x, z, .04);
+  const top = project(x, z, .55);
+  const lit = clamp(piece.light / .20, 0, 1);
+  const aura = lit * (reducedMotion ? .5 : 1);
+  glow(ctx, base.x, base.y, base.factor * (1.05 + aura * .69), color, .24 + aura * .56);
+  disc(ctx, x, z + .10, .046, .80, "#070e19bc");
+  cylinder(ctx, x, z, .053, .155, .73, "#373b48", dark, "#6a7880");
+  cylinder(ctx, x, z, .155, .34, .58, "#151a29", "#353e4e", "#f7cf9369");
+  cylinder(ctx, x, z, .34, .46, .64, dark, color, "#18192d");
+  const cap = gradient(ctx, top.x - top.factor * .48, top.y - top.factor * .28,
+    top.x + top.factor * .46, top.y + top.factor * .39,
+    [[0, pale], [.37, color], [1, dark]]);
+  cylinder(ctx, x, z, .46, .57, .565, lit ? color : dark, lit ? pale : cap, pale);
+  disc(ctx, x, z, .581, .462, null, "#261c39a9", .9);
+  disc(ctx, x, z, .584, .412, null, "#fffbdb78", .85);
+  star(ctx, top.x, top.y - top.factor * .015, top.factor * .215, lit ? dark : "#fff4d3");
+  ctx.fillStyle = lit ? dark : "#211c37";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.font = `bold ${Math.max(5.5, top.factor * .118)}px monospace`;
+  ctx.fillText(String(index + 1), top.x, top.y + top.factor * .29);
+  if (lit > .01) glow(ctx, top.x, top.y, top.factor * (1 + aura * .52), pale, aura * .26);
+}
+
+function drawSling(piece) {
+  const { a, b, c, color, shadow, light } = piece;
+  const corners = [a, b, c];
+  const top = corners.map(([x, z]) => [x, z, .31]);
+  const middle = project((a[0] + b[0] + c[0]) / 3, (a[1] + b[1] + c[1]) / 3, .34);
+  face(ctx, [[a[0], a[1], .052], [b[0], b[1], .052], top[1], top[0]], "#161926", "#0c101d", 2);
+  face(ctx, [[b[0], b[1], .052], [c[0], c[1], .052], top[2], top[1]], shadow, "#111a2a", 1.6);
+  const cap = gradient(ctx, middle.x - 20, middle.y - 35, middle.x + 38, middle.y + 30,
+    [[0, "#fff2d0"], [.20, color], [1, shadow]]);
+  face(ctx, top, light > 0 ? "#fff5d3" : cap, "#ffeacdb6", 1);
+  const sx = (a[0] + b[0] + c[0]) / 3;
+  const sz = (a[1] + b[1] + c[1]) / 3;
+  const inner = corners.map(([x, z]) => [mix(sx, x, .66), mix(sz, z, .72), .323]);
+  face(ctx, inner, "#152436b4", color, 1);
+  star(ctx, middle.x, middle.y, middle.factor * .24, color);
+  rail(ctx, [a, b], .174, "#1c2430", color, .52);
+  for (const [x, z] of [a, b, c]) {
+    screw(ctx, mix(sx, x, .79), mix(sz, z, .84), .345, .052);
+  }
+  if (light > 0) glow(ctx, middle.x, middle.y, 67, color, light * 2.25);
+}
+
+function drawTarget(target) {
+  const { x, z, light } = target;
+  const p = project(x, z, .037);
+  disc(ctx, x, z, .036, .32, "#1a2036", "#e4c395", 1.25);
+  disc(ctx, x, z, .040, .252, light ? "#ffd879" : "#7e4d42", light ? "#ffefbf" : "#c99578", .9);
+  star(ctx, p.x, p.y, p.factor * .105, light ? "#fff7dc" : "#dcb488");
+  if (light) glow(ctx, p.x, p.y, p.factor * .72, "#ffba57", .37);
+}
+
+function flipperOutline(flipper, height) {
+  const tip = flipperTip(flipper);
+  const points = [];
+  for (const [x, z, radius, start] of [[tip[0], tip[1], .136, -.5], [flipper.x, flipper.z, .247, .5]]) {
+    for (let i = 0; i <= 12; i++) {
+      const angle = flipper.angle + (start + i / 12) * Math.PI;
+      points.push([x + Math.cos(angle) * radius, z + Math.sin(angle) * radius, height]);
+    }
+  }
+  return points;
+}
+function drawFlipper(flipper) {
+  const { x, z, color, shadow } = flipper;
+  const top = flipperOutline(flipper, .30);
+  const base = flipperOutline(flipper, .105);
+  const shade = flipperOutline(flipper, .047).map(([u, v, h]) => [u + .015, v + .12, h]);
+  face(ctx, shade, "#030712c7");
+  face(ctx, base, "#202432", "#090f1c", 1);
+  top.forEach((point, index) => {
+    const next = (index + 1) % top.length;
+    if (top[next][0] >= point[0]) return;
+    face(ctx, [base[index], base[next], top[next], point], shadow);
+  });
+  const p = project(x, z, .30);
+  const cap = gradient(ctx, p.x, p.y - 22, p.x, p.y + 21, [[0, "#fff7da"], [.65, color], [1, shadow]]);
+  face(ctx, top, cap, "#fff2d6", 1.1);
+  const tip = flipperTip(flipper);
+  worldLine(ctx, [[mix(x, tip[0], .19), mix(z, tip[1], .19)], [mix(x, tip[0], .89), mix(z, tip[1], .89)]],
+    .309, "#fff9e5aa", 1.7);
+  disc(ctx, x, z, .314, .149, shadow, "#fff0cf", .9);
+  screw(ctx, x, z, .323, .071);
+}
+
+function drawPlunger() {
+  const compression = state.mode === "ready" ? state.charge : 0;
+  const travel = launchZ + .32 + compression * .45;
+  const track = [[launchX, travel], [launchX, 16.04]];
+  rail(ctx, track, .155, "#aab9be", "#f6d9b3", 1);
+  const turns = 8;
+  for (let i = 0; i < turns; i++) {
+    const z = mix(travel, 15.96, i / turns);
+    worldLine(ctx, [[launchX - .115, z], [launchX + .115, z + .078]], .166, "#27263a", 3.7);
+    worldLine(ctx, [[launchX - .115, z], [launchX + .115, z + .078]], .184, "#e5c7b3", 1.6);
+  }
+  disc(ctx, launchX, travel, .172, .175, "#535a62", "#f5d4aa", 1);
+  const knob = project(launchX, 16.25 + compression * .41, -.17);
+  const paint = gradient(ctx, knob.x - 10, knob.y - 11, knob.x + 10, knob.y + 9,
+    [[0, "#ffd4a7"], [.28, "#d88b62"], [.65, "#813d49"], [1, "#322337"]]);
+  ctx.beginPath();
+  ctx.ellipse(knob.x, knob.y, knob.factor * .19, knob.factor * .152, 0, 0, TAU);
+  ctx.fillStyle = paint;
+  ctx.fill();
+  ctx.strokeStyle = "#190e1d";
+  ctx.lineWidth = 1.7;
+  ctx.stroke();
+}
+
+function drawBall() {
+  const radius = BALL_RADIUS;
+  const p = project(ball.x, ball.z, radius + .037);
+  const r = p.factor * radius;
+  const shadow = project(ball.x + .045, ball.z + .075, .047);
+  const speed = Math.hypot(ball.vx, ball.vz);
+  if (!reducedMotion && (speed > 12 || state.mode === "launching")) {
+    trail.forEach((point, index) => {
+      const opacity = (index + 1) / trail.length;
+      const glowRadius = r * (.30 + .43 * opacity);
+      glow(ctx, point.x, point.y, glowRadius, "#bfe7ff", opacity * .43);
+    });
+  }
+  ctx.beginPath();
+  ctx.ellipse(shadow.x, shadow.y, r * 1.22, r * .56, 0, 0, TAU);
+  ctx.fillStyle = "#040814b7";
+  ctx.fill();
+  const steel = ctx.createRadialGradient(p.x - r * .40, p.y - r * .46, r * .07, p.x, p.y, r);
+  for (const [offset, color] of [[0, "#ffffff"], [.20, "#f4fcfd"], [.41, "#b2c9d5"], [.58, "#748a9e"], [.73, "#262e45"], [.86, "#526778"], [1, "#deece8"]]) {
+    steel.addColorStop(offset, color);
+  }
+  ctx.beginPath();
+  ctx.arc(p.x, p.y, r, 0, TAU);
+  ctx.strokeStyle = "#0a1527";
+  ctx.lineWidth = 1;
+  ctx.fillStyle = steel;
+  ctx.fill();
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.ellipse(p.x - r * .29, p.y - r * .37, r * .39, r * .22, -.47, 0, TAU);
+  ctx.fillStyle = "#ffffffd9";
+  ctx.fill();
+  if (state.mode === "ready" && input.launch.size) {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, r * 1.58, -Math.PI / 2, TAU * state.charge - Math.PI / 2);
+    ctx.strokeStyle = "#ffb67a";
+    ctx.lineWidth = 2.25;
+    ctx.stroke();
+  }
+}
+
+function render() {
+  if (!canvas.width || !canvas.height) return;
+  if (artDirty) {
+    paintCabinet();
+    artDirty = false;
+  }
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(cabinet, 0, 0);
+  ctx.setTransform(pixels * scale, 0, 0, pixels * scale, offsetX * pixels, offsetY * pixels);
+
+  if (orbitLight) {
+    const point = project(-3.98, 5.66, .14);
+    glow(ctx, point.x, point.y, 72, "#66f6da", Math.min(.8, orbitLight));
+    worldLine(ctx, [[-3.98, 7.68], [-3.98, 4.12]], .064, "#a0ffdfaa", 2.5);
+  }
+  for (const target of targets) drawTarget(target);
+  drawPlunger();
+  const pieces = [
+    ...bumpers.map((item, index) => ({ z: item.z + .35, draw: () => drawBumper(item, index) })),
+    ...slings.map(item => ({ z: (item.a[1] + item.b[1]) / 2, draw: () => drawSling(item) })),
+    ...flippers.map(item => ({ z: item.z, draw: () => drawFlipper(item) })),
+  ];
+  if (state.mode !== "over" && !(state.mode === "draining" && ball.z > 15.54)) {
+    pieces.push({ z: ball.z, draw: drawBall });
+  }
+  pieces.sort((a, b) => a.z - b.z);
+  for (const item of pieces) item.draw();
+  $("launch").style.setProperty("--charge", `${state.mode === "ready" ? Math.round(state.charge * 100) : 0}%`);
+  $("launch").classList.toggle("held", state.mode === "ready" && input.launch.size > 0);
+}
+
+function resize() {
+  const width = canvas.clientWidth;
+  const height = canvas.clientHeight;
+  if (!width || !height) return;
+  pixels = Math.min(devicePixelRatio || 1, 2);
+  canvas.width = cabinet.width = Math.round(width * pixels);
+  canvas.height = cabinet.height = Math.round(height * pixels);
+  const isNarrow = width < 600;
+  scale = Math.min(width / (isNarrow ? 615 : W), height / H);
+  offsetX = (width - W * scale) / 2;
+  offsetY = (height - H * scale) / 2;
+  artDirty = true;
+  render();
+}
+
+function advance(seconds) {
+  accumulator += seconds;
+  while (accumulator + 1e-10 >= DT) {
+    tick(DT);
+    accumulator -= DT;
+  }
+  const last = trail.at(-1);
+  const moving = state.mode === "launching" || state.mode === "playing";
+  if (moving) {
+    const p = project(ball.x, ball.z, BALL_RADIUS + .037);
+    if (!last || Math.hypot(p.x - last.x, p.y - last.y) > 3) {
+      trail.push(p);
+      if (trail.length > 5) trail.shift();
+    }
+  } else trail.length = 0;
+}
+
+function frame(now) {
+  if (!manualClock) {
+    if (lastFrame) advance(Math.min(.05, (now - lastFrame) / 1000));
+    render();
+  }
+  lastFrame = now;
+  requestAnimationFrame(frame);
+}
+
+window.render_game_to_text = () => JSON.stringify({
+  mode: state.mode,
+  score: state.score,
+  ballNumber: state.number,
+  ballsRemaining: state.mode === "over" ? 0 : 4 - state.number - Number(state.mode === "draining"),
+  plunger: Number(state.charge.toFixed(3)),
+  coordinates: "x increases to the right; z increases toward the player and drain",
+  ball: state.mode === "over" ? null : Object.fromEntries(Object.entries(ball).map(([k, v]) => [k, Number(v.toFixed(3))])),
+  flippers: flippers.map((flipper, i) => ({
+    side: i ? "right" : "left", angle: Number((flipper.angle * 180 / Math.PI).toFixed(1)),
+    held: Boolean(input[i ? "right" : "left"].size),
+  })),
+  bumpers: bumpers.map(({ x, z, light }) => ({ x, z, lit: light > 0 })),
+  orbit: orbitLight > 0,
+  signal: $("status").textContent,
+});
+window.advanceTime = milliseconds => {
+  manualClock = true;
+  advance(Math.max(0, Number(milliseconds) || 0) / 1000);
+  render();
+};
+
+new ResizeObserver(resize).observe($("table"));
+syncHUD();
+resize();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

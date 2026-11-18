@@ -36,23 +36,29 @@ const run = async (a) => {
   else if (a.do === "click") { await moveTo(a.x, a.y, 4); await down(); await sleep(60); await up(); }
   else if (a.do === "clicktext") {
     // same rule for every model: press the visible button/link whose text matches a.re (start/enter/sound...), else click a.x,a.y
-    const hit = await page.evaluate((srcs) => {
+    const hit = await page.evaluate(([srcs, skipSrc]) => {
+      const skip = new RegExp(skipSrc, "i");
       const all = [...document.querySelectorAll("button, a, [role=button], label, [role=radio], [role=option], [role=tab], [aria-pressed], [data-value], input[type=radio] + *, .swatch, .option")]
         .filter((e) => { const r = e.getBoundingClientRect(); const s = getComputedStyle(e); return r.width > 4 && r.height > 4 && r.width < 700 && r.height < 300 && s.visibility !== "hidden" && s.display !== "none" && +s.opacity > 0.05 && (e.innerText || "").length < 200; });
       for (const src of [].concat(srcs)) {
         const re = new RegExp(src, "i");
-        const els = all.filter((e) => re.test((e.innerText || e.getAttribute("aria-label") || "").trim()));
+        const els = all.filter((e) => { const t = (e.innerText || e.getAttribute("aria-label") || "").trim(); return re.test(t) && !skip.test(t); });
         els.sort((p, q) => (p.innerText || "").length - (q.innerText || "").length);
         const e = els[0];
         if (e) { e.scrollIntoView({ block: "center", inline: "center", behavior: "instant" }); const r = e.getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2, text: (e.innerText || "").trim().slice(0, 40) }; }
       }
       return null;
-    }, a.re).catch(() => null);
+    }, [a.re, a.skip ?? "how to|help|guide|tutorial|restart|reset|retry|settings|sound|mute|도움말|방법|다시|재시작"]).catch(() => null);
     logs.push("[clicktext] " + JSON.stringify(hit));
     const p = hit ?? { x: a.x, y: a.y };
     await moveTo(p.x, p.y, 4); await down(); await sleep(60); await up();
     // same for every model: do not leave keyboard focus on the clicked button (some games ignore Space while a button is focused)
     await page.evaluate(() => { const a = document.activeElement; if (a && a !== document.body && a.blur) a.blur(); }).catch(() => {});
+  }
+  else if (a.do === "keyif") {
+    // same rule for every model: press a.key only while the page text matches a.when (e.g. a game-over screen)
+    const on = await page.evaluate((src) => new RegExp(src, "i").test(document.body.innerText || ""), a.when).catch(() => false);
+    if (on) { logs.push("[keyif] " + a.key); await key("keyDown", a.key); await sleep(140); await key("keyUp", a.key); }
   }
   else if (a.do === "move") await moveTo(a.x, a.y, a.steps ?? 8);
   else if (a.do === "moveby") await moveTo(mx + (a.dx ?? 0), my + (a.dy ?? 0), a.steps ?? 8);

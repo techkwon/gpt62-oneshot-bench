@@ -1,0 +1,1378 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Northfold Camper Works — Build your Traverse 4×4</title>
+<meta name="description" content="Configure and price a hand-built Northfold Traverse 4×4 camper van: paint, roof, floor plan and expedition add-ons, with a live total.">
+<meta name="theme-color" content="#ECE5D5">
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.170.0/build/three.module.min.js"}}</script>
+<style>
+:root{
+  --paper:#ECE5D5; --paper-2:#E2D9C5; --paper-3:#F5F0E4; --stage:#D9D0B9;
+  --ink:#17211C; --ink-2:#3B463F; --ink-3:#667066;
+  --blaze:#E2531F; --moss:#55683F; --lake:#2B5A60; --ochre:#D39B2A;
+  --rule:rgba(23,33,28,.2);
+  --f-display:"Avenir Next Condensed","Bahnschrift","DIN Condensed","Roboto Condensed","Liberation Sans Narrow","Arial Narrow","Helvetica Neue",Arial,sans-serif;
+  --f-serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-mono:ui-monospace,"SF Mono","Cascadia Mono","Roboto Mono",Menlo,Consolas,monospace;
+  --f-body:"Avenir Next","Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --hdr:58px; --pad:clamp(18px,3.2vw,44px);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.55 var(--f-body);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .09 0 0 0 0 .13 0 0 0 0 .11 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E")}
+img,svg{display:block;max-width:100%}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+h1,h2,h3,p,dl,dd,ul,ol,figure{margin:0}
+ul,ol{padding:0;list-style:none}
+:focus-visible{outline:3px solid var(--lake);outline-offset:3px}
+[id]{scroll-margin-top:calc(var(--hdr) + 8px)}
+.mono{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase}
+.disp{font-family:var(--f-display);font-stretch:condensed;font-weight:700;text-transform:uppercase;letter-spacing:-.005em;line-height:.9}
+.num{font-variant-numeric:tabular-nums}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+/* ───────── buttons ───────── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.7em;padding:.95em 1.4em;border:1.5px solid var(--ink);
+  background:var(--blaze);color:var(--ink);font-family:var(--f-mono);font-size:.78rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  text-decoration:none;box-shadow:4px 4px 0 var(--ink);transition:transform .12s,box-shadow .12s,background .15s,color .15s;white-space:nowrap}
+.btn:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+.btn:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink)}
+.btn.ghost{background:transparent;box-shadow:none}
+.btn.ghost:hover{background:var(--ink);color:var(--paper);transform:none}
+.btn .arr{font-family:var(--f-body);font-size:1.1em;line-height:1}
+
+/* ───────── header ───────── */
+.hdr{position:sticky;top:0;z-index:40;height:var(--hdr);display:flex;align-items:center;gap:28px;padding:0 var(--pad);
+  background:var(--paper);border-bottom:1.5px solid var(--ink)}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;margin-right:auto}
+.brand svg{width:22px;height:26px}
+.brand b{font-family:var(--f-display);font-stretch:condensed;font-weight:800;font-size:1.55rem;letter-spacing:.06em;text-transform:uppercase;line-height:1}
+.brand small{font-family:var(--f-serif);font-style:italic;font-size:.9rem;color:var(--ink-2);transform:translateY(2px)}
+.hdr nav{display:flex;gap:26px}
+.hdr nav a{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;padding:6px 0;border-bottom:1.5px solid transparent}
+.hdr nav a:hover{border-color:var(--blaze)}
+.hdr-price{display:flex;align-items:center;gap:12px;height:36px;padding:0 14px;border:1.5px solid var(--ink);background:var(--ink);color:var(--paper);text-decoration:none}
+.hdr-price span{font-family:var(--f-mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;opacity:.75}
+.hdr-price b{font-family:var(--f-display);font-stretch:condensed;font-size:1.3rem;font-weight:700;letter-spacing:.01em}
+.hdr-price:hover{background:var(--blaze);color:var(--ink)}
+
+/* ───────── hero ───────── */
+.hero{position:relative;padding:clamp(22px,3vw,40px) var(--pad) 0;overflow:hidden;
+  background:
+    linear-gradient(90deg,transparent calc(33.33% - 46px),rgba(255,255,255,.28) calc(33.33% - 1px),rgba(23,33,28,.13) 33.33%,transparent calc(33.33% + 54px)),
+    linear-gradient(90deg,transparent calc(66.66% - 46px),rgba(255,255,255,.28) calc(66.66% - 1px),rgba(23,33,28,.13) 66.66%,transparent calc(66.66% + 54px)),
+    linear-gradient(180deg,transparent calc(52% - 40px),rgba(255,255,255,.25) calc(52% - 1px),rgba(23,33,28,.1) 52%,transparent calc(52% + 46px))}
+.topo{position:absolute;inset:0;background:var(--topo) center/cover no-repeat;opacity:.5;pointer-events:none}
+.hero>*:not(.topo){position:relative}
+.hero-meta{display:flex;flex-wrap:wrap;gap:6px 22px;padding-bottom:12px;border-bottom:1.5px solid var(--ink);color:var(--ink-2)}
+.hero-meta b{color:var(--ink);font-weight:700}
+.hero-meta span:last-child{margin-left:auto}
+.hero-top{display:grid;grid-template-columns:minmax(0,1fr) 316px;gap:clamp(20px,3vw,48px);align-items:start;padding-top:clamp(18px,2.6vw,36px)}
+.hero h1{font-family:var(--f-display);font-stretch:condensed;font-weight:800;text-transform:uppercase;line-height:.84;letter-spacing:-.012em;
+  font-size:clamp(3.3rem,8.8vw,9rem)}
+.hero h1 em{font-family:var(--f-serif);font-style:italic;font-weight:400;text-transform:none;color:var(--blaze);letter-spacing:-.03em;font-size:.92em;padding-right:.06em}
+.legend{border:1.5px solid var(--ink);background:var(--paper-3);box-shadow:6px 6px 0 rgba(23,33,28,.14)}
+.legend h2{display:flex;justify-content:space-between;padding:9px 14px;border-bottom:1.5px solid var(--ink);font-family:var(--f-mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700}
+.legend h2 i{font-style:normal;color:var(--blaze)}
+.legend ul{padding:6px 14px}
+.legend li{display:grid;grid-template-columns:20px 62px 1fr;align-items:center;gap:8px;padding:7px 0;border-bottom:1px dashed var(--rule);font-size:.86rem}
+.legend li:last-child{border:0}
+.legend li span{font-family:var(--f-mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.legend li b{font-weight:600;text-align:right}
+.legend .sym{width:16px;height:16px;border:1.5px solid var(--ink)}
+.legend .sym.c{background:var(--bodycol,#E8E4D8)}
+.legend .sym.r{border-width:0 0 1.5px;position:relative}
+.legend .sym.r::before{content:"";position:absolute;left:1px;right:1px;top:2px;height:9px;border:1.5px solid var(--ink);border-bottom:0;border-radius:6px 6px 0 0}
+.legend .sym.l{background:repeating-linear-gradient(45deg,var(--ink) 0 1.5px,transparent 1.5px 5px)}
+.legend .sym.a{border-radius:50%;background:radial-gradient(var(--blaze) 0 3.5px,transparent 4px)}
+.legend .tot{display:flex;align-items:baseline;justify-content:space-between;padding:10px 14px;border-top:1.5px solid var(--ink)}
+.legend .tot b{font-family:var(--f-display);font-stretch:condensed;font-size:2.3rem;font-weight:700;line-height:1}
+.legend .btn{display:flex;margin:0 14px 14px;box-shadow:3px 3px 0 var(--ink)}
+.hero-low{display:grid;grid-template-columns:minmax(250px,.5fr) minmax(0,1.5fr);gap:clamp(16px,3vw,50px);align-items:end;margin-top:clamp(4px,1vw,14px)}
+.lede{font-family:var(--f-serif);font-size:clamp(1.08rem,1.45vw,1.36rem);line-height:1.42;max-width:31ch}
+.hero-cta{display:flex;flex-wrap:wrap;align-items:center;gap:16px 22px;margin:24px 0 clamp(26px,4vw,56px)}
+.hero-cta a.txt{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;text-underline-offset:5px}
+.hero-van{color:var(--ink);margin-bottom:-6px;margin-top:clamp(-150px,-10vw,-40px)}
+.hero-van svg{width:100%;height:auto;overflow:visible}
+[data-elev] text{font-family:var(--f-mono);font-size:12.5px;fill:currentColor;letter-spacing:.06em}
+[data-elev] .dim{stroke:currentColor;stroke-width:1;fill:none}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1.5px solid var(--ink);margin:0 calc(var(--pad)*-1);background:var(--paper)}
+.stats div{padding:16px var(--pad);border-right:1.5px solid var(--ink)}
+.stats div:last-child{border-right:0}
+.stats dt{font-family:var(--f-mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.stats dd{font-family:var(--f-display);font-stretch:condensed;font-weight:700;font-size:clamp(1.5rem,2.6vw,2.3rem);line-height:1.05;text-transform:uppercase}
+
+/* ───────── sheet headers ───────── */
+.sheet-h{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 30px;padding:clamp(34px,5vw,68px) var(--pad) clamp(18px,2.4vw,30px)}
+.sheet-h .mono{color:var(--blaze);font-weight:700;display:block;margin-bottom:10px}
+.sheet-h h2{font-family:var(--f-display);font-stretch:condensed;font-weight:800;text-transform:uppercase;font-size:clamp(2.4rem,5.6vw,5rem);line-height:.88;letter-spacing:-.01em}
+.sheet-h h2 em{font-family:var(--f-serif);font-style:italic;font-weight:400;text-transform:none;letter-spacing:-.03em}
+.sheet-h p{max-width:44ch;font-family:var(--f-serif);font-size:1.08rem;line-height:1.45;color:var(--ink-2)}
+
+/* ───────── configurator ───────── */
+.build{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(390px,.92fr);border-top:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink)}
+.stage{position:sticky;top:var(--hdr);height:calc(100vh - var(--hdr));height:calc(100svh - var(--hdr));display:flex;flex-direction:column;
+  background:var(--stage);color:var(--ink);border-right:1.5px solid var(--ink);overflow:hidden;transition:background .6s,color .6s;z-index:5}
+.stage::before{content:"";position:absolute;inset:0;background:var(--topo) center/cover no-repeat;opacity:.55;pointer-events:none;transition:opacity .6s}
+.stage.is-dusk{--stage:#121C1E;color:var(--paper)}
+.stage.is-dusk::before{background-image:var(--topo-light);opacity:.16}
+.stage-top{position:relative;z-index:3;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 14px;padding:12px 16px}
+.stage-name{display:flex;flex-direction:column;gap:2px;min-width:0}
+.stage-name b{font-family:var(--f-display);font-stretch:condensed;font-size:1.35rem;font-weight:700;text-transform:uppercase;letter-spacing:.02em;line-height:1}
+.stage-name span{font-family:var(--f-mono);font-size:.68rem;letter-spacing:.07em;text-transform:uppercase;opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.toggles{display:flex;flex-wrap:wrap;gap:8px}
+.seg{display:flex;border:1.5px solid currentColor;background:rgba(245,240,228,.55)}
+.is-dusk .seg{background:rgba(18,28,30,.5)}
+.seg button{border:0;background:none;padding:7px 11px;font-family:var(--f-mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.seg button+button{border-left:1.5px solid currentColor}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--paper)}
+.is-dusk .seg button[aria-pressed=true]{background:var(--paper);color:var(--ink)}
+.stage-view{position:relative;flex:1;min-height:0}
+#gl{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y;cursor:grab;opacity:0;transition:opacity .7s;outline-offset:-4px}
+#gl.grabbing{cursor:grabbing}
+.has-3d #gl{opacity:1}
+.stage-fallback{position:absolute;inset:0;display:grid;place-items:center;padding:4% 6%;transition:opacity .4s}
+.stage-fallback svg{width:100%;max-height:100%;height:auto}
+.has-3d .stage-fallback{opacity:0;pointer-events:none}
+.stage-hint{position:absolute;left:16px;bottom:12px;display:flex;align-items:center;gap:8px;opacity:.7;pointer-events:none}
+.stage-hint svg{width:22px;height:14px}
+.plan-inset{position:absolute;right:14px;bottom:12px;width:min(40%,300px);padding:8px 10px 6px;border:1.5px solid var(--ink);background:var(--paper-3);color:var(--ink);
+  opacity:0;transform:translateY(8px);transition:opacity .35s,transform .35s;pointer-events:none}
+.plan-inset b{display:block;margin-bottom:4px}
+.view-int .plan-inset{opacity:1;transform:none}
+.plan text{font-family:var(--f-mono);font-size:16px;font-weight:700;letter-spacing:.04em;fill:#17211C;text-transform:uppercase}
+.delta{position:absolute;right:16px;top:6px;padding:6px 10px;background:var(--ink);color:var(--paper);font-family:var(--f-mono);font-size:.74rem;letter-spacing:.05em;
+  opacity:0;transform:translateY(-6px);pointer-events:none;z-index:4}
+.delta.show{animation:delta 2.2s ease both}
+.delta b{color:#FFB48F;font-weight:700}
+.delta.minus b{color:#B8D5B0}
+.is-dusk .delta{background:var(--paper);color:var(--ink)}
+.is-dusk .delta b{color:#B23A10}
+.is-dusk .delta.minus b{color:var(--moss)}
+@keyframes delta{0%{opacity:0;transform:translateY(-6px)}10%,78%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-6px)}}
+.specs{position:relative;z-index:2;display:grid;grid-template-columns:repeat(5,1fr);border-top:1.5px solid currentColor}
+.specs div{padding:9px 14px 8px;border-right:1px solid currentColor;min-width:0}
+.specs div:last-child{border-right:0}
+.specs dt{font-family:var(--f-mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;opacity:.7;white-space:nowrap}
+.specs dd{font-family:var(--f-display);font-stretch:condensed;font-weight:700;font-size:1.32rem;line-height:1.1;text-transform:uppercase;white-space:nowrap}
+.pricebar{position:relative;z-index:6;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 16px;background:var(--ink);color:var(--paper)}
+.pricebar .t{display:flex;flex-direction:column;min-width:0}
+.pricebar .t span{font-family:var(--f-mono);font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;opacity:.7}
+.pricebar .t b{font-family:var(--f-display);font-stretch:condensed;font-weight:700;font-size:clamp(2rem,3.2vw,2.9rem);line-height:.95;letter-spacing:.005em}
+.pricebar .m{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.04em;opacity:.8;margin-left:auto;text-align:right;line-height:1.5}
+.pricebar .btn{border-color:var(--paper);box-shadow:4px 4px 0 rgba(236,229,213,.35)}
+.pricebar .btn:hover{box-shadow:2px 2px 0 rgba(236,229,213,.35)}
+
+.panel{padding:0 clamp(18px,2.4vw,34px) 34px;background:var(--paper);min-width:0;container-type:inline-size}
+.step{border:0;margin:0;padding:26px 0 28px;border-bottom:1.5px solid var(--ink);min-width:0}
+.step legend{display:flex;align-items:baseline;gap:12px;width:100%;padding:0;margin-bottom:6px}
+.step legend i{font-style:normal;font-family:var(--f-mono);font-size:.74rem;font-weight:700;color:var(--blaze);letter-spacing:.08em}
+.step legend b{font-family:var(--f-display);font-stretch:condensed;font-size:1.9rem;font-weight:700;text-transform:uppercase;line-height:1}
+.step legend span{margin-left:auto;font-family:var(--f-mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);text-align:right}
+.step>p{font-size:.92rem;color:var(--ink-2);margin-bottom:16px;max-width:52ch}
+.opt{position:relative;display:block;cursor:pointer}
+.opt input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.price{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.03em;white-space:nowrap}
+.price.inc{color:var(--moss);font-weight:700}
+
+.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.chip .card{display:block;border:1.5px solid var(--ink);background:var(--paper-3);padding:5px 5px 7px;transition:transform .15s,box-shadow .15s}
+.chip .sw{display:block;aspect-ratio:16/9;background:var(--c);border:1px solid rgba(23,33,28,.35);position:relative;overflow:hidden}
+.chip .sw::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,.34) 0 22%,transparent 46%)}
+.chip .sw.matte::after{background:linear-gradient(115deg,rgba(255,255,255,.07) 0 30%,transparent 60%)}
+.chip .nm{display:flex;justify-content:space-between;align-items:baseline;gap:6px;padding:7px 3px 0;font-size:.84rem;font-weight:600;line-height:1.2}
+.chip .fin{display:block;padding:1px 3px 0;font-family:var(--f-mono);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.opt:hover .card{transform:translate(-1px,-1px);box-shadow:3px 3px 0 rgba(23,33,28,.25)}
+.opt.on .card{box-shadow:4px 4px 0 var(--blaze);transform:translate(-2px,-2px);background:#fff}
+.opt input:focus-visible+.card{outline:3px solid var(--lake);outline-offset:3px}
+.opt.on .card::before{content:"";position:absolute;right:-1.5px;top:-1.5px;width:22px;height:22px;z-index:2;
+  background:var(--blaze) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'%3E%3Cpath d='M6 11.5l3.4 3.4L16 8' fill='none' stroke='%2317211C' stroke-width='2.4'/%3E%3C/svg%3E");border:1.5px solid var(--ink)}
+.card{position:relative}
+
+.roofs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.roof .card{display:flex;flex-direction:column;height:100%;border:1.5px solid var(--ink);background:var(--paper-3);padding:8px 10px 10px;transition:transform .15s,box-shadow .15s}
+.roof .ico{color:var(--ink);margin:0 -4px 4px}
+.roof .ico svg{width:100%;height:auto}
+.roof b{font-family:var(--f-display);font-stretch:condensed;font-size:1.28rem;text-transform:uppercase;line-height:1}
+.roof small{display:block;font-size:.78rem;line-height:1.35;color:var(--ink-2);margin:5px 0 9px}
+.roof .price{margin-top:auto}
+
+.lays{display:grid;gap:10px}
+.lay .card{display:grid;grid-template-columns:minmax(0,46%) 1fr;gap:14px;align-items:center;border:1.5px solid var(--ink);background:var(--paper-3);padding:10px 12px;transition:transform .15s,box-shadow .15s}
+.lay .plan{color:var(--ink)}
+.lay b{font-family:var(--f-display);font-stretch:condensed;font-size:1.42rem;text-transform:uppercase;line-height:1}
+.lay .who{display:block;font-family:var(--f-mono);font-size:.64rem;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);margin:3px 0 5px}
+.lay small{display:block;font-size:.8rem;line-height:1.36;color:var(--ink-2);margin-bottom:7px}
+
+.adds{display:grid;gap:0;border:1.5px solid var(--ink);background:var(--paper-3)}
+.add{border-bottom:1px solid var(--rule)}
+.add:last-child{border-bottom:0}
+.add .row{display:grid;grid-template-columns:22px 1fr auto;gap:12px;align-items:start;padding:12px 12px 12px 12px;transition:background .15s}
+.add:hover .row{background:rgba(255,255,255,.55)}
+.add .box{width:20px;height:20px;border:1.5px solid var(--ink);background:var(--paper);margin-top:1px;display:grid;place-items:center}
+.add.on .box{background:var(--blaze)}
+.add.on .box::after{content:"";width:11px;height:6px;border:2.4px solid var(--ink);border-top:0;border-right:0;transform:translateY(-1.5px) rotate(-45deg)}
+.add.on .row{background:#fff}
+.add input:focus-visible+.row{outline:3px solid var(--lake);outline-offset:-3px}
+.add b{display:block;font-size:.92rem;font-weight:600;line-height:1.25}
+.add small{display:block;font-size:.79rem;line-height:1.36;color:var(--ink-2);margin-top:2px}
+.add .tag{display:inline-block;margin-left:6px;padding:1px 5px;border:1px solid var(--ink-3);font-family:var(--f-mono);font-size:.56rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);vertical-align:2px;font-weight:400}
+
+/* build sheet (receipt) */
+.sheet{margin-top:34px;background:#FBF8F0;border:1.5px solid var(--ink);border-top:0;position:relative;font-family:var(--f-mono);font-size:.78rem;box-shadow:6px 6px 0 rgba(23,33,28,.14)}
+.sheet::before{content:"";display:block;height:12px;margin-top:-1px;
+  background:radial-gradient(circle at 8px -2px,var(--paper) 6px,var(--ink) 6px 7.5px,transparent 8px) 0 0/16px 12px repeat-x}
+.sheet header{display:flex;justify-content:space-between;gap:10px;padding:8px 16px 12px;border-bottom:1.5px dashed var(--ink);text-transform:uppercase;letter-spacing:.08em}
+.sheet header b{font-weight:700}
+.sheet ol{padding:10px 16px 4px}
+.sheet li{display:flex;align-items:baseline;gap:8px;padding:4.5px 0}
+.sheet li span:first-child{flex:none;max-width:72%}
+.sheet li i{flex:1;border-bottom:1px dotted var(--ink-3);transform:translateY(-3px);min-width:14px}
+.sheet li.sub{color:var(--ink-2)}
+.sheet .sum{display:flex;justify-content:space-between;align-items:baseline;padding:12px 16px;border-top:1.5px dashed var(--ink);margin-top:6px}
+.sheet .sum span{text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.sheet .sum b{font-family:var(--f-display);font-stretch:condensed;font-size:2.5rem;line-height:.9}
+.sheet .fine{padding:0 16px 14px;color:var(--ink-2);font-size:.7rem;line-height:1.6}
+.sheet .acts{display:flex;flex-wrap:wrap;gap:12px;padding:0 16px 18px}
+.sheet .acts .btn{flex:1}
+
+/* ───────── kit ───────── */
+.kit{display:grid;grid-template-columns:repeat(3,1fr);margin:0 var(--pad);border:1.5px solid var(--ink);background:var(--paper-3)}
+.kit li{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:22px 22px 24px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.kit li:nth-child(3n){border-right:0}
+.kit li:nth-last-child(-n+3){border-bottom:0}
+.kit svg{width:30px;height:30px;margin-top:2px}
+.kit b{display:block;font-family:var(--f-display);font-stretch:condensed;font-size:1.35rem;text-transform:uppercase;line-height:1.05;margin-bottom:5px}
+.kit p{font-size:.9rem;color:var(--ink-2);line-height:1.45}
+
+/* ───────── process ───────── */
+.route{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:0 var(--pad);counter-reset:wp}
+.route li{position:relative;padding:34px 26px 0 0;border-top:2px dashed var(--ink);counter-increment:wp}
+.route li::before{content:counter(wp,decimal-leading-zero);position:absolute;left:0;top:-17px;width:32px;height:32px;display:grid;place-items:center;
+  background:var(--blaze);border:1.5px solid var(--ink);border-radius:50%;font-family:var(--f-mono);font-size:.7rem;font-weight:700}
+.route li:last-child::after{content:"";position:absolute;right:0;top:-8px;border:7px solid transparent;border-left:11px solid var(--ink)}
+.route b{display:block;font-family:var(--f-display);font-stretch:condensed;font-size:1.6rem;text-transform:uppercase;line-height:1;margin-bottom:8px}
+.route span{display:block;font-family:var(--f-mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px}
+.route p{font-size:.93rem;color:var(--ink-2);max-width:30ch}
+
+/* ───────── notes ───────── */
+.notes{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,2vw,26px);margin:0 var(--pad)}
+.note{padding:22px 22px 18px;border:1.5px solid var(--ink);background:var(--paper-3);display:flex;flex-direction:column;
+  background-image:repeating-linear-gradient(180deg,transparent 0 31px,rgba(43,90,96,.16) 31px 32px);background-position:0 20px}
+.note:nth-child(2){transform:rotate(-.6deg)}
+.note:nth-child(3){transform:rotate(.5deg)}
+.note blockquote{margin:0 0 22px;font-family:var(--f-serif);font-style:italic;font-size:1.26rem;line-height:32px}
+.note footer{margin-top:auto;font-family:var(--f-mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;line-height:1.7;color:var(--ink-2)}
+.note footer b{color:var(--ink)}
+
+/* ───────── faq + cta + footer ───────── */
+.faq{margin:0 var(--pad);border-top:1.5px solid var(--ink);display:grid;grid-template-columns:1fr 1fr;column-gap:clamp(20px,4vw,60px)}
+.faq details{border-bottom:1.5px solid var(--ink)}
+.faq summary{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:17px 0;cursor:pointer;list-style:none;font-weight:600;font-size:1.02rem}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-family:var(--f-mono);font-size:1.2rem;color:var(--blaze);font-weight:700}
+.faq details[open] summary::after{content:"–"}
+.faq details p{padding:0 0 18px;color:var(--ink-2);max-width:58ch;font-size:.95rem}
+.cta{margin-top:clamp(50px,7vw,96px);padding:clamp(32px,5vw,64px) var(--pad);background:var(--blaze);border-top:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink);
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:24px 40px;position:relative;overflow:hidden}
+.cta .topo{opacity:.35;mix-blend-mode:multiply}
+.cta>*:not(.topo){position:relative}
+.cta h2{font-family:var(--f-display);font-stretch:condensed;font-weight:800;text-transform:uppercase;font-size:clamp(2.2rem,5.4vw,4.8rem);line-height:.88}
+.cta h2 span{display:block;font-family:var(--f-serif);font-style:italic;font-weight:400;text-transform:none;font-size:.42em;line-height:1.3;letter-spacing:0;margin-bottom:8px}
+.cta .btn{background:var(--ink);color:var(--paper);box-shadow:4px 4px 0 rgba(23,33,28,.35)}
+.cta .btn.ghost{background:transparent;color:var(--ink);box-shadow:none}
+.cta .acts{display:flex;flex-wrap:wrap;gap:14px}
+.ftr{position:relative;background:var(--ink);color:var(--paper);padding:clamp(34px,5vw,60px) var(--pad) 26px;overflow:hidden}
+.ftr .topo{background-image:var(--topo-light);opacity:.12}
+.ftr>*:not(.topo){position:relative}
+.ftr .word{font-family:var(--f-display);font-stretch:condensed;font-weight:800;text-transform:uppercase;font-size:clamp(4rem,17vw,16rem);line-height:.8;letter-spacing:.01em;
+  color:transparent;-webkit-text-stroke:1.5px rgba(236,229,213,.75);margin-bottom:28px;white-space:nowrap}
+.ftr .cols{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:26px;padding-top:22px;border-top:1px solid rgba(236,229,213,.3);font-size:.9rem}
+.ftr h3{font-family:var(--f-mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;opacity:.6;margin-bottom:10px;font-weight:400}
+.ftr li{margin-bottom:5px}
+.ftr a{text-decoration:none;border-bottom:1px solid rgba(236,229,213,.3)}
+.ftr a:hover{border-color:var(--blaze);color:#FFB48F}
+.ftr .fine{margin-top:30px;font-family:var(--f-mono);font-size:.64rem;letter-spacing:.07em;text-transform:uppercase;opacity:.55;display:flex;flex-wrap:wrap;gap:6px 24px;justify-content:space-between}
+
+/* ───────── dialog ───────── */
+dialog{border:1.5px solid var(--ink);padding:0;background:var(--paper-3);color:var(--ink);width:min(760px,calc(100vw - 28px));max-height:calc(100dvh - 28px);box-shadow:10px 10px 0 rgba(23,33,28,.35)}
+dialog::backdrop{background:rgba(23,33,28,.62)}
+.rsv-h{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1.5px solid var(--ink);background:var(--ink);color:var(--paper)}
+.rsv-h b{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase}
+.rsv-h button{border:1.5px solid var(--paper);background:none;color:var(--paper);width:30px;height:30px;font-size:1rem;line-height:1}
+.rsv-b{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.rsv-b .recap{padding:18px;border-right:1.5px solid var(--ink);background:var(--paper-2)}
+.rsv-b .recap svg{width:100%;height:auto;margin-bottom:6px}
+.rsv-b .recap ul{font-family:var(--f-mono);font-size:.72rem;line-height:1.9}
+.rsv-b .recap li{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dashed var(--rule)}
+.rsv-b .recap .big{display:flex;justify-content:space-between;align-items:baseline;margin-top:12px}
+.rsv-b .recap .big b{font-family:var(--f-display);font-stretch:condensed;font-size:2.3rem;line-height:1}
+.rsv-b form{padding:18px;display:grid;gap:12px;align-content:start}
+.rsv-b h3{font-family:var(--f-display);font-stretch:condensed;font-size:1.9rem;text-transform:uppercase;line-height:.95}
+.rsv-b p{font-size:.88rem;color:var(--ink-2)}
+.rsv-b label{display:grid;gap:4px;font-family:var(--f-mono);font-size:.66rem;letter-spacing:.09em;text-transform:uppercase}
+.rsv-b input,.rsv-b select{font:400 1rem var(--f-body);padding:10px 11px;border:1.5px solid var(--ink);background:#fff;color:var(--ink);border-radius:0;width:100%}
+.rsv-done{padding:34px 26px;text-align:center;display:none}
+.rsv-done h3{font-family:var(--f-display);font-stretch:condensed;font-size:2.6rem;text-transform:uppercase;line-height:.95;margin-bottom:10px}
+.rsv-done .ref{display:inline-block;margin:14px 0;padding:8px 16px;border:1.5px dashed var(--ink);font-family:var(--f-mono);font-weight:700;letter-spacing:.14em}
+dialog.done .rsv-b{display:none} dialog.done .rsv-done{display:block}
+
+/* ───────── responsive ───────── */
+@container (max-width:470px){
+  .roofs{grid-template-columns:1fr}
+  .roof .card{display:grid;grid-template-columns:36% 1fr;column-gap:12px;align-items:center}
+  .roof .ico{grid-row:span 3;margin:0}
+  .roof small{margin:3px 0 5px}
+}
+@media (max-width:1080px){
+  .hdr nav{display:none}
+  .hero-top{grid-template-columns:1fr}
+  .legend{display:none}
+  .kit{grid-template-columns:repeat(2,1fr)}
+  .kit li:nth-child(3n){border-right:1px solid var(--rule)} .kit li:nth-child(2n){border-right:0}
+  .kit li:nth-last-child(-n+3){border-bottom:1px solid var(--rule)} .kit li:nth-last-child(-n+2){border-bottom:0}
+  .route{grid-template-columns:repeat(2,1fr);row-gap:44px}
+  .route li:nth-child(2)::after{content:none}
+}
+@media (max-width:940px){
+  body{padding-bottom:68px}
+  .build{display:block}
+  .stage{height:auto;border-right:0;border-bottom:1.5px solid var(--ink);overflow:visible}
+  .stage::before{bottom:0}
+  .stage-view{flex:none;height:39vh;height:39svh;min-height:220px;max-height:400px}
+  .stage-top{padding:8px 10px;gap:6px}
+  .stage-name{display:none}
+  .toggles{gap:6px;width:100%;justify-content:space-between}
+  .seg button{padding:6px 9px;font-size:.62rem}
+  .specs{display:none}
+  .plan-inset{display:none}
+  .stage-hint{left:10px;bottom:6px}
+  .pricebar{position:fixed;left:0;right:0;bottom:0;padding:9px 14px;border-top:1.5px solid var(--paper);z-index:50}
+  .pricebar .m{display:none}
+  .pricebar .t b{font-size:1.9rem}
+  .pricebar .btn{padding:.85em 1em;box-shadow:none}
+  .delta{top:auto;bottom:8px;right:10px}
+  .hdr-price span{display:none}
+  .notes{grid-template-columns:1fr}
+  .note{transform:none!important}
+  .faq{grid-template-columns:1fr}
+  .ftr .cols{grid-template-columns:1fr 1fr}
+  .rsv-b{grid-template-columns:1fr}
+  .rsv-b .recap{border-right:0;border-bottom:1.5px solid var(--ink)}
+  .rsv-b .recap svg{max-height:120px}
+}
+@media (max-width:720px){
+  .hero-low{grid-template-columns:1fr}
+  .hero-cta{margin-bottom:8px}
+  .hero-meta span:last-child{display:none}
+  .hero-van text,.hero-van .dim{display:none}
+  .hero-van{margin-top:-30px}
+  .stats{grid-template-columns:1fr 1fr}
+  .stats div:nth-child(2){border-right:0}
+  .stats div:nth-child(-n+2){border-bottom:1.5px solid var(--ink)}
+  .brand small{display:none}
+  .kit{grid-template-columns:1fr}
+  .kit li{border-right:0!important;border-bottom:1px solid var(--rule)!important}
+  .kit li:last-child{border-bottom:0!important}
+  .route{grid-template-columns:1fr}
+  .route li::after{content:none!important}
+  .lay .card{grid-template-columns:1fr}
+}
+@media (max-width:420px){
+  .chips{grid-template-columns:repeat(2,1fr)}
+  .seg button{padding:6px 7px}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <a class="brand" href="#top" aria-label="Northfold Camper Works — home">
+    <svg viewBox="0 0 22 26" aria-hidden="true"><path d="M11 1 2 24l9-5.4z" fill="#17211C"/><path d="M11 1l9 23-9-5.4z" fill="none" stroke="#17211C" stroke-width="1.5" stroke-linejoin="round"/></svg>
+    <b>Northfold</b><small>Camper Works</small>
+  </a>
+  <nav aria-label="Primary">
+    <a href="#build">Build</a><a href="#kit">Standard kit</a><a href="#process">How it works</a><a href="#notes">Field notes</a><a href="#faq">Questions</a>
+  </nav>
+  <a class="hdr-price" href="#build"><span>Your build</span><b class="num" data-total>$78,900</b></a>
+</header>
+
+<main id="top">
+<!-- ═════════ SHEET 01 — HERO ═════════ -->
+<section class="hero">
+  <div class="topo" aria-hidden="true"></div>
+  <div class="hero-meta mono"><span><b>Sheet 01</b> / Traverse 4×4</span><span>Hand-built in Bend, Oregon</span><span>44°03′N 121°18′W</span><span>Scale 1 : 28 — elevation updates with your build</span></div>
+  <div class="hero-top">
+    <h1>Unfold<br>the far <em>corner</em><br>of the map.</h1>
+    <aside class="legend" aria-label="Your current build">
+      <h2>Legend — your build <i>● live</i></h2>
+      <ul>
+        <li><i class="sym c"></i><span>Paint</span><b data-l="color">Glacier Chalk</b></li>
+        <li><i class="sym r"></i><span>Roof</span><b data-l="roof">Low roof</b></li>
+        <li><i class="sym l"></i><span>Layout</span><b data-l="layout">Basecamp</b></li>
+        <li><i class="sym a"></i><span>Add-ons</span><b data-l="addons">None yet</b></li>
+      </ul>
+      <div class="tot"><span class="mono">As specced</span><b class="num" data-total>$78,900</b></div>
+      <a class="btn" href="#build">Open the configurator <span class="arr">→</span></a>
+    </aside>
+  </div>
+  <div class="hero-low">
+    <div>
+      <p class="lede">The Traverse is a 4×4 camper van, specced by you and finished by eleven people in one workshop. Pick the paint, the roof and the floor plan — the price moves as you do, and it’s the price on the invoice.</p>
+      <div class="hero-cta">
+        <a class="btn" href="#build">Build your Traverse <span class="arr">→</span></a>
+        <a class="txt" href="#kit">What’s standard</a>
+      </div>
+    </div>
+    <figure class="hero-van" aria-label="Side elevation of your current build"><div data-elev="hero"></div></figure>
+  </div>
+  <dl class="stats">
+    <div><dt>Starts at</dt><dd>$78,900</dd></div>
+    <div><dt>Build time</dt><dd>12–17 weeks</dd></div>
+    <div><dt>Floor plans</dt><dd>3, all 4-season</dd></div>
+    <div><dt>Conversion warranty</dt><dd>5 years</dd></div>
+  </dl>
+</section>
+
+<!-- ═════════ SHEET 02 — CONFIGURATOR ═════════ -->
+<div class="sheet-h" id="build">
+  <div><span class="mono">Sheet 02 — Configurator</span><h2>Spec it. <em>Price it.</em></h2></div>
+  <p>Four decisions. The total includes the base van, the conversion, delivery in the lower 48 and a shakedown night — nothing gets added at the desk.</p>
+</div>
+<section class="build" aria-label="Camper configurator">
+  <div class="stage" id="stage">
+    <div class="stage-top">
+      <div class="stage-name"><b>Traverse 4×4</b><span data-buildname>Glacier Chalk · Low roof · Basecamp</span></div>
+      <div class="toggles">
+        <div class="seg" role="group" aria-label="View"><button type="button" data-set="view:ext" aria-pressed="true">Outside</button><button type="button" data-set="view:int" aria-pressed="false">Inside</button></div>
+        <div class="seg" role="group" aria-label="Mode"><button type="button" data-set="mode:drive" aria-pressed="true">Drive</button><button type="button" data-set="mode:camp" aria-pressed="false">Camp</button></div>
+        <div class="seg" role="group" aria-label="Light"><button type="button" data-set="light:day" aria-pressed="true">Day</button><button type="button" data-set="light:dusk" aria-pressed="false">Dusk</button></div>
+      </div>
+    </div>
+    <div class="stage-view" id="stage-view">
+      <div class="stage-fallback elev" data-elev="stage"></div>
+      <canvas id="gl" tabindex="0" role="img" aria-label="3D preview of your camper. Drag or use arrow keys to rotate."></canvas>
+      <div class="stage-hint mono" id="hint"><svg viewBox="0 0 22 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 7h20M5 3 1 7l4 4M17 3l4 4-4 4"/></svg><span>Loading 3D preview…</span></div>
+      <div class="plan-inset" aria-hidden="true"><b class="mono">Floor plan — <span data-l="layout">Basecamp</span></b><div data-plan="inset"></div></div>
+      <div class="delta" id="delta" aria-hidden="true"></div>
+    </div>
+    <dl class="specs">
+      <div><dt>Sleeps</dt><dd data-s="sleeps">2</dd></div>
+      <div><dt>Belted seats</dt><dd data-s="seats">2</dd></div>
+      <div><dt>Standing room</dt><dd data-s="stand">1.72 m</dd></div>
+      <div><dt>Overall height</dt><dd data-s="height">2.36 m</dd></div>
+      <div><dt>Build time</dt><dd data-s="weeks">12 weeks</dd></div>
+    </dl>
+    <div class="pricebar">
+      <div class="t"><span>Total as specced</span><b class="num" data-total aria-live="polite">$78,900</b></div>
+      <div class="m">est. <span data-monthly>$0</span>/mo<br>10% down · 144 mo · 7.49% APR</div>
+      <button class="btn" type="button" data-reserve>Reserve <span class="arr">→</span></button>
+    </div>
+  </div>
+
+  <form class="panel" id="panel" autocomplete="off" onsubmit="return false">
+    <fieldset class="step" data-step="color">
+      <legend><i>01</i><b>Body colour</b><span data-cur="color"></span></legend>
+      <p>Two-stage paint over the factory e-coat, with matching bumpers on request. Lower cladding stays raw black — it’s there to be scratched.</p>
+      <div class="chips" id="o-color"></div>
+    </fieldset>
+    <fieldset class="step" data-step="roof">
+      <legend><i>02</i><b>Roof</b><span data-cur="roof"></span></legend>
+      <p>The roof decides where you can park and whether you can stand. Flip the preview to <em>Camp</em> to raise the pop-top.</p>
+      <div class="roofs" id="o-roof"></div>
+    </fieldset>
+    <fieldset class="step" data-step="layout">
+      <legend><i>03</i><b>Interior layout</b><span data-cur="layout"></span></legend>
+      <p>Birch ply cabinetry on an aluminium frame. Choosing a layout opens the van so you can look inside.</p>
+      <div class="lays" id="o-layout"></div>
+    </fieldset>
+    <fieldset class="step" data-step="addons">
+      <legend><i>04</i><b>Add-ons</b><span data-cur="addons"></span></legend>
+      <p>Fitted during the build, so wiring and mounts are hidden and warrantied. Tick anything to see it on the van.</p>
+      <div class="adds" id="o-addons"></div>
+    </fieldset>
+
+    <section class="sheet" aria-label="Build sheet">
+      <header><b>Build sheet</b><span data-ref>NF-00000</span></header>
+      <ol id="sheet-items"></ol>
+      <div class="sum"><span>Total</span><b class="num" data-total>$78,900</b></div>
+      <p class="fine">Est. <span data-monthly>$0</span>/mo with 10% down over 144 months at 7.49% APR. Build time <span data-s="weeks">12 weeks</span> from spec lock. Price excludes your state’s tax and registration.</p>
+      <div class="acts">
+        <button class="btn" type="button" data-reserve>Reserve this build <span class="arr">→</span></button>
+        <button class="btn ghost" type="button" id="copy">Copy build link</button>
+      </div>
+    </section>
+  </form>
+</section>
+
+<!-- ═════════ SHEET 03 — STANDARD KIT ═════════ -->
+<div class="sheet-h" id="kit">
+  <div><span class="mono">Sheet 03 — Standard kit</span><h2>Already <em>on board.</em></h2></div>
+  <p>Every Traverse leaves the works ready for a week off-grid before you tick a single box.</p>
+</div>
+<ul class="kit">
+  <li><svg viewBox="0 0 30 30" fill="none" stroke="#17211C" stroke-width="1.6"><path d="M3 24 11 8l5 9 3-5 8 12z"/><path d="M11 8l-2.2 4.4 2.2 1.4 2.4-1.6" /></svg><div><b>All-wheel drive</b><p>2.0 L turbo-diesel, 9-speed automatic, selectable AWD with a locking rear differential.</p></div></li>
+  <li><svg viewBox="0 0 30 30" fill="none" stroke="#17211C" stroke-width="1.6"><rect x="4" y="9" width="20" height="14"/><path d="M24 13h3v6h-3M9 9V6h4v3M14 12l-3 4.5h5L13 21"/></svg><div><b>100 Ah lithium</b><p>40 A alternator charging, a 2 kW inverter and shore power. USB-C at every seat and bunk.</p></div></li>
+  <li><svg viewBox="0 0 30 30" fill="none" stroke="#17211C" stroke-width="1.6"><path d="M15 4c5 6 7.5 9.800 7.500 13.500a7.500 7.500 0 0 1-15 0C7.500 13.800 10 10 15 4z"/><path d="M11.500 18a3.500 3.500 0 0 0 3.500 3.500"/></svg><div><b>95 L fresh water</b><p>Insulated tank inside the heated envelope, pressurised tap, 12 L grey-water caddy.</p></div></li>
+  <li><svg viewBox="0 0 30 30" fill="none" stroke="#17211C" stroke-width="1.6"><rect x="5" y="6" width="20" height="18"/><circle cx="11" cy="15" r="3"/><circle cx="19.500" cy="15" r="3"/><path d="M5 10h20"/></svg><div><b>Full galley</b><p>Two-burner induction hob, deep steel sink, 65 L compressor fridge, solid-oak worktop.</p></div></li>
+  <li><svg viewBox="0 0 30 30" fill="none" stroke="#17211C" stroke-width="1.6"><path d="M4 22c3.500-4 6-4 9 0s5.500 4 9 0 3.500-2 4-2M4 15c3.500-4 6-4 9 0s5.500 4 9 0 3.500-2 4-2M4 8c3.500-4 6-4 9 0s5.500 4 9 0 3.500-2 4-2"/></svg><div><b>Sheep-wool insulation</b><p>Walls, floor and roof. Breathes, doesn’t rattle, and stays put for the life of the van.</p></div></li>
+  <li><svg viewBox="0 0 30 30" fill="none" stroke="#17211C" stroke-width="1.6"><circle cx="15" cy="15" r="11"/><path d="M15 4v4M15 22v4M4 15h4M22 15h4M19 11l-2.500 6.500L10 20l2.500-6.500z"/></svg><div><b>5-year warranty</b><p>On everything we build, transferable to the next owner. Lifetime phone support from the people who built it.</p></div></li>
+</ul>
+
+<!-- ═════════ SHEET 04 — PROCESS ═════════ -->
+<div class="sheet-h" id="process">
+  <div><span class="mono">Sheet 04 — Route</span><h2>From here <em>to handover.</em></h2></div>
+  <p>Four waypoints. You’ll have one builder’s mobile number the whole way.</p>
+</div>
+<ol class="route">
+  <li><span>Today · $1,000</span><b>Reserve</b><p>A refundable deposit holds your build slot and freezes the price you configured.</p></li>
+  <li><span>Within a week</span><b>Spec call</b><p>An hour with your builder to pressure-test the layout against how you actually travel.</p></li>
+  <li><span>12–17 weeks</span><b>Build</b><p>Photos every Friday. Change your mind on fabrics and finishes until week four.</p></li>
+  <li><span>Handover day</span><b>Shakedown</b><p>Collect in Bend, camp one night nearby, and we fix anything that rattles before you leave.</p></li>
+</ol>
+
+<!-- ═════════ SHEET 05 — FIELD NOTES ═════════ -->
+<div class="sheet-h" id="notes">
+  <div><span class="mono">Sheet 05 — Field notes</span><h2>Owners, <em>out there.</em></h2></div>
+</div>
+<div class="notes">
+  <article class="note"><blockquote>“Six weeks up the Dempster and the only thing that broke was my phone.”</blockquote><footer><b>Ines &amp; Tomás</b><br>Tarn · Pop-top · Switchback<br>64°03′N 139°25′W</footer></article>
+  <article class="note"><blockquote>“Two enduro bikes sleep inside, and I can still cook dinner standing up.”</blockquote><footer><b>Priya K.</b><br>Basalt · High roof · Gearhouse<br>38°34′N 109°33′W</footer></article>
+  <article class="note"><blockquote>“The number on the configurator was the number on the invoice. To the dollar.”</blockquote><footer><b>Dale R.</b><br>Glacier Chalk · Low roof · Basecamp<br>47°30′N 120°50′W</footer></article>
+</div>
+
+<!-- ═════════ SHEET 06 — FAQ ═════════ -->
+<div class="sheet-h" id="faq">
+  <div><span class="mono">Sheet 06 — Questions</span><h2>Before you <em>commit.</em></h2></div>
+</div>
+<div class="faq">
+  <details><summary>Is the deposit refundable?</summary><p>Yes, in full, until we order your base van — usually ten days after the spec call. After that it converts into your first stage payment.</p></details>
+  <details><summary>Can I change the spec after reserving?</summary><p>Paint, roof and layout lock when the van is ordered. Add-ons can be added or dropped until week four at the prices shown here.</p></details>
+  <details><summary>Will it fit where I need to park?</summary><p>The configurator shows the overall height of your exact build, including racks and lift. The low roof clears a 2.4 m barrier; the high roof needs 2.9 m.</p></details>
+  <details><summary>Do you deliver?</summary><p>Delivery to any address in the lower 48 is included. Most owners still choose to collect in Bend for the shakedown night.</p></details>
+  <details><summary>Can you convert a van I already own?</summary><p>If it’s the same chassis and under 30,000 miles, yes. Configure as normal and tell us on the spec call — we’ll deduct the base vehicle.</p></details>
+  <details><summary>How does payment work?</summary><p>$1,000 to reserve, 40% when the van arrives at the works, 40% at mid-build, and the balance at handover. Finance is available through two credit unions.</p></details>
+</div>
+
+<section class="cta">
+  <div class="topo" aria-hidden="true"></div>
+  <h2><span>Your Traverse, exactly as specced —</span><b class="num" data-total>$78,900</b></h2>
+  <div class="acts">
+    <button class="btn" type="button" data-reserve>Hold a build slot · $1,000 <span class="arr">→</span></button>
+    <a class="btn ghost" href="#build">Keep configuring</a>
+  </div>
+</section>
+</main>
+
+<footer class="ftr">
+  <div class="topo" aria-hidden="true"></div>
+  <div class="word" aria-hidden="true">Northfold</div>
+  <div class="cols">
+    <div><h3>The works</h3><p>61 Tannery Row, Bend, Oregon<br>Open Tue–Sat, 9–5. Walk-ins welcome; the kettle is usually on.</p></div>
+    <div><h3>Build</h3><ul><li><a href="#build">Configurator</a></li><li><a href="#kit">Standard kit</a></li><li><a href="#process">How it works</a></li></ul></div>
+    <div><h3>Owners</h3><ul><li><a href="#notes">Field notes</a></li><li><a href="#faq">Questions</a></li><li><a href="#faq">Warranty</a></li></ul></div>
+    <div><h3>Talk to a builder</h3><ul><li><a href="tel:+15415550142">541 555 0142</a></li><li><a href="mailto:build@northfold.example">build@northfold.example</a></li></ul></div>
+  </div>
+  <div class="fine"><span>© 2026 Northfold Camper Works</span><span>44°03′29″N 121°18′55″W · elev. 1,104 m</span><span>Prices in USD, valid for builds reserved this quarter</span></div>
+</footer>
+
+<dialog id="reserve" aria-labelledby="rsv-t">
+  <div class="rsv-h"><b id="rsv-t">Reserve build slot — <span data-ref>NF-00000</span></b><button type="button" id="rsv-x" aria-label="Close">✕</button></div>
+  <div class="rsv-b">
+    <div class="recap"><div class="elev" data-elev="recap"></div><ul id="rsv-list"></ul><div class="big"><span class="mono">Total</span><b class="num" data-total>$78,900</b></div></div>
+    <form id="rsv-f">
+      <h3>Hold this spec</h3>
+      <p>We’ll call within one working day to book your spec call. The $1,000 deposit is taken then, not now.</p>
+      <label>Name<input name="name" required autocomplete="name"></label>
+      <label>Email<input name="email" type="email" required autocomplete="email"></label>
+      <label>Ideal handover<select name="when"><option>As soon as possible</option><option>Spring</option><option>Summer</option><option>Autumn</option><option>Winter</option></select></label>
+      <button class="btn" type="submit">Request my slot <span class="arr">→</span></button>
+    </form>
+  </div>
+  <div class="rsv-done">
+    <h3>Slot requested.</h3>
+    <p>Quote this reference when we call — it carries your whole spec and the price.</p>
+    <div class="ref" data-ref>NF-00000</div>
+    <p><button class="btn ghost" type="button" id="rsv-ok">Back to the build</button></p>
+  </div>
+</dialog>
+
+<!-- ═════════════════════════ CORE: data, pricing, UI, drawings ═════════════════════════ -->
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const fmt = n => '$' + Math.round(n).toLocaleString('en-US');
+const byId = (list, id) => list.find(x => x.id === id);
+
+/* ───── catalogue ───── */
+const BASE = 78900;
+const COLORS = [
+  {id:'chalk',  name:'Glacier Chalk', hex:'#E8E4D8', price:0,    fin:'Solid'},
+  {id:'lichen', name:'Lichen',        hex:'#8A9A76', price:900,  fin:'Solid'},
+  {id:'dune',   name:'Dune',          hex:'#C7A470', price:900,  fin:'Solid'},
+  {id:'ember',  name:'Ember',         hex:'#BF4A1E', price:1400, fin:'Gloss'},
+  {id:'tarn',   name:'Tarn',          hex:'#1E4B57', price:1400, fin:'Metallic'},
+  {id:'basalt', name:'Basalt',        hex:'#2D312F', price:2200, fin:'Matte', matte:true},
+];
+const ROOFS = [
+  {id:'std',  name:'Low roof',  H:2.36, price:0,    weeks:0, stand:'1.72 m', desc:'Factory steel roof. Least drag, clears a 2.4 m barrier, rides ferries at car rates.'},
+  {id:'pop',  name:'Pop-top',   H:2.36, price:8400, weeks:2, stand:'2.30 m', desc:'Raises in ten seconds. Adds a canvas loft that sleeps two and standing room when parked.'},
+  {id:'high', name:'High roof', H:2.76, price:5900, weeks:1, stand:'1.98 m', desc:'Fixed and fully insulated. Stand up straight in any weather; the winter choice.'},
+];
+const LAYOUTS = [
+  {id:'basecamp', name:'Basecamp', price:0, weeks:0, sleeps:2, seats:2, who:'Couples · long trips',
+   desc:'Fixed rear double over a gear garage, long galley, and a bench by the sliding door.',
+   items:[
+    {k:'bed',   x:[-2.86,-1.4],  z:[-.92,.92],  top:1.36, label:'Bed'},
+    {k:'galley',x:[-1.3,.1],     z:[-.92,-.4],  top:1.5,  label:'Galley'},
+    {k:'tall',  x:[.1,.62],      z:[-.92,-.4],  top:2.1,  label:'Fridge'},
+    {k:'bench', x:[-1.3,-.5],    z:[.4,.92],    top:1.05, back:'+z', label:'Bench'},
+    {k:'table', c:[-.12,.5], r:.27, top:1.32},
+   ]},
+  {id:'switchback', name:'Switchback', price:3600, weeks:1, sleeps:2, seats:4, who:'Families · four belted seats',
+   desc:'Crash-tested second-row bench, dinette up front, and a rear lounge that folds into a double.',
+   items:[
+    {k:'bench', x:[-2.86,-1.2],  z:[-.92,-.42], top:1.05, back:'-z', label:'Lounge'},
+    {k:'bench', x:[-2.86,-1.85], z:[.42,.92],   top:1.05, back:'+z'},
+    {k:'bench', x:[-2.86,-2.42], z:[-.42,.42],  top:1.05, back:'-x'},
+    {k:'table', x:[-2.2,-1.55],  z:[-.26,.26],  top:1.28},
+    {k:'galley',x:[-1.75,-.85],  z:[.4,.92],    top:1.5,  label:'Galley'},
+    {k:'tall',  x:[-1.1,-.5],    z:[-.92,-.4],  top:2.1,  label:'Robe'},
+    {k:'bench', x:[-.42,.12],    z:[-.92,.14],  top:1.05, back:'-x', label:'Seats'},
+    {k:'table', x:[.22,.62],     z:[-.88,-.2],  top:1.32},
+   ]},
+  {id:'gearhouse', name:'Gearhouse', price:4800, weeks:2, sleeps:2, seats:2, who:'Riders · skiers · dirty kit',
+   desc:'Electric lift bed over a garage that swallows two bikes, plus a wet room for you and the gear.',
+   items:[
+    {k:'bed',   x:[-2.86,-1.0],  z:[-.92,.92],  top:1.62, ghost:true, label:'Lift bed'},
+    {k:'crate', x:[-2.8,-2.36],  z:[.58,.9],    top:.98},
+    {k:'wet',   x:[-.95,-.3],    z:[-.92,-.3],  top:2.1,  label:'Wet'},
+    {k:'galley',x:[-.25,.62],    z:[-.92,-.42], top:1.5,  label:'Galley'},
+    {k:'bench', x:[-.95,-.45],   z:[.45,.92],   top:1.05, back:'+z', label:'Bench'},
+   ]},
+];
+const ADDONS = [
+  {id:'rack',   name:'Expedition roof rack',   price:2450, where:'Roof',   h:.2,  desc:'Full-length alloy rack with side ladder, cargo case and recovery boards.'},
+  {id:'solar',  name:'400 W solar + 200 Ah',   price:3900, where:'Roof',   h:.05, desc:'Two rigid panels and a second lithium battery. Roughly a week off-grid in summer.'},
+  {id:'awning', name:'Side awning, 2.5 m',     price:1650, where:'Side',   h:0,   desc:'Cassette awning over the sliding door with drop-down legs. Shown open in Camp mode.'},
+  {id:'at',     name:'All-terrain pack',       price:4200, where:'Chassis',h:.06, desc:'33-inch all-terrain tyres, 60 mm suspension lift and an alloy skid plate.'},
+  {id:'lights', name:'Light bar + ditch lights',price:890, where:'Front',  h:.1,  desc:'Roof-edge LED bar and two A-pillar pods on a dash switch. Try them in Dusk.'},
+  {id:'winch',  name:'Winch bumper',           price:2750, where:'Front',  h:0,   desc:'Steel bumper with hoop and a 4.3-tonne synthetic-rope winch.'},
+  {id:'bikes',  name:'Two-bike carrier',       price:1150, where:'Rear',   h:0,   desc:'Swing-away platform rack on the tow hitch. Rear doors still open with bikes loaded.'},
+  {id:'heater', name:'Winter pack',            price:1900, where:'Inside', h:0,   desc:'2 kW diesel air heater plumbed to the main tank, plus insulated window covers.'},
+];
+
+/* ───── state ───── */
+const state = {color:'chalk', roof:'std', layout:'basecamp', addons:[], view:'ext', mode:'drive', light:'day'};
+const encode = s => [s.color, s.roof, s.layout, s.addons.join('-')].join('.');
+function decode(str){
+  const [c, r, l, a = ''] = String(str).split('.');
+  if (byId(COLORS, c)) state.color = c;
+  if (byId(ROOFS, r)) state.roof = r;
+  if (byId(LAYOUTS, l)) state.layout = l;
+  state.addons = ADDONS.map(x => x.id).filter(id => a.split('-').includes(id));
+}
+try {
+  const h = location.hash.match(/^#b=([\w.\-]*)/);
+  if (h) decode(h[1]); else { const s = localStorage.getItem('nf-build'); if (s) decode(s); }
+} catch (e) {}
+
+function derive(s){
+  const c = byId(COLORS, s.color), r = byId(ROOFS, s.roof), l = byId(LAYOUTS, s.layout);
+  const adds = ADDONS.filter(a => s.addons.includes(a.id));
+  const items = [
+    {label:'Traverse 4×4 — van + conversion', price:BASE},
+    {label:'Paint · ' + c.name, price:c.price, sub:true},
+    {label:'Roof · ' + r.name, price:r.price, sub:true},
+    {label:'Layout · ' + l.name, price:l.price, sub:true},
+    ...adds.map(a => ({label:a.name, price:a.price, sub:true})),
+  ];
+  const total = items.reduce((t, i) => t + i.price, 0);
+  const P = total * .9, i = .0749 / 12, n = 144;
+  const has = id => s.addons.includes(id);
+  const top = has('rack') ? .2 : has('lights') ? .1 : has('solar') ? .05 : 0;
+  const height = r.H + (s.roof === 'pop' ? .1 : 0) + (has('at') ? .06 : 0) + top;
+  const weeks = 12 + r.weeks + l.weeks + (adds.length >= 4 ? 1 : 0);
+  let hsh = 7; for (const ch of encode(s)) hsh = (hsh * 31 + ch.charCodeAt(0)) >>> 0;
+  return {c, r, l, adds, items, total, monthly:P * i / (1 - Math.pow(1 + i, -n)),
+    sleeps:l.sleeps + (s.roof === 'pop' ? 2 : 0), seats:l.seats, stand:r.stand, height, weeks,
+    ref:'NF-' + (hsh % 60466176).toString(36).toUpperCase().padStart(5, '0')};
+}
+
+/* ───── shared van profile (used by the 2D elevation and the 3D body) ───── */
+function profile(H){
+  const t = Math.max(0, Math.min(1, (H - 2.36) / .4)), L = (a, b) => a + (b - a) * t;
+  return [
+    ['M',-2.95,.42], ['L',-2.95,1.2], ['L',-2.9,H-.18], ['Q',-2.88,H-.02,-2.7,H],
+    ['L',L(.9,.45),H], ['C',L(1.15,.95),H, L(1.3,1.22),L(2.32,2.5), 1.42,2.2],
+    ['L',2.08,1.47], ['Q',2.14,1.41,2.26,1.38], ['L',2.8,1.2], ['Q',2.97,1.13,2.98,.95],
+    ['L',2.98,.55], ['Q',2.98,.42,2.85,.42], ['L',2.48,.42], ['ARCH',1.98,.42,.5],
+    ['L',-1.25,.42], ['ARCH',-1.75,.42,.5], ['Z'],
+  ];
+}
+const u = v => +(v * 100).toFixed(1);
+function profilePath(H){
+  let d = '';
+  for (const s of profile(H)) {
+    if (s[0] === 'M' || s[0] === 'L') d += `${s[0]}${u(s[1])} ${u(-s[2])}`;
+    else if (s[0] === 'Q') d += `Q${u(s[1])} ${u(-s[2])} ${u(s[3])} ${u(-s[4])}`;
+    else if (s[0] === 'C') d += `C${u(s[1])} ${u(-s[2])} ${u(s[3])} ${u(-s[4])} ${u(s[5])} ${u(-s[6])}`;
+    else if (s[0] === 'ARCH') d += `A${u(s[3])} ${u(s[3])} 0 0 0 ${u(s[1]-s[3])} ${u(-s[2])}`;
+    else d += 'Z';
+  }
+  return d;
+}
+
+/* ───── side elevation drawing ───── */
+function elevation(s, o = {}){
+  const D = derive(s), col = D.c.hex, H = D.r.H, HY = -H * 100, has = id => s.addons.includes(id);
+  const lift = has('at') ? 6 : 0, R = has('at') ? 43 : 39, pop = s.roof === 'pop';
+  const ang = pop && o.raised !== false ? 17 : 0, K = '#232826', G = '#22302F', sw = o.mini ? 3.2 : 1.7;
+  let gear = '', b = '';
+  if (has('solar')) gear += `<rect x="-238" y="${HY-(has('rack')?13:7)}" width="78" height="5" fill="#1F2F4A" stroke="${K}" stroke-width=".8"/><rect x="-152" y="${HY-(has('rack')?13:7)}" width="78" height="5" fill="#1F2F4A" stroke="${K}" stroke-width=".8"/>`;
+  if (has('rack')) gear += `<path d="M-250 ${HY-17}H40M-250 ${HY}v-17M-177.500 ${HY}v-17M-105 ${HY}v-17M-32.500 ${HY}v-17M40 ${HY}v-17" fill="none" stroke="${K}" stroke-width="3.2"/><rect x="-54" y="${HY-45}" width="80" height="28" rx="4" fill="#46523F" stroke="${K}" stroke-width="1"/><rect x="-68" y="${HY-23}" width="102" height="6" fill="#E2531F"/>`;
+  if (pop) {
+    const a = ang * Math.PI / 180, fx = -265 + 327 * Math.cos(a), fy = HY - 327 * Math.sin(a);
+    if (ang) b += `<path d="M-258 ${HY}L62 ${HY}L${fx.toFixed(1)} ${fy.toFixed(1)}Z" fill="#D8C8A2" stroke="currentColor" stroke-width="${sw*.7}" stroke-linejoin="round"/><path d="M-72 ${HY-11}H26V${HY-74}L-72 ${HY-46}Z" fill="#4C4B3C" opacity=".5"/>`;
+    b += `<g transform="rotate(${-ang} -265 ${HY})"><rect x="-265" y="${HY-10}" width="335" height="10.500" rx="4" fill="${col}" stroke="currentColor" stroke-width="${sw*.8}"/><g transform="translate(0 -10)">${gear}</g></g>`;
+  } else b += gear;
+  if (has('lights')) { const lx = 80, ly = s.roof === 'high' ? 6 : 0; b += `<rect x="${lx-6}" y="${HY-9+ly}" width="12" height="9.500" rx="2" fill="${K}"/><rect x="${lx+5}" y="${HY-8+ly}" width="3" height="7" fill="#FFD27A"/>`; }
+  b += `<path d="${profilePath(H)}" fill="${col}" stroke="currentColor" stroke-width="${sw}" stroke-linejoin="round"/>`;
+  if (!o.mini) b += `<path d="M62 -52V-220M-78 -52V-220H62" fill="none" stroke="#000" stroke-opacity=".3" stroke-width="1.2"/><rect x="46" y="-133" width="10" height="4" rx="2" fill="${K}"/><rect x="67" y="-133" width="10" height="4" rx="2" fill="${K}"/>`;
+  b += `<path d="M74 -144V-208H131L189 -144Z" fill="${G}" stroke="${G}" stroke-width="7" stroke-linejoin="round"/><rect x="-55" y="-208" width="99" height="64" rx="7" fill="${G}"/><rect x="-250" y="-198" width="95" height="43" rx="7" fill="${G}"/>`;
+  b += `<g fill="${K}"><rect x="-295" y="-63" width="63" height="21"/><rect x="-118" y="-63" width="259" height="21"/><rect x="255" y="-74" width="46" height="32" rx="5"/><rect x="-301" y="-68" width="24" height="26" rx="3"/><rect x="166" y="-164" width="12" height="23" rx="3"/></g>`;
+  for (const cx of [198, -175]) b += `<path d="M${cx-54} -42A54 54 0 0 1 ${cx+54} -42" fill="none" stroke="${K}" stroke-width="9"/>`;
+  b += `<path d="M284 -113L297 -98V-80H279Z" fill="#F6ECCB" stroke="${K}" stroke-width="1"/><rect x="-297" y="-126" width="6" height="52" rx="2" fill="#B3301C"/>`;
+  if (has('awning')) b += `<rect x="-190" y="${HY+5}" width="250" height="12" rx="6" fill="${K}"/><rect x="-176" y="${HY+9}" width="222" height="2" fill="#6B716B"/>`;
+  if (has('winch')) b += `<rect x="258" y="-82" width="56" height="42" rx="5" fill="#161A18"/><path d="M302 -80V-114H288" fill="none" stroke="#161A18" stroke-width="5.500" stroke-linejoin="round"/><rect x="309" y="-64" width="9" height="9" rx="1.500" fill="#E2531F"/>`;
+  if (has('at')) b += `<path d="M246 -39L298 -47" stroke="#8D938F" stroke-width="4.500" stroke-linecap="round"/>`;
+  if (has('bikes')) {
+    b += `<path d="M-290 -50H-366M-316 -50V-152" fill="none" stroke="${K}" stroke-width="5"/>`;
+    [[-333,'#E2531F'],[-356,'#2B5A60']].forEach(([x, c]) => b += `<rect x="${x-3.500}" y="-128" width="7" height="74" rx="3.500" fill="#161A18"/><path d="M${x} -128V-150" stroke="${c}" stroke-width="3.500"/><rect x="${x-9}" y="-153" width="18" height="4" rx="2" fill="#161A18"/>`);
+  }
+  let w = '';
+  for (const cx of [198, -175]) w += `<circle cx="${cx}" cy="${-R}" r="${R}" fill="#191D1B"/>${has('at') ? `<circle cx="${cx}" cy="${-R}" r="${R-3}" fill="none" stroke="#3B423E" stroke-width="5" stroke-dasharray="5 4.500"/>` : ''}<circle cx="${cx}" cy="${-R}" r="${R*.58}" fill="#4B504D" stroke="#0E100F" stroke-width="1.500"/><circle cx="${cx}" cy="${-R}" r="${R*.2}" fill="#191D1B"/>`;
+  if (o.mini) return `<svg viewBox="-312 -362 624 372" aria-hidden="true"><path d="M-308 0H308" stroke="currentColor" stroke-width="2.500"/><g transform="translate(0 ${-lift})">${b}</g>${w}</svg>`;
+  let hatch = ''; for (let x = -372; x <= 380; x += 22) hatch += `M${x} 1l-7 8`;
+  let dims = '';
+  if (o.dims !== false) {
+    const top = -(D.height * 100);
+    dims = `<g class="dim"><path d="M-295 26v24M298 26v24M-295 40H298M-299 44l8-8M294 44l8-8"/><path d="M338 0h30M338 ${top.toFixed(1)}h30M355 0V${top.toFixed(1)}M351 4l8-8M351 ${(top+4).toFixed(1)}l8-8"/></g>` +
+      `<text x="1" y="60" text-anchor="middle">LENGTH 5.93 M</text><text transform="translate(374 ${(top/2).toFixed(1)}) rotate(90)" text-anchor="middle">HEIGHT ${D.height.toFixed(2)} M</text>`;
+  }
+  return `<svg viewBox="-395 -388 790 458" role="img" aria-label="${D.c.name} Traverse, ${D.r.name.toLowerCase()}, side view"><ellipse cx="0" cy="3" rx="330" ry="9" fill="#000" opacity=".1"/><g transform="translate(0 ${-lift})">${b}</g>${w}<path d="M-385 0H385" stroke="currentColor" stroke-width="1.300"/><path d="${hatch}" stroke="currentColor" stroke-width=".8" opacity=".55"/>${dims}</svg>`;
+}
+
+/* ───── floor plan drawing (same item data drives the 3D interior) ───── */
+function plan(id, o = {}){
+  const L = byId(LAYOUTS, id), S = 'stroke="#17211C" stroke-width="1.400"';
+  let g = '', t = '';
+  for (const it of L.items) {
+    if (it.c) { g += `<circle cx="${u(it.c[0])}" cy="${u(it.c[1])}" r="${u(it.r)}" fill="#F7F2E6" ${S} stroke-dasharray="4 3"/>`; continue; }
+    const x = u(it.x[0]), y = u(it.z[0]), w = u(it.x[1] - it.x[0]), h = u(it.z[1] - it.z[0]), cx = x + w / 2, cy = y + h / 2;
+    if (it.k === 'bed') {
+      if (it.ghost) {
+        for (const bz of [-34, 24]) g += `<g fill="none" stroke="#17211C" stroke-width="2"><circle cx="${cx-56}" cy="${bz}" r="17"/><circle cx="${cx+56}" cy="${bz}" r="17"/><path d="M${cx-56} ${bz}H${cx+56}"/></g>`;
+        g += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="5" fill="#F7F2E6" fill-opacity=".5" ${S} stroke-dasharray="7 4"/>`;
+      } else g += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="5" fill="#F7F2E6" ${S}/><rect x="${x+12}" y="${y+10}" width="${w/2-18}" height="34" rx="6" fill="#fff" ${S}/><rect x="${cx+6}" y="${y+10}" width="${w/2-18}" height="34" rx="6" fill="#fff" ${S}/><path d="M${x} ${y+h*.42}H${x+w}" stroke="#D39B2A" stroke-width="3"/>`;
+    } else if (it.k === 'bench') {
+      g += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="#A8B48E" ${S}/>`;
+      const bk = it.back; g += bk === '+z' ? `<rect x="${x}" y="${y+h-9}" width="${w}" height="9" fill="#55683F"/>` : bk === '-z' ? `<rect x="${x}" y="${y}" width="${w}" height="9" fill="#55683F"/>` : `<rect x="${x}" y="${y}" width="9" height="${h}" fill="#55683F"/>`;
+    } else if (it.k === 'galley') {
+      const fy = y < 0 ? y + 9 : y + h - 33;
+      g += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#DCC39A" ${S}/><rect x="${x+w*.16}" y="${fy}" width="30" height="24" rx="4" fill="#fff" ${S}/><circle cx="${x+w*.62}" cy="${fy+12}" r="8.500" fill="none" ${S}/><circle cx="${x+w*.62+22}" cy="${fy+12}" r="8.500" fill="none" ${S}/>`;
+    } else if (it.k === 'tall') g += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#C6AB7F" ${S}/><path d="M${x} ${y}l${w} ${h}M${x+w} ${y}l${-w} ${h}" stroke="#17211C" stroke-width=".9"/>`;
+    else if (it.k === 'wet') g += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#BCD2D0" ${S}/><circle cx="${cx}" cy="${cy}" r="6" fill="none" ${S}/><path d="M${x+6} ${y+6}h${w-12}v${h-12}h${-(w-12)}z" fill="none" stroke="#17211C" stroke-width=".7"/>`;
+    else if (it.k === 'crate') g += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#7B8468" ${S}/>`;
+    else if (it.k === 'table') g += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="#F7F2E6" ${S} stroke-dasharray="4 3"/>`;
+    if (o.labels && it.label && it.label.length * 11.5 + 4 < w) t += `<text x="${cx}" y="${cy + (it.k === 'bed' ? 24 : 6)}" text-anchor="middle" paint-order="stroke" stroke="#F7F2E6" stroke-width="4">${it.label}</text>`;
+  }
+  return `<svg class="plan" viewBox="-305 -110 613 ${o.labels ? 244 : 220}" role="img" aria-label="${L.name} floor plan">
+    <path d="M-287 -100H232Q298 -100 298 -52V52Q298 100 232 100H-287Q-295 100 -295 92V-92Q-295 -100 -287 -100Z" fill="#EDE6D6" stroke="#17211C" stroke-width="2.600"/>
+    <path d="M204 -93Q224 0 204 93" fill="none" stroke="#17211C" stroke-width="1.200"/><path d="M204 -93Q224 0 204 93L250 97Q296 96 296 52V-52Q296 -96 250 -97Z" fill="#17211C" opacity=".1"/>
+    <g fill="#8E958A" ${S}><rect x="92" y="-74" width="48" height="48" rx="9"/><rect x="92" y="26" width="48" height="48" rx="9"/></g><rect x="92" y="-74" width="9" height="48" rx="3" fill="#17211C"/><rect x="92" y="26" width="9" height="48" rx="3" fill="#17211C"/>
+    <circle cx="163" cy="-50" r="13" fill="none" ${S}/>
+    ${g}<path d="M-78 100H62" stroke="#E2531F" stroke-width="6"/>${t}
+    ${o.labels ? '<text x="-8" y="126" text-anchor="middle">Sliding door</text>' : ''}</svg>`;
+}
+
+/* ───── build the option controls (once) ───── */
+const priceTag = p => p ? `<span class="price">+ ${fmt(p)}</span>` : '<span class="price inc">Included</span>';
+$('#o-color').innerHTML = COLORS.map(c => `<label class="opt chip"><input type="radio" name="color" value="${c.id}"><span class="card"><span class="sw${c.matte ? ' matte' : ''}" style="--c:${c.hex}"></span><span class="nm">${c.name}</span><span class="fin">${c.fin} · ${c.price ? '+ ' + fmt(c.price) : 'incl.'}</span></span></label>`).join('');
+$('#o-roof').innerHTML = ROOFS.map(r => `<label class="opt roof"><input type="radio" name="roof" value="${r.id}"><span class="card"><span class="ico" data-roofico="${r.id}"></span><b>${r.name}</b><small>${r.desc}</small>${priceTag(r.price)}</span></label>`).join('');
+$('#o-layout').innerHTML = LAYOUTS.map(l => `<label class="opt lay"><input type="radio" name="layout" value="${l.id}"><span class="card">${plan(l.id)}<span><b>${l.name}</b><span class="who">${l.who} · sleeps ${l.sleeps} · seats ${l.seats}</span><small>${l.desc}</small>${priceTag(l.price)}</span></span></label>`).join('');
+$('#o-addons').innerHTML = ADDONS.map(a => `<label class="opt add"><input type="checkbox" name="addon" value="${a.id}"><span class="row"><span class="box"></span><span><b>${a.name}<span class="tag">${a.where}</span></b><small>${a.desc}</small></span><span class="price">+ ${fmt(a.price)}</span></span></label>`).join('');
+
+/* ───── subscribers (the 3D scene registers here) ───── */
+const subs = [];
+const NF = window.NF = {state, COLORS, ROOFS, LAYOUTS, ADDONS, profile, derive,
+  on(fn){ subs.push(fn); fn(state, {key:'init'}); },
+  ready3d(){ $('#stage').classList.add('has-3d'); $('#hint span').textContent = 'Drag to rotate'; },
+  no3d(){ $('#hint span').textContent = '2D preview'; },
+};
+
+/* ───── render ───── */
+let shown = null, raf = 0, lastTotal = null;
+function tweenTotal(to){
+  const from = shown == null ? to : shown, t0 = performance.now();
+  cancelAnimationFrame(raf);
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const f = now => {
+    const p = still ? 1 : Math.min(1, (now - t0) / 480), v = from + (to - from) * (1 - Math.pow(1 - p, 3));
+    shown = v; const txt = fmt(p < 1 ? Math.round(v / 10) * 10 : to);
+    $$('[data-total]').forEach(el => el.textContent = txt);
+    if (p < 1) raf = requestAnimationFrame(f);
+  };
+  f(t0);
+}
+function sync(change = {}){
+  const D = derive(state), stage = $('#stage');
+  // inputs + cards
+  $$('#panel input').forEach(i => {
+    i.checked = i.name === 'addon' ? state.addons.includes(i.value) : state[i.name] === i.value;
+    i.closest('.opt').classList.toggle('on', i.checked);
+  });
+  // texts
+  const addTxt = D.adds.length ? `${D.adds.length} fitted · + ${fmt(D.adds.reduce((t, a) => t + a.price, 0))}` : 'None yet';
+  const set = (sel, v) => $$(sel).forEach(el => el.textContent = v);
+  set('[data-l=color]', D.c.name); set('[data-l=roof]', D.r.name); set('[data-l=layout]', D.l.name); set('[data-l=addons]', addTxt);
+  set('[data-cur=color]', D.c.name); set('[data-cur=roof]', D.r.name); set('[data-cur=layout]', D.l.name); set('[data-cur=addons]', D.adds.length ? D.adds.length + ' selected' : 'None');
+  set('[data-buildname]', `${D.c.name} · ${D.r.name} · ${D.l.name}`);
+  set('[data-s=sleeps]', D.sleeps); set('[data-s=seats]', D.seats); set('[data-s=stand]', D.stand);
+  set('[data-s=height]', D.height.toFixed(2) + ' m'); set('[data-s=weeks]', D.weeks + ' weeks');
+  set('[data-monthly]', fmt(D.monthly)); set('[data-ref]', D.ref);
+  document.documentElement.style.setProperty('--bodycol', D.c.hex);
+  // totals
+  if (lastTotal !== D.total) tweenTotal(D.total);
+  if (lastTotal != null && change.label && D.total !== lastTotal) {
+    const d = D.total - lastTotal, el = $('#delta');
+    el.innerHTML = `<b>${d > 0 ? '+' : '−'} ${fmt(Math.abs(d))}</b> ${change.label}`;
+    el.classList.toggle('minus', d < 0); el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+  }
+  lastTotal = D.total;
+  // build sheet
+  const rows = D.items.map(i => `<li class="${i.sub ? 'sub' : ''}"><span>${i.label}</span><i></i><span class="num">${i.price ? fmt(i.price) : 'incl.'}</span></li>`).join('');
+  $('#sheet-items').innerHTML = rows;
+  $('#rsv-list').innerHTML = D.items.slice(1).map(i => `<li><span>${i.label}</span><span>${i.price ? '+ ' + fmt(i.price) : 'incl.'}</span></li>`).join('');
+  // drawings
+  const raised = state.mode === 'camp';
+  $('[data-elev=hero]').innerHTML = elevation(state);
+  $('[data-elev=recap]').innerHTML = elevation(state, {dims:false});
+  $('[data-elev=stage]').innerHTML = state.view === 'int' ? plan(state.layout, {labels:true}) : elevation(state, {dims:false, raised});
+  $('[data-plan=inset]').innerHTML = plan(state.layout, {labels:true});
+  $$('[data-roofico]').forEach(el => el.innerHTML = elevation({...state, roof:el.dataset.roofico, addons:[]}, {mini:true}));
+  // stage toggles
+  stage.classList.toggle('is-dusk', state.light === 'dusk');
+  stage.classList.toggle('view-int', state.view === 'int');
+  $$('[data-set]').forEach(b => { const [k, v] = b.dataset.set.split(':'); b.setAttribute('aria-pressed', String(state[k] === v)); });
+  // persist
+  const code = encode(state);
+  try { localStorage.setItem('nf-build', code); if (change.key && change.key !== 'init') history.replaceState(null, '', '#b=' + code); } catch (e) {}
+  subs.forEach(fn => fn(state, change));
+}
+
+/* ───── events ───── */
+$('#panel').addEventListener('change', e => {
+  const i = e.target; if (!i.name) return;
+  const change = {key:i.name, id:i.value};
+  if (i.name === 'addon') {
+    const a = byId(ADDONS, i.value);
+    state.addons = ADDONS.map(x => x.id).filter(id => id === i.value ? i.checked : state.addons.includes(id));
+    change.on = i.checked; change.label = a.name;
+    state.view = i.value === 'heater' ? 'int' : 'ext';
+    if (i.value === 'awning' && i.checked) state.mode = 'camp';
+  } else {
+    state[i.name] = i.value;
+    change.label = byId({color:COLORS, roof:ROOFS, layout:LAYOUTS}[i.name], i.value).name;
+    state.view = i.name === 'layout' ? 'int' : 'ext';
+    if (i.name === 'roof') state.mode = i.value === 'pop' ? 'camp' : state.addons.includes('awning') ? state.mode : 'drive';
+  }
+  sync(change);
+});
+$$('[data-set]').forEach(b => b.addEventListener('click', () => {
+  const [k, v] = b.dataset.set.split(':'); if (state[k] === v) return;
+  state[k] = v; sync({key:k, id:v});
+}));
+const dlg = $('#reserve');
+$$('[data-reserve]').forEach(b => b.addEventListener('click', () => { dlg.classList.remove('done'); dlg.showModal ? dlg.showModal() : dlg.setAttribute('open', ''); }));
+const closeDlg = () => dlg.close ? dlg.close() : dlg.removeAttribute('open');
+$('#rsv-x').addEventListener('click', closeDlg); $('#rsv-ok').addEventListener('click', closeDlg);
+dlg.addEventListener('click', e => { if (e.target === dlg) closeDlg(); });
+$('#rsv-f').addEventListener('submit', e => { e.preventDefault(); dlg.classList.add('done'); });
+$('#copy').addEventListener('click', async e => {
+  const url = location.origin + location.pathname + '#b=' + encode(state), btn = e.currentTarget;
+  let ok = false;
+  try { await navigator.clipboard.writeText(url); ok = true; } catch (err) {
+    const ta = document.createElement('textarea'); ta.value = url; document.body.appendChild(ta); ta.select();
+    try { ok = document.execCommand('copy'); } catch (e2) {} ta.remove();
+  }
+  btn.textContent = ok ? 'Link copied ✓' : 'Copy from address bar';
+  try { history.replaceState(null, '', '#b=' + encode(state)); } catch (e3) {}
+  setTimeout(() => btn.textContent = 'Copy build link', 2200);
+});
+
+addEventListener('hashchange', () => {            // a pasted build link while the page is already open
+  const h = location.hash.match(/^#b=([\w.\-]*)/);
+  if (h && h[1] !== encode(state)) { decode(h[1]); state.view = 'ext'; sync({key:'init'}); }
+});
+
+/* ───── topographic contours (marching squares over value noise) ───── */
+(function topo(){
+  const W = 112, H = 68, G = 18; let seed = 20261;
+  const rnd = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296;
+  const grid = Array.from({length:(G + 1) * (G + 1)}, rnd), sm = t => t * t * (3 - 2 * t);
+  const vn = (x, y) => { const X = Math.floor(x), Y = Math.floor(y), xi = X % G, yi = Y % G, a = grid[yi*(G+1)+xi], b = grid[yi*(G+1)+xi+1], c = grid[(yi+1)*(G+1)+xi], d = grid[(yi+1)*(G+1)+xi+1], p = sm(x - X), q = sm(y - Y); return a + (b-a)*p + (c-a)*q + (a-b-c+d)*p*q; };
+  const f = new Float32Array((W + 1) * (H + 1));
+  for (let y = 0; y <= H; y++) for (let x = 0; x <= W; x++) f[y*(W+1)+x] = vn(x*.034, y*.034)*.64 + vn(x*.085+5.2, y*.085+1.3)*.27 + vn(x*.19+9.1, y*.19+3.7)*.09;
+  const n = v => (v * 10).toFixed(1); let thin = '', bold = '', li = 0;
+  for (let L = .16; L < .86; L += .036, li++) {
+    let d = '';
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const a = f[y*(W+1)+x], b = f[y*(W+1)+x+1], c = f[(y+1)*(W+1)+x+1], e = f[(y+1)*(W+1)+x];
+      const idx = (a > L) << 3 | (b > L) << 2 | (c > L) << 1 | (e > L);
+      if (!idx || idx === 15) continue;
+      const T = () => n(x + (L-a)/(b-a)) + ' ' + n(y), Rt = () => n(x+1) + ' ' + n(y + (L-b)/(c-b)), B = () => n(x + (L-e)/(c-e)) + ' ' + n(y+1), Lf = () => n(x) + ' ' + n(y + (L-a)/(e-a));
+      const seg = (p, q) => d += 'M' + p() + 'L' + q();
+      switch (idx) { case 1: case 14: seg(Lf, B); break; case 2: case 13: seg(B, Rt); break; case 3: case 12: seg(Lf, Rt); break; case 4: case 11: seg(T, Rt); break;
+        case 6: case 9: seg(T, B); break; case 7: case 8: seg(T, Lf); break; case 5: seg(T, Lf); seg(B, Rt); break; case 10: seg(T, Rt); seg(Lf, B); break; }
+    }
+    if (li % 4 === 0) bold += d; else thin += d;
+  }
+  const svg = col => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W*10} ${H*10}" preserveAspectRatio="xMidYMid slice" fill="none" stroke="${col}" stroke-linecap="round"><path d="${thin}" stroke-width=".9" opacity=".55"/><path d="${bold}" stroke-width="1.700" opacity=".8"/></svg>`;
+  try {
+    const mk = col => `url("${URL.createObjectURL(new Blob([svg(col)], {type:'image/svg+xml'}))}")`;
+    document.documentElement.style.setProperty('--topo', mk('#8C7A52'));
+    document.documentElement.style.setProperty('--topo-light', mk('#ECE5D5'));
+  } catch (e) {}
+})();
+
+sync({key:'init'});
+})();
+</script>
+
+<!-- ═════════════════════════ 3D PREVIEW (three.js) ═════════════════════════ -->
+<script type="module">
+const NF = window.NF;
+import('three').then(start).catch(err => { console.warn('3D preview unavailable — showing 2D drawing.', err); NF.no3d(); });
+
+function start(THREE){
+  const view = document.getElementById('stage-view'), canvas = document.getElementById('gl');
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true, powerPreference:'high-performance'}); }
+  catch (e) { console.warn('WebGL unavailable', e); NF.no3d(); return; }
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+  renderer.toneMapping = THREE.NeutralToneMapping; renderer.toneMappingExposure = 1.0;
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.localClippingEnabled = true;
+  const scene = new THREE.Scene();
+  const FOV = 27, camera = new THREE.PerspectiveCamera(FOV, 1.5, .5, 90);
+  const V = (x, y, z) => new THREE.Vector3(x, y, z), lerp = (a, b, t) => a + (b - a) * t, PI = Math.PI;
+
+  /* ── environment for reflections (built in-scene, no extra downloads) ── */
+  (function env(){
+    const s = new THREE.Scene(), g = new THREE.SphereGeometry(30, 32, 16), p = g.attributes.position, col = [], c = new THREE.Color();
+    const top = new THREE.Color(0xa9c3cb), hor = new THREE.Color(0xf6ecd8), bot = new THREE.Color(0x7c725d);
+    for (let i = 0; i < p.count; i++) { const y = p.getY(i) / 30; y > 0 ? c.copy(hor).lerp(top, Math.pow(y, .55)) : c.copy(hor).lerp(bot, Math.min(1, -y * 4)); col.push(c.r, c.g, c.b); }
+    g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+    s.add(new THREE.Mesh(g, new THREE.MeshBasicMaterial({vertexColors:true, side:THREE.BackSide})));
+    const soft = (x, y, z, w, h, k) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({color:new THREE.Color(k, k * .97, k * .9), side:THREE.DoubleSide})); m.position.set(x, y, z); m.lookAt(0, 0, 0); s.add(m); };
+    soft(8, 16, 10, 14, 10, 7); soft(-14, 8, -6, 8, 8, 2.5); soft(2, 5, 20, 20, 3, 1.6);
+    const pm = new THREE.PMREMGenerator(renderer); scene.environment = pm.fromScene(s, .035).texture; pm.dispose();
+  })();
+  scene.environmentIntensity = .55;
+
+  /* ── lights ── */
+  const hemi = new THREE.HemisphereLight(0xfff5e2, 0x8a7f66, .62); scene.add(hemi);
+  const sun = new THREE.DirectionalLight(0xfff0d8, 2.1); sun.position.set(7.5, 9, 3.2); sun.castShadow = true;
+  sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, {left:-7, right:7, top:7, bottom:-7, near:1, far:32});
+  sun.shadow.bias = -.0003; sun.shadow.normalBias = .03; sun.shadow.radius = 5; scene.add(sun);
+  const fill = new THREE.DirectionalLight(0xcfe0e6, .45); fill.position.set(-6, 3, 7); scene.add(fill);
+  const DAY = new THREE.Color(0xfff0d8), DUSK = new THREE.Color(0x8fa6d8), HD = new THREE.Color(0xfff5e2), HN = new THREE.Color(0x6f86b8);
+
+  /* ── materials ── */
+  const clip = new THREE.Plane(V(0, -1, 0), 99);
+  const X = m => { m.clippingPlanes = [clip]; m.clipShadows = true; return m; };   // "exterior": gets sliced in Inside view
+  const std = (color, roughness = .8, metalness = 0, o = {}) => new THREE.MeshStandardMaterial({color, roughness, metalness, ...o});
+  const M = {
+    paint: X(new THREE.MeshPhysicalMaterial({color:0xE8E4D8, roughness:.42, metalness:.05, clearcoat:.75, clearcoatRoughness:.28})),
+    trim: X(std(0x1c1f1d, .78)), trimU: std(0x1c1f1d, .78), under: std(0x101211, .95),
+    glass: X(new THREE.MeshPhysicalMaterial({color:0x0c1413, roughness:.06, metalness:.3, envMapIntensity:1.5, emissive:0xffa64a, emissiveIntensity:0})),
+    seam: X(new THREE.MeshBasicMaterial({color:0x000000, transparent:true, opacity:.34})),
+    head: std(0xfdf6e0, .25, 0, {emissive:0xfff0c4, emissiveIntensity:.2}), tail: std(0x9c2414, .4, 0, {emissive:0xff2a12, emissiveIntensity:.15}),
+    bar: X(std(0xfff6dc, .3, 0, {emissive:0xffe2a0, emissiveIntensity:.1})),
+    rubber: std(0x141615, .93, 0, {side:THREE.DoubleSide}), rim: std(0x2b2e2c, .5, .5), rimFace: std(0xa3a9a4, .5, .35), steel: std(0x9aa19c, .4, .8),
+    liner: X(std(0xd9d2c1, .95, 0, {side:THREE.BackSide})), tub: std(0xcfc8b6, .95), floor: std(0x77705f, .9),
+    wood: std(0xdcc296, .75), woodD: std(0xc2a473, .78), counter: std(0x2b312e, .55), fabric: std(0x5b6c48, .98), seat: std(0x3a403c, .95),
+    mattress: std(0xf1ebdc, 1), blanket: std(0xb98a2e, 1), white: std(0xe9e8e1, .6),
+    ghost: new THREE.MeshStandardMaterial({color:0xf1ebdc, roughness:1, transparent:true, opacity:.3, depthWrite:false}),
+    canvas: X(std(0xd8c8a2, 1, 0, {side:THREE.DoubleSide, emissive:0xffb25a, emissiveIntensity:0})),
+    net: X(new THREE.MeshBasicMaterial({color:0x2e2c22, transparent:true, opacity:.5, side:THREE.DoubleSide})),
+    awn: X(std(0xcbb684, 1, 0, {side:THREE.DoubleSide})), caseM: X(std(0x45523e, .8)),
+    blaze: std(0xe2531f, .6), blazeX: X(std(0xe2531f, .6)), lake: std(0x2b5a60, .5, .2), cut: new THREE.MeshBasicMaterial({color:0xf5efe2, side:THREE.DoubleSide}),
+    lamp: std(0xfff1cf, .4, 0, {emissive:0xffc070, emissiveIntensity:.3}),
+  };
+  const solarTex = (() => { const c = document.createElement('canvas'); c.width = 256; c.height = 128; const x = c.getContext('2d'); x.fillStyle = '#131d30'; x.fillRect(0, 0, 256, 128); x.strokeStyle = '#3a4d70'; x.lineWidth = 1.5; for (let i = 0; i <= 256; i += 21.33) { x.beginPath(); x.moveTo(i, 0); x.lineTo(i, 128); x.stroke(); } for (let j = 0; j <= 128; j += 21.33) { x.beginPath(); x.moveTo(0, j); x.lineTo(256, j); x.stroke(); } x.strokeStyle = '#c9ced0'; x.lineWidth = 6; x.strokeRect(0, 0, 256, 128); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; })();
+  M.solar = X(std(0xffffff, .25, .3, {map:solarTex}));
+
+  /* ── geometry helpers ── */
+  const sh = m => { m.castShadow = true; m.receiveShadow = true; return m; };
+  function crease(g, deg = 40){               // smooth normals across soft edges, keep hard ones
+    const pos = g.attributes.position, n = pos.count, cos = Math.cos(deg * PI / 180), fn = new Float32Array(n * 3), un = new Float32Array(n * 3);
+    const a = V(), b = V(), c = V(), ab = V(), cb = V();
+    for (let i = 0; i < n; i += 3) {
+      a.fromBufferAttribute(pos, i); b.fromBufferAttribute(pos, i + 1); c.fromBufferAttribute(pos, i + 2);
+      cb.subVectors(c, b); ab.subVectors(a, b); cb.cross(ab); const l = cb.length() || 1;
+      for (let k = 0; k < 3; k++) { fn.set([cb.x, cb.y, cb.z], (i + k) * 3); un.set([cb.x / l, cb.y / l, cb.z / l], (i + k) * 3); }
+    }
+    const map = new Map();
+    for (let i = 0; i < n; i++) { const key = Math.round(pos.getX(i) * 2e3) + '_' + Math.round(pos.getY(i) * 2e3) + '_' + Math.round(pos.getZ(i) * 2e3); let l = map.get(key); if (!l) map.set(key, l = []); l.push(i); }
+    const out = new Float32Array(n * 3);
+    for (const l of map.values()) for (const i of l) {
+      let x = 0, y = 0, z = 0; const i3 = i * 3;
+      for (const j of l) { const j3 = j * 3; if (un[i3] * un[j3] + un[i3+1] * un[j3+1] + un[i3+2] * un[j3+2] > cos) { x += fn[j3]; y += fn[j3+1]; z += fn[j3+2]; } }
+      const len = Math.hypot(x, y, z) || 1; out[i3] = x / len; out[i3+1] = y / len; out[i3+2] = z / len;
+    }
+    g.setAttribute('normal', new THREE.BufferAttribute(out, 3)); return g;
+  }
+  function rr(w, h, r){ const s = new THREE.Shape(), x = -w / 2, y = -h / 2; r = Math.min(r, w / 2 - 1e-3, h / 2 - 1e-3);
+    s.moveTo(x + r, y); s.lineTo(x + w - r, y); s.quadraticCurveTo(x + w, y, x + w, y + r); s.lineTo(x + w, y + h - r); s.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    s.lineTo(x + r, y + h); s.quadraticCurveTo(x, y + h, x, y + h - r); s.lineTo(x, y + r); s.quadraticCurveTo(x, y, x + r, y); return s; }
+  function bx(x0, x1, y0, y1, z0, z1, mat, r = 0){   // box from extents; r > 0 gives soft edges
+    const w = x1 - x0, h = y1 - y0, d = z1 - z0; let g;
+    if (r > 0) { const b = Math.min(r, w / 2.6, h / 2.6, d / 2.6);
+      g = new THREE.ExtrudeGeometry(rr(w, h, b * 2), {depth:d - 2 * b, bevelEnabled:true, bevelThickness:b, bevelSize:b, bevelOffset:-b, bevelSegments:3, curveSegments:5});
+      g.translate(0, 0, -(d - 2 * b) / 2); crease(g, 50);
+    } else g = new THREE.BoxGeometry(w, h, d);
+    const m = sh(new THREE.Mesh(g, mat)); m.position.set((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2); return m;
+  }
+  const Y = V(0, 1, 0);
+  function tube(a, b, r, mat){ const d = V().subVectors(b, a), m = sh(new THREE.Mesh(new THREE.CylinderGeometry(r, r, d.length(), 10), mat)); m.position.copy(a).addScaledVector(d, .5); m.quaternion.setFromUnitVectors(Y, d.normalize()); return m; }
+  function plate(shape, t, mat, x, y, z){ const m = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, {depth:t, bevelEnabled:false, curveSegments:6}), mat); m.position.set(x, y, z - t / 2); return m; }
+  function poly(pts, r){ const s = new THREE.Shape(), n = pts.length;
+    for (let i = 0; i < n; i++) { const p = pts[i], a = pts[(i + n - 1) % n], b = pts[(i + 1) % n], da = Math.hypot(a[0]-p[0], a[1]-p[1]), db = Math.hypot(b[0]-p[0], b[1]-p[1]);
+      const p1 = [p[0] + (a[0]-p[0]) / da * r, p[1] + (a[1]-p[1]) / da * r], p2 = [p[0] + (b[0]-p[0]) / db * r, p[1] + (b[1]-p[1]) / db * r];
+      i ? s.lineTo(p1[0], p1[1]) : s.moveTo(p1[0], p1[1]); s.quadraticCurveTo(p[0], p[1], p2[0], p2[1]); }
+    return s; }
+  function toShape(segs){ const s = new THREE.Shape();
+    for (const g of segs) { if (g[0] === 'M') s.moveTo(g[1], g[2]); else if (g[0] === 'L') s.lineTo(g[1], g[2]); else if (g[0] === 'Q') s.quadraticCurveTo(g[1], g[2], g[3], g[4]);
+      else if (g[0] === 'C') s.bezierCurveTo(g[1], g[2], g[3], g[4], g[5], g[6]); else if (g[0] === 'ARCH') s.absarc(g[1], g[2], g[3], 0, PI, false); }
+    return s; }
+  function bodyGeo(H){
+    const g = new THREE.ExtrudeGeometry(toShape(NF.profile(H)), {depth:1.86, bevelEnabled:true, bevelThickness:.07, bevelSize:.07, bevelOffset:-.07, bevelSegments:4, curveSegments:12});
+    g.translate(0, 0, -.93); g.deleteAttribute('uv'); return crease(g, 42);
+  }
+
+  /* ═════════ the van ═════════ */
+  const van = new THREE.Group(); scene.add(van);            // everything that rides on the suspension
+  let builtH = 2.36;
+  const body = sh(new THREE.Mesh(bodyGeo(builtH), M.paint)); van.add(body);
+  van.add(bx(-2.86, 2.8, .28, .6, -.72, .72, M.under));     // chassis
+  const flareShape = new THREE.Shape(); flareShape.absarc(0, 0, .625, 0, PI, false); flareShape.lineTo(-.5, 0); flareShape.absarc(0, 0, .5, PI, 0, true); flareShape.lineTo(.625, 0);
+  const flareGeo = new THREE.ExtrudeGeometry(flareShape, {depth:.105, bevelEnabled:false, curveSegments:16});
+  const archDisc = new THREE.CircleGeometry(.56, 20, 0, PI);
+  for (const s of [-1, 1]) {
+    const zr = (a, b) => s > 0 ? [a, b] : [-b, -a];
+    van.add(bx(-2.95, -2.3, .44, .66, ...zr(.92, 1.012), M.trim, .02), bx(-1.2, 1.43, .44, .66, ...zr(.92, 1.012), M.trim, .02));   // sills
+    for (const cx of [1.98, -1.75]) {
+      const f = sh(new THREE.Mesh(flareGeo, M.trim)); f.position.set(cx, .42, s > 0 ? .912 : -1.017); van.add(f);
+      const d = new THREE.Mesh(archDisc, M.under); d.position.set(cx, .42, s * .52); if (s < 0) d.rotation.y = PI; van.add(d);      // stops you seeing through the arches
+    }
+    // glass
+    van.add(plate(poly([[.74,1.44],[.74,2.08],[1.31,2.08],[1.89,1.44]], .06), .014, M.glass, 0, 0, s * 1.0));
+    van.add(plate(rr(1.0, .44, .06), .014, M.glass, -2.02, 1.77, s * 1.0));
+    if (s > 0) van.add(plate(rr(.99, .64, .07), .014, M.glass, -.055, 1.76, 1.0));
+    else van.add(plate(rr(1.05, .5, .07), .014, M.glass, -.3, 1.75, -1.0));
+    // door seams + handles
+    van.add(bx(.612, .628, .5, 2.2, ...zr(.995, 1.004), M.seam));
+    if (s > 0) van.add(bx(-.788, -.772, .5, 2.2, .995, 1.004, M.seam), bx(-.78, .62, 2.192, 2.208, .995, 1.004, M.seam), bx(.44, .56, 1.3, 1.34, 1.0, 1.02, M.trim, .008));
+    van.add(bx(.68, .8, 1.3, 1.34, ...zr(1.0, 1.02), M.trim, .008));
+    van.add(bx(1.66, 1.78, 1.4, 1.64, ...zr(1.02, 1.17), M.trim, .03), bx(1.7, 1.76, 1.44, 1.5, ...zr(.98, 1.05), M.trim));         // mirrors
+    van.add(bx(2.9, 2.995, .72, .97, ...zr(.54, .93), M.trimU, .02), bx(2.96, 3.006, .76, .93, ...zr(.58, .89), M.head, .015));                                                                   // headlights
+    van.add(bx(-2.975, -2.94, .74, 1.24, ...zr(.8, .92), M.tail, .012));                                                             // tail lights
+  }
+  // windscreen (laid on the slope)
+  { const d = V(.66, -.73, 0).normalize(), nrm = V(.742, .671, 0).normalize(), m = new THREE.Mesh(new THREE.ExtrudeGeometry(rr(.88, 1.72, .09), {depth:.02, bevelEnabled:false, curveSegments:6}), M.glass);
+    m.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(d, V(0, 0, 1), nrm.clone().negate())); m.position.set(1.75, 1.835, 0).addScaledVector(nrm, .026); van.add(m); }
+  const bumperF = bx(2.72, 3.03, .42, .7, -1.01, 1.01, M.trimU, .05), bumperR = bx(-3.02, -2.82, .42, .68, -1.01, 1.01, M.trimU, .04);
+  van.add(bumperF, bumperR, bx(2.96, 3.0, .72, .95, -.52, .52, M.trimU, .012), bx(3.0, 3.012, .5, .6, -.24, .24, M.white), bx(-2.975, -2.955, .82, .93, -.24, .24, M.white));
+  van.add(bx(-2.962, -2.95, .68, 1.2, -.008, .008, M.seam));
+  const rearTilt = new THREE.Group(); rearTilt.position.set(-2.95, 1.2, 0); van.add(rearTilt);   // follows the lean of the back doors
+  for (const s of [-1, 1]) rearTilt.add(bx(-.016, .004, .32, .8, s > 0 ? .1 : -.8, s > 0 ? .8 : -.1, M.glass, .008));
+  rearTilt.add(bx(-.012, .002, 0, .95, -.008, .008, M.seam), bx(-.03, 0, .04, .09, .06, .2, M.trim));
+
+  /* wheels (stay on the ground while the body lifts) */
+  function wheel(R, W, knob){
+    const g = new THREE.Group();
+    const pts = [[R*.58,-W/2],[R-.05,-W/2],[R-.012,-W/2+.03],[R,-W/2+.075],[R,W/2-.075],[R-.012,W/2-.03],[R-.05,W/2],[R*.58,W/2]].map(p => new THREE.Vector2(p[0], p[1]));
+    const tyre = sh(new THREE.Mesh(new THREE.LatheGeometry(pts, 44), M.rubber)); tyre.rotation.x = PI / 2; g.add(tyre);
+    const barrel = new THREE.Mesh(new THREE.CylinderGeometry(R*.6, R*.6, W*.6, 32), M.rim); barrel.rotation.x = PI / 2; g.add(barrel);
+    const face = new THREE.Mesh(new THREE.CylinderGeometry(R*.54, R*.57, .03, 32), M.rimFace); face.rotation.x = PI / 2; face.position.z = W*.34; g.add(face);
+    const hub = new THREE.Mesh(new THREE.CylinderGeometry(R*.15, R*.19, .07, 16), M.rim); hub.rotation.x = PI / 2; hub.position.z = W*.34 + .03; g.add(hub);
+    const hole = new THREE.CircleGeometry(R*.085, 12);
+    for (let i = 0; i < 8; i++) { const a = i / 8 * PI * 2, h = new THREE.Mesh(hole, M.under); h.position.set(Math.cos(a) * R*.38, Math.sin(a) * R*.38, W*.34 + .017); g.add(h); }
+    if (knob) { const lg = new THREE.BoxGeometry(.05, .024, W*.4);
+      for (let i = 0; i < 32; i++) { const a = i / 32 * PI * 2, l = new THREE.Mesh(lg, M.rubber); l.position.set(Math.cos(a) * (R + .004), Math.sin(a) * (R + .004), (i % 2 ? 1 : -1) * W*.24); l.rotation.z = a + PI / 2; g.add(l); } }
+    return g;
+  }
+  const mkWheels = (R, W, knob) => { const g = new THREE.Group(); for (const s of [-1, 1]) for (const cx of [1.98, -1.75]) { const w = wheel(R, W, knob); w.position.set(cx, R, s * .86); if (s < 0) w.rotation.y = PI; g.add(w); } scene.add(g); return g; };
+  const wheelsStd = mkWheels(.39, .26, false), wheelsAT = mkWheels(.43, .3, true);
+
+  /* pop-top: lid hinged at the rear, canvas rebuilt as it opens */
+  const capPivot = new THREE.Group(); capPivot.position.set(-2.65, 2.36, 0); van.add(capPivot);
+  const cap = bx(0, 3.35, 0, .1, -.87, .87, M.paint, .04); capPivot.add(cap);
+  const carrier = new THREE.Group(); carrier.position.x = 2.65; capPivot.add(carrier);       // roof gear, in world-x coordinates
+  const tentGeo = new THREE.BufferGeometry(), netGeo = new THREE.BufferGeometry();
+  const tent = new THREE.Mesh(tentGeo, M.canvas), net = new THREE.Mesh(netGeo, M.net); tent.castShadow = true; van.add(tent, net);
+  function updateTent(H, t){
+    const a = t * .3, c = Math.cos(a), s = Math.sin(a), q = [], n = [];
+    const P = (x, y, z) => [x, y, z], bil = (A, B, C, D, uu, vv) => A.map((_, i) => lerp(lerp(A[i], B[i], uu), lerp(D[i], C[i], uu), vv));
+    const quad = (arr, A, B, C, D) => arr.push(...A, ...B, ...C, ...A, ...C, ...D);
+    const top = lx => [-2.65 + lx * c, H + lx * s];
+    const [rx, ry] = top(.06), [fx, fy] = top(3.27);
+    for (const z of [-.8, .8]) {
+      const A = P(-2.6, H, z), B = P(.62, H, z), C = P(fx, fy, z), D = P(rx, ry, z);
+      quad(q, A, B, C, D);
+      const o = z * 1.008, at = (uu, vv) => { const p = bil(A, B, C, D, uu, vv); p[2] = o; return p; }; quad(n, at(.5, .2), at(.9, .2), at(.9, .78), at(.5, .72));
+    }
+    const A = P(.62, H, -.8), B = P(.62, H, .8), C = P(fx, fy, .8), D = P(fx, fy, -.8);
+    quad(q, A, B, C, D); quad(n, ...[[.22,.25],[.78,.25],[.78,.75],[.22,.75]].map(([uu, vv]) => { const p = bil(A, B, C, D, uu, vv); p[0] += .008; return p; }));
+    tentGeo.setAttribute('position', new THREE.Float32BufferAttribute(q, 3)); tentGeo.computeVertexNormals();
+    netGeo.setAttribute('position', new THREE.Float32BufferAttribute(n, 3));
+  }
+
+  /* ── add-ons ── */
+  const G = {};   // each: {g, base, off} — slides in from `off`
+  const reg = (id, g, parent, off) => { parent.add(g); G[id] = {g, base:g.position.clone(), off:V(...off)}; g.visible = false; return g; };
+  { // roof rack + cargo
+    const g = new THREE.Group(), xs = [-2.5, -1.775, -1.05, -.325, .4];
+    for (const z of [-.8, .8]) { g.add(tube(V(-2.5, .17, z), V(.4, .17, z), .022, M.trim)); for (const x of xs) g.add(tube(V(x, 0, z), V(x, .17, z), .018, M.trim)); }
+    for (const x of xs) g.add(bx(x - .03, x + .03, .05, .07, -.8, .8, M.trim));
+    g.add(tube(V(-2.5, .17, -.8), V(-2.5, .17, .8), .022, M.trim), tube(V(.4, .17, -.8), V(.4, .17, .8), .022, M.trim));
+    g.add(bx(-.56, .28, .075, .37, -.66, .12, M.caseM, .04), bx(-.66, .32, .075, .115, .26, .7, M.blazeX), bx(-.66, .32, .12, .16, .26, .7, M.blazeX));
+    reg('rack', g, carrier, [0, .8, 0]);
+    const lad = new THREE.Group();
+    for (const x of [-2.28, -1.98]) { lad.add(tube(V(x, 0, -1.05), V(x, 1.72, -1.05), .016, M.trim), tube(V(x, 1.72, -1.05), V(x, 1.72, -.86), .016, M.trim)); }
+    for (let y = .12; y < 1.6; y += .3) lad.add(tube(V(-2.28, y, -1.05), V(-1.98, y, -1.05), .014, M.trim));
+    lad.position.y = .78; reg('ladder', lad, van, [0, 0, -.5]);
+  }
+  { const g = new THREE.Group(); g.add(bx(-2.4, -1.6, .025, .06, -.72, .72, M.solar), bx(-1.54, -.74, .025, .06, -.72, .72, M.solar)); reg('solar', g, carrier, [0, .8, 0]); }
+  const awn = {};
+  { const g = new THREE.Group(); g.add(bx(-1.27, 1.27, -.065, .065, -.02, .12, M.trim, .05));
+    const fg = new THREE.BufferGeometry(); fg.setAttribute('position', new THREE.Float32BufferAttribute([-1.24,0,.05, 1.24,0,.05, 1.24,-.34,2.25, -1.24,0,.05, 1.24,-.34,2.25, -1.24,-.34,2.25], 3)); fg.computeVertexNormals();
+    awn.fab = new THREE.Mesh(fg, M.awn); awn.fab.castShadow = true; g.add(awn.fab);
+    awn.bar = bx(-1.26, 1.26, -.025, .025, -.025, .025, M.trimU); g.add(awn.bar);
+    const pg = new THREE.CylinderGeometry(.016, .016, 1, 8); pg.translate(0, -.5, 0);
+    awn.poles = [-1.2, 1.2].map(x => { const p = sh(new THREE.Mesh(pg, M.steel)); p.position.x = x; g.add(p); return p; });
+    g.position.set(-.1, 2.24, 1.04); awn.g = reg('awning', g, van, [0, 0, .6]); }
+  { const g = new THREE.Group(); const p = bx(2.48, 2.98, .345, .375, -.6, .6, M.steel); p.rotation.z = .16; g.add(p); reg('at', g, van, [0, -.3, 0]); }
+  { const g = new THREE.Group(); g.add(bx(-.045, .045, -.045, .04, -.56, .56, M.trim, .02), bx(.04, .052, -.03, .028, -.53, .53, M.bar), bx(-.03, .03, -.06, -.04, -.5, -.4, M.trim), bx(-.03, .03, -.06, -.04, .4, .5, M.trim));
+    G.lightsBar = reg('lights', g, van, [0, .5, 0]);
+    const d = new THREE.Group(); for (const s of [-1, 1]) { const pod = new THREE.Mesh(new THREE.CylinderGeometry(.055, .05, .07, 14), M.trim); pod.rotation.z = PI / 2; pod.position.set(2.08, 1.56, s * .9); const lens = new THREE.Mesh(new THREE.CircleGeometry(.045, 14), M.bar); lens.rotation.y = PI / 2; lens.position.set(2.117, 1.56, s * .9); d.add(pod, lens, bx(2.06, 2.1, 1.44, 1.52, s * .9 - .015, s * .9 + .015, M.trim)); }
+    reg('ditch', d, van, [.4, 0, 0]); }
+  { const g = new THREE.Group(); g.add(bx(2.7, 3.12, .4, .76, -1.03, 1.03, M.trimU, .05), bx(3.1, 3.16, .52, .66, -.2, .2, M.steel, .01), bx(3.15, 3.2, .55, .63, -.04, .04, M.blaze));
+    for (const z of [-.42, .42]) g.add(tube(V(3.05, .74, z), V(3.09, 1.08, z), .026, M.trimU)); g.add(tube(V(3.09, 1.08, -.42), V(3.09, 1.08, .42), .026, M.trimU));
+    const drum = new THREE.Mesh(new THREE.CylinderGeometry(.07, .07, .36, 14), M.steel); drum.rotation.x = PI / 2; drum.position.set(3.0, .8, 0); g.add(drum); reg('winch', g, van, [.7, 0, 0]); }
+  function bike(col){
+    const g = new THREE.Group(), fr = std(col, .5, .3), wg = new THREE.TorusGeometry(.33, .024, 8, 30);
+    for (const x of [-.56, .56]) { const w = sh(new THREE.Mesh(wg, M.rubber)); w.position.set(x, .355, 0); g.add(w); }
+    const bb = V(-.12, .33, 0), st = V(-.27, .9, 0), ht = V(.36, .86, 0), hb = V(.4, .72, 0), ra = V(-.56, .355, 0), fa = V(.56, .355, 0);
+    g.add(tube(bb, st, .02, fr), tube(V().lerpVectors(bb, st, .86), ht, .02, fr), tube(bb, hb, .024, fr), tube(bb, ra, .014, fr), tube(V().lerpVectors(bb, st, .78), ra, .012, fr), tube(hb, fa, .018, M.rim), tube(hb, V(.34, .98, 0), .016, M.rim), tube(V(.34, .98, -.32), V(.34, .98, .32), .014, M.rim));
+    g.add(bx(-.38, -.16, .9, .94, -.06, .06, M.under, .015)); return g;
+  }
+  { const g = new THREE.Group(); g.add(bx(-3.72, -2.9, .47, .53, -.04, .04, M.trimU), tube(V(-3.44, .5, 0), V(-3.44, 1.42, 0), .03, M.trimU));
+    [[-3.28, 0xe2531f, 1], [-3.6, 0x2b5a60, -1]].forEach(([x, c, dir]) => { g.add(bx(x - .05, x + .05, .53, .56, -.92, .92, M.trimU)); const b = bike(c); b.rotation.y = dir * PI / 2; b.position.set(x, .56, 0); g.add(b); });
+    reg('bikes', g, van, [-.9, 0, 0]); }
+
+  /* ── interior (only drawn while the body is sliced open) ── */
+  const interior = new THREE.Group(); van.add(interior);
+  { const liner = new THREE.Mesh(new THREE.BoxGeometry(4.83, .86, 1.86), M.liner); liner.position.set(-.465, 1.03, 0); liner.receiveShadow = true; interior.add(liner);
+    const fl = bx(-2.88, 1.56, .585, .605, -.93, .93, M.floor); fl.castShadow = false; interior.add(fl);
+    const tg = new THREE.CylinderGeometry(.56, .56, .43, 20, 1, false, 0, PI); tg.rotateZ(PI / 2); tg.rotateY(PI / 2);
+    for (const s of [-1, 1]) { const t = sh(new THREE.Mesh(tg, M.tub)); t.position.set(-1.75, .42, s * .715); interior.add(t); }
+    interior.add(bx(1.5, 1.95, .6, 1.2, -.93, .93, M.seat));                                             // dash
+    const sw = new THREE.Mesh(new THREE.TorusGeometry(.17, .02, 8, 24), M.under); sw.position.set(1.47, 1.3, -.5); sw.rotation.y = PI / 2; sw.rotation.z = .35; interior.add(sw);
+    for (const z of [-.5, .5]) interior.add(bx(.9, 1.38, .6, .98, z - .21, z + .21, M.under), bx(.9, 1.4, .98, 1.1, z - .25, z + .25, M.seat, .04), bx(.86, .99, 1.06, 1.72, z - .24, z + .24, M.seat, .05)); }
+  const cut = new THREE.Mesh((() => { const o = new THREE.Shape(), r = .07, x0 = -2.955, x1 = 2.175, z = 1.004;
+      o.moveTo(x0 + r, -z); o.lineTo(x1 - .25, -z); o.quadraticCurveTo(x1, -z, x1, -z + .25); o.lineTo(x1, z - .25); o.quadraticCurveTo(x1, z, x1 - .25, z); o.lineTo(x0 + r, z); o.quadraticCurveTo(x0, z, x0, z - r); o.lineTo(x0, -z + r); o.quadraticCurveTo(x0, -z, x0 + r, -z);
+      const h = new THREE.Path(); h.moveTo(-2.88, -.93); h.lineTo(-2.88, .93); h.lineTo(1.95, .93); h.lineTo(1.95, -.93); h.closePath(); o.holes.push(h); return new THREE.ShapeGeometry(o, 8); })(), M.cut);
+  cut.rotation.x = PI / 2; interior.add(cut);
+  const F = .6;   // floor height
+  function furnish(it){
+    const g = [];
+    if (it.c) { const top = new THREE.Mesh(new THREE.CylinderGeometry(it.r, it.r, .03, 28), M.wood); top.position.set(it.c[0], it.top, it.c[1]); g.push(sh(top), tube(V(it.c[0], F, it.c[1]), V(it.c[0], it.top, it.c[1]), .025, M.steel)); return g; }
+    const [x0, x1] = it.x, [z0, z1] = it.z, T = it.top, cx = (x0 + x1) / 2, cz = (z0 + z1) / 2;
+    if (it.k === 'bed') {
+      if (it.ghost) {
+        const slab = new THREE.Mesh(new THREE.BoxGeometry(x1 - x0, .2, z1 - z0), M.ghost); slab.position.set(cx, T + .08, cz); slab.renderOrder = 2;
+        const edge = new THREE.LineSegments(new THREE.EdgesGeometry(slab.geometry), new THREE.LineBasicMaterial({color:0x17211c})); edge.position.copy(slab.position);
+        g.push(slab, edge); for (const x of [x0 + .04, x1 - .04]) for (const z of [z0 + .04, z1 - .04]) g.push(tube(V(x, F, z), V(x, T, z), .014, M.steel));
+        [[-.34, 0xe2531f, 0], [.22, 0x2b5a60, PI]].forEach(([z, c, r]) => { const b = bike(c); b.rotation.y = r; b.position.set(cx, F + .02, z); g.push(b); });
+      } else {
+        g.push(bx(x0, x1, F, T, z0, z1, M.wood), bx(x1 - .005, x1 + .012, F + .08, T - .1, z0 + .1, z1 - .1, M.woodD), bx(x0 + .02, x1 - .02, T, T + .15, z0 + .02, z1 - .02, M.mattress, .05));
+        g.push(bx(x0 + .03, x1 - .03, T + .15, T + .175, z0 + .75, z1 - .03, M.blanket));
+        for (const k of [0, 1]) { const w = (x1 - x0) / 2; g.push(bx(x0 + .08 + k * w, x0 + w - .06 + k * w, T + .14, T + .25, z0 + .1, z0 + .5, M.white, .05)); }
+      }
+    } else if (it.k === 'bench') {
+      g.push(bx(x0, x1, F, T - .1, z0, z1, M.wood), bx(x0 + .015, x1 - .015, T - .1, T + .02, z0 + .015, z1 - .015, M.fabric, .04));
+      const b = it.back, th = .11, hh = T + .46;
+      if (b === '+z') g.push(bx(x0 + .02, x1 - .02, T, hh, z1 - th, z1, M.fabric, .04)); else if (b === '-z') g.push(bx(x0 + .02, x1 - .02, T, hh, z0, z0 + th, M.fabric, .04)); else g.push(bx(x0, x0 + th, T, hh + (z1 - z0 > 1 ? .2 : 0), z0 + .02, z1 - .02, M.fabric, .04));
+    } else if (it.k === 'galley') {
+      const dz = z0 < 0 ? .11 : -.11, L = x1 - x0;
+      g.push(bx(x0, x1, F, T - .04, z0, z1, M.wood), bx(x0 - .01, x1 + .01, T - .04, T, z0 - (z0 < 0 ? 0 : .015), z1 + (z0 < 0 ? .015 : 0), M.counter));
+      const sx = x0 + L * .27; g.push(bx(sx - .17, sx + .17, T, T + .006, cz - .15 - dz * .4, cz + .15 - dz * .4, M.steel), bx(sx - .14, sx + .14, T + .006, T + .009, cz - .12 - dz * .4, cz + .12 - dz * .4, M.rim), tube(V(sx, T, cz - dz * 1.9), V(sx, T + .2, cz - dz * 1.9), .012, M.steel), tube(V(sx, T + .2, cz - dz * 1.9), V(sx, T + .18, cz - dz * .6), .012, M.steel));
+      const hx = x0 + L * .72; g.push(bx(hx - .22, hx + .22, T, T + .008, cz - .16, cz + .16, M.under));
+      for (const o of [-.11, .11]) { const r = new THREE.Mesh(new THREE.TorusGeometry(.065, .006, 6, 24), M.blaze); r.rotation.x = PI / 2; r.position.set(hx + o, T + .012, cz); g.push(r); }
+      const fz = z0 < 0 ? z1 : z0 - .008; for (let i = 0; i < 3; i++) g.push(bx(x0 + .03 + i * L / 3, x0 + L / 3 - .03 + i * L / 3, F + .1, T - .1, fz, fz + .008, M.woodD));
+    } else if (it.k === 'tall') { g.push(bx(x0, x1, F, T, z0, z1, M.wood)); const fz = z0 < 0 ? z1 : z0 - .008; g.push(bx(x0 + .03, x1 - .03, F + .06, T - .06, fz, fz + .008, M.woodD), bx(x1 - .1, x1 - .07, 1.3, 1.5, fz + .008, fz + .022, M.under)); }
+    else if (it.k === 'wet') { g.push(bx(x0, x1, F, T, z0, z1, M.white)); g.push(bx(x0 + .05, x1 - .05, F + .05, T - .05, z1, z1 + .008, M.lake)); }
+    else if (it.k === 'crate') { g.push(bx(x0, x1, F, T, z0, z1, std(0x5d6850, .9), .03), bx(x0 - .5, x0 - .06, F, T - .1, z0, z1, M.under, .03)); g[1].position.x += .58; g[1].position.z -= .42; }
+    else if (it.k === 'table') g.push(bx(x0, x1, T - .03, T, z0, z1, M.wood), tube(V(cx, F, cz), V(cx, T - .03, cz), .028, M.steel));
+    return g;
+  }
+  const layouts = {};
+  for (const L of NF.LAYOUTS) { const g = new THREE.Group(); L.items.forEach(it => g.add(...furnish(it))); g.visible = false; interior.add(g); layouts[L.id] = g; }
+  { const g = new THREE.Group(); g.add(bx(.56, .86, F, F + .13, .32, .5, M.blaze, .02), tube(V(.56, F + .06, .41), V(.4, F + .06, .41), .025, M.steel)); reg('heater', g, interior, [0, .4, 0]); }
+
+  /* ── camp props ── */
+  const camp = new THREE.Group(); camp.position.set(-.1, 0, 2.55); scene.add(camp);
+  function chair(col){ const g = new THREE.Group(), m = std(col, .95);
+    g.add(bx(-.24, .24, .4, .43, -.22, .22, m)); const b = bx(-.24, .24, 0, .46, -.015, .015, m); b.position.set(0, .64, -.27); b.rotation.x = -.28; g.add(b);
+    for (const x of [-.23, .23]) g.add(tube(V(x, 0, -.24), V(x, .43, .22), .012, M.steel), tube(V(x, 0, .24), V(x, .88, -.34), .012, M.steel)); return g; }
+  { const a = chair(0xe2531f); a.position.set(-.75, 0, 0); a.rotation.y = .35; const b = chair(0x2b5a60); b.position.set(.55, 0, .15); b.rotation.y = -.4; camp.add(a, b);
+    camp.add(bx(-.25, .15, 0, .3, -.5, -.2, M.wood), bx(-.11, -.01, .3, .46, -.4, -.3, M.lamp, .02)); }
+  const lantern = new THREE.PointLight(0xffb060, 0, 9, 1.6); lantern.position.set(-.16, .9, 2.15); scene.add(lantern);
+  const cabin = new THREE.PointLight(0xffc27a, 0, 5, 1.8); cabin.position.set(-.6, 1.6, 0); van.add(cabin);
+
+  /* ── ground: shadow catcher + survey compass ── */
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.ShadowMaterial({opacity:.24})); ground.rotation.x = -PI / 2; ground.receiveShadow = true; scene.add(ground);
+  const INK = new THREE.Color(0x17211c), PAPER = new THREE.Color(0xece5d5);
+  const compass = new THREE.Mesh(new THREE.PlaneGeometry(11.6, 11.6), new THREE.MeshBasicMaterial({transparent:true, depthWrite:false, opacity:.42, color:INK.clone(), map:(() => {
+    const c = document.createElement('canvas'); c.width = c.height = 1024; const x = c.getContext('2d'); x.translate(512, 512); x.strokeStyle = x.fillStyle = '#fff';
+    x.lineWidth = 2.5; x.beginPath(); x.arc(0, 0, 410, 0, 7); x.stroke(); x.lineWidth = 1; x.beginPath(); x.arc(0, 0, 384, 0, 7); x.stroke();
+    for (let a = 0; a < 360; a += 5) { const r = a * PI / 180, l = a % 45 === 0 ? 40 : a % 15 === 0 ? 24 : 12; x.lineWidth = a % 45 === 0 ? 3 : 1.4; x.beginPath(); x.moveTo(Math.cos(r) * 410, Math.sin(r) * 410); x.lineTo(Math.cos(r) * (410 + l), Math.sin(r) * (410 + l)); x.stroke(); }
+    x.setLineDash([6, 10]); x.lineWidth = 1.2; x.beginPath(); x.moveTo(-384, 0); x.lineTo(384, 0); x.moveTo(0, -384); x.lineTo(0, 384); x.stroke(); x.setLineDash([]);
+    x.font = '700 40px ui-monospace, Menlo, Consolas, monospace'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('N', 482, 0); x.fillText('S', -482, 0); x.fillText('W', 0, -482); x.fillText('E', 0, 482);
+    x.beginPath(); x.moveTo(505, -36); x.lineTo(492, -14); x.lineTo(505, -20); x.lineTo(505, -36); x.fill();
+    const t = new THREE.CanvasTexture(c); t.anisotropy = 8; return t; })()}));
+  compass.rotation.x = -PI / 2; compass.position.y = .004; scene.add(compass);
+  const blob = new THREE.Mesh(new THREE.PlaneGeometry(8.2, 3.9), new THREE.MeshBasicMaterial({transparent:true, depthWrite:false, opacity:.5, map:(() => { const c = document.createElement('canvas'); c.width = 256; c.height = 128; const x = c.getContext('2d'), g = x.createRadialGradient(128, 64, 8, 128, 64, 126); g.addColorStop(0, 'rgba(10,14,12,.85)'); g.addColorStop(.55, 'rgba(10,14,12,.38)'); g.addColorStop(1, 'rgba(10,14,12,0)'); x.fillStyle = g; x.setTransform(1, 0, 0, .5, 0, 0); x.fillRect(0, 0, 256, 256); return new THREE.CanvasTexture(c); })()}));
+  blob.rotation.x = -PI / 2; blob.position.y = .008; scene.add(blob);
+
+  /* ═════════ animation state: every value eases toward a target ═════════ */
+  const S = {}, sv = (n, v, k = 6) => S[n] = {v, t:v, k};
+  sv('H', 2.36, 7); sv('lift', 0, 6); sv('pop', 0, 4.5); sv('awn', 0, 4.5); sv('camp', 0, 7); sv('dusk', 0, 3.5); sv('clip', 3.95, 3.6); sv('matte', 0, 6);
+  for (const id of ['rack', 'solar', 'awning', 'at', 'lights', 'winch', 'bikes', 'heater']) sv('a_' + id, 0, 8);
+  for (const id in layouts) sv('l_' + id, 0, 7);
+  const colT = new THREE.Color(0xE8E4D8); let colMoving = false;
+  const cam = {th:2.1, ph:1.18, r:1.2, tx:0, ty:1.15, tz:0}, goal = {th:.62, ph:1.33, r:1, tx:0, ty:1.15, tz:0};
+  const VIEWS = {front:{th:.62, ph:1.33, r:1}, side:{th:.3, ph:1.31, r:1.02}, top:{th:.5, ph:.98, r:1}, awn:{th:.52, ph:1.14, r:1.16, tz:.7}, rear:{th:-.98, ph:1.22, r:1.08, tx:-.35}, nose:{th:1.02, ph:1.3, r:.98, tx:.3}, inside:{th:-.62, ph:.66, r:.86, tx:-.25, ty:.9}, left:{th:2.5, ph:1.15, r:1.02}};
+  function focus(name, st){
+    const p = VIEWS[name]; if (!p) return;
+    const tall = st.roof === 'high' || (st.roof === 'pop' && st.mode === 'camp');
+    goal.th = p.th + Math.round((goal.th - p.th) / (2 * PI)) * 2 * PI; goal.ph = p.ph;
+    goal.r = (p.r || 1) * (tall && name !== 'inside' ? 1.08 : 1); goal.tx = p.tx || 0; goal.tz = p.tz || 0; goal.ty = p.ty || (tall ? 1.4 : 1.15);
+  }
+  const baseR = () => Math.max(9.4, 4.15 / (Math.tan(FOV * PI / 360) * camera.aspect));
+
+  function apply(){
+    const H = S.H.v, lift = S.lift.v, t = (H - 2.36) / .4, d = S.dusk.v, clipV = S.clip.v;
+    if (Math.abs(H - builtH) > .004 || (H === S.H.t && builtH !== H)) { body.geometry.dispose(); body.geometry = bodyGeo(H); builtH = H; }
+    van.position.y = lift;
+    capPivot.position.y = H; capPivot.rotation.z = S.pop.v * .3; carrier.position.y = cap.visible ? .1 : 0;
+    tent.visible = net.visible = cap.visible && S.pop.v > .01; if (tent.visible) updateTent(H, S.pop.v);
+    rearTilt.rotation.z = -Math.atan2(.05, H - 1.38);
+    // slide-ins
+    const slide = (o, v) => { o.g.visible = v > .012; const e = (1 - v) * (1 - v); o.g.position.copy(o.base).addScaledVector(o.off, e); };
+    slide(G.rack, S.a_rack.v); slide(G.ladder, S.a_rack.v); G.ladder.g.scale.y = (H + .14 - .78) / 1.72;
+    G.solar.base.y = .075 * S.a_rack.v; slide(G.solar, S.a_solar.v);
+    G.awning.base.y = H - .12; slide(G.awning, S.a_awning.v);
+    slide(G.at, S.a_at.v); slide(G.winch, S.a_winch.v); slide(G.bikes, S.a_bikes.v); slide(G.heater, S.a_heater.v); slide(G.ditch, S.a_lights.v);
+    G.lights.base.set(.8, H + lerp(.05, -.012, t), 0); slide(G.lights, S.a_lights.v);
+    bumperF.visible = S.a_winch.v < .9;
+    // awning deploy
+    const a = S.awn.v, open = a > .02 && clipV > 3.2;
+    awn.fab.visible = awn.bar.visible = open; awn.poles.forEach(p => p.visible = open);
+    if (open) { awn.fab.scale.set(1, a, a); awn.bar.position.set(0, -.34 * a, .05 + 2.2 * a); awn.poles.forEach(p => { p.position.y = -.34 * a; p.position.z = .05 + 2.2 * a; p.scale.y = Math.max(.01, (H - .12 + lift - .34 * a) * Math.min(1, a * 1.6)); }); }
+    camp.visible = S.camp.v > .02 && clipV > 3; camp.scale.setScalar(.6 + .4 * S.camp.v); camp.position.y = -(1 - S.camp.v) * .0;
+    // section cut
+    clip.constant = clipV + lift; interior.visible = clipV < 3.9; cut.visible = clipV < 1.52; cut.position.y = clipV + .002;
+    for (const id in layouts) { const v = S['l_' + id].v; layouts[id].visible = v > .01; layouts[id].position.y = (1 - v) * (1 - v) * .7; }
+    // paint
+    M.paint.roughness = lerp(.42, .82, S.matte.v); M.paint.clearcoat = lerp(.75, 0, S.matte.v);
+    // light
+    sun.intensity = lerp(2.1, .5, d); sun.color.lerpColors(DAY, DUSK, d); hemi.intensity = lerp(.62, .3, d); hemi.color.lerpColors(HD, HN, d); fill.intensity = lerp(.45, .2, d);
+    scene.environmentIntensity = lerp(.55, .18, d);
+    M.head.emissiveIntensity = .2 + d * 5; M.tail.emissiveIntensity = .15 + d * 3; M.bar.emissiveIntensity = .1 + d * 6; M.glass.emissiveIntensity = d * .3;
+    M.canvas.emissiveIntensity = d * .55; M.lamp.emissiveIntensity = .3 + d * 4; lantern.intensity = d * S.camp.v * 10; cabin.intensity = d * (clipV < 3 ? 5 : 0);
+    ground.material.opacity = lerp(.24, .4, d); compass.material.color.lerpColors(INK, PAPER, d); compass.material.opacity = lerp(.42, .26, d); blob.material.opacity = lerp(.5, .7, d);
+  }
+  function step(dt){
+    let moving = false;
+    for (const n in S) { const s = S[n], df = s.t - s.v; if (df !== 0) { if (Math.abs(df) < 8e-4 || reduce) s.v = s.t; else s.v += df * (1 - Math.exp(-dt * s.k)); moving = true; } }
+    if (colMoving) { M.paint.color.lerp(colT, reduce ? 1 : 1 - Math.exp(-dt * 7)); const c = M.paint.color; if (Math.abs(c.r - colT.r) + Math.abs(c.g - colT.g) + Math.abs(c.b - colT.b) < .004) { c.copy(colT); colMoving = false; } moving = true; }
+    const k = reduce ? 1 : 1 - Math.exp(-dt * (drag ? 16 : 4.2));
+    for (const key in goal) { const df = goal[key] - cam[key]; if (Math.abs(df) > 4e-4) { cam[key] += df * k; moving = true; } else cam[key] = goal[key]; }
+    if (moving) { apply(); const R = baseR() * cam.r, sp = Math.sin(cam.ph); camera.position.set(cam.tx + R * sp * Math.sin(cam.th), cam.ty + R * Math.cos(cam.ph), cam.tz + R * sp * Math.cos(cam.th)); camera.lookAt(cam.tx, cam.ty, cam.tz); }
+    return moving;
+  }
+
+  /* ── state → targets ── */
+  const FOCUS = {rack:'top', solar:'top', awning:'awn', at:'nose', lights:'nose', winch:'nose', bikes:'rear'};
+  let first = true, drag = null, dirty = true, visible = true;
+  NF.on((st, ch) => {
+    const has = id => st.addons.includes(id), campOn = st.mode === 'camp', col = NF.COLORS.find(c => c.id === st.color);
+    S.H.t = st.roof === 'high' ? 2.76 : 2.36; S.lift.t = has('at') ? .06 : 0;
+    cap.visible = st.roof === 'pop'; S.pop.t = cap.visible && campOn ? 1 : 0; if (!cap.visible) S.pop.v = 0;
+    S.awn.t = has('awning') && campOn ? 1 : 0; S.camp.t = campOn ? 1 : 0; S.dusk.t = st.light === 'dusk' ? 1 : 0;
+    S.clip.t = st.view === 'int' ? 1.42 : 3.95; S.clip.k = st.view === 'int' ? 3.6 : 6;
+    for (const a of NF.ADDONS) S['a_' + a.id].t = has(a.id) ? 1 : 0;
+    for (const id in layouts) { const on = st.layout === id; if (!on) S['l_' + id].v = S['l_' + id].t = 0; else { S['l_' + id].t = 1; if (first) S['l_' + id].v = 1; } }
+    colT.set(col.hex); colMoving = true; S.matte.t = col.matte ? 1 : 0;
+    wheelsStd.visible = !has('at'); wheelsAT.visible = has('at');
+    if (first) { for (const n in S) if (n !== 'clip') S[n].v = S[n].t; M.paint.color.copy(colT); first = false; focus(st.view === 'int' ? 'inside' : campOn && has('awning') ? 'awn' : 'front', st); }
+    else if (ch.key === 'color') focus('front', st);
+    else if (ch.key === 'roof') focus('side', st);
+    else if (ch.key === 'layout' || (ch.key === 'view' && st.view === 'int') || ch.id === 'heater') focus('inside', st);
+    else if (ch.key === 'addon') focus(ch.id === 'rack' && !ch.on ? 'top' : FOCUS[ch.id], st);
+    else if (ch.key === 'view') focus('front', st);
+    else if (ch.key === 'mode') focus(campOn && has('awning') ? 'awn' : campOn ? 'side' : 'front', st);
+    dirty = true;
+  });
+
+  /* ── interaction ── */
+  canvas.addEventListener('pointerdown', e => { drag = {x:e.clientX, y:e.clientY}; try { canvas.setPointerCapture(e.pointerId); } catch (_) {} canvas.classList.add('grabbing'); });
+  canvas.addEventListener('pointermove', e => { if (!drag) return; goal.th -= (e.clientX - drag.x) * .0075; goal.ph = Math.max(.32, Math.min(1.5, goal.ph - (e.clientY - drag.y) * .005)); drag.x = e.clientX; drag.y = e.clientY; });
+  const end = () => { drag = null; canvas.classList.remove('grabbing'); };
+  canvas.addEventListener('pointerup', end); canvas.addEventListener('pointercancel', end); canvas.addEventListener('lostpointercapture', end);
+  canvas.addEventListener('keydown', e => { const k = {ArrowLeft:[.25, 0], ArrowRight:[-.25, 0], ArrowUp:[0, -.12], ArrowDown:[0, .12]}[e.key]; if (!k) return; e.preventDefault(); goal.th += k[0]; goal.ph = Math.max(.32, Math.min(1.5, goal.ph + k[1])); });
+  function resize(){ const w = view.clientWidth, h = view.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); cam.r += 1e-3; dirty = true; }
+  new ResizeObserver(resize).observe(view); resize();
+  if ('IntersectionObserver' in window) new IntersectionObserver(es => { visible = es[0].isIntersecting; }, {rootMargin:'120px'}).observe(view);
+  canvas.addEventListener('webglcontextlost', e => e.preventDefault());
+  canvas.addEventListener('webglcontextrestored', () => { dirty = true; });
+
+  apply(); cam.r += 1e-3; step(.016);
+  let last = performance.now(), shownOnce = false;
+  function tick(now){
+    requestAnimationFrame(tick);
+    const dt = Math.min(.05, (now - last) / 1000); last = now;
+    if (!visible) return;
+    if (step(dt) || dirty) { renderer.render(scene, camera); dirty = false; if (!shownOnce) { shownOnce = true; NF.ready3d(); } }
+  }
+  requestAnimationFrame(tick);
+  NF._3d = {S, cam, goal, settle(){ for (let i = 0; i < 400; i++) step(.05); dirty = true; }};
+}
+</script>
+<noscript><p style="padding:20px;font-family:sans-serif">The Northfold configurator needs JavaScript. Call 541 555 0142 and a builder will price your van by phone.</p></noscript>
+</body>
+</html>

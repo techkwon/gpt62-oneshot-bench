@@ -3,9 +3,9 @@
 import json, glob, os
 from collections import defaultdict
 B = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-base = lambda m: m.replace('-fair', '')
+base = lambda m: m.replace('-fair', '').replace('-r3', '')
 res = {}
-for st in ['plain', 'fair', 'ep7']:
+for st in ['plain', 'fair', 'ep7', 'equal']:
     tot, nos, wins, per = defaultdict(int), defaultdict(int), defaultdict(int), {}
     for d in sorted(glob.glob(f'{B}/judge/{st}-*')):
         task = d.split(f'/{st}-')[1]; per[task] = {}

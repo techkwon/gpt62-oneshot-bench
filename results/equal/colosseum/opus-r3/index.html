@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Colosseum 3D · Interactive Flavian Amphitheatre</title>
+<style>
+  :root{
+    --ink:#f7f0e3; --muted:#cdbfa6; --gold:#e6b866; --gold2:#f3d79b;
+    --panel:rgba(26,19,12,.56); --line:rgba(255,232,190,.17);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;overflow:hidden;background:#0d0b09;color:var(--ink);
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  #app,#app canvas{position:fixed;inset:0;display:block;width:100%;height:100%;touch-action:none}
+  .glass{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    -webkit-backdrop-filter:blur(12px) saturate(1.25);backdrop-filter:blur(12px) saturate(1.25);
+    box-shadow:0 12px 34px rgba(0,0,0,.32)}
+  .serif{font-family:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif}
+
+  #title{position:fixed;left:18px;top:16px;padding:13px 18px 12px}
+  #title h1{margin:0;font-size:21px;font-weight:600;letter-spacing:.34em;text-transform:uppercase}
+  #title .sub{margin-top:4px;font-size:11.5px;letter-spacing:.09em;color:var(--muted)}
+
+  #panel{position:fixed;right:18px;top:16px;width:292px;padding:14px 15px 12px}
+  .row{margin:0 0 13px}
+  .row:last-child{margin-bottom:2px}
+  .row .lab{display:flex;justify-content:space-between;align-items:baseline;font-size:10.5px;
+    letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+  .row .lab b{font-weight:600;color:var(--gold2);letter-spacing:.06em;font-size:12px}
+  .seg{display:flex;gap:3px;padding:3px;border-radius:10px;background:rgba(0,0,0,.3)}
+  .seg button{flex:1;border:0;border-radius:7px;padding:7px 6px;background:transparent;color:var(--ink);
+    font:inherit;font-size:12px;cursor:pointer;opacity:.78;transition:background .2s,opacity .2s,color .2s}
+  .seg button:hover{opacity:1;background:rgba(255,255,255,.07)}
+  .seg button.on{opacity:1;background:linear-gradient(180deg,#f0c97c,#c99645);color:#2a1c08;font-weight:600}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:22px;background:transparent;cursor:pointer;margin:0}
+  input[type=range]::-webkit-slider-runnable-track{height:5px;border-radius:5px;
+    background:linear-gradient(90deg,#f19a52,#ffe9b8 50%,#f19a52)}
+  input[type=range]::-moz-range-track{height:5px;border-radius:5px;background:linear-gradient(90deg,#f19a52,#ffe9b8 50%,#f19a52)}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;margin-top:-6px;border-radius:50%;
+    background:#fff6dc;border:3px solid #d99a3e;box-shadow:0 0 12px rgba(255,200,100,.8)}
+  input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:#fff6dc;border:3px solid #d99a3e}
+
+  #views{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);display:flex;gap:6px;padding:7px;
+    max-width:calc(100vw - 24px);overflow-x:auto;scrollbar-width:none}
+  #views::-webkit-scrollbar{display:none}
+  #views button{display:flex;align-items:center;gap:8px;white-space:nowrap;border:1px solid transparent;border-radius:10px;
+    padding:9px 14px;background:rgba(255,255,255,.05);color:var(--ink);font:inherit;font-size:13px;cursor:pointer;
+    transition:background .2s,border-color .2s,transform .15s}
+  #views button:hover{background:rgba(255,255,255,.12);transform:translateY(-1px)}
+  #views button.active{border-color:rgba(240,201,124,.75);background:rgba(240,201,124,.17)}
+  #views button .k{font-size:10px;opacity:.55;border:1px solid rgba(255,255,255,.3);border-radius:4px;padding:0 4px}
+  #views button svg{width:17px;height:17px;stroke:var(--gold2);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+
+  #caption{position:fixed;left:50%;bottom:86px;transform:translate(-50%,0);width:min(660px,calc(100vw - 28px));
+    padding:15px 44px 16px 20px;transition:opacity .45s ease,transform .45s ease}
+  #caption.hidden{opacity:0;transform:translate(-50%,12px);pointer-events:none}
+  #caption .kick{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+  #caption h2{margin:3px 0 6px;font-size:21px;font-weight:600;letter-spacing:.03em}
+  #caption p{margin:0;font-size:13.6px;line-height:1.55;color:#eadfcb}
+  #caption p em{color:var(--gold2);font-style:italic}
+  #caption .close{position:absolute;right:10px;top:9px;width:26px;height:26px;border-radius:50%;border:0;
+    background:rgba(255,255,255,.08);color:var(--ink);cursor:pointer;font-size:15px;line-height:26px}
+  #caption .close:hover{background:rgba(255,255,255,.18)}
+
+  #hint{position:fixed;left:18px;bottom:24px;font-size:11.5px;color:var(--muted);line-height:1.6;
+    text-shadow:0 1px 3px rgba(0,0,0,.7);pointer-events:none}
+  #compass{position:fixed;right:18px;bottom:20px;width:54px;height:54px;padding:0;display:grid;place-items:center;border-radius:50%}
+  #compass svg{width:46px;height:46px}
+
+  #loader{position:fixed;inset:0;display:grid;place-items:center;background:radial-gradient(circle at 50% 40%,#2b2117,#0d0a07);
+    z-index:10;transition:opacity .9s ease}
+  #loader.gone{opacity:0;pointer-events:none}
+  #loader .box{text-align:center}
+  #loader .arch{width:84px;height:84px;margin:0 auto 18px;border:3px solid rgba(230,184,102,.25);border-top-color:var(--gold);
+    border-radius:50%;animation:spin 1.1s linear infinite}
+  #loader .t{letter-spacing:.3em;text-transform:uppercase;font-size:13px;color:var(--muted)}
+  #loader .err{max-width:420px;margin-top:14px;font-size:13px;color:#ffb39a;line-height:1.5}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  @media (max-width:900px){
+    #hint{display:none}
+    #panel{left:12px;right:auto;top:auto;bottom:76px;width:auto;max-width:calc(100vw - 24px);padding:10px 12px 8px;display:flex;gap:12px;flex-wrap:wrap}
+    #panel .row{margin:0;min-width:150px}
+    #title{left:12px;top:12px;padding:10px 14px}
+    #title h1{font-size:16px}
+    #caption{top:74px;bottom:auto;padding:12px 40px 12px 14px}
+    #caption h2{font-size:17px}
+    #caption p{font-size:12.5px}
+    #compass{top:14px;bottom:auto;right:12px}
+    #views{bottom:12px}
+    #views button{padding:8px 11px;font-size:12px}
+    #views button .k{display:none}
+  }
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.170.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.170.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<div id="app"></div>
+
+<div id="title" class="glass">
+  <h1 class="serif">Colosseum</h1>
+  <div class="sub">Amphitheatrum Flavium · Rome · AD 80</div>
+</div>
+
+<div id="panel" class="glass">
+  <div class="row">
+    <div class="lab">Era</div>
+    <div class="seg" id="seg-era">
+      <button data-v="restored">Restored · AD 80</button>
+      <button data-v="today">Today</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="lab">Arena floor</div>
+    <div class="seg" id="seg-floor">
+      <button data-v="full">Sand</button>
+      <button data-v="partial">Partial</button>
+      <button data-v="open">Open</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="lab">Time of day <b id="hour-label">10:30</b></div>
+    <input type="range" id="hour" min="6.2" max="19.8" step="0.05" value="10.5" aria-label="Time of day">
+  </div>
+</div>
+
+<div id="caption" class="glass hidden" role="status" aria-live="polite">
+  <button class="close" aria-label="Hide caption">×</button>
+  <div class="kick">Viewpoint</div>
+  <h2 class="serif"></h2>
+  <p></p>
+</div>
+
+<nav id="views" class="glass" aria-label="Viewpoints">
+  <button data-view="aerial"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="13" rx="9" ry="6"/><ellipse cx="12" cy="13" rx="4.5" ry="2.6"/><path d="M12 2v4M10 4l2 2 2-2"/></svg>Aerial view<span class="k">1</span></button>
+  <button data-view="exterior"><svg viewBox="0 0 24 24"><path d="M3 21V5h18v16"/><path d="M6 21v-4a2 2 0 0 1 4 0v4M14 21v-4a2 2 0 0 1 4 0v4M6 12v-2a2 2 0 0 1 4 0v2M14 12v-2a2 2 0 0 1 4 0v2"/></svg>Façade<span class="k">2</span></button>
+  <button data-view="arena"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="16" rx="10" ry="4"/><path d="M12 4v8M9 7l3-3 3 3"/></svg>Arena floor<span class="k">3</span></button>
+  <button data-view="hypogeum"><svg viewBox="0 0 24 24"><path d="M2 8h20M5 8v12M10 8v12M14 8v12M19 8v12M2 20h20"/><path d="M12 2v3"/></svg>Hypogeum<span class="k">4</span></button>
+  <button data-view="top"><svg viewBox="0 0 24 24"><path d="M3 20l5-5 4 3 4-6 5 3"/><path d="M3 4h18M6 4v4M12 4v4M18 4v4"/></svg>Top tier<span class="k">5</span></button>
+</nav>
+
+<div id="hint">Drag to orbit · Scroll / pinch to zoom · Right‑drag or two fingers to pan<br>Keys 1–5 jump to viewpoints</div>
+<div id="compass" class="glass" title="North"><svg viewBox="0 0 46 46"><circle cx="23" cy="23" r="20" fill="none" stroke="rgba(255,235,200,.25)"/><g id="needle"><path d="M23 6l5 17h-10z" fill="#e6b866"/><path d="M23 40l5-17h-10z" fill="rgba(255,255,255,.35)"/><text x="23" y="5" fill="#f3d79b" font-size="7" text-anchor="middle" font-family="sans-serif" dy="-0.5">N</text></g></svg></div>
+
+<div id="loader"><div class="box"><div class="arch"></div><div class="t">Raising the Colosseum…</div><div class="err" id="err"></div></div></div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { Sky } from 'three/addons/objects/Sky.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+
+const qs = new URLSearchParams(location.search);
+
+/* ------------------------------------------------------------------ *
+ *  Renderer / scene / camera
+ * ------------------------------------------------------------------ */
+const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.52;
+document.getElementById('app').appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.25, 6000);
+camera.position.set(420, 260, 520);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.minDistance = 0.6;
+controls.maxDistance = 900;
+controls.maxPolarAngle = Math.PI * 0.96;
+controls.screenSpacePanning = true;
+controls.zoomToCursor = true;
+controls.target.set(0, 5, 0);
+
+const MAX_ANISO = renderer.capabilities.getMaxAnisotropy();
+
+/* ------------------------------------------------------------------ *
+ *  Utilities
+ * ------------------------------------------------------------------ */
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/* ---------- procedural canvas textures (1 UV unit = 1 metre) ---------- */
+function makeTex(size, metres, seed, draw) {
+  const c = document.createElement('canvas');
+  c.width = c.height = size;
+  const g = c.getContext('2d');
+  draw(g, size, mulberry32(seed));
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = MAX_ANISO;
+  t.repeat.set(1 / metres, 1 / metres);
+  return t;
+}
+// draw a rect that wraps horizontally & vertically (for seamless tiling)
+function wrect(g, x, y, w, h, s) {
+  for (const ox of [-s, 0, s]) for (const oy of [-s, 0, s]) {
+    if (x + ox + w < 0 || x + ox > s || y + oy + h < 0 || y + oy > s) continue;
+    g.fillRect(x + ox, y + oy, w, h);
+  }
+}
+function speckle(g, s, r, n, cols, a, wMin = 1, wMax = 2.5, hMul = 1) {
+  for (let i = 0; i < n; i++) {
+    g.globalAlpha = a * (0.3 + 0.7 * r());
+    g.fillStyle = cols[(r() * cols.length) | 0];
+    const w = wMin + r() * (wMax - wMin);
+    wrect(g, r() * s, r() * s, w, Math.max(1, w * hMul * (0.4 + r() * 0.6)), s);
+  }
+  g.globalAlpha = 1;
+}
+function stoneBlocks(g, s, r, opt) {
+  const { base, rows, ppm, hue, sat, lit, joint, pores = 4000, streaks = 30 } = opt;
+  g.fillStyle = base; g.fillRect(0, 0, s, s);
+  const rh = s / rows;
+  for (let row = 0; row < rows; row++) {
+    let x = r() * 60;
+    const end = x + s;
+    while (x < end) {
+      const w = Math.min((1.0 + r() * 1.1) * ppm, end - x);
+      g.globalAlpha = 0.4;
+      g.fillStyle = `hsl(${hue + r() * 8},${sat + r() * 10}%,${lit + r() * 10}%)`;
+      wrect(g, x, row * rh, w, rh, s);
+      g.globalAlpha = 1;
+      g.fillStyle = joint; wrect(g, x, row * rh, 2, rh, s);
+      x += w;
+    }
+    g.fillStyle = joint; wrect(g, 0, row * rh, s, 2, s);
+  }
+  // horizontal travertine pores
+  speckle(g, s, r, pores, ['#7a6448', '#8d7759', '#a38c6b', '#5f4f3b'], 0.5, 2, 9, 0.18);
+  speckle(g, s, r, pores * 1.5, ['#ffffff', '#efe5cf', '#6b5a44'], 0.18, 1, 2);
+  // weathering streaks
+  for (let i = 0; i < streaks; i++) {
+    const x = r() * s, w = 3 + r() * 26, y = r() * s, h = s * (0.2 + r() * 0.6);
+    const grd = g.createLinearGradient(0, y, 0, y + h);
+    grd.addColorStop(0, 'rgba(90,72,52,0.08)'); grd.addColorStop(1, 'rgba(70,60,50,0)');
+    g.fillStyle = grd; wrect(g, x, y, w, h, s);
+  }
+}
+
+const TEX = {};
+TEX.trav = makeTex(512, 4, 11, (g, s, r) => stoneBlocks(g, s, r, {
+  base: '#dcc9a2', rows: 7, ppm: 128, hue: 38, sat: 30, lit: 70, joint: 'rgba(110,88,60,0.38)', streaks: 14 }));
+TEX.stone = makeTex(512, 4, 23, (g, s, r) => stoneBlocks(g, s, r, {
+  base: '#ddd7cc', rows: 5, ppm: 128, hue: 40, sat: 6, lit: 76, joint: 'rgba(80,70,60,0.55)', pores: 2500, streaks: 18 }));
+TEX.brick = makeTex(512, 2, 37, (g, s, r) => {
+  g.fillStyle = '#b5a68e'; g.fillRect(0, 0, s, s);
+  const rows = 32, rh = s / rows;
+  for (let row = 0; row < rows; row++) {
+    let x = (row % 2) * 50 + r() * 30;
+    const end = x + s;
+    while (x < end) {
+      const w = 80 + r() * 60;
+      g.fillStyle = r() < 0.18 ? `hsl(${38 + r() * 10},${14 + r() * 10}%,${52 + r() * 12}%)` : `hsl(${12 + r() * 14},${26 + r() * 14}%,${36 + r() * 12}%)`;
+      wrect(g, x + 1.5, row * rh + 2.5, w - 3, rh - 4, s);
+      x += w;
+    }
+  }
+  speckle(g, s, r, 6000, ['#3d2418', '#d8b49a', '#6d4130'], 0.25, 1, 2.5);
+});
+TEX.sand = makeTex(512, 4, 41, (g, s, r) => {
+  g.fillStyle = '#cfb68b'; g.fillRect(0, 0, s, s);
+  for (let i = 0; i < 40; i++) {
+    const x = r() * s, y = r() * s, rad = 20 + r() * 90;
+    const grd = g.createRadialGradient(x, y, 0, x, y, rad);
+    grd.addColorStop(0, r() > 0.5 ? 'rgba(160,125,80,0.18)' : 'rgba(245,228,195,0.2)');
+    grd.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = grd; wrect(g, x - rad, y - rad, rad * 2, rad * 2, s);
+  }
+  speckle(g, s, r, 26000, ['#9c805a', '#e7d3ab', '#b39367', '#fff1d0', '#7d6446'], 0.55, 1, 2);
+});
+TEX.wood = makeTex(512, 4, 53, (g, s, r) => {
+  const ph = s / 16; // 25 cm planks
+  for (let i = 0; i < 16; i++) {
+    let x = r() * s;
+    const L = 1.6 + r() * 1.8;
+    for (let k = 0; k < 4; k++) {
+      g.fillStyle = `hsl(${26 + r() * 9},${34 + r() * 14}%,${30 + r() * 14}%)`;
+      wrect(g, x, i * ph, L * 128, ph, s);
+      g.fillStyle = 'rgba(30,18,8,.6)'; wrect(g, x, i * ph, 2, ph, s);
+      x += L * 128;
+    }
+    g.fillStyle = 'rgba(25,14,6,.7)'; wrect(g, 0, i * ph, s, 1.5, s);
+  }
+  for (let i = 0; i < 900; i++) {
+    g.globalAlpha = 0.12 + r() * 0.16;
+    g.fillStyle = r() > 0.5 ? '#2c1a0c' : '#c99c6c';
+    wrect(g, r() * s, r() * s, 20 + r() * 120, 1, s);
+  }
+  g.globalAlpha = 1;
+});
+TEX.ground = makeTex(512, 40, 61, (g, s, r) => {
+  g.fillStyle = '#948a62'; g.fillRect(0, 0, s, s);
+  for (let i = 0; i < 70; i++) {
+    const x = r() * s, y = r() * s, rad = 20 + r() * 110;
+    const grd = g.createRadialGradient(x, y, 0, x, y, rad);
+    const c = r();
+    grd.addColorStop(0, c < 0.4 ? 'rgba(150,130,95,.16)' : c < 0.8 ? 'rgba(90,100,58,.16)' : 'rgba(110,112,70,.14)');
+    grd.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = grd; wrect(g, x - rad, y - rad, rad * 2, rad * 2, s);
+  }
+  speckle(g, s, r, 30000, ['#6d7342', '#a99d70', '#5d6038', '#bcae84'], 0.3, 1, 2);
+});
+TEX.paving = makeTex(512, 6, 71, (g, s, r) => {
+  g.fillStyle = '#7f776a'; g.fillRect(0, 0, s, s);
+  const ppm = s / 6, rows = 5, rh = s / rows;
+  for (let row = 0; row < rows; row++) {
+    let x = r() * 40; const end = x + s;
+    while (x < end) {
+      const w = Math.min((0.9 + r() * 1.4) * ppm, end - x);
+      g.fillStyle = `hsl(${34 + r() * 8},${10 + r() * 8}%,${50 + r() * 10}%)`;
+      wrect(g, x + 1.5, row * rh + 1.5, w - 3, rh - 3, s);
+      x += w;
+    }
+  }
+  speckle(g, s, r, 9000, ['#6e6455', '#d9d0bd', '#857a68'], 0.3, 1, 3, 0.4);
+});
+TEX.dirt = makeTex(512, 6, 83, (g, s, r) => {
+  g.fillStyle = '#7b6a55'; g.fillRect(0, 0, s, s);
+  speckle(g, s, r, 20000, ['#5c4c3b', '#958169', '#a8957a', '#4d3f31'], 0.5, 1, 3);
+});
+
+/* ---------- materials ---------- */
+const MAT = {
+  trav: new THREE.MeshStandardMaterial({ map: TEX.trav, bumpMap: TEX.trav, bumpScale: 0.6, roughness: 0.9 }),
+  travIn: new THREE.MeshStandardMaterial({ map: TEX.trav, color: 0xd9ccb6, roughness: 0.95 }),
+  stone: new THREE.MeshStandardMaterial({ map: TEX.stone, bumpMap: TEX.stone, bumpScale: 0.8, vertexColors: true, roughness: 0.9 }),
+  brick: new THREE.MeshStandardMaterial({ map: TEX.brick, bumpMap: TEX.brick, bumpScale: 0.8, roughness: 0.95, color: 0xe8ddd0 }),
+  wood: new THREE.MeshStandardMaterial({ map: TEX.wood, roughness: 0.85 }),
+  sand: new THREE.MeshStandardMaterial({ map: TEX.sand, roughness: 1 }),
+  ground: new THREE.MeshStandardMaterial({ map: TEX.ground, roughness: 1 }),
+  paving: new THREE.MeshStandardMaterial({ map: TEX.paving, roughness: 0.92 }),
+  dirt: new THREE.MeshStandardMaterial({ map: TEX.dirt, roughness: 1 }),
+  marble: new THREE.MeshStandardMaterial({ color: 0xf3efe6, roughness: 0.45 }),
+  bronze: new THREE.MeshStandardMaterial({ color: 0x8a6a3a, roughness: 0.5, metalness: 0.6 }),
+  dark: new THREE.MeshStandardMaterial({ color: 0x241a13, roughness: 1 }),
+  cloth: new THREE.MeshStandardMaterial({ color: 0x6e1530, roughness: 0.9, side: THREE.DoubleSide }),
+  mast: new THREE.MeshStandardMaterial({ color: 0x6b4b2e, roughness: 0.8 }),
+  pine: new THREE.MeshStandardMaterial({ color: 0x3d5530, roughness: 0.95 }),
+  trunk: new THREE.MeshStandardMaterial({ color: 0x5b4532, roughness: 1 }),
+  iron: new THREE.MeshStandardMaterial({ color: 0x2e2a27, roughness: 0.6, metalness: 0.5 }),
+};
+
+/* ------------------------------------------------------------------ *
+ *  Elliptical geometry of the amphitheatre
+ *  All rings are "offset" ellipses with semi-axes (A0+d, B0+d).
+ *  +x = east, -z = north, y = up. Units are metres.
+ * ------------------------------------------------------------------ */
+const A0 = 43, B0 = 27;      // arena semi-axes  (86 × 54 m)
+const D_OUT = 51;            // outer façade -> 188 × 156 m
+const NB = 80;               // 80 arches per storey
+const PIT = -6.5;            // hypogeum floor
+const WALL = 2.4;            // façade thickness
+const R2D = 44, R2W = 1.6;   // second (inner) arcaded ring
+const XCUT = 12;             // partial arena deck covers x > XCUT
+
+const ellPt = (t, d) => [(A0 + d) * Math.cos(t), (B0 + d) * Math.sin(t)];
+function ellTan(t, d) {
+  const x = -(A0 + d) * Math.sin(t), z = (B0 + d) * Math.cos(t), l = Math.hypot(x, z);
+  return [x / l, z / l];
+}
+
+// Equal-arc-length bay boundaries on the outer façade
+const bayT = new Array(NB + 1);
+(() => {
+  const M = 8192, sT = new Float64Array(M + 1);
+  let L = 0;
+  for (let i = 1; i <= M; i++) {
+    const [x0, z0] = ellPt((i - 1) / M * Math.PI * 2, D_OUT), [x1, z1] = ellPt(i / M * Math.PI * 2, D_OUT);
+    L += Math.hypot(x1 - x0, z1 - z0); sT[i] = L;
+  }
+  const tOfS = (s) => {
+    s = ((s % L) + L) % L;
+    let lo = 0, hi = M;
+    while (hi - lo > 1) { const m = (lo + hi) >> 1; if (sT[m] <= s) lo = m; else hi = m; }
+    return (lo + (s - sT[lo]) / (sT[lo + 1] - sT[lo])) / M * Math.PI * 2;
+  };
+  for (let k = 0; k <= NB; k++) bayT[k] = tOfS((k - 0.5) * L / NB);
+  bayT[0] -= Math.PI * 2;
+  bayT[NB] = bayT[0] + Math.PI * 2;
+})();
+const bayMid = (k) => (bayT[k] + bayT[k + 1]) / 2;
+
+function bayFrame(k, d) {
+  const [x0, z0] = ellPt(bayT[k], d), [x1, z1] = ellPt(bayT[k + 1], d);
+  const ux = x1 - x0, uz = z1 - z0, c = Math.hypot(ux, uz);
+  return { cx: (x0 + x1) / 2, cz: (z0 + z1) / 2, ux: ux / c, uz: uz / c, chord: c };
+}
+function ptFrame(t, d) {
+  const [cx, cz] = ellPt(t, d), [ux, uz] = ellTan(t, d);
+  return { cx, cz, ux, uz };
+}
+// local frame: x = along ring (counter-clockwise), y = up, z = inward
+function frameM(f, y, sx = 1, lx = 0, ly = 0, lz = 0) {
+  const m = new THREE.Matrix4().set(
+    f.ux * sx, 0, -f.uz, f.cx,
+    0, 1, 0, y,
+    f.uz * sx, 0, f.ux, f.cz,
+    0, 0, 0, 1);
+  if (lx || ly || lz) m.multiply(new THREE.Matrix4().makeTranslation(lx, ly, lz));
+  return m;
+}
+let avgChord = (d) => { let s = 0; for (let k = 0; k < NB; k++) s += bayFrame(k, d).chord; return s / NB; };
+const W_OUT = avgChord(D_OUT), W_R2 = avgChord(R2D);
+
+/* ---------- ruin model ("Today") ---------- */
+const RS = 8, RE = 34;  // ruined arc of the outer ring (south side)
+function outerCut(k) {           // number of façade storeys standing (99 = all)
+  if (k < RS || k > RE) return 99;
+  if (k > RE - 3) return 3 - (RE - k); // stepped "Valadier" end
+  return 0;                        // gone (or inside the "Stern" buttress)
+}
+
+/* ------------------------------------------------------------------ *
+ *  Geometry builder for faceted solids (metric planar UVs)
+ * ------------------------------------------------------------------ */
+class Builder {
+  constructor() { this.p = []; this.n = []; this.uv = []; }
+  quad(a, b, c, d, ref, isDir = false) {
+    const e1 = [c[0] - a[0], c[1] - a[1], c[2] - a[2]], e2 = [d[0] - b[0], d[1] - b[1], d[2] - b[2]];
+    let n = [e1[1] * e2[2] - e1[2] * e2[1], e1[2] * e2[0] - e1[0] * e2[2], e1[0] * e2[1] - e1[1] * e2[0]];
+    const l = Math.hypot(n[0], n[1], n[2]);
+    if (l < 1e-9) return;
+    n = [n[0] / l, n[1] / l, n[2] / l];
+    if (ref) {
+      const v = isDir ? ref : [(a[0] + b[0] + c[0] + d[0]) / 4 - ref[0], (a[1] + b[1] + c[1] + d[1]) / 4 - ref[1], (a[2] + b[2] + c[2] + d[2]) / 4 - ref[2]];
+      if (n[0] * v[0] + n[1] * v[1] + n[2] * v[2] < 0) { const t = b; b = d; d = t; n = [-n[0], -n[1], -n[2]]; }
+    }
+    let uvf;
+    if (Math.abs(n[1]) > 0.7) uvf = (p) => [p[0], p[2]];
+    else { const tx = -n[2], tz = n[0], tl = Math.hypot(tx, tz) || 1; uvf = (p) => [(p[0] * tx + p[2] * tz) / tl, p[1]]; }
+    for (const p of [a, b, c, a, c, d]) { this.p.push(p[0], p[1], p[2]); this.n.push(n[0], n[1], n[2]); const u = uvf(p); this.uv.push(u[0], u[1]); }
+  }
+  hex(c) {
+    const ctr = [0, 0, 0];
+    for (const p of c) { ctr[0] += p[0] / 8; ctr[1] += p[1] / 8; ctr[2] += p[2] / 8; }
+    for (const f of [[0, 1, 2, 3], [4, 5, 6, 7], [0, 1, 5, 4], [1, 2, 6, 5], [2, 3, 7, 6], [3, 0, 4, 7]])
+      this.quad(c[f[0]], c[f[1]], c[f[2]], c[f[3]], ctr);
+  }
+  box(x0, x1, y0, y1, z0, z1) {
+    this.hex([[x0, y0, z0], [x1, y0, z0], [x1, y0, z1], [x0, y0, z1], [x0, y1, z0], [x1, y1, z0], [x1, y1, z1], [x0, y1, z1]]);
+  }
+  // oriented box: centre (cx,cz), main axis (ax,az) with half-length hl, half-thickness ht
+  obox(cx, cz, ax, az, hl, ht, y0, y1) {
+    const bx = -az, bz = ax;
+    const P = (sa, sb, y) => [cx + ax * hl * sa + bx * ht * sb, y, cz + az * hl * sa + bz * ht * sb];
+    this.hex([P(-1, -1, y0), P(1, -1, y0), P(1, 1, y0), P(-1, 1, y0), P(-1, -1, y1), P(1, -1, y1), P(1, 1, y1), P(-1, 1, y1)]);
+  }
+  // curved ring segment between t0..t1 and offsets dIn..dOut, top may slope from yt0 to yt1
+  ring(t0, t1, dIn, dOut, y0, yt0, yt1 = yt0, sub = 1) {
+    for (let i = 0; i < sub; i++) {
+      const ta = t0 + (t1 - t0) * i / sub, tb = t0 + (t1 - t0) * (i + 1) / sub;
+      const ya = yt0 + (yt1 - yt0) * i / sub, yb = yt0 + (yt1 - yt0) * (i + 1) / sub;
+      const [x0, z0] = ellPt(ta, dIn), [x1, z1] = ellPt(tb, dIn), [x2, z2] = ellPt(tb, dOut), [x3, z3] = ellPt(ta, dOut);
+      this.hex([[x0, y0, z0], [x1, y0, z1], [x2, y0, z2], [x3, y0, z3], [x0, ya, z0], [x1, yb, z1], [x2, yb, z2], [x3, ya, z3]]);
+    }
+  }
+  // flat horizontal elliptical annulus
+  flatRing(dIn, dOut, y, seg) {
+    for (let i = 0; i < seg; i++) {
+      const ta = i / seg * Math.PI * 2, tb = (i + 1) / seg * Math.PI * 2;
+      const [x0, z0] = ellPt(ta, dIn), [x1, z1] = ellPt(tb, dIn), [x2, z2] = ellPt(tb, dOut), [x3, z3] = ellPt(ta, dOut);
+      this.quad([x0, y, z0], [x1, y, z1], [x2, y, z2], [x3, y, z3], [0, 1, 0], true);
+    }
+  }
+  geometry() {
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.Float32BufferAttribute(this.p, 3));
+    g.setAttribute('normal', new THREE.Float32BufferAttribute(this.n, 3));
+    g.setAttribute('uv', new THREE.Float32BufferAttribute(this.uv, 2));
+    g.computeBoundingSphere();
+    return g;
+  }
+  mesh(mat, cast = true, receive = true) {
+    const m = new THREE.Mesh(this.geometry(), mat);
+    m.castShadow = cast; m.receiveShadow = receive;
+    return m;
+  }
+}
+
+/* ---------- primitive geometries with metric UVs ---------- */
+function boxM(w, h, d) {
+  const g = new THREE.BoxGeometry(w, h, d);
+  const uv = g.attributes.uv, dims = [[d, h], [d, h], [w, d], [w, d], [w, h], [w, h]];
+  for (let f = 0; f < 6; f++) for (let i = 0; i < 4; i++) {
+    const j = f * 4 + i; uv.setXY(j, uv.getX(j) * dims[f][0], uv.getY(j) * dims[f][1]);
+  }
+  return g;
+}
+function cylM(rt, rb, h, seg = 20) {
+  const g = new THREE.CylinderGeometry(rt, rb, h, seg);
+  const uv = g.attributes.uv, C = Math.PI * 2 * rb;
+  for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * C, uv.getY(i) * h);
+  return g;
+}
+function archBayGeom(W, H, ow, sp, depth) {
+  const s = new THREE.Shape();
+  s.moveTo(-W / 2, 0); s.lineTo(-ow, 0); s.lineTo(-ow, sp);
+  s.absarc(0, sp, ow, Math.PI, 0, true);
+  s.lineTo(ow, 0); s.lineTo(W / 2, 0); s.lineTo(W / 2, H); s.lineTo(-W / 2, H); s.closePath();
+  return new THREE.ExtrudeGeometry(s, { depth, bevelEnabled: false, curveSegments: 22 });
+}
+function atticBayGeom(W, H, depth, window) {
+  const s = new THREE.Shape();
+  s.moveTo(-W / 2, 0); s.lineTo(W / 2, 0); s.lineTo(W / 2, H); s.lineTo(-W / 2, H); s.closePath();
+  if (window) {
+    const h = new THREE.Path();
+    h.moveTo(-0.8, 3.3); h.lineTo(-0.8, 5.9); h.lineTo(0.8, 5.9); h.lineTo(0.8, 3.3); h.closePath();
+    s.holes.push(h);
+  }
+  return new THREE.ExtrudeGeometry(s, { depth, bevelEnabled: false });
+}
+function archivoltGeom(ow) {
+  const R = ow + 0.38, s = new THREE.Shape();
+  s.moveTo(R, 0); s.absarc(0, 0, R, 0, Math.PI, false);
+  s.lineTo(-ow, 0); s.absarc(0, 0, ow, Math.PI, 0, true); s.closePath();
+  const g = new THREE.ExtrudeGeometry(s, { depth: 0.14, bevelEnabled: false, curveSegments: 24 });
+  g.translate(0, 0, -0.14);
+  return g;
+}
+const tr = (g, x, y, z) => { g.translate(x, y, z); return g; };
+
+/* ------------------------------------------------------------------ *
+ *  Instanced "parts" with era-dependent visibility
+ * ------------------------------------------------------------------ */
+let era = 'restored', floorMode = 'partial';
+const parts = [];
+const ZERO = new THREE.Matrix4().makeScale(0, 0, 0);
+class Part {
+  constructor(geo, mat, cast = true) { this.geo = geo; this.mat = mat; this.items = []; this.cast = cast; }
+  add(m, meta = {}) { this.items.push({ m, ...meta }); return this; }
+  build(parent) {
+    const mesh = new THREE.InstancedMesh(this.geo, this.mat, this.items.length);
+    this.items.forEach((it, i) => mesh.setMatrixAt(i, it.m));
+    mesh.castShadow = this.cast; mesh.receiveShadow = true; mesh.frustumCulled = false;
+    parent.add(mesh); this.mesh = mesh; parts.push(this);
+    return this;
+  }
+  refresh() {
+    this.items.forEach((it, i) => this.mesh.setMatrixAt(i, isVisible(it) ? it.m : ZERO));
+    this.mesh.instanceMatrix.needsUpdate = true;
+  }
+}
+function isVisible(it) {
+  if (it.restoredOnly && era !== 'restored') return false;
+  if (it.ring === 1 && era === 'today') {
+    const c = Math.max(outerCut(it.bay), it.bay2 != null ? outerCut(it.bay2) : -1);
+    return it.tier < c;
+  }
+  return true;
+}
+
+const world = new THREE.Group();
+scene.add(world);
+
+/* ------------------------------------------------------------------ *
+ *  Outer façade: 3 arcaded storeys + attic
+ * ------------------------------------------------------------------ */
+const OT = [
+  { y0: 0,    h: 10.5, ow: 2.15, sp: 4.95, r: 0.6,  ped: 0,   ent: 1.6, order: 'tuscan' },
+  { y0: 10.5, h: 11.8, ow: 2.05, sp: 5.8,  r: 0.55, ped: 1.5, ent: 1.5, order: 'ionic' },
+  { y0: 22.3, h: 11.6, ow: 2.05, sp: 5.7,  r: 0.5,  ped: 1.5, ent: 1.5, order: 'corinthian' },
+];
+const ATTIC = { y0: 33.9, h: 14.7 };
+const TOP = 48.6;
+
+(function buildFacade() {
+  OT.forEach((T, i) => {
+    const bays = new Part(archBayGeom(W_OUT, T.h, T.ow, T.sp, WALL), MAT.trav);
+    const avolt = new Part(archivoltGeom(T.ow), MAT.trav);
+    const impost = new Part(mergeGeometries([
+      tr(boxM(0.95, 0.32, 0.16), -(T.ow + 0.47), T.sp - 0.16, -0.08),
+      tr(boxM(0.95, 0.32, 0.16), (T.ow + 0.47), T.sp - 0.16, -0.08)]), MAT.trav);
+    const baseH = i === 0 ? 0.5 : 0.3, capH = 0.6;
+    const colBot = T.ped + baseH, colTop = T.h - T.ent - capH;
+    const col = new Part(tr(cylM(T.r * 0.86, T.r, colTop - colBot), 0, (colTop - colBot) / 2, 0), MAT.trav);
+    const base = new Part(tr(boxM(2 * T.r + 0.3, baseH, 2 * T.r + 0.3), 0, baseH / 2, 0), MAT.trav);
+    let capGeo;
+    if (T.order === 'tuscan') capGeo = mergeGeometries([tr(boxM(2 * T.r + 0.1, 0.3, 2 * T.r + 0.1), 0, 0.15, 0), tr(boxM(2 * T.r + 0.45, 0.3, 2 * T.r + 0.45), 0, 0.45, 0)]);
+    else if (T.order === 'ionic') {
+      const v1 = new THREE.CylinderGeometry(0.17, 0.17, 2 * T.r + 0.5, 12); v1.rotateZ(Math.PI / 2);
+      const v2 = v1.clone(); v1.translate(0, 0.32, 0.3); v2.translate(0, 0.32, -0.3);
+      capGeo = mergeGeometries([v1, v2, tr(boxM(2 * T.r + 0.5, 0.18, 2 * T.r + 0.5), 0, 0.51, 0), tr(boxM(2 * T.r, 0.25, 2 * T.r), 0, 0.12, 0)]);
+    } else capGeo = mergeGeometries([tr(cylM(T.r * 1.35, T.r * 0.86, 0.45, 14), 0, 0.225, 0), tr(boxM(2 * T.r + 0.6, 0.16, 2 * T.r + 0.6), 0, 0.53, 0)]);
+    const cap = new Part(capGeo, MAT.trav);
+    const ped = T.ped ? new Part(tr(boxM(1.55, T.ped, 1.35), 0, T.ped / 2, 0), MAT.trav) : null;
+    const parapet = i > 0 ? new Part(tr(boxM(2 * T.ow + 0.04, 1.05, 0.45), 0, 0.525, WALL / 2), MAT.trav) : null;
+    const statue = i > 0 ? new Part(mergeGeometries([
+      tr(boxM(0.9, 0.35, 0.7), 0, 0.175, 0),
+      tr(new THREE.CapsuleGeometry(0.32, 1.25, 4, 10), 0, 0.35 + 0.32 + 0.62, 0),
+      tr(new THREE.SphereGeometry(0.21, 12, 8), 0, 0.35 + 1.25 + 0.64 + 0.18, 0)]), MAT.marble) : null;
+
+    for (let k = 0; k < NB; k++) {
+      const bf = bayFrame(k, D_OUT), sx = bf.chord / W_OUT, meta = { ring: 1, tier: i, bay: k };
+      bays.add(frameM(bf, T.y0, sx), meta);
+      avolt.add(frameM(bf, T.y0 + T.sp, sx), meta);
+      impost.add(frameM(bf, T.y0, sx), meta);
+      if (parapet) parapet.add(frameM(bf, T.y0, sx), meta);
+      if (statue) statue.add(frameM(bf, T.y0 + 1.05, 1, 0, 0, WALL / 2 + 0.25), { ...meta, restoredOnly: true });
+      const pf = ptFrame(bayT[k], D_OUT), bmeta = { ring: 1, tier: i, bay: k, bay2: (k + NB - 1) % NB };
+      col.add(frameM(pf, T.y0 + colBot, 1, 0, 0, -0.22), bmeta);
+      base.add(frameM(pf, T.y0 + T.ped, 1, 0, 0, -0.22), bmeta);
+      cap.add(frameM(pf, T.y0 + colTop, 1, 0, 0, -0.22), bmeta);
+      if (ped) ped.add(frameM(pf, T.y0, 1, 0, 0, -0.3), bmeta);
+    }
+    [bays, avolt, impost, col, base, cap, ped, parapet, statue].forEach((p) => p && p.build(world));
+  });
+
+  // ---- attic ----
+  const aWin = new Part(atticBayGeom(W_OUT, ATTIC.h, WALL, true), MAT.trav);
+  const aSol = new Part(atticBayGeom(W_OUT, ATTIC.h, WALL, false), MAT.trav);
+  const pil = new Part(tr(boxM(0.95, 12.4, 0.6), 0, 6.2, 0), MAT.trav);
+  const pilCap = new Part(tr(boxM(1.25, 0.6, 0.8), 0, 0.3, 0), MAT.trav);
+  const consoles = new Part(mergeGeometries([-1, 0, 1].map((s) => tr(boxM(0.45, 0.7, 0.9), s * W_OUT / 3, 0.35, -0.1))), MAT.trav);
+  const masts = new Part(tr(cylM(0.13, 0.17, 19, 8), 0, 9.5, 0), MAT.mast);
+  for (let k = 0; k < NB; k++) {
+    const bf = bayFrame(k, D_OUT), sx = bf.chord / W_OUT, meta = { ring: 1, tier: 3, bay: k };
+    (k % 2 ? aSol : aWin).add(frameM(bf, ATTIC.y0, sx), meta);
+    consoles.add(frameM(bf, ATTIC.y0 + 6.6, sx), meta);
+    masts.add(frameM(bf, ATTIC.y0 + 7.3, 1, 0, 0, -0.33), { ...meta, restoredOnly: true });
+    const pf = ptFrame(bayT[k], D_OUT), bmeta = { ring: 1, tier: 3, bay: k, bay2: (k + NB - 1) % NB };
+    pil.add(frameM(pf, ATTIC.y0 + 0.7), bmeta);
+    pilCap.add(frameM(pf, ATTIC.y0 + 13.1), bmeta);
+  }
+  [aWin, aSol, pil, pilCap, consoles, masts].forEach((p) => p.build(world));
+
+  // ---- second ring (inner arcade, seen through the outer arches) ----
+  const R2 = [{ h: 9.9, sp: 4.6 }, { h: 11.2, sp: 5.2 }, { h: 11.0, sp: 5.1 }];
+  R2.forEach((T, i) => {
+    const p = new Part(archBayGeom(W_R2, T.h, 1.85, T.sp, R2W), MAT.travIn);
+    for (let k = 0; k < NB; k++) { const bf = bayFrame(k, R2D); p.add(frameM(bf, OT[i].y0, bf.chord / W_R2), { ring: 2 }); }
+    p.build(world);
+  });
+
+  // ---- summa cavea portico columns (restored only) ----
+  const pc = new Part(mergeGeometries([tr(cylM(0.24, 0.3, 4.6, 12), 0, 2.3, 0), tr(boxM(0.8, 0.5, 0.8), 0, 4.85, 0), tr(boxM(0.75, 0.25, 0.75), 0, 0.12, 0)]), MAT.marble);
+  for (let k = 0; k < NB; k++) for (const t of [bayT[k], bayMid(k)]) pc.add(frameM(ptFrame(t, 45.5), 42.7), { restoredOnly: true });
+  pc.build(world);
+})();
+
+/* ------------------------------------------------------------------ *
+ *  Cavea (seating bowl) — smooth around the ring, sharp step edges
+ * ------------------------------------------------------------------ */
+function caveaProfile(e) {
+  const P = [], pt = (d, y, c) => P.push({ d, y, c });
+  const steps = (d1, y1, n, c) => {
+    const s = P[P.length - 1], run = (d1 - s.d) / n, rise = (y1 - s.y) / n;
+    let d = s.d, y = s.y;
+    for (let i = 0; i < n; i++) { y += rise; pt(d, y, c); d += run; pt(d, y, c); }
+  };
+  pt(0, PIT, 'pit'); pt(0, 0, 'pit');
+  pt(0, 5.0, 'podium'); pt(0.7, 5.0, 'podium'); pt(0.7, 4.3, 'podium'); pt(2.2, 4.3, 'marble');
+  steps(5.8, 5.65, 3, 'marble');                       // podium: senators' marble seats
+  pt(5.8, 7.3, 'balteus'); pt(6.4, 7.3, 'balteus');
+  steps(17.5, 15.55, 15, 't1');                        // maenianum primum
+  pt(17.5, 17.3, 'balteus'); pt(18.1, 17.3, 'balteus');
+  steps(29.0, 25.85, 15, 't2');                        // maenianum secundum imum
+  pt(29.0, 27.9, 'balteus'); pt(29.6, 27.9, 'balteus');
+  steps(40.0, 36.58, 14, 't3');                        // maenianum secundum summum
+  if (e === 'restored') {
+    pt(40.0, 39.2, 'balteus'); pt(40.5, 39.2, 'balteus');
+    steps(45.0, 42.7, 7, 'wood');                      // summa cavea in ligneis
+    pt(48.9, 42.7, 'floor');                           // portico floor
+  } else pt(40.0, 33.9, 'balteus');                     // broken edge above the corridor vaults
+  return P;
+}
+function caveaHeightAt(d, e) {
+  const P = caveaProfile(e); let h = 0;
+  for (let j = 0; j < P.length - 1; j++) { const p = P[j], q = P[j + 1]; if (p.y === q.y && d >= p.d && d <= q.d) h = Math.max(h, p.y); }
+  return h;
+}
+const PAL = {
+  restored: { pit: '#8a6f58', podium: '#efe9de', marble: '#f3efe7', balteus: '#ddd2bc', t1: '#ddd0b4', t2: '#d7c9ab', t3: '#d1c2a3', wood: '#8a6542', floor: '#cdbf9f' },
+  today:    { pit: '#8a6f58', podium: '#c8b696', marble: '#ad8d6e', balteus: '#bba383', t1: '#a7846a', t2: '#a1806a', t3: '#9c7c62', wood: '#8a6542', floor: '#cdbf9f' },
+};
+function buildCavea(e) {
+  const P = caveaProfile(e), N = 320, pal = PAL[e], rnd = mulberry32(99);
+  const pos = [], nor = [], uv = [], col = [], idx = [], c = new THREE.Color();
+  const perim = (d) => { const a = A0 + d, b = B0 + d; return Math.PI * (3 * (a + b) - Math.sqrt((3 * a + b) * (a + 3 * b))); };
+  let vlen = 0;
+  for (let j = 0; j < P.length - 1; j++) {
+    const p = P[j], q = P[j + 1], dd = q.d - p.d, dy = q.y - p.y, len = Math.hypot(dd, dy);
+    if (len < 1e-6) continue;
+    const nr = -dy / len, ny = dd / len, dm = (p.d + q.d) / 2, per = perim(dm);
+    c.set(pal[q.c]);
+    const base = pos.length / 3;
+    for (let i = 0; i <= N; i++) {
+      const t = i / N * Math.PI * 2;
+      let nx = (B0 + dm) * Math.cos(t), nz = (A0 + dm) * Math.sin(t); const nl = Math.hypot(nx, nz); nx /= nl; nz /= nl;
+      const [x0, z0] = ellPt(t, p.d), [x1, z1] = ellPt(t, q.d);
+      pos.push(x0, p.y, z0, x1, q.y, z1);
+      nor.push(nx * nr, ny, nz * nr, nx * nr, ny, nz * nr);
+      const u = i / N * per; uv.push(u, vlen, u, vlen + len);
+      const v = 0.92 + 0.12 * rnd();
+      col.push(c.r * v, c.g * v, c.b * v, c.r * v, c.g * v, c.b * v);
+    }
+    vlen += len;
+    for (let i = 0; i < N; i++) { const a = base + 2 * i; idx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3); }
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+  g.setIndex(idx);
+  g.computeBoundingSphere();
+  const m = new THREE.Mesh(g, MAT.stone);
+  m.castShadow = m.receiveShadow = true;
+  return m;
+}
+
+/* ------------------------------------------------------------------ *
+ *  Era-dependent solids (bands, corridor vaults, ruins) – rebuilt on toggle
+ * ------------------------------------------------------------------ */
+const eraGroup = new THREE.Group();
+world.add(eraGroup);
+function buildEra() {
+  eraGroup.children.slice().forEach((m) => { eraGroup.remove(m); m.geometry.dispose(); });
+  const tb = new Builder(), bb = new Builder();
+  const today = era === 'today';
+  for (let k = 0; k < NB; k++) {
+    const t0 = bayT[k], t1 = bayT[k + 1];
+    const cut = today ? outerCut(k) : 99;
+    // plinth steps around the base (survive everywhere)
+    tb.ring(t0, t1, 50.9, 52.4, 0, 0.22, 0.22, 2);
+    tb.ring(t0, t1, 50.9, 51.7, 0.22, 0.44, 0.44, 2);
+    for (let i = 0; i < 3; i++) {
+      const top = OT[i].y0 + OT[i].h;
+      if (i < cut) {
+        tb.ring(t0, t1, 50.95, 51.95, top - OT[i].ent, top + 0.01, top + 0.01, 2);   // entablature
+        tb.ring(t0, t1, 51.95, 52.3, top - 0.38, top + 0.01, top + 0.01, 2);         // cornice lip
+        tb.ring(t0, t1, 51.95, 52.03, top - OT[i].ent, top - OT[i].ent + 0.45, top - OT[i].ent + 0.45, 2); // architrave fascia
+        tb.ring(t0, t1, 43.2, 48.9, top - 0.6, top - 0.02, top - 0.02, 1);           // outer corridor vault/floor
+      }
+      tb.ring(t0, t1, 40, 43.2, top - 0.6, top - 0.02, top - 0.02, 1);               // inner corridor vault/floor
+    }
+    if (3 < cut) {
+      tb.ring(t0, t1, 50.95, 51.45, ATTIC.y0, ATTIC.y0 + 0.7, ATTIC.y0 + 0.7, 2);     // attic base course
+      tb.ring(t0, t1, 50.95, 52.25, TOP - 1.0, TOP + 0.01, TOP + 0.01, 2);            // crowning cornice
+      tb.ring(t0, t1, 50.95, 51.5, TOP - 1.25, TOP - 1.0, TOP - 1.0, 2);
+    }
+    tb.ring(t0, t1, 38.5, 40, 0, 35.0, 35.0, 2);                                   // third ring (solid)
+    if (!today) {
+      tb.ring(t0, t1, 44.6, 48.9, 47.9, 48.5, 48.5, 2);                              // portico roof
+      tb.ring(t0, t1, 46.4, 47.0, 33.9, 42.1, 42.1, 1);                              // attic gallery back wall
+      tb.ring(t0, t1, 46.4, 48.9, 42.1, 42.68, 42.68, 1);                            // gallery ceiling
+    }
+  }
+  if (today) {
+    // brick buttress (Stern, 1807) sealing the eastern break
+    for (let j = 0; j < 2; j++) {
+      const k = RS + j;
+      bb.ring(bayT[k], bayT[k + 1], 43.4, 51.7, 0, TOP * (1 - j / 2), TOP * (1 - (j + 1) / 2), 4);
+    }
+    // brick facing on the exposed broken ends of the staircase side (Valadier, 1820s)
+    bb.ring(bayT[RE + 1] - 0.004, bayT[RE + 1] + 0.004, 44, 51.2, 33.9, TOP, TOP, 1);
+  }
+  eraGroup.add(tb.mesh(MAT.trav), buildCavea(era));
+  if (bb.p.length) eraGroup.add(bb.mesh(MAT.brick));
+}
+
+/* ------------------------------------------------------------------ *
+ *  Arena, hypogeum, surroundings (static)
+ * ------------------------------------------------------------------ */
+const floorObjs = { full: [], partial: [], beams: [] };
+const restoredObjs = [];
+(function buildStatic() {
+  const R = mulberry32(2024);
+
+  // ground & paving
+  const gb = new Builder();
+  gb.flatRing(0, 69, 0, 160); gb.flatRing(69, 300, 0, 128); gb.flatRing(300, 1800, 0, 96);
+  const ground = gb.mesh(MAT.ground, false, true); world.add(ground);
+  const pb = new Builder(); pb.flatRing(38, 69, 0.03, 240);
+  world.add(pb.mesh(MAT.paving, false, true));
+  // travertine bollards (cippi) ringing the plaza
+  const cip = new Part(tr(boxM(0.6, 1.7, 0.45), 0, 0.85, 0), MAT.trav);
+  for (let k = 0; k < NB; k++) for (const t of [bayT[k], bayMid(k)]) cip.add(frameM(ptFrame(t, 68), 0));
+  cip.build(world);
+
+  // hypogeum floor
+  const pitShape = new THREE.Shape(); pitShape.absellipse(0, 0, A0 + 0.2, B0 + 0.2, 0, Math.PI * 2, false, 0);
+  const pitGeo = new THREE.ShapeGeometry(pitShape, 96); pitGeo.rotateX(-Math.PI / 2); pitGeo.translate(0, PIT, 0);
+  const pit = new THREE.Mesh(pitGeo, MAT.dirt); pit.receiveShadow = true; world.add(pit);
+
+  // hypogeum walls
+  const hb = new Builder();
+  for (let k = 0; k < NB; k++) {
+    const t0 = bayT[k], t1 = bayT[k + 1], tm = t0 + 0.6 * (t1 - t0);
+    hb.ring(t0, tm, -4.3, -3.5, PIT, -0.6, -0.6, 1);         // ring wall pier
+    hb.ring(tm, t1, -4.3, -3.5, -2.7, -0.6, -0.6, 1);        // lintel over doorway
+    if (k % 2 === 0) {                                        // radial cell walls
+      const [cx, cz] = ellPt(t0, -1.75), [ux, uz] = ellTan(t0, -1.75);
+      hb.obox(cx, cz, uz, -ux, 1.75, 0.4, PIT, -0.6);
+    }
+  }
+  const zs = [2.0, 6.5, 11, 15.5, 19.5];
+  const lifts = new Builder();
+  for (const sgn of [-1, 1]) for (const z0 of zs) {
+    const z = sgn * z0, zz = (Math.abs(z) + 0.45) / (B0 - 4.3);
+    const xmax = (A0 - 4.3) * Math.sqrt(Math.max(0, 1 - zz * zz)) - 0.3;
+    if (xmax < 3) continue;
+    hb.box(-xmax, xmax, -2.7, -0.6, z - 0.45, z + 0.45);    // continuous lintel
+    for (let x = -xmax; x < xmax - 0.5; x += 3.7) hb.box(x, Math.min(x + 2.4, xmax), PIT, -2.7, z - 0.45, z + 0.45);
+  }
+  // wooden lifts (capstan-operated cages) between the parallel walls
+  for (const sgn of [-1, 1]) for (const zc of [8.75, 13.25]) {
+    const zz = (zc + 2) / (B0 - 4.3), xmax = (A0 - 4.3) * Math.sqrt(Math.max(0, 1 - zz * zz)) - 3;
+    for (let x = -xmax; x <= xmax; x += 6.5 + R() * 3) {
+      const z = sgn * zc;
+      lifts.box(x - 0.85, x + 0.85, PIT, PIT + 2.1, z - 0.85, z + 0.85);
+      lifts.box(x - 1.05, x - 0.9, PIT, -0.5, z - 0.08, z + 0.08);
+      lifts.box(x + 0.9, x + 1.05, PIT, -0.5, z - 0.08, z + 0.08);
+      lifts.box(x - 1.05, x + 1.05, -0.75, -0.55, z - 0.1, z + 0.1);
+    }
+  }
+  world.add(hb.mesh(MAT.brick), lifts.mesh(MAT.wood));
+
+  // arena floor: full sand (restored) / partial wooden deck (today) / open
+  const fullShape = new THREE.Shape(); fullShape.absellipse(0, 0, A0 + 0.3, B0 + 0.3, 0, Math.PI * 2, false, 0);
+  const fullGeo = new THREE.ExtrudeGeometry(fullShape, { depth: 0.3, bevelEnabled: false, curveSegments: 96 }); fullGeo.rotateX(-Math.PI / 2);
+  const sand = new THREE.Mesh(fullGeo, MAT.sand); sand.position.y = -0.3; sand.receiveShadow = sand.castShadow = true;
+  world.add(sand); floorObjs.full.push(sand);
+
+  const tc = Math.acos(XCUT / (A0 + 0.3)), ds = new THREE.Shape();
+  for (let i = 0; i <= 64; i++) { const t = -tc + 2 * tc * i / 64, x = (A0 + 0.3) * Math.cos(t), y = (B0 + 0.3) * Math.sin(t); i ? ds.lineTo(x, y) : ds.moveTo(x, y); }
+  ds.closePath();
+  const deckGeo = new THREE.ExtrudeGeometry(ds, { depth: 0.3, bevelEnabled: false }); deckGeo.rotateX(-Math.PI / 2);
+  const deck = new THREE.Mesh(deckGeo, MAT.wood); deck.position.y = -0.3; deck.receiveShadow = deck.castShadow = true;
+  world.add(deck); floorObjs.partial.push(deck);
+
+  const beams = new Builder();
+  for (let x = XCUT + 0.2; x < A0 - 0.5; x += 2.4) {
+    const zh = B0 * Math.sqrt(1 - (x / A0) ** 2);
+    beams.box(x - 0.17, x + 0.17, -0.9, -0.3, -zh, zh);
+  }
+  for (const z of [-17.5, -8.75, 0, 8.75, 17.5]) {
+    const xe = A0 * Math.sqrt(Math.max(0, 1 - (z / B0) ** 2));
+    beams.box(XCUT, xe, -1.3, -0.9, z - 0.2, z + 0.2);
+  }
+  const beamMesh = beams.mesh(MAT.wood); world.add(beamMesh); floorObjs.beams.push(beamMesh);
+
+  // railing along the edge of the partial deck
+  const rail = new Builder(), zc = (B0 + 0.3) * Math.sin(tc) - 0.3;
+  for (let z = -zc; z <= zc + 0.01; z += zc / 16) rail.box(XCUT + 0.1, XCUT + 0.2, 0, 1.1, z - 0.05, z + 0.05);
+  rail.box(XCUT + 0.08, XCUT + 0.22, 1.05, 1.15, -zc, zc);
+  rail.box(XCUT + 0.12, XCUT + 0.18, 0.55, 0.6, -zc, zc);
+  const railMesh = rail.mesh(MAT.iron); world.add(railMesh); floorObjs.partial.push(railMesh);
+
+  // podium gates on the major axis (Porta Triumphalis / Libitinaria)
+  const gate = new Part(tr(new THREE.PlaneGeometry(5.4, 4.0), 0, 2.0, 0), MAT.dark, false);
+  gate.add(frameM(ptFrame(0, -0.03), 0)).add(frameM(ptFrame(Math.PI, -0.03), 0)).build(world);
+
+  // vomitoria — dark doorways in the balteus walls
+  const vom = [[5.8, 5.65, 7.3], [17.5, 15.55, 17.3], [29.0, 25.85, 27.9], [40.0, 36.58, 39.2]];
+  vom.forEach(([d, y0, y1], L) => {
+    const h = y1 - y0 - 0.12, p = new Part(tr(new THREE.PlaneGeometry(1.5, h), 0, h / 2, 0), MAT.dark, false);
+    for (let k = 0; k < NB; k++) {
+      if ((k + L * 2) % 4) continue;
+      if (L === 0 && [0, 19, 20, 21, 40, 59, 60, 61].includes(k)) continue;
+      p.add(frameM(ptFrame(bayMid(k), d - 0.03), y0), { restoredOnly: L === 3 });
+    }
+    p.build(world);
+  });
+
+  // imperial box (south) & magistrates' box (north)
+  const ib = new Builder(), roofB = new Builder();
+  const icol = new Part(mergeGeometries([tr(cylM(0.22, 0.26, 4.2, 14), 0, 2.1, 0), tr(boxM(0.65, 0.35, 0.65), 0, 4.37, 0)]), MAT.marble);
+  for (const s of [1, -1]) {
+    const zw = s * B0, zf = s * (B0 - 1.5), zb = s * (B0 + 6.5);
+    const zmin = (a, b) => Math.min(a, b), zmax = (a, b) => Math.max(a, b);
+    ib.box(-5, 5, 0, 4.6, zmin(zf, zw + s * 0.3), zmax(zf, zw + s * 0.3));
+    ib.box(-5, 5, 4.6, 5.5, zmin(zf, zf + s * 0.4), zmax(zf, zf + s * 0.4));
+    for (const x of [-4.4, -1.5, 1.5, 4.4]) icol.add(new THREE.Matrix4().makeTranslation(x, 4.6, zf + s * 0.75), { restoredOnly: true });
+    roofB.box(-5.5, 5.5, 9.15, 9.8, zmin(zf - s * 0.2, zb), zmax(zf - s * 0.2, zb));
+    roofB.hex([[-5.5, 9.8, zf - s * 0.2], [5.5, 9.8, zf - s * 0.2], [5.5, 9.8, zb], [-5.5, 9.8, zb],
+               [0, 11.4, zf - s * 0.2], [0, 11.4, zf - s * 0.2], [0, 11.4, zb], [0, 11.4, zb]]);
+    if (s === 1) {
+      const drape = new THREE.Mesh(new THREE.PlaneGeometry(9.2, 2.4), MAT.cloth);
+      drape.position.set(0, 3.5, zf - 0.04); drape.rotation.y = Math.PI; drape.castShadow = true;
+      world.add(drape); restoredObjs.push(drape);
+    }
+  }
+  const ibm = ib.mesh(MAT.marble), rbm = roofB.mesh(MAT.trav);
+  world.add(ibm, rbm); restoredObjs.push(ibm, rbm);
+  icol.build(world);
+
+  // umbrella pines around the valley
+  const trunks = new Part(tr(cylM(0.28, 0.42, 1, 8), 0, 0.5, 0), MAT.trunk);
+  const crowns = new Part(new THREE.SphereGeometry(1, 14, 9), MAT.pine);
+  let placed = 0, guard = 0;
+  while (placed < 46 && guard++ < 1000) {
+    const t = R() * Math.PI * 2, d = 82 + R() * 230;
+    if (d < 170 && Math.abs(Math.atan2(Math.sin(t + 0.45), Math.cos(t + 0.45))) < 0.55) continue;   // keep the façade view clear
+    const [x, z] = ellPt(t, d), h = 8 + R() * 6, cr = 4.5 + R() * 3.5;
+    const q = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), R() * 6.28);
+    trunks.add(new THREE.Matrix4().compose(new THREE.Vector3(x, 0, z), q, new THREE.Vector3(1, h, 1)));
+    crowns.add(new THREE.Matrix4().compose(new THREE.Vector3(x, h + 0.6, z), q, new THREE.Vector3(cr, cr * 0.36, cr * 0.92)));
+    placed++;
+  }
+  trunks.build(world); crowns.build(world);
+})();
+
+/* ------------------------------------------------------------------ *
+ *  Sky, sun & shadows
+ * ------------------------------------------------------------------ */
+const sky = new Sky();
+sky.scale.setScalar(4000);
+scene.add(sky);
+const su = sky.material.uniforms;
+su.turbidity.value = 3.4; su.rayleigh.value = 1.15; su.mieCoefficient.value = 0.004; su.mieDirectionalG.value = 0.82;
+const envScene = new THREE.Scene();
+const sky2 = new Sky(); sky2.material = sky.material; sky2.scale.setScalar(100); envScene.add(sky2);
+const pmrem = new THREE.PMREMGenerator(renderer);
+let envRT = null;
+
+const sun = new THREE.DirectionalLight(0xffffff, 3);
+sun.castShadow = true;
+sun.shadow.mapSize.set(4096, 4096);
+Object.assign(sun.shadow.camera, { left: -132, right: 132, top: 132, bottom: -132, near: 20, far: 900 });
+sun.shadow.camera.updateProjectionMatrix();
+sun.shadow.bias = -0.0003;
+sun.shadow.normalBias = 0.05;
+scene.add(sun, sun.target);
+const hemi = new THREE.HemisphereLight(0xdfe8f5, 0xb08a5c, 0.35);
+scene.add(hemi);
+scene.fog = new THREE.Fog(0xcfd9e2, 450, 2600);
+
+const sunDir = new THREE.Vector3();
+let envTimer = 0;
+function setSun(h) {
+  const phi = (h - 6) / 14 * Math.PI;
+  const elev = THREE.MathUtils.degToRad(Math.max(0.8, 66 * Math.sin(phi)));
+  sunDir.set(Math.cos(elev) * Math.cos(phi), Math.sin(elev), Math.cos(elev) * Math.sin(phi));
+  sun.position.copy(sunDir).multiplyScalar(450);
+  su.sunPosition.value.copy(sunDir);
+  const k = THREE.MathUtils.smoothstep(Math.sin(elev), 0.0, 0.45);
+  sun.color.setRGB(1, 0.62 + 0.34 * k, 0.38 + 0.52 * k);
+  sun.intensity = 0.5 + 2.3 * k;
+  hemi.intensity = 0.1 + 0.2 * k;
+  scene.fog.color.setRGB(0.86 - 0.06 * k, 0.74 + 0.1 * k, 0.62 + 0.25 * k);
+  renderer.toneMappingExposure = 0.5 + 0.06 * k;
+  const hh = Math.floor(h), mm = Math.round((h - hh) * 60 / 5) * 5;
+  document.getElementById('hour-label').textContent = `${String(hh + (mm === 60 ? 1 : 0)).padStart(2, '0')}:${String(mm % 60).padStart(2, '0')}`;
+  clearTimeout(envTimer);
+  envTimer = setTimeout(updateEnv, 60);
+}
+function updateEnv() {
+  const rt = pmrem.fromScene(envScene, 0, 0.1, 1000);
+  scene.environment = rt.texture;
+  if (envRT) envRT.dispose();
+  envRT = rt;
+}
+scene.environmentIntensity = 0.42;
+
+/* ------------------------------------------------------------------ *
+ *  Modes
+ * ------------------------------------------------------------------ */
+function setEra(e) {
+  era = e;
+  buildEra();
+  parts.forEach((p) => p.refresh());
+  restoredObjs.forEach((o) => (o.visible = era === 'restored'));
+  document.querySelectorAll('#seg-era button').forEach((b) => b.classList.toggle('on', b.dataset.v === era));
+  if (currentView) showCaption(currentView);
+  if (viewActive && currentView === 'top') goView('top');   // seating height differs between eras
+}
+function setFloor(f) {
+  floorMode = f;
+  floorObjs.full.forEach((o) => (o.visible = f === 'full'));
+  floorObjs.partial.forEach((o) => (o.visible = f === 'partial'));
+  floorObjs.beams.forEach((o) => (o.visible = f !== 'open'));
+  document.querySelectorAll('#seg-floor button').forEach((b) => b.classList.toggle('on', b.dataset.v === f));
+}
+
+/* ------------------------------------------------------------------ *
+ *  Viewpoints & camera flights
+ * ------------------------------------------------------------------ */
+const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
+const VIEWS = {
+  aerial: {
+    title: 'Aerial View',
+    get: () => ({ pos: V3(150, 168, 205), target: V3(0, 4, 4) }),
+    text: () => `Begun by Vespasian around AD 72 and inaugurated by Titus in AD 80 with a hundred days of games, the Flavian Amphitheatre is the largest ever built: an ellipse roughly 188 × 156 m, 48 m high, pierced by 80 arches on every storey. It held an estimated <em>50,000 spectators</em>.` +
+      (era === 'today' ? ` Today only the north side keeps its full outer ring — the southern half was brought down by earthquakes (notably in 1349) and quarried for building stone.` : ''),
+  },
+  exterior: {
+    title: 'The Façade',
+    get: () => ({ pos: V3(132, 1.7, -50), target: V3(93, 19, -10) }),
+    text: () => `Three storeys of travertine arcades are framed by engaged columns in the <em>Tuscan, Ionic and Corinthian</em> orders — heaviest at the bottom, lightest at the top. Above rises the attic, with Corinthian pilasters, small windows and stone corbels that once held the masts of the <em>velarium</em>, a vast awning rigged by sailors to shade the crowd.` +
+      (era === 'restored' ? ` Statues are thought to have filled the upper arches.` : ` The numbered ground-floor arches still served as the ticketed entrances.`),
+  },
+  arena: {
+    title: 'The Arena Floor',
+    get: () => ({ pos: V3(31, 1.7, -6), target: V3(23, 3.4, -3.2) }),
+    need: () => { if (floorMode === 'open') setFloor('partial'); },
+    text: () => `The arena (about 86 × 54 m) was a timber floor strewn with sand — <em>harena</em> in Latin, the origin of our word. A four-metre podium wall protected the front rows, where senators sat on marble seats beside the imperial box on the south side. Gladiators and beasts entered through the great gates at either end of the long axis.` +
+      (floorMode === 'partial' ? ` The wooden deck you stand on reconstructs part of the floor, exposing the hypogeum beyond.` : ''),
+  },
+  hypogeum: {
+    title: 'The Hypogeum',
+    get: () => ({ pos: V3(-5, -4.85, 0.2), target: V3(-11, -4.2, 0.6) }),
+    need: () => { if (floorMode === 'full') setFloor('partial'); },
+    text: () => `Added under Domitian, this underground warren of corridors, cells and ramps lay hidden beneath the arena. Animals, gladiators and stage scenery waited here, then were hoisted by <em>dozens of capstan-driven lifts</em> and burst through trapdoors into the arena as if by magic. Around a thousand workers may have operated the machinery during a show.`,
+  },
+  top: {
+    title: 'The Top Tier',
+    get: () => {
+      const d = era === 'restored' ? 43.2 : 38.6, y = caveaHeightAt(d, era) + 1.65;
+      const pos = V3(0, y, B0 + d), dir = V3(0, 12, 0).sub(pos).normalize();
+      return { pos, target: pos.clone().addScaledVector(dir, 9) };
+    },
+    text: () => era === 'restored'
+      ? `Some 40 m above the arena, the <em>summa cavea</em> held wooden benches for women, slaves and the poorest citizens, sheltered by a marble colonnade. Seating was strictly ordered by rank — senators at the ringside, equestrians above them, plebeians higher still — yet admission to the games was free.`
+      : `The wooden upper tiers and their colonnade are long gone; from the highest surviving terraces you look down on the stripped brick-and-tufa vaults that once carried the marble seating, and across the bowl to the surviving outer wall.`,
+  },
+};
+let currentView = null, flight = null, viewActive = false;
+
+function offsetOf(x, z) {
+  let lo = -B0 + 0.01, hi = 4000;
+  for (let i = 0; i < 40; i++) { const m = (lo + hi) / 2; ((x / (A0 + m)) ** 2 + (z / (B0 + m)) ** 2 > 1) ? (lo = m) : (hi = m); }
+  return (lo + hi) / 2;
+}
+function crossesBuilding(a, b) {
+  for (let i = 1; i < 20; i++) {
+    const p = a.clone().lerp(b, i / 20), d = offsetOf(p.x, p.z);
+    if (d > -0.5 && d < 54 && p.y < 52) return true;
+  }
+  return false;
+}
+const ease = (k) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
+
+function flyTo(pos, target, instant = false) {
+  if (instant) {
+    camera.position.copy(pos); controls.target.copy(target); controls.update(); return;
+  }
+  const p0 = camera.position.clone(), t0 = controls.target.clone(), dist = p0.distanceTo(pos);
+  let peak = Math.max(p0.y, pos.y) + THREE.MathUtils.clamp(dist * 0.15, 1, 45);
+  if (crossesBuilding(p0, pos)) peak = Math.max(peak, 82);
+  const ctrl = V3((p0.x + pos.x) / 2, 2 * peak - 0.5 * (p0.y + pos.y), (p0.z + pos.z) / 2);
+  flight = { p0, p1: pos.clone(), ctrl, t0, t1: target.clone(), start: performance.now(),
+    dur: THREE.MathUtils.clamp(1500 + dist * 7, 1800, 4200) };
+  controls.enabled = false;
+}
+function goView(name, instant = false) {
+  const v = VIEWS[name]; if (!v) return;
+  currentView = name; viewActive = true;
+  if (v.need) v.need();
+  const { pos, target } = v.get();
+  flyTo(pos, target, instant);
+  document.querySelectorAll('#views button').forEach((b) => b.classList.toggle('active', b.dataset.view === name));
+  showCaption(name);
+}
+const capEl = document.getElementById('caption');
+function showCaption(name) {
+  const v = VIEWS[name];
+  capEl.querySelector('h2').textContent = v.title;
+  capEl.querySelector('p').innerHTML = v.text();
+  capEl.classList.remove('hidden');
+}
+capEl.querySelector('.close').addEventListener('click', () => capEl.classList.add('hidden'));
+
+/* ------------------------------------------------------------------ *
+ *  UI wiring
+ * ------------------------------------------------------------------ */
+document.querySelectorAll('#views button').forEach((b) => b.addEventListener('click', () => goView(b.dataset.view)));
+document.querySelectorAll('#seg-era button').forEach((b) => b.addEventListener('click', () => setEra(b.dataset.v)));
+document.querySelectorAll('#seg-floor button').forEach((b) => b.addEventListener('click', () => setFloor(b.dataset.v)));
+const hourEl = document.getElementById('hour');
+hourEl.addEventListener('input', () => setSun(parseFloat(hourEl.value)));
+addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' && e.target.type !== 'range') return;
+  const names = ['aerial', 'exterior', 'arena', 'hypogeum', 'top'];
+  const i = parseInt(e.key, 10) - 1;
+  if (i >= 0 && i < names.length) goView(names[i]);
+});
+renderer.domElement.addEventListener('pointerdown', () => {
+  if (flight) { flight = null; controls.enabled = true; }
+});
+controls.addEventListener('start', () => {
+  viewActive = false;
+  document.querySelectorAll('#views button').forEach((b) => b.classList.remove('active'));
+});
+addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+/* ------------------------------------------------------------------ *
+ *  Init & loop
+ * ------------------------------------------------------------------ */
+const initHour = parseFloat(qs.get('hour') || '10.5');
+hourEl.value = initHour;
+setSun(initHour);
+updateEnv();
+setEra(qs.get('era') === 'today' ? 'today' : 'restored');
+setFloor(['full', 'partial', 'open'].includes(qs.get('floor')) ? qs.get('floor') : 'partial');
+const startView = VIEWS[qs.get('view')] ? qs.get('view') : 'aerial';
+goView(startView, qs.has('nofly'));
+if (qs.get('cam')) { const c = qs.get('cam').split(',').map(Number); flyTo(V3(c[0], c[1], c[2]), V3(c[3], c[4], c[5]), true); capEl.classList.add('hidden'); }
+
+const needle = document.getElementById('needle');
+const tmpV = new THREE.Vector3();
+function animate(now) {
+  if (flight) {
+    let k = Math.min(1, (now - flight.start) / flight.dur);
+    const e = ease(k), a = (1 - e) * (1 - e), b = 2 * e * (1 - e), c = e * e;
+    camera.position.set(
+      a * flight.p0.x + b * flight.ctrl.x + c * flight.p1.x,
+      a * flight.p0.y + b * flight.ctrl.y + c * flight.p1.y,
+      a * flight.p0.z + b * flight.ctrl.z + c * flight.p1.z);
+    const et = ease(Math.min(1, k * 1.15));
+    controls.target.lerpVectors(flight.t0, flight.t1, et);
+    camera.lookAt(controls.target);
+    if (k >= 1) { flight = null; controls.enabled = true; controls.update(); }
+  } else controls.update();
+  // keep the shadow frustum centred on the amphitheatre
+  sun.target.position.set(0, 0, 0);
+  camera.getWorldDirection(tmpV);
+  needle.setAttribute('transform', `rotate(${-THREE.MathUtils.radToDeg(Math.atan2(tmpV.x, -tmpV.z))} 23 23)`);
+  renderer.render(scene, camera);
+}
+renderer.setAnimationLoop(animate);
+requestAnimationFrame(() => requestAnimationFrame(() => document.getElementById('loader').classList.add('gone')));
+</script>
+<script>
+  // Surface load failures (e.g. offline / blocked CDN) instead of an endless spinner
+  addEventListener('error', (e) => {
+    const el = document.getElementById('err');
+    if (el) el.textContent = 'Could not start the 3D scene: ' + (e.message || 'a resource failed to load') + '. three.js is loaded from unpkg.com — check your connection.';
+  }, true);
+</script>
+</body>
+</html>

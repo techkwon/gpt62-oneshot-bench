@@ -2,13 +2,14 @@ import { initEvidence, taskNames } from './evidence.js';
 import { renderRecords } from './records.js';
 
 const el = id => document.getElementById(id);
-const roundNames = {plain:'기본 설정', fair:'이미지 생성 끔', ep7:'재대결'};
+const roundNames = {plain:'기본 설정', fair:'이미지 생성 끔', equal:'같은 도구', ep7:'재대결'};
 const labels = {
   plain: 'Codex 기본 설정으로 실험했어요. Astra의 레이싱과 두 GPT 모델의 캠핑카 사이트에는 내장 이미지 생성 도구가 쓰였어요.',
-  fair: 'GPT의 이미지 생성, 앱, 메모리, 웹 검색을 끄고 사용자 설정도 제외했어요. Claude는 첫 라운드 결과를 그대로 심사했어요.',
+  fair: 'GPT의 이미지 생성, 앱, 메모리, 웹 검색을 껐어요. 하지만 GPT는 여전히 명령을 실행하고 브라우저로 자기 화면을 찍어 보며 고칠 수 있었고, Codex 개인 지침(AGENTS.md)도 읽었어요. Claude는 첫 라운드 결과(파일 쓰기·고치기·읽기만)를 그대로 심사했어요.',
+  equal: 'Claude에게도 GPT와 같은 도구를 줬어요. 명령 실행, 브라우저 스크린샷, 같은 웹게임 테스트 스킬. GPT 쪽은 2라운드 결과를 그대로 썼어요.',
   ep7: '이전 강의의 과제로 다시 겨뤘어요. GPT-6.2는 이미지 도구를 끈 설정을 썼고, Claude와 GPT-6.1 Sol은 이전 결과를 사용했어요.'
 };
-const shortName = model => model.name.replace(' (fair)', '');
+const shortName = model => model.name.replace(' (fair)', '').replace(' (round 3)', '');
 const currency = value => '$' + value.toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:3});
 function icon(paths) {
   return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + paths + '</svg>';

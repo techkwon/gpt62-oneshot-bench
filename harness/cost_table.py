@@ -5,6 +5,32 @@ import json, os, glob, csv, sys
 B = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PRICE = {"astra": (8.00, 0.40, 40.00), "sol": (2.00, 0.10, 10.00), "gpt61": (2.00, 0.10, 10.00)}
 
+import re
+MODEL_PRICE = {"gpt-6.2-astra": PRICE["astra"], "gpt-6.2-sol": PRICE["sol"]}
+SESS = {}
+for f in glob.glob(os.path.expanduser("~/.codex/sessions/**/*.jsonl"), recursive=True):
+    mm = re.search(r"([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\.jsonl$", f)
+    if mm: SESS[mm.group(1)] = f
+
+def helper_cost(tid, seen):
+    """Codex sub-agents (spawned by the model itself) are billed separately from turn.completed usage."""
+    f = SESS.get(tid); usd = 0.0; n = 0
+    if not f: return 0.0, 0
+    txt = open(f, encoding="utf8", errors="ignore").read()
+    for m in re.finditer(r'"SubAgentActivity","model":"([^"]+)".{0,200}?"agent_thread_id":"([^"]+)"', txt):
+        mod, a = m.groups()
+        if a in seen: continue
+        seen.add(a)
+        sf = SESS.get(a); u = None
+        if sf:
+            for line in open(sf, encoding="utf8", errors="ignore"):
+                for x in re.findall(r'"total_token_usage":(\{[^}]+\})', line): u = json.loads(x)
+        if u and mod in MODEL_PRICE:
+            pi, pc, po = MODEL_PRICE[mod]; c = u.get("cached_input_tokens", 0)
+            usd += ((u["input_tokens"] - c) * pi + c * pc + u["output_tokens"] * po) / 1e6; n += 1
+        su, sn = helper_cost(a, seen); usd += su; n += sn
+    return usd, n
+
 def gpt_cost(d, m):
     u = None
     p = os.path.join(d, "log.jsonl")
@@ -17,7 +43,15 @@ def gpt_cost(d, m):
     pi, pc, po = PRICE[m]
     inp, cached, out = u["input_tokens"], u.get("cached_input_tokens", 0), u["output_tokens"]
     usd = ((inp - cached) * pi + cached * pc + out * po) / 1e6
-    return usd, f"in {inp:,} (cached {cached:,}) out {out:,}"
+    note = f"in {inp:,} (cached {cached:,}) out {out:,}"
+    tid = None
+    for line in open(p, encoding="utf8", errors="ignore"):
+        mm = re.search(r'"thread_id":"([^"]+)"', line)
+        if mm: tid = mm.group(1); break
+    if tid:
+        hu, hn = helper_cost(tid, set())
+        if hn: usd += hu; note += f" + {hn} helper agents ${hu:.2f}"
+    return usd, note
 
 def claude_cost(d):
     p = os.path.join(d, "log.json")
@@ -51,6 +85,8 @@ for t in ["racing", "pinball", "colosseum", "camper", "deck"]:
     for m in ["astra", "sol"]:
         add("fair", t, m + "-fair", f"{B}/runs-fair/{t}/{m}")
     add("fable-limit-failed", t, "fable", f"{B}/runs-fable-limit/{t}")
+    for m in ["fable", "opus"]:
+        add("equal", t, m + "-r3", f"{B}/runs-r3/{t}/{m}")
 for t in ["motion", "physics", "svg", "three", "game"]:
     for m in ["astra", "sol", "fable", "opus", "gpt61"]:
         add("ep7", t, m, os.path.realpath(f"{B}/runs/ep7-{t}/{m}"))

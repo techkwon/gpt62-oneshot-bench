@@ -1,6 +1,7 @@
 export const roundNames = {
   plain: "1라운드 · 기본 설정",
   fair: "2라운드 · 이미지 생성 끄기",
+  equal: "3라운드 · 같은 도구",
   ep7: "재대결 · 이전 강의 과제"
 };
 
@@ -19,7 +20,7 @@ export const taskNames = {
 
 const entities = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
 const esc = value => String(value).replace(/[&<>"']/g, char => entities[char]);
-const baseModel = id => id.replace(/-fair$/, "");
+const baseModel = id => id.replace(/-fair$/, "").replace(/-r3$/, "");
 const REPO = "https://github.com/techkwon/gpt62-oneshot-bench";
 const repoBlob = path => `${REPO}/blob/main/${path}`;
 const BLOB_LIMIT = 1000000; // GitHub's code view does not render files above ~1 MB
@@ -40,7 +41,7 @@ function cost(value) {
 export function initEvidence(data) {
   const root = document.getElementById("evidence");
   const modelName = id => data.models[baseModel(id)]?.name || data.models[id]?.name || id;
-  const shortRoundNames = {plain:"기본 설정", fair:"이미지 생성 끔", ep7:"이전 과제 재대결"};
+  const shortRoundNames = {plain:"기본 설정", fair:"이미지 생성 끔", equal:"같은 도구", ep7:"이전 과제 재대결"};
   const option = (id, label) => `<option value="${esc(id)}">${esc(label)}</option>`;
 
   root.setAttribute("aria-labelledby", "ev-heading");

@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kestrel Overland — Build &amp; price your adventure camper</title>
+<meta name="description" content="Configure your Kestrel K1 adventure camper van: colour, roof, floor plan and trail gear, with live pricing.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#ECE5D3; --paper-2:#E4DBC5; --paper-3:#D6CAAE;
+  --ink:#1A1E1B; --ink-2:#464B43; --ink-3:#7A7C70;
+  --moss:#2E3A2B; --moss-2:#43523D;
+  --rust:#CF5427; --rust-2:#A8401B;
+  --signal:#F0B23A;
+  --line:rgba(26,30,27,.16);
+  --sans:"Archivo","Helvetica Neue",Arial,system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;opacity:.22;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1  0 0 0 0 0.1  0 0 0 0 0.08  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+.mono{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.display{font-stretch:125%;font-weight:850;text-transform:uppercase;letter-spacing:-.025em;line-height:.9}
+.wrap{max-width:1440px;margin:0 auto;padding:0 28px}
+.btn{display:inline-flex;align-items:center;gap:10px;border:1.5px solid var(--ink);border-radius:999px;padding:13px 22px;font-weight:700;font-stretch:110%;text-transform:uppercase;letter-spacing:.02em;font-size:14px;text-decoration:none;background:transparent;transition:transform .2s var(--ease),box-shadow .2s var(--ease),background .2s}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:3px 3px 0 var(--ink)}
+.btn:active{transform:none;box-shadow:none}
+.btn-rust{background:var(--rust);color:#fff;border-color:var(--ink)}
+.btn-ink{background:var(--ink);color:var(--paper)}
+.btn-ink:hover{box-shadow:3px 3px 0 var(--rust)}
+:focus-visible{outline:2px solid var(--rust);outline-offset:3px}
+
+/* ---------- strip + nav ---------- */
+.strip{background:var(--ink);color:var(--paper);overflow:hidden;white-space:nowrap;height:30px;display:flex;align-items:center}
+.strip .mono{font-size:10.5px}
+.strip-track{display:inline-flex;gap:48px;animation:marq 40s linear infinite;padding-left:48px}
+.strip-track span::before{content:"◆";color:var(--signal);margin-right:12px}
+@keyframes marq{to{transform:translateX(-50%)}}
+nav.top{position:sticky;top:0;z-index:60;background:rgba(236,229,211,.86);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+nav.top .wrap{display:flex;align-items:center;height:64px;gap:28px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo svg{width:34px;height:34px}
+.logo b{font-stretch:125%;font-weight:900;letter-spacing:-.01em;font-size:17px;line-height:1}
+.logo small{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--ink-3);font-weight:500;margin-top:3px}
+nav.top ul{display:flex;gap:24px;list-style:none;margin:0 0 0 auto;padding:0}
+nav.top ul a{text-decoration:none;font-weight:600;font-size:14px;font-stretch:105%}
+nav.top ul a:hover{color:var(--rust)}
+nav.top .btn{padding:10px 18px;font-size:13px}
+
+/* ---------- hero ---------- */
+.hero{position:relative;overflow:hidden;border-bottom:1.5px solid var(--ink)}
+.topo{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.hero .wrap{position:relative;display:grid;grid-template-columns:1.35fr .9fr;gap:48px;align-items:center;padding-top:72px;padding-bottom:72px}
+.eyebrow{display:flex;gap:10px;align-items:center;margin-bottom:22px;color:var(--ink-2)}
+.eyebrow i{width:28px;height:1.5px;background:var(--rust);display:inline-block}
+.hero h1{font-size:clamp(46px,7.4vw,118px);margin:0}
+.hero h1 em{font-style:normal;color:var(--rust);display:inline-block}
+.hero h1 .thin{font-weight:300;font-stretch:62%;letter-spacing:0}
+.hero p.lede{font-size:clamp(17px,1.4vw,20px);max-width:560px;margin:26px 0 30px;color:var(--ink-2)}
+.hero-ctas{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.presets-inline{margin-top:28px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;color:var(--ink-3)}
+.presets-inline button{background:none;border:1px dashed var(--ink-3);border-radius:999px;padding:6px 12px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
+.presets-inline button:hover{border-style:solid;border-color:var(--rust);color:var(--rust)}
+
+.plate{position:relative;transform:rotate(-2.2deg);border:2px solid var(--ink);border-radius:10px;padding:26px 28px 22px;
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,.18) 0 1px,transparent 1px 3px),linear-gradient(160deg,#CFC9BA,#B7B0A0 45%,#D8D2C3 70%,#ABA494);
+  box-shadow:10px 12px 0 var(--ink);max-width:440px;justify-self:end;width:100%}
+.plate .rv{position:absolute;width:11px;height:11px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#eee,#7d786c 60%,#4a463e);border:1px solid #4a463e}
+.plate .rv:nth-child(1){top:9px;left:9px}.plate .rv:nth-child(2){top:9px;right:9px}.plate .rv:nth-child(3){bottom:9px;left:9px}.plate .rv:nth-child(4){bottom:9px;right:9px}
+.plate-h{display:flex;justify-content:space-between;border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:6px}
+.plate-h b{font-stretch:125%;font-weight:900;font-size:15px}
+.plate dl{margin:0;font-family:var(--mono);font-size:12.5px;text-transform:uppercase;letter-spacing:.05em}
+.plate dl div{display:flex;justify-content:space-between;gap:16px;padding:8px 0;border-bottom:1px solid rgba(26,30,27,.25);text-shadow:0 1px 0 rgba(255,255,255,.45)}
+.plate dt{color:#4b4a42}
+.plate dd{margin:0;font-weight:700}
+.plate .serial{display:flex;justify-content:space-between;margin-top:12px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:#4b4a42}
+.plate .stamp{position:absolute;right:-34px;top:-58px;width:110px;height:110px;border-radius:50%;background:var(--rust);color:#fff;display:grid;place-items:center;text-align:center;transform:rotate(14deg);border:2px solid var(--ink);font-stretch:120%;font-weight:900;font-size:13px;line-height:1.05;text-transform:uppercase}
+.plate .stamp small{display:block;font-family:var(--mono);font-weight:500;font-size:9px;letter-spacing:.12em;margin-top:4px}
+
+.terrain{background:var(--rust);color:var(--ink);border-bottom:1.5px solid var(--ink);overflow:hidden;white-space:nowrap}
+.terrain .strip-track{animation-duration:55s;padding:14px 0 14px 48px}
+.terrain span{font-stretch:125%;font-weight:900;font-size:22px;text-transform:uppercase;letter-spacing:-.01em}
+.terrain span::before{color:var(--paper)}
+
+/* ---------- configurator ---------- */
+.build{padding:72px 0 40px}
+.sec-head{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:28px;flex-wrap:wrap}
+.sec-head h2{font-size:clamp(36px,4.6vw,68px);margin:8px 0 0}
+.sec-head p{max-width:440px;margin:0;color:var(--ink-2)}
+.cfg{display:grid;grid-template-columns:minmax(0,1fr) 450px;gap:28px;align-items:start}
+.stage{position:sticky;top:80px}
+.stage-card{border:1.5px solid var(--ink);border-radius:18px;overflow:hidden;background:var(--moss);box-shadow:8px 8px 0 var(--ink)}
+.stage-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;background:var(--ink);color:var(--paper)}
+.seg{display:inline-flex;border:1px solid rgba(236,229,211,.35);border-radius:999px;padding:3px;gap:2px}
+.seg button{border:0;background:transparent;color:var(--paper);border-radius:999px;padding:6px 13px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;display:inline-flex;gap:6px;align-items:center}
+.seg button[aria-pressed="true"]{background:var(--paper);color:var(--ink)}
+.seg svg{width:13px;height:13px}
+.views{position:relative;aspect-ratio:2.25/1;background:#E9E1CE}
+.views>svg{position:absolute;inset:0;width:100%;height:100%;display:block;transition:opacity .45s var(--ease),transform .45s var(--ease)}
+#plan{background-color:#E9E1CE;background-image:linear-gradient(rgba(26,30,27,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(26,30,27,.07) 1px,transparent 1px);background-size:20px 20px}
+.views[data-view="side"] #plan,.views[data-view="plan"] #van{opacity:0;transform:scale(.985);pointer-events:none}
+.view-tag{position:absolute;left:14px;top:12px;z-index:2;background:rgba(26,30,27,.82);color:var(--paper);padding:5px 10px;border-radius:6px;pointer-events:none}
+.view-hint{position:absolute;right:14px;top:12px;z-index:2;background:var(--signal);color:var(--ink);padding:5px 10px;border-radius:6px;pointer-events:none;opacity:0;transform:translateY(-6px);transition:.35s var(--ease)}
+.view-hint.show{opacity:1;transform:none}
+.readout{display:grid;grid-template-columns:repeat(5,1fr);background:var(--ink);color:var(--paper)}
+.readout>div{padding:12px 14px 13px;border-right:1px solid rgba(236,229,211,.12);min-width:0}
+.readout>div:last-child{border-right:0}
+.readout .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;white-space:nowrap}
+.readout .v{font-stretch:118%;font-weight:800;font-size:22px;line-height:1.15;white-space:nowrap;transition:color .3s}
+.readout .v small{font-size:12px;font-weight:600;opacity:.7;margin-left:2px}
+.readout .v.flash{color:var(--signal)}
+.bar{height:4px;background:rgba(236,229,211,.15);border-radius:2px;margin-top:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--signal);border-radius:2px;transition:width .5s var(--ease),background .3s}
+.bar i.warn{background:var(--rust)}
+.stage-foot{display:flex;justify-content:space-between;gap:12px;margin-top:14px;color:var(--ink-3);flex-wrap:wrap}
+
+.panel{display:flex;flex-direction:column;gap:16px;padding-bottom:110px}
+.stepnav{position:sticky;top:72px;z-index:5;display:flex;gap:4px;background:var(--paper);padding:8px 0;border-bottom:1px solid var(--line)}
+.stepnav a{flex:1;text-align:center;text-decoration:none;padding:7px 2px;border-radius:8px;font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);transition:.2s}
+.stepnav a b{display:block;font-size:9px;color:var(--rust);font-weight:700}
+.stepnav a.on{background:var(--ink);color:var(--paper)}
+.stepnav a.on b{color:var(--signal)}
+.presets{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.presets .mono{color:var(--ink-3);margin-right:4px}
+.presets button{border:1.5px solid var(--ink);background:var(--paper);border-radius:999px;padding:6px 12px;font-weight:700;font-size:12.5px;font-stretch:110%;transition:.2s}
+.presets button:hover{background:var(--ink);color:var(--paper)}
+.step{border:1.5px solid var(--ink);border-radius:16px;padding:20px;background:var(--paper-2);scroll-margin-top:130px}
+.step-h{display:flex;align-items:baseline;gap:12px;margin-bottom:14px}
+.step-n{color:var(--rust);font-weight:700}
+.step-t{font-stretch:122%;font-weight:850;text-transform:uppercase;font-size:21px;letter-spacing:-.01em;margin:0}
+.step-sel{margin-left:auto;color:var(--ink-2);text-align:right}
+.step-note{font-size:13px;color:var(--ink-2);margin:12px 0 0}
+
+.opt{position:relative;display:block;cursor:pointer}
+.opt input,.sw input,.ad input,.fin input{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px}
+.ob{display:flex;flex-direction:column;gap:3px;height:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--paper);transition:transform .18s var(--ease),box-shadow .18s var(--ease),border-color .18s}
+.opt:hover .ob{border-color:var(--ink-2)}
+.opt input:checked+.ob{border-color:var(--ink);box-shadow:4px 4px 0 var(--ink);transform:translate(-2px,-2px)}
+.opt input:focus-visible+.ob,.sw input:focus-visible+.sw-b,.ad input:focus-visible+.ad-b,.fin input:focus-visible+span{outline:2px solid var(--rust);outline-offset:2px}
+.ob-row{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.ob-name{font-stretch:112%;font-weight:800;font-size:16px}
+.ob-price{font-family:var(--mono);font-size:12px;font-weight:700;white-space:nowrap}
+.ob-price.inc{color:var(--moss-2)}
+.ob-desc{font-size:13px;color:var(--ink-2);line-height:1.4}
+.ob-meta{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin-top:4px}
+.opt input:checked+.ob .ob-name::after{content:"";display:inline-block;width:8px;height:8px;background:var(--rust);border-radius:50%;margin-left:8px;vertical-align:middle}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.roof-ico{width:100%;height:46px;color:var(--ink-2);margin-bottom:6px}
+.opt input:checked+.ob .roof-ico{color:var(--ink)}
+.roof-ico .accent{fill:var(--rust)}
+.lay-thumb{width:100%;height:auto;margin-bottom:8px;border-radius:6px;background:#E9E1CE}
+
+.swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.sw{cursor:pointer;display:block}
+.sw-b{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px 10px;border-radius:12px;border:1.5px solid transparent;transition:.18s var(--ease)}
+.sw:hover .sw-b{border-color:var(--line);background:var(--paper)}
+.sw input:checked+.sw-b{border-color:var(--ink);background:var(--paper);box-shadow:4px 4px 0 var(--ink);transform:translate(-2px,-2px)}
+.sw-dot{width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.55),rgba(255,255,255,0) 42%),radial-gradient(circle at 70% 80%,rgba(0,0,0,.28),rgba(0,0,0,0) 55%),var(--c);border:1.5px solid var(--ink);position:relative}
+.sw-tag{position:absolute;top:-6px;right:-14px;background:var(--signal);border:1px solid var(--ink);border-radius:4px;font-family:var(--mono);font-size:8px;padding:1px 4px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink)}
+.sw-n{font-weight:800;font-stretch:110%;font-size:13.5px;line-height:1}
+.sw-p{font-family:var(--mono);font-size:10.5px;color:var(--ink-2)}
+
+.fins{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;align-items:center}
+.fins .mono{color:var(--ink-3);margin-right:4px}
+.fin{cursor:pointer}
+.fin span{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--line);border-radius:999px;padding:5px 12px 5px 6px;background:var(--paper);font-size:13px;font-weight:600;transition:.18s}
+.fin span i{width:20px;height:20px;border-radius:50%;border:1px solid var(--ink);background:var(--c)}
+.fin span em{font-style:normal;font-family:var(--mono);font-size:10.5px;color:var(--ink-3)}
+.fin input:checked+span{border-color:var(--ink);background:var(--ink);color:var(--paper)}
+.fin input:checked+span em{color:var(--signal)}
+
+.ad-group{margin-top:6px}
+.ad-group+.ad-group{margin-top:16px}
+.ad-group h4{margin:0 0 8px;color:var(--ink-3)}
+.ad{display:block;cursor:pointer}
+.ad+.ad{margin-top:6px}
+.ad-b{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:10px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--paper);transition:.18s var(--ease)}
+.ad:hover .ad-b{border-color:var(--ink-2)}
+.ad input:checked+.ad-b{border-color:var(--ink);box-shadow:3px 3px 0 var(--ink);transform:translate(-1px,-1px)}
+.tg{width:36px;height:21px;border-radius:999px;border:1.5px solid var(--ink);position:relative;background:var(--paper-3);transition:.2s}
+.tg::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--ink);transition:transform .25s var(--ease)}
+.ad input:checked+.ad-b .tg{background:var(--rust)}
+.ad input:checked+.ad-b .tg::after{transform:translateX(15px);background:#fff}
+.ad-t b{display:flex;align-items:center;gap:6px;font-weight:750;font-stretch:108%;font-size:14.5px;line-height:1.25}
+.ad-t small{display:block;font-size:12.5px;color:var(--ink-2);line-height:1.35;margin-top:2px}
+.ad-t .eye{width:15px;height:15px;color:var(--ink-3);flex:none}
+.ad-p{text-align:right;font-family:var(--mono);font-size:12px;font-weight:700;white-space:nowrap}
+.ad-p small{display:block;font-weight:400;color:var(--ink-3);font-size:10px}
+.legend{display:flex;align-items:center;gap:6px;color:var(--ink-3);margin-top:10px}
+.legend svg{width:14px;height:14px}
+
+.sum{list-style:none;margin:0;padding:0;font-size:14px}
+.sum li{display:flex;align-items:baseline;gap:8px;padding:6px 0}
+.sum li span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:70%}
+.sum li .dots{flex:1;border-bottom:1.5px dotted var(--ink-3);transform:translateY(-4px);min-width:12px}
+.sum li .p{font-family:var(--mono);font-size:12.5px;font-weight:700;white-space:nowrap}
+.sum li.base span:first-child{font-weight:700}
+.total-box{margin-top:14px;padding-top:14px;border-top:2px solid var(--ink);display:flex;justify-content:space-between;align-items:end;gap:12px}
+.total-box .big{font-stretch:120%;font-weight:900;font-size:40px;line-height:1;letter-spacing:-.02em}
+.total-box .sub{color:var(--ink-2);font-size:13px;margin-top:6px}
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
+.meta-grid div{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.meta-grid .mono{color:var(--ink-3);font-size:9.5px}
+.meta-grid b{display:block;font-stretch:112%;font-size:16px;margin-top:2px}
+.std{margin-top:14px;font-size:13px;color:var(--ink-2)}
+.std summary{cursor:pointer;font-weight:700;color:var(--ink)}
+.std ul{margin:8px 0 0;padding-left:18px;columns:2;column-gap:20px}
+.act-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.act-row .btn{padding:11px 16px;font-size:12.5px}
+.act-row .btn-rust{flex:1;justify-content:center}
+
+.pricebar{position:fixed;left:50%;bottom:14px;z-index:70;width:min(1100px,calc(100% - 20px));transform:translate(-50%,160%);transition:transform .5s var(--ease);
+  background:var(--ink);color:var(--paper);border-radius:18px;display:flex;align-items:center;gap:22px;padding:10px 10px 10px 22px;box-shadow:0 18px 40px rgba(0,0,0,.28),5px 5px 0 var(--rust)}
+.pricebar.show{transform:translate(-50%,0)}
+.pb-cfg{min-width:0;flex:1}
+.pb-cfg .mono{color:var(--signal);font-size:10px}
+.pb-cfg div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13.5px;opacity:.85}
+.pb-price{text-align:right;position:relative}
+.pb-price b{display:block;font-stretch:120%;font-weight:900;font-size:28px;line-height:1}
+.pb-price small{font-family:var(--mono);font-size:10.5px;opacity:.65}
+.delta{position:absolute;right:calc(100% + 14px);top:50%;margin-top:-12px;background:var(--signal);color:var(--ink);font-family:var(--mono);font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;opacity:0;transform:translateY(6px);transition:.3s var(--ease);pointer-events:none;white-space:nowrap}
+.delta.neg{background:#9BC28A}
+.delta.show{opacity:1;transform:translateY(0)}
+.delta{transform:translateX(8px)}.delta.show{transform:none}
+.pricebar .btn{border-color:var(--paper);padding:13px 20px}
+
+/* ---------- other sections ---------- */
+section.dark{background:var(--moss);color:var(--paper);border-top:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink);position:relative;overflow:hidden}
+.feats{display:grid;grid-template-columns:repeat(4,1fr);border-left:1px solid rgba(236,229,211,.18)}
+.feat{padding:34px 26px 38px;border-right:1px solid rgba(236,229,211,.18)}
+.feat .num{font-stretch:125%;font-weight:900;font-size:clamp(40px,4.4vw,64px);line-height:1;color:var(--signal);letter-spacing:-.03em}
+.feat h3{font-stretch:115%;text-transform:uppercase;font-size:17px;margin:14px 0 8px}
+.feat p{margin:0;font-size:14.5px;opacity:.8}
+.dark .sec-head{padding-top:72px}
+.dark .sec-head p{color:rgba(236,229,211,.75)}
+.dark .pad{padding-bottom:80px}
+
+.quote{padding:96px 0;text-align:center;position:relative}
+.quote blockquote{margin:0 auto;max-width:1100px;font-stretch:118%;font-weight:800;font-size:clamp(28px,3.6vw,52px);line-height:1.08;letter-spacing:-.02em;text-transform:uppercase}
+.quote blockquote::before{content:"“";display:block;font-size:1.8em;line-height:.6;color:var(--rust)}
+.quote cite{display:block;margin-top:24px;font-style:normal;color:var(--ink-2)}
+
+.process{padding:80px 0;border-top:1.5px solid var(--ink)}
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:0;counter-reset:s;position:relative;margin-top:16px}
+.steps li{list-style:none;padding:26px 22px 0 0;position:relative;border-top:2px solid var(--ink)}
+.steps li::before{counter-increment:s;content:"0" counter(s);position:absolute;top:-14px;left:0;background:var(--paper);padding-right:10px;font-family:var(--mono);font-size:12px;font-weight:700;color:var(--rust)}
+.steps li::after{content:"";position:absolute;top:-7px;right:22px;width:12px;height:12px;border-top:2px solid var(--ink);border-right:2px solid var(--ink);transform:rotate(45deg)}
+.steps li:last-child::after{display:none}
+.steps h3{margin:0 0 6px;font-stretch:118%;text-transform:uppercase;font-size:19px}
+.steps p{margin:0;font-size:14.5px;color:var(--ink-2)}
+.steps .mono{display:inline-block;margin-top:10px;background:var(--ink);color:var(--paper);padding:3px 8px;border-radius:4px;font-size:10px}
+.steps{padding:0}
+
+.faq{padding:80px 0;border-top:1.5px solid var(--ink);display:grid;grid-template-columns:.8fr 1.2fr;gap:48px}
+.faq h2{font-size:clamp(36px,4.4vw,64px);margin:8px 0 0}
+.faq details{border-top:1.5px solid var(--ink);padding:18px 0}
+.faq details:last-child{border-bottom:1.5px solid var(--ink)}
+.faq summary{cursor:pointer;font-stretch:112%;font-weight:750;font-size:19px;list-style:none;display:flex;justify-content:space-between;gap:16px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-family:var(--mono);font-weight:400;font-size:22px;line-height:1;transition:transform .25s}
+.faq details[open] summary::after{transform:rotate(45deg);color:var(--rust)}
+.faq details p{margin:10px 0 0;color:var(--ink-2);max-width:640px}
+
+footer{background:var(--ink);color:var(--paper);padding:64px 0 28px;overflow:hidden}
+.foot-word{font-stretch:125%;font-weight:900;font-size:clamp(56px,13vw,210px);line-height:.82;letter-spacing:-.04em;text-transform:uppercase;margin:0 0 36px;color:var(--paper)}
+.foot-word span{color:var(--rust)}
+.foot-row{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;color:rgba(236,229,211,.6);border-top:1px solid rgba(236,229,211,.2);padding-top:20px}
+.foot-row a{text-decoration:none}
+.foot-row a:hover{color:var(--signal)}
+
+/* ---------- dialog ---------- */
+dialog{border:1.5px solid var(--ink);border-radius:20px;padding:0;max-width:880px;width:calc(100% - 24px);background:var(--paper);color:var(--ink);box-shadow:10px 10px 0 var(--ink)}
+dialog::backdrop{background:rgba(20,24,21,.6);backdrop-filter:blur(3px)}
+.dlg{display:grid;grid-template-columns:1.05fr 1fr}
+.dlg-sheet{padding:28px;background:var(--paper-2);border-right:1.5px solid var(--ink)}
+.dlg-sheet h3,.dlg-form h3{font-stretch:122%;font-weight:900;text-transform:uppercase;font-size:24px;margin:6px 0 14px;line-height:1}
+.dlg-form{padding:28px;position:relative}
+.dlg-x{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;border:1.5px solid var(--ink);background:var(--paper);font-size:18px;line-height:1}
+.field{display:block;margin-bottom:12px}
+.field span{display:block;margin-bottom:4px;color:var(--ink-2)}
+.field input,.field select{width:100%;font:inherit;padding:11px 12px;border:1.5px solid var(--ink);border-radius:10px;background:#F5F0E4}
+.dlg-form .fine{font-size:12.5px;color:var(--ink-3);margin:12px 0 0}
+.ok{text-align:center;padding:20px 0}
+.ok .tick{width:64px;height:64px;border-radius:50%;background:var(--rust);color:#fff;display:grid;place-items:center;margin:0 auto 14px;border:1.5px solid var(--ink);font-size:30px}
+
+.toast{position:fixed;left:50%;top:84px;transform:translate(-50%,-20px);background:var(--signal);color:var(--ink);border:1.5px solid var(--ink);padding:10px 16px;border-radius:12px;font-weight:650;font-size:14px;z-index:200;opacity:0;pointer-events:none;transition:.35s var(--ease);box-shadow:4px 4px 0 var(--ink);max-width:calc(100% - 24px)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+
+/* plan svg */
+.pl-label{font-family:var(--mono);font-size:12px;letter-spacing:.04em;text-transform:uppercase;fill:var(--ink);paint-order:stroke;stroke:#F2ECDD;stroke-width:3.5px;stroke-linejoin:round;font-weight:500}
+.pl-label.inv{fill:#F2ECDD;stroke:#1A1E1B}
+.pl-dim{font-family:var(--mono);font-size:12px;letter-spacing:.08em;fill:var(--ink-2);text-transform:uppercase}
+.mod{animation:modIn .55s var(--ease) both;transform-box:fill-box;transform-origin:center}
+@keyframes modIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+#van .acc{transition:opacity .45s var(--ease)}
+#van .paint{transition:fill .7s var(--ease)}
+
+@media (max-width:1100px){
+  .cfg{grid-template-columns:minmax(0,1fr) 400px}
+  .readout{grid-template-columns:repeat(3,1fr)}
+  .readout>div:nth-child(n+4){display:none}
+  nav.top ul{display:none}
+  nav.top .btn{margin-left:auto}
+}
+@media (max-width:900px){
+  .wrap{padding:0 16px}
+  .hero .wrap{grid-template-columns:1fr;padding-top:44px;padding-bottom:64px}
+  .plate{justify-self:start;max-width:100%}
+  .cfg{grid-template-columns:1fr}
+  .stage{position:sticky;top:64px;z-index:20;margin:0 -16px}
+  .stage-card{border-radius:0;box-shadow:none;border-left:0;border-right:0}
+  .stage-foot{display:none}
+  .readout .v{font-size:17px}
+  .readout>div{padding:8px 10px}
+  .stepnav{top:auto;position:relative}
+  .feats{grid-template-columns:1fr 1fr}
+  .steps{grid-template-columns:1fr;gap:28px}
+  .steps li::after{display:none}
+  .faq{grid-template-columns:1fr;gap:16px}
+  .dlg{grid-template-columns:1fr}
+  .dlg-sheet{border-right:0;border-bottom:1.5px solid var(--ink)}
+  .pricebar{gap:12px;padding-left:16px;bottom:8px}
+  .pb-cfg{display:none}
+  .pb-price{flex:1;text-align:left}
+  .pb-price b{font-size:24px}
+  .delta{left:auto;right:0;top:-34px;margin-top:0}
+}
+@media (max-width:520px){
+  .swatches{grid-template-columns:repeat(4,1fr);gap:4px}
+  .sw-dot{width:38px;height:38px}
+  .grid3{gap:6px}
+  #optRoof .ob-desc,#optRoof .ob-meta{display:none}
+  #optRoof .ob{padding:10px}
+  #optRoof .ob-name{font-size:14px}
+  .grid2{grid-template-columns:1fr}
+  .step{padding:16px}
+  .stage-bar .mono.lbl{display:none}
+  .std ul{columns:1}
+  .feats{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
+<body>
+
+<div class="strip" aria-hidden="true"><div class="strip-track mono">
+  <span>Spring 2027 build slots — 14 of 40 remaining</span><span>€500 fully refundable reservation</span><span>Hand-built in batches of 40</span><span>5-year habitation warranty</span><span>Free first night at a partner site on handover</span>
+  <span>Spring 2027 build slots — 14 of 40 remaining</span><span>€500 fully refundable reservation</span><span>Hand-built in batches of 40</span><span>5-year habitation warranty</span><span>Free first night at a partner site on handover</span>
+</div></div>
+
+<nav class="top" aria-label="Main">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Kestrel Overland home">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="1" y="1" width="38" height="38" rx="9" fill="#1A1E1B"/><path d="M7 25 L17 15 L21 19 L33 10 L27 22 L22 19 L14 28 Z" fill="#CF5427"/><path d="M7 31 H33" stroke="#F0B23A" stroke-width="2.4" stroke-linecap="round"/></svg>
+      <span><b>KESTREL</b><small>OVERLAND CO.</small></span>
+    </a>
+    <ul>
+      <li><a href="#build">Configure</a></li>
+      <li><a href="#built">Built different</a></li>
+      <li><a href="#process">How it works</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <a class="btn btn-ink" href="#build">Build yours</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <svg class="topo" id="topo" aria-hidden="true"></svg>
+  <div class="wrap">
+    <div>
+      <div class="eyebrow mono"><i></i>K1 Adventure camper · built in small batches</div>
+      <h1 class="display">Further than <span class="thin">the</span> road <em>goes.</em></h1>
+      <p class="lede">A 4×4-ready camper van built around how you actually travel. Choose the colour, roof, floor plan and trail gear, and see exactly what your build costs. You don't need to speak to a salesperson.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-rust" href="#build">Configure your K1 <span aria-hidden="true">→</span></a>
+        <span class="mono" style="color:var(--ink-2)">From <b id="heroFrom">€58,900</b> · or <b id="heroMo">€—</b>/mo</span>
+      </div>
+      <div class="presets-inline"><span class="mono">Or start from a proven build:</span>
+        <button data-preset="weekender">Weekender</button><button data-preset="overlander">Overlander</button><button data-preset="offgrid">Off-grid Pro</button>
+      </div>
+    </div>
+    <div class="plate" aria-label="K1 specification plate">
+      <span class="rv"></span><span class="rv"></span><span class="rv"></span><span class="rv"></span>
+      <div class="plate-h"><b>KESTREL OVERLAND</b><span class="mono">Type K1</span></div>
+      <dl>
+        <div><dt>Max. GVW</dt><dd>3,500 kg</dd></div>
+        <div><dt>Sleeps</dt><dd>2 – 5</dd></div>
+        <div><dt>Off-grid</dt><dd>Up to 21 days</dd></div>
+        <div><dt>Drive</dt><dd>2WD / AWD 4×4</dd></div>
+        <div><dt>Insulation</dt><dd>Rated −25 °C</dd></div>
+        <div><dt>Build time</dt><dd>14 – 18 wks</dd></div>
+      </dl>
+      <div class="serial"><span>VIN KO1·K1·27·</span><span>№ 0418 / 0440</span></div>
+      <div class="stamp"><span>14 slots<small>left · spring 27</small></span></div>
+    </div>
+  </div>
+</header>
+
+<div class="terrain" aria-hidden="true"><div class="strip-track">
+  <span>Fjord roads</span><span>Dune tracks</span><span>Alpine passes</span><span>Forest service roads</span><span>Coastal pull-outs</span><span>Desert washes</span>
+  <span>Fjord roads</span><span>Dune tracks</span><span>Alpine passes</span><span>Forest service roads</span><span>Coastal pull-outs</span><span>Desert washes</span>
+</div></div>
+
+<!-- ================= CONFIGURATOR ================= -->
+<main>
+<section class="build" id="build" aria-labelledby="buildTitle">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><span class="mono" style="color:var(--rust)">Configurator · K1</span><h2 class="display" id="buildTitle">Build your camper</h2></div>
+      <p>Every choice updates the van, the floor plan, the spec readout and the price as you make it. Your build is saved in the link, so you can share it or come back to it later.</p>
+    </div>
+
+    <div class="cfg">
+      <!-- stage -->
+      <div class="stage">
+        <div class="stage-card">
+          <div class="stage-bar">
+            <div class="seg" role="group" aria-label="Preview view">
+              <button type="button" data-view="side" aria-pressed="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 11V5h9l3 3v3z"/><circle cx="4" cy="12" r="1.6" fill="currentColor"/><circle cx="11" cy="12" r="1.6" fill="currentColor"/></svg>Side</button>
+              <button type="button" data-view="plan" aria-pressed="false"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1.5" y="3.5" width="13" height="9" rx="1.5"/><path d="M6 3.5v9M6 8h8.5"/></svg>Floor plan</button>
+            </div>
+            <span class="mono lbl" style="opacity:.6">Live preview</span>
+            <div class="seg" role="group" aria-label="Scene">
+              <button type="button" data-scene="day" aria-pressed="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6L13 13M3 13l1.4-1.4M11.6 4.4L13 3"/></svg>Day</button>
+              <button type="button" data-scene="camp" aria-pressed="false"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M10.5 1.5a6.5 6.5 0 1 0 4 11.6A6 6 0 0 1 10.5 1.5z"/></svg>Camp</button>
+            </div>
+          </div>
+          <div class="views" id="views" data-view="side">
+            <span class="view-tag mono" id="viewTag">Exterior · driver side</span>
+            <span class="view-hint mono" id="viewHint"></span>
+
+            <svg id="van" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMax slice" role="img" aria-label="Side view of your configured camper van">
+              <defs>
+                <linearGradient id="g-sky" x1="0" y1="0" x2="0" y2="1"><stop id="sky1" offset="0" stop-color="#B9CFCB"/><stop id="sky2" offset="1" stop-color="#F2E2BF"/></linearGradient>
+                <linearGradient id="g-shade" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#fff" stop-opacity=".32"/><stop offset=".3" stop-color="#fff" stop-opacity=".04"/>
+                  <stop offset=".75" stop-color="#000" stop-opacity=".05"/><stop offset="1" stop-color="#000" stop-opacity=".28"/>
+                </linearGradient>
+                <linearGradient id="g-glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#46575c"/><stop offset=".55" stop-color="#1b2427"/><stop offset="1" stop-color="#0f1517"/></linearGradient>
+                <pattern id="g-stripe" width="30" height="80" patternUnits="userSpaceOnUse"><rect width="15" height="80" fill="#CF5427"/><rect x="15" width="15" height="80" fill="#F2EAD8"/></pattern>
+                <linearGradient id="g-beam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFF1C2" stop-opacity=".75"/><stop offset="1" stop-color="#FFF1C2" stop-opacity="0"/></linearGradient>
+                <radialGradient id="g-warm"><stop offset="0" stop-color="#FFD98F" stop-opacity=".95"/><stop offset="1" stop-color="#FFB24A" stop-opacity="0"/></radialGradient>
+                <clipPath id="c-body"><path id="bodyClip"/></clipPath>
+              </defs>
+
+              <g id="sceneBg">
+                <rect width="1000" height="500" fill="url(#g-sky)"/>
+                <g id="stars" opacity="0"></g>
+                <circle id="sun" cx="820" cy="110" r="30" fill="#F7C65A"/>
+                <path id="moon" d="M190 66 a26 26 0 1 0 22 40 a21 21 0 1 1 -22 -40z" fill="#F4EBD8" opacity="0"/>
+                <path id="mtnFar" d="M0 300 L70 255 L140 272 L235 188 L310 238 L395 205 L470 150 L555 228 L640 196 L725 118 L805 205 L885 168 L1000 228 L1000 440 L0 440Z"/>
+                <path id="snow" d="M450 166 L470 150 L493 170 L481 166 L471 175 L461 167Z M703 138 L725 118 L750 142 L737 137 L726 147 L714 139Z M218 203 L235 188 L252 205 L241 201 L234 208Z" fill="#F6F2E8"/>
+                <path id="mtnMid" d="M0 345 L90 296 L180 322 L290 262 L380 312 L495 282 L600 330 L700 272 L815 322 L915 284 L1000 314 L1000 440 L0 440Z"/>
+                <g id="trees"></g>
+                <rect id="ground" y="432" width="1000" height="68"/>
+                <rect id="track" y="439" width="1000" height="16"/>
+                <g id="pebbles"></g>
+              </g>
+
+              <g id="veh">
+                <ellipse id="shadow" cx="520" cy="443" rx="410" ry="9" fill="#000" opacity=".28"/>
+                <g id="bodyG">
+                  <!-- rear: bikes & spare -->
+                  <g id="bikesG" class="acc" opacity="0">
+                    <path d="M150 300 H118 V360 H150" fill="none" stroke="#2A2D2A" stroke-width="6"/>
+                    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+                      <g stroke="#1E2220" stroke-width="5"><circle cx="40" cy="330" r="29"/><circle cx="126" cy="330" r="29"/></g>
+                      <path d="M40 330 L70 290 L112 290 L84 330 Z M70 290 L65 278 M112 290 L126 330 M106 276 L116 276 M110 276 L112 290" stroke="#CF5427" stroke-width="5"/>
+                      <g stroke="#1E2220" stroke-width="5" transform="translate(16,8)"><circle cx="40" cy="330" r="29" opacity=".85"/><circle cx="126" cy="330" r="29" opacity=".85"/></g>
+                      <path transform="translate(16,8)" d="M40 330 L70 290 L112 290 L84 330 Z M70 290 L65 278 M112 290 L126 330 M106 276 L116 276 M110 276 L112 290" stroke="#2F5B6D" stroke-width="5"/>
+                    </g>
+                  </g>
+                  <g id="spareG" class="acc" opacity="0">
+                    <rect x="146" y="300" width="16" height="44" fill="#2A2D2A"/>
+                    <rect x="122" y="266" width="30" height="112" rx="13" fill="#161816"/>
+                    <path d="M128 276 V368 M146 276 V368" stroke="#2c302c" stroke-width="3" stroke-dasharray="6 5"/>
+                  </g>
+                  <!-- pop top -->
+                  <g id="popG">
+                    <path id="canvas" fill="#6F6B4F" stroke="#3E3C2C" stroke-width="1.5"/>
+                    <path id="canvasWin" fill="#2F3328" stroke="#3E3C2C" stroke-width="1.5"/>
+                    <path id="cap" class="paint" stroke="#1A1E1B" stroke-width="1.5"/>
+                  </g>
+                  <!-- body -->
+                  <path id="bodyP" class="paint" stroke="#1A1E1B" stroke-width="2"/>
+                  <g clip-path="url(#c-body)">
+                    <rect x="140" y="100" width="760" height="300" fill="url(#g-shade)"/>
+                    <g id="stripes">
+                      <path id="st1" d="M158 334 H600 L612 322 H880 V326 H614 L602 338 H158Z"/>
+                      <path id="st2" d="M158 342 H604 L616 330 H880 V334 H618 L606 346 H158Z"/>
+                      <path id="st3" d="M158 350 H608 L620 338 H880 V342 H622 L610 354 H158Z"/>
+                    </g>
+                    <rect x="140" y="363" width="760" height="40" fill="#24282A"/>
+                    <path id="highRib" d="M160 170 H705" stroke="#000" stroke-opacity=".14" stroke-width="2" fill="none"/>
+                  </g>
+                  <!-- panel details -->
+                  <g fill="none" stroke="#000" stroke-opacity=".28" stroke-width="1.6">
+                    <path d="M476 363 V228 H618 V363"/>
+                    <path d="M652 363 V228 H760"/>
+                    <path d="M640 228 V363" stroke-opacity=".12"/>
+                    <path d="M176 228 V363" stroke-opacity=".18"/>
+                  </g>
+                  <rect x="196" y="240" width="136" height="54" rx="9" fill="url(#g-glass)" stroke="#1A1E1B" stroke-width="1.5"/>
+                  <rect x="490" y="240" width="112" height="54" rx="7" fill="url(#g-glass)" stroke="#1A1E1B" stroke-width="1.5"/>
+                  <path d="M664 234 H756 L814 292 H664 Z" fill="url(#g-glass)" stroke="#1A1E1B" stroke-width="1.5"/>
+                  <path d="M205 245 L232 245 L210 288 L200 288Z M500 245 L522 245 L503 288 L495 288Z M672 240 L700 240 L680 286 L670 286Z" fill="#fff" opacity=".12"/>
+                  <path d="M764 222 L838 292" stroke="#20292c" stroke-width="7" stroke-linecap="round"/>
+                  <path d="M812 262 L838 260 L842 278 L818 280 Z" fill="#1E2220"/>
+                  <rect x="590" y="306" width="22" height="5" rx="2" fill="#1E2220"/>
+                  <rect x="732" y="306" width="22" height="5" rx="2" fill="#1E2220"/>
+                  <path d="M866 312 L882 318 L884 338 L868 336 Z" fill="#F3EED9" stroke="#1A1E1B" stroke-width="1.5"/>
+                  <rect x="158" y="292" width="9" height="46" rx="2" fill="#B5321C" stroke="#1A1E1B" stroke-width="1.2"/>
+                  <rect x="146" y="368" width="30" height="28" rx="4" fill="#1E2220"/>
+                  <path d="M856 364 H888 Q894 364 894 372 V390 Q894 398 886 398 H856Z" fill="#1E2220"/>
+                  <text id="decalWord" x="196" y="320" font-family="JetBrains Mono, monospace" font-size="13" letter-spacing="6" font-weight="700">KESTREL</text>
+                  <text id="decal44" x="340" y="320" font-family="Archivo, sans-serif" font-size="14" font-weight="900" font-stretch="125%" opacity="0">4×4</text>
+                  <!-- arches -->
+                  <path d="M234 393 A56 56 0 0 1 346 393 Z M689 393 A56 56 0 0 1 801 393 Z" fill="#111311"/>
+                  <path id="flares" class="acc" d="M228 393 A62 62 0 0 1 352 393 M683 393 A62 62 0 0 1 807 393" fill="none" stroke="#2A2E2B" stroke-width="10" opacity="0"/>
+                  <!-- snorkel -->
+                  <g id="snorkelG" class="acc" opacity="0">
+                    <path d="M850 352 V314 Q850 304 842 296 L780 234 V214" fill="none" stroke="#1C1F1D" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <rect x="770" y="200" width="22" height="16" rx="4" fill="#1C1F1D"/>
+                  </g>
+                  <!-- ladder -->
+                  <path id="ladderP" class="acc" fill="none" stroke="#2A2D2A" stroke-width="3.5" stroke-linecap="round" opacity="0"/>
+                  <!-- roof accessories -->
+                  <path id="rackP" class="acc" fill="none" stroke="#1F2320" stroke-width="4.5" stroke-linecap="round" opacity="0"/>
+                  <g id="solarG" class="acc" opacity="0"><path id="solarP" fill="#22395A" stroke="#11141A" stroke-width="1.2"/><path id="solarHi" fill="none" stroke="#8FB2D8" stroke-width="1.2" stroke-opacity=".8"/></g>
+                  <path id="starP" class="acc" fill="#EDEBE5" stroke="#1A1E1B" stroke-width="1.5" opacity="0"/>
+                  <g id="lbarG" class="acc" opacity="0"><rect id="lbarR" width="56" height="10" rx="3" fill="#1C1F1D"/><rect id="lbarL" width="50" height="5" rx="2" fill="#FFE7A0"/></g>
+                  <!-- awning -->
+                  <g id="awnG" class="acc" opacity="0">
+                    <path id="awnPoles" stroke="#2A2D2A" stroke-width="4" fill="none" stroke-linecap="round"/>
+                    <path id="awnCanopy" fill="url(#g-stripe)" stroke="#1A1E1B" stroke-width="1.5" stroke-linejoin="round"/>
+                    <path id="awnVal" fill="#CF5427" stroke="#1A1E1B" stroke-width="1.5"/>
+                    <rect id="awnBox" x="298" width="396" height="13" rx="6.5" fill="#2A2E2B" stroke="#1A1E1B" stroke-width="1.5"/>
+                  </g>
+                </g>
+                <!-- wheels -->
+                <g id="wheelR"></g>
+                <g id="wheelF"></g>
+              </g>
+
+              <g id="campProps" opacity="0">
+                <g transform="translate(400,0)" fill="none" stroke="#1E2220" stroke-width="4" stroke-linecap="round">
+                  <path d="M0 440 L24 404 M30 440 L6 404 M2 404 H32 L36 380" /><path d="M4 402 Q18 412 30 402" stroke="#CF5427" stroke-width="7"/>
+                </g>
+                <g transform="translate(470,0)"><rect x="0" y="414" width="44" height="5" fill="#1E2220"/><path d="M6 419 V440 M38 419 V440" stroke="#1E2220" stroke-width="3.5"/><rect x="16" y="398" width="12" height="16" rx="2" fill="#F0B23A" stroke="#1E2220" stroke-width="2"/></g>
+              </g>
+
+              <rect id="nightOv" width="1000" height="500" fill="#0E1736" opacity="0" style="mix-blend-mode:multiply"/>
+
+              <g id="glowVeh" pointer-events="none">
+                <g id="glowBody">
+                  <rect id="gwRear" x="196" y="240" width="136" height="54" rx="9" fill="#FFC86B" opacity="0"/>
+                  <rect id="gwSlide" x="490" y="240" width="112" height="54" rx="7" fill="#FFC86B" opacity="0"/>
+                  <path id="gwCanvas" fill="#FFB65A" opacity="0"/>
+                  <path id="beam" fill="url(#g-beam)" opacity="0"/>
+                  <g id="strLights" opacity="0"></g>
+                </g>
+              </g>
+              <circle id="lantern" cx="492" cy="404" r="46" fill="url(#g-warm)" opacity="0" pointer-events="none"/>
+            </svg>
+
+            <svg id="plan" viewBox="0 0 1000 500" role="img" aria-label="Top-down floor plan of your chosen interior layout"></svg>
+          </div>
+          <div class="readout" aria-live="polite">
+            <div><div class="k">Sleeps</div><div class="v" id="rSleeps">2</div></div>
+            <div><div class="k">Headroom</div><div class="v" id="rHead">1.52<small>m</small></div></div>
+            <div><div class="k">Off-grid</div><div class="v" id="rGrid">1.6<small>days</small></div></div>
+            <div><div class="k">Overall height</div><div class="v" id="rHeight">2.08<small>m</small></div></div>
+            <div><div class="k">Payload left</div><div class="v" id="rPay">890<small>kg</small></div><div class="bar"><i id="rPayBar" style="width:100%"></i></div></div>
+          </div>
+        </div>
+        <div class="stage-foot mono"><span id="stageFoot">Illustration · not to scale</span><span>Switch to <b>Camp</b> to see it set up at dusk</span></div>
+      </div>
+
+      <!-- panel -->
+      <div class="panel" id="panel">
+        <nav class="stepnav" aria-label="Configurator steps">
+          <a href="#s-chassis" data-step="s-chassis"><b>01</b>Chassis</a>
+          <a href="#s-colour" data-step="s-colour"><b>02</b>Colour</a>
+          <a href="#s-roof" data-step="s-roof"><b>03</b>Roof</a>
+          <a href="#s-layout" data-step="s-layout"><b>04</b>Layout</a>
+          <a href="#s-addons" data-step="s-addons"><b>05</b>Gear</a>
+          <a href="#s-review" data-step="s-review"><b>06</b>Price</a>
+        </nav>
+        <div class="presets"><span class="mono">Quick start</span>
+          <button type="button" data-preset="weekender">Weekender</button>
+          <button type="button" data-preset="overlander">Overlander</button>
+          <button type="button" data-preset="offgrid">Off-grid Pro</button>
+        </div>
+
+        <section class="step" id="s-chassis">
+          <div class="step-h"><span class="step-n mono">01</span><h3 class="step-t">Chassis</h3><span class="step-sel mono" id="selDrive"></span></div>
+          <div class="grid2" id="optDrive"></div>
+        </section>
+
+        <section class="step" id="s-colour">
+          <div class="step-h"><span class="step-n mono">02</span><h3 class="step-t">Body colour</h3><span class="step-sel mono" id="selColor"></span></div>
+          <div class="swatches" id="optColor"></div>
+          <p class="step-note">Two-pack ceramic-coated paint with a stone-chip-resistant lower cladding as standard.</p>
+        </section>
+
+        <section class="step" id="s-roof">
+          <div class="step-h"><span class="step-n mono">03</span><h3 class="step-t">Roof</h3><span class="step-sel mono" id="selRoof"></span></div>
+          <div class="grid3" id="optRoof"></div>
+        </section>
+
+        <section class="step" id="s-layout">
+          <div class="step-h"><span class="step-n mono">04</span><h3 class="step-t">Interior layout</h3><span class="step-sel mono" id="selLayout"></span></div>
+          <div class="grid2" id="optLayout"></div>
+          <div class="fins" id="optFinish"><span class="mono">Cabinetry</span></div>
+        </section>
+
+        <section class="step" id="s-addons">
+          <div class="step-h"><span class="step-n mono">05</span><h3 class="step-t">Gear &amp; add-ons</h3><span class="step-sel mono" id="selAddons"></span></div>
+          <div id="optAddons"></div>
+          <div class="legend mono"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/></svg>Shown in the preview</div>
+        </section>
+
+        <section class="step" id="s-review">
+          <div class="step-h"><span class="step-n mono">06</span><h3 class="step-t">Your price</h3><span class="step-sel mono" id="buildCode"></span></div>
+          <ul class="sum" id="sumList"></ul>
+          <div class="total-box">
+            <div><div class="mono" style="color:var(--ink-3)">Total · incl. VAT &amp; delivery</div><div class="big js-total">€0</div></div>
+            <div style="text-align:right"><div class="mono" style="color:var(--ink-3)">Finance from</div><b class="js-monthly" style="font-size:20px;font-stretch:115%">€0/mo</b><div class="sub">60 mo · 20% down · 6.9% APR</div></div>
+          </div>
+          <div class="meta-grid">
+            <div><span class="mono">Estimated handover</span><b id="eta">—</b></div>
+            <div><span class="mono">Reserve today</span><b>€500 · refundable</b></div>
+          </div>
+          <details class="std"><summary>Standard on every K1</summary>
+            <ul><li>200 Ah lithium + 2 kW inverter</li><li>90 L compressor fridge</li><li>70 L fresh / 50 L grey water</li><li>Sheep-wool + cork insulation</li><li>2-burner hob &amp; deep sink</li><li>Dimmable LED lighting</li><li>USB-C at every seat</li><li>Blackout thermal blinds</li></ul>
+          </details>
+          <div class="act-row">
+            <button class="btn btn-rust" type="button" id="reserveBtn">Reserve this build →</button>
+            <button class="btn" type="button" id="copyBtn">Copy link</button>
+            <button class="btn" type="button" id="resetBtn" aria-label="Reset configuration">Reset</button>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark" id="built">
+  <div class="wrap">
+    <div class="sec-head"><div><span class="mono" style="color:var(--signal)">Built different</span><h2 class="display">Engineered for<br>the long way round</h2></div>
+    <p>We build 40 vans a season, each one by a named builder who signs off the weld seams and the wiring loom before it leaves the shop.</p></div>
+  </div>
+  <div class="wrap pad">
+    <div class="feats">
+      <div class="feat reveal"><div class="num">−25°</div><h3>Four-season shell</h3><p>40 mm sheep wool and cork, thermal-broken windows and a diesel heater option. We test every shell overnight in a freezer.</p></div>
+      <div class="feat reveal"><div class="num">21 d</div><h3>Off-grid range</h3><p>With 460 Ah of lithium and 400 W of solar, a typical couple can run fridge, lights and laptops for three weeks.</p></div>
+      <div class="feat reveal"><div class="num">60 mm</div><h3>More clearance</h3><p>Our lift kit and 31″ all-terrain tyres are homologated, so they're road-legal and your warranty stays intact.</p></div>
+      <div class="feat reveal"><div class="num">5 yr</div><h3>Habitation warranty</h3><p>That covers furniture, electrics, water and the pop-top. If something fails on the road, we'll get you moving again.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="quote">
+  <div class="wrap reveal">
+    <blockquote>We drove ours from Tromsø to Tarifa and never booked a single campsite.</blockquote>
+    <cite class="mono">Inês &amp; Pavel — K1 Overlander, Dune, Gear Garage · build № 0217</cite>
+  </div>
+</section>
+
+<section class="process" id="process">
+  <div class="wrap">
+    <div class="sec-head"><div><span class="mono" style="color:var(--rust)">How it works</span><h2 class="display">From link to keys</h2></div>
+    <p>There's no dealership in the middle. You'll talk to the people who build your van.</p></div>
+    <ol class="steps">
+      <li class="reveal"><h3>Configure</h3><p>Build it here. The price you see is the price you pay, with delivery and VAT included.</p><span class="mono">~5 minutes</span></li>
+      <li class="reveal"><h3>Reserve</h3><p>Hold a build slot for €500. It's fully refundable until your spec call.</p><span class="mono">€500</span></li>
+      <li class="reveal"><h3>Spec call</h3><p>A builder walks through your build with you, checks payload and tweaks the details.</p><span class="mono">45 min video</span></li>
+      <li class="reveal"><h3>Build</h3><p>Your named builder sends photos every week while the van takes shape.</p><span class="mono">14 – 18 weeks</span></li>
+      <li class="reveal"><h3>Handover</h3><p>A two-hour walkthrough, then your first night at a partner site, on us.</p><span class="mono">Keys + coffee</span></li>
+    </ol>
+  </div>
+</section>
+
+<section class="wrap faq" id="faq">
+  <div><span class="mono" style="color:var(--rust)">Questions</span><h2 class="display">Before you<br>commit</h2></div>
+  <div>
+    <details open><summary>Is the configurator price final?</summary><p>Yes. The total includes VAT, registration-ready paperwork and delivery to any mainland EU address. The only thing that can change it is something you add on the spec call.</p></details>
+    <details><summary>Can I drive it on a standard car licence?</summary><p>Every K1 is plated at 3,500 kg GVW. The payload readout in the configurator shows how much room is left for people, water and gear in your build.</p></details>
+    <details><summary>Pop-top or high roof?</summary><p>A pop-top keeps the van under 2.3 m, so it fits car parks and ferries at car rates, and it adds two berths upstairs. A high roof gives permanent standing room and better insulation for winter trips.</p></details>
+    <details><summary>What if I change my mind after reserving?</summary><p>Your €500 is refundable in full until the spec call. After that it becomes part of your deposit, and you can still change finishes up to four weeks before your build starts.</p></details>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="foot-word">Kestrel<span>.</span><br>Overland</p>
+    <div class="foot-row mono">
+      <span>© 2026 Kestrel Overland Co. · Demo concept: brand and vehicle are fictional</span>
+      <span><a href="#build">Configure</a> · <a href="#process">Process</a> · <a href="#faq">FAQ</a> · <a href="#top">Back to top ↑</a></span>
+    </div>
+  </div>
+</footer>
+
+<div class="pricebar" id="pricebar" aria-label="Current build price">
+  <div class="pb-cfg"><span class="mono">Your K1 · <span id="pbCode"></span></span><div id="pbSummary"></div></div>
+  <div class="pb-price"><span class="delta" id="delta"></span><b class="js-total">€0</b><small class="js-monthly">€0/mo</small></div>
+  <button class="btn btn-rust" type="button" id="pbReserve">Reserve →</button>
+</div>
+
+<dialog id="dlg" aria-labelledby="dlgTitle">
+  <div class="dlg">
+    <div class="dlg-sheet" id="dlgSheet"></div>
+    <div class="dlg-form" id="dlgForm"></div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+'use strict';
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const NS = 'http://www.w3.org/2000/svg';
+const fmt = n => '€' + Math.round(n).toLocaleString('en-GB');
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ======================= DATA ======================= */
+const BASE = { price: 58900, kg: 2610, gvw: 3500 };
+const DRIVES = [
+  { id: '2wd', name: '2WD', desc: 'Front-wheel drive, 170 hp, 9-speed auto. Light, efficient and plenty for tarmac and gravel.', price: 0, kg: 0, meta: '9.1 L/100 km' },
+  { id: 'awd', name: 'AWD 4×4', desc: 'Permanent all-wheel drive, rear diff lock and hill-descent control for sand, snow and mud.', price: 9400, kg: 85, meta: '10.2 L/100 km' },
+];
+const COLORS = [
+  { id: 'glacier', name: 'Glacier', hex: '#E7E5DE', price: 0 },
+  { id: 'dune', name: 'Dune', hex: '#C8AE86', price: 1400 },
+  { id: 'lichen', name: 'Lichen', hex: '#A3AA88', price: 1400 },
+  { id: 'moss', name: 'Moss', hex: '#56633F', price: 1400 },
+  { id: 'fjord', name: 'Fjord', hex: '#2E5A6C', price: 1400 },
+  { id: 'basalt', name: 'Basalt', hex: '#4A4E50', price: 900 },
+  { id: 'midnight', name: 'Midnight', hex: '#1F242B', price: 1400 },
+  { id: 'ember', name: 'Ember', hex: '#C9532A', price: 2100, tag: 'Signature' },
+];
+const ROOFS = [
+  { id: 'low', name: 'Low roof', desc: 'Stealthy. Fits car parks, ferries and garages.', price: 0, kg: 0, head: 1.52, height: 2.08 },
+  { id: 'pop', name: 'Pop-top', desc: 'Low on the road and over 2 m inside when raised. Adds two berths upstairs.', price: 7900, kg: 95, head: 2.05, height: 2.24, sleeps: 2 },
+  { id: 'high', name: 'High roof', desc: 'Permanent standing room and overhead lockers.', price: 3600, kg: 60, head: 1.92, height: 2.72 },
+];
+const LAYOUTS = [
+  { id: 'nomad', name: 'Nomad', desc: 'Transverse rear bed, long galley, swivel cab seats.', price: 0, kg: 0, sleeps: 2, meta: 'Bed 190 × 140' },
+  { id: 'garage', name: 'Gear Garage', desc: 'Raised bed over a 1.1 m³ garage for bikes and boards.', price: 3900, kg: 40, sleeps: 2, meta: 'Bed 190 × 135 · 2 belted seats' },
+  { id: 'lounge', name: 'Lounge', desc: 'L-shaped lounge for five that folds into a king bed.', price: 5200, kg: 55, sleeps: 3, meta: 'Bed 190 × 176' },
+  { id: 'basecamp', name: 'Basecamp', desc: 'Dinette bed plus an enclosed wet bath with hot shower.', price: 7800, kg: 110, sleeps: 2, meta: 'Bed 190 × 120 · wet bath' },
+];
+const FINISHES = [
+  { id: 'birch', name: 'Birch', hex: '#DCC49A', price: 0 },
+  { id: 'oak', name: 'Smoked oak', hex: '#8A6744', price: 900 },
+  { id: 'char', name: 'Charcoal', hex: '#3B3E3B', price: 1200 },
+];
+const ADDONS = [
+  { id: 'rack', g: 'Roof & power', name: 'Full-length roof rack', desc: 'Alloy platform, 150 kg dynamic load', price: 1290, kg: 32, vis: 1 },
+  { id: 'solar', g: 'Roof & power', name: 'Solar array · 400 W', desc: 'Two mono panels + MPPT controller', price: 2450, kg: 24, vis: 1 },
+  { id: 'battery', g: 'Roof & power', name: 'Lithium bank · 460 Ah', desc: 'Upgrade from 200 Ah. Weeks, not days.', price: 2900, kg: 22 },
+  { id: 'starlink', g: 'Roof & power', name: 'Satellite internet mount', desc: 'Flat dish, wired & fused · needs roof rack', price: 1150, kg: 6, vis: 1, needs: 'rack' },
+  { id: 'lift', g: 'Trail', name: 'Lift kit + 31″ AT tyres', desc: '+60 mm clearance, all-terrain tyres, flares', price: 4600, kg: 48, vis: 1 },
+  { id: 'snorkel', g: 'Trail', name: 'Raised air intake', desc: 'For dust, deep puddles and river fords', price: 720, kg: 7, vis: 1 },
+  { id: 'lightbar', g: 'Trail', name: 'LED light bar', desc: 'Roof-mounted, 14,000 lumens', price: 680, kg: 4, vis: 1 },
+  { id: 'spare', g: 'Trail', name: 'Rear spare-wheel carrier', desc: 'Full-size spare · uses the rear-door mount', price: 760, kg: 31, vis: 1, excl: 'bikes' },
+  { id: 'ladder', g: 'Trail', name: 'Rear access ladder', desc: 'Folding, stainless steel', price: 540, kg: 9, vis: 1 },
+  { id: 'awning', g: 'Camp', name: 'Side awning · 3.5 m', desc: 'Wind-rated, with integrated LED strip', price: 1180, kg: 22, vis: 1 },
+  { id: 'bikes', g: 'Camp', name: 'Bike carrier · 2 bikes', desc: 'E-bike rated · uses the rear-door mount', price: 890, kg: 18, vis: 1, excl: 'spare' },
+  { id: 'heater', g: 'Camp', name: 'Diesel air heater · 4 kW', desc: 'Quiet, thermostatic, winter-proof', price: 1650, kg: 9 },
+  { id: 'shower', g: 'Camp', name: 'Outdoor hot shower', desc: 'Rear-door port with mixer tap', price: 590, kg: 3 },
+  { id: 'water', g: 'Camp', name: '120 L fresh water', desc: 'Upgrade from 70 L, insulated & heated', price: 480, kg: 8 },
+];
+const PRESETS = {
+  weekender: { drive: '2wd', color: 'glacier', roof: 'pop', layout: 'nomad', finish: 'birch', addons: ['awning'] },
+  overlander: { drive: 'awd', color: 'dune', roof: 'pop', layout: 'garage', finish: 'oak', addons: ['rack', 'solar', 'lift', 'snorkel', 'lightbar', 'spare', 'ladder', 'awning'] },
+  offgrid: { drive: 'awd', color: 'moss', roof: 'high', layout: 'basecamp', finish: 'char', addons: ['rack', 'solar', 'battery', 'starlink', 'awning', 'bikes', 'heater', 'shower', 'water'] },
+};
+const DEFAULT = { drive: '2wd', color: 'ember', roof: 'pop', layout: 'nomad', finish: 'birch', addons: ['awning'] };
+const byId = (arr, id) => arr.find(o => o.id === id);
+
+let state = { drive: DEFAULT.drive, color: DEFAULT.color, roof: DEFAULT.roof, layout: DEFAULT.layout, finish: DEFAULT.finish, addons: new Set(DEFAULT.addons) };
+const has = id => state.addons.has(id);
+
+/* ======================= URL STATE ======================= */
+function encode() { return [state.drive, state.color, state.roof, state.layout, state.finish, [...state.addons].join('-')].join('.'); }
+function decode(str) {
+  const p = (str || '').split('.');
+  if (p.length < 5) return false;
+  const [d, c, r, l, f, a = ''] = p;
+  if (!byId(DRIVES, d) || !byId(COLORS, c) || !byId(ROOFS, r) || !byId(LAYOUTS, l) || !byId(FINISHES, f)) return false;
+  state = { drive: d, color: c, roof: r, layout: l, finish: f, addons: new Set(a.split('-').filter(x => byId(ADDONS, x))) };
+  return true;
+}
+function buildCode() {
+  let h = 2166136261; const s = encode();
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return 'K1-' + (h >>> 0).toString(36).toUpperCase().slice(-5).padStart(5, '0');
+}
+
+/* ======================= PRICING & SPECS ======================= */
+function lineItems() {
+  const d = byId(DRIVES, state.drive), c = byId(COLORS, state.color), r = byId(ROOFS, state.roof), l = byId(LAYOUTS, state.layout), f = byId(FINISHES, state.finish);
+  const items = [
+    { label: 'K1 base vehicle', price: BASE.price, kg: BASE.kg, base: 1 },
+    { label: 'Chassis · ' + d.name, price: d.price, kg: d.kg },
+    { label: 'Paint · ' + c.name, price: c.price, kg: 0 },
+    { label: 'Roof · ' + r.name, price: r.price, kg: r.kg },
+    { label: 'Layout · ' + l.name, price: l.price, kg: l.kg },
+    { label: 'Cabinetry · ' + f.name, price: f.price, kg: 0 },
+  ];
+  ADDONS.forEach(a => { if (has(a.id)) items.push({ label: a.name, price: a.price, kg: a.kg }); });
+  return items;
+}
+const totalOf = items => items.reduce((s, i) => s + i.price, 0);
+const monthly = total => { const P = total * 0.8, r = 0.069 / 12, n = 60; return P * r / (1 - Math.pow(1 + r, -n)); };
+function specs() {
+  const r = byId(ROOFS, state.roof), l = byId(LAYOUTS, state.layout);
+  const sleeps = l.sleeps + (r.sleeps || 0);
+  let height = r.height + (has('lift') ? 0.06 : 0) + (has('rack') ? 0.09 : 0) + (has('starlink') ? 0.03 : 0);
+  const kWh = (has('battery') ? 460 : 200) * 12.8 * 0.9 / 1000;
+  const solar = has('solar') ? 400 * 3.6 * 0.8 / 1000 : 0;
+  const use = 1.35 + (has('heater') ? 0.18 : 0) + (has('starlink') ? 0.55 : 0) + (state.layout === 'basecamp' ? 0.1 : 0);
+  const days = kWh / Math.max(use - solar, 0.12);
+  const weight = lineItems().reduce((s, i) => s + i.kg, 0);
+  const payload = BASE.gvw - weight;
+  return { sleeps, head: r.head, height, days, payload };
+}
+function eta() {
+  const w = 14 + (state.layout === 'basecamp' ? 2 : state.layout === 'nomad' ? 0 : 1) + (state.roof === 'low' ? 0 : 1) + Math.floor(state.addons.size / 3);
+  const d = new Date(Date.now() + w * 7 * 864e5);
+  return { weeks: w, label: d.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }) };
+}
+
+/* ======================= PANEL BUILD ======================= */
+const priceTag = p => p === 0 ? '<span class="ob-price inc">Included</span>' : `<span class="ob-price">+${fmt(p)}</span>`;
+const eyeIco = '<svg class="eye" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-label="shown in preview"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/></svg>';
+const ROOF_ICONS = {
+  low: '<path d="M8 50 V24 Q8 20 12 20 H84 Q93 20 97 27 L107 38 Q113 40 113 46 V50 Z" fill="currentColor"/>',
+  pop: '<path class="accent" d="M34 20 L34 6 L88 15 L88 20 Z"/><path d="M30 8 L92 15 L92 18 L30 8 Z" fill="currentColor"/><path d="M8 50 V24 Q8 20 12 20 H84 Q93 20 97 27 L107 38 Q113 40 113 46 V50 Z" fill="currentColor"/>',
+  high: '<path d="M8 50 V9 Q8 5 12 5 H80 Q92 5 95 22 L107 38 Q113 40 113 46 V50 Z" fill="currentColor"/>',
+};
+function layoutThumb(id) {
+  const col = { bed: '#F4EFE4', raised: 'none', garage: '#E4B9A4', galley: '#DCC49A', fridge: '#C9B48E', tower: '#C9B48E', bench: '#7E8A6A', table: '#EADFC6', bath: '#CBD6D3' };
+  let s = `<svg class="lay-thumb" viewBox="-6 -6 357 188" aria-hidden="true"><rect x="-4" y="-4" width="353" height="184" rx="10" fill="none" stroke="#1A1E1B" stroke-width="3"/>`;
+  MODS[id].forEach(m => {
+    const dash = m.t === 'raised' ? ' stroke-dasharray="6 4"' : '';
+    s += `<rect x="${m.x}" y="${m.y}" width="${m.w}" height="${m.h}" rx="5" fill="${col[m.t]}" stroke="#1A1E1B" stroke-width="2"${dash}/>`;
+  });
+  return s + '<rect x="215" y="174" width="120" height="8" fill="#E9E1CE"/></svg>';
+}
+function buildPanel() {
+  $('#optDrive').innerHTML = DRIVES.map(d => `<label class="opt"><input type="radio" name="drive" value="${d.id}"><span class="ob"><span class="ob-row"><b class="ob-name">${d.name}</b>${priceTag(d.price)}</span><span class="ob-desc">${d.desc}</span><span class="ob-meta">${d.meta}</span></span></label>`).join('');
+  $('#optColor').innerHTML = COLORS.map(c => `<label class="sw" title="${c.name}"><input type="radio" name="color" value="${c.id}"><span class="sw-b"><span class="sw-dot" style="--c:${c.hex}">${c.tag ? `<span class="sw-tag">${c.tag}</span>` : ''}</span><span class="sw-n">${c.name}</span><span class="sw-p">${c.price ? '+' + fmt(c.price) : 'Included'}</span></span></label>`).join('');
+  $('#optRoof').innerHTML = ROOFS.map(r => `<label class="opt"><input type="radio" name="roof" value="${r.id}"><span class="ob"><svg class="roof-ico" viewBox="0 0 120 56" aria-hidden="true">${ROOF_ICONS[r.id]}<circle cx="30" cy="50" r="7" fill="#1A1E1B" stroke="#ECE5D3" stroke-width="2"/><circle cx="92" cy="50" r="7" fill="#1A1E1B" stroke="#ECE5D3" stroke-width="2"/></svg><b class="ob-name">${r.name}</b>${priceTag(r.price)}<span class="ob-desc">${r.desc}</span><span class="ob-meta">Headroom ${r.head.toFixed(2)} m</span></span></label>`).join('');
+  $('#optLayout').innerHTML = LAYOUTS.map(l => `<label class="opt"><input type="radio" name="layout" value="${l.id}"><span class="ob">${layoutThumb(l.id)}<span class="ob-row"><b class="ob-name">${l.name}</b>${priceTag(l.price)}</span><span class="ob-desc">${l.desc}</span><span class="ob-meta">${l.meta}</span></span></label>`).join('');
+  $('#optFinish').insertAdjacentHTML('beforeend', FINISHES.map(f => `<label class="fin"><input type="radio" name="finish" value="${f.id}"><span><i style="--c:${f.hex}"></i>${f.name}<em>${f.price ? '+' + fmt(f.price) : 'Incl.'}</em></span></label>`).join(''));
+  const groups = [...new Set(ADDONS.map(a => a.g))];
+  $('#optAddons').innerHTML = groups.map(g => `<div class="ad-group"><h4 class="mono">${g}</h4>${ADDONS.filter(a => a.g === g).map(a => `<label class="ad"><input type="checkbox" name="addon" value="${a.id}"><span class="ad-b"><span class="tg"></span><span class="ad-t"><b>${a.name}${a.vis ? eyeIco : ''}</b><small>${a.desc}</small></span><span class="ad-p">+${fmt(a.price)}<small>${a.kg} kg</small></span></span></label>`).join('')}</div>`).join('');
+}
+
+/* ======================= FLOOR PLAN ======================= */
+// interior module coordinates in cm: x from rear doors, y from driver-side wall. Interior 345 × 176.
+const MODS = {
+  nomad: [
+    { t: 'bed', x: 0, y: 0, w: 140, h: 176, l: 'Rear bed|190 × 140 cm', pil: 'top' },
+    { t: 'galley', x: 150, y: 0, w: 130, h: 58, l: 'Galley' },
+    { t: 'fridge', x: 280, y: 0, w: 55, h: 58, l: 'Fridge|90 L' },
+    { t: 'tower', x: 150, y: 118, w: 55, h: 58, l: 'Wardrobe' },
+    { t: 'table', x: 288, y: 82, w: 44, h: 52, l: '' },
+  ],
+  garage: [
+    { t: 'garage', x: 0, y: 0, w: 118, h: 176, l: 'Gear garage|1.1 m³', ly: .3 },
+    { t: 'raised', x: 0, y: 0, w: 118, h: 176, l: 'Bed above|190 × 135', ly: .72 },
+    { t: 'galley', x: 128, y: 0, w: 140, h: 58, l: 'Galley' },
+    { t: 'fridge', x: 268, y: 0, w: 60, h: 58, l: 'Fridge' },
+    { t: 'bench', x: 128, y: 114, w: 78, h: 62, l: 'Bench|2 belted' },
+    { t: 'table', x: 236, y: 78, w: 52, h: 42, l: '' },
+  ],
+  lounge: [
+    { t: 'bench', x: 0, y: 0, w: 58, h: 176, l: '' },
+    { t: 'bench', x: 58, y: 114, w: 124, h: 62, l: 'L-lounge → king|190 × 176' },
+    { t: 'table', x: 76, y: 26, w: 88, h: 64, l: 'Table|seats 5' },
+    { t: 'galley', x: 192, y: 0, w: 100, h: 58, l: 'Galley' },
+    { t: 'fridge', x: 292, y: 0, w: 46, h: 58, l: 'Fridge' },
+  ],
+  basecamp: [
+    { t: 'bench', x: 0, y: 0, w: 52, h: 176, l: '' },
+    { t: 'table', x: 58, y: 36, w: 58, h: 104, l: 'Dinette|→ bed' },
+    { t: 'bench', x: 122, y: 0, w: 52, h: 176, l: '' },
+    { t: 'bath', x: 184, y: 0, w: 90, h: 86, l: 'Wet bath' },
+    { t: 'galley', x: 274, y: 0, w: 66, h: 58, l: 'Galley|+ fridge' },
+  ],
+};
+const SWIVEL = { nomad: 1, garage: 1, lounge: 1, basecamp: 0 };
+function lum(hex) { const [r, g, b] = hex2rgb(hex).map(v => v / 255); return 0.2126 * r + 0.7152 * g + 0.0722 * b; }
+function shade(hex, amt) { const c = hex2rgb(hex).map(v => clamp(Math.round(v + amt * 255), 0, 255)); return '#' + c.map(v => v.toString(16).padStart(2, '0')).join(''); }
+
+function renderPlan() {
+  const K = 1.85, OX = 112, OY = 92;
+  const X = x => OX + x * K, Y = y => OY + y * K;
+  const body = byId(COLORS, state.color).hex, fin = byId(FINISHES, state.finish).hex;
+  let s = `<defs>
+    <pattern id="p-planks" width="64" height="22" patternUnits="userSpaceOnUse"><rect width="64" height="22" fill="#E2D6BC"/><path d="M0 21.5H64M32 0V11M0 11H64M14 11V22M50 11V22" stroke="#C9B994" stroke-width="1"/></pattern>
+    <pattern id="p-hatch" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="9" height="9" fill="${fin}"/><line x1="0" y1="0" x2="0" y2="9" stroke="#000" stroke-opacity=".25" stroke-width="3"/></pattern>
+    <pattern id="p-hatchR" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)"><rect width="10" height="10" fill="#F1DCCF"/><line x1="0" y1="0" x2="0" y2="10" stroke="#CF5427" stroke-opacity=".55" stroke-width="2.5"/></pattern>
+    <marker id="p-arr" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#CF5427"/></marker>
+  </defs>`;
+  // tyres peeking
+  s += `<g fill="#1A1E1B"><rect x="190" y="64" width="96" height="14" rx="4"/><rect x="190" y="432" width="96" height="14" rx="4"/><rect x="792" y="64" width="96" height="14" rx="4"/><rect x="792" y="432" width="96" height="14" rx="4"/></g>`;
+  // shell
+  s += `<path d="M110 76 H860 Q942 78 962 150 Q970 255 962 360 Q942 432 860 434 H110 Q96 434 96 420 V90 Q96 76 110 76 Z" fill="${body}" stroke="#1A1E1B" stroke-width="2.5" style="transition:fill .6s"/>`;
+  s += `<rect x="${OX}" y="${OY}" width="${345 * K}" height="${176 * K}" fill="url(#p-planks)" stroke="#1A1E1B" stroke-width="1.5"/>`;
+  s += `<path d="M750 92 H858 Q926 96 944 156 Q950 255 944 354 Q926 414 858 418 H750 Z" fill="#CFC4AB" stroke="#1A1E1B" stroke-width="1.5"/>`;
+  s += `<path d="M934 118 Q956 255 934 392" fill="none" stroke="#6F8A93" stroke-width="7" stroke-linecap="round"/><path d="M904 112 Q930 255 904 398" fill="none" stroke="#1A1E1B" stroke-width="5" stroke-linecap="round"/>`;
+  // cab seats
+  [[118], [306]].forEach(([y]) => { s += `<g><rect x="772" y="${y}" width="86" height="86" rx="14" fill="#3A3F3A" stroke="#1A1E1B" stroke-width="1.5"/><rect x="772" y="${y}" width="22" height="86" rx="8" fill="#2A2E2A"/></g>`; });
+  s += `<ellipse cx="882" cy="161" rx="7" ry="30" fill="none" stroke="#1A1E1B" stroke-width="5"/>`;
+  if (SWIVEL[state.layout]) {
+    s += `<path d="M770 112 A54 54 0 0 0 740 170" fill="none" stroke="#CF5427" stroke-width="2.5" marker-end="url(#p-arr)"/><path d="M770 398 A54 54 0 0 1 740 340" fill="none" stroke="#CF5427" stroke-width="2.5" marker-end="url(#p-arr)"/>`;
+    s += `<text class="pl-dim" x="815" y="258" text-anchor="middle" style="fill:#CF5427">Swivel</text>`;
+  }
+  // sliding door gap + rear doors
+  s += `<rect x="${X(215)}" y="414" width="${120 * K}" height="24" fill="#E9E1CE"/><path d="M${X(215)} 418 H${X(335)}" stroke="#CF5427" stroke-width="2" stroke-dasharray="6 5"/><text class="pl-dim" x="${X(275)}" y="462" text-anchor="middle">Sliding door</text>`;
+  s += `<path d="M96 160 V350" stroke="#E9E1CE" stroke-width="6"/><path d="M96 160 V350" stroke="#1A1E1B" stroke-width="1.5" stroke-dasharray="5 5"/><text class="pl-dim" x="60" y="255" text-anchor="middle" transform="rotate(-90 60 255)">Rear doors</text>`;
+  // overlay roof extras
+  const extra = [];
+  if (state.roof === 'high') extra.push(`<g class="mod"><rect x="${X(140)}" y="${Y(0)}" width="${200 * K}" height="${26 * K}" fill="none" stroke="#1A1E1B" stroke-width="1.5" stroke-dasharray="3 4"/><rect x="${X(140)}" y="${Y(150)}" width="${200 * K}" height="${26 * K}" fill="none" stroke="#1A1E1B" stroke-width="1.5" stroke-dasharray="3 4"/></g>`);
+  // modules
+  let i = 0;
+  MODS[state.layout].forEach(m => {
+    const x = X(m.x), y = Y(m.y), w = m.w * K, h = m.h * K;
+    let g = '';
+    switch (m.t) {
+      case 'bed':
+        g += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8" fill="#F4EFE4" stroke="#1A1E1B" stroke-width="1.8"/>`;
+        g += `<rect x="${x + 8}" y="${y + 8}" width="${(w - 24) / 2}" height="34" rx="9" fill="#fff" stroke="#1A1E1B" stroke-width="1.2"/><rect x="${x + 16 + (w - 24) / 2}" y="${y + 8}" width="${(w - 24) / 2}" height="34" rx="9" fill="#fff" stroke="#1A1E1B" stroke-width="1.2"/>`;
+        g += `<path d="M${x} ${y + h * .42} H${x + w} V${y + h - 8} Q${x + w} ${y + h} ${x + w - 8} ${y + h} H${x + 8} Q${x} ${y + h} ${x} ${y + h - 8} Z" fill="#7C8A6A" stroke="#1A1E1B" stroke-width="1.5"/><path d="M${x} ${y + h * .42 + 14} H${x + w}" stroke="#ECE5D3" stroke-opacity=".6" stroke-width="2"/>`;
+        break;
+      case 'garage':
+        g += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="url(#p-hatchR)" stroke="#CF5427" stroke-width="2"/>`;
+        g += `<g transform="translate(${x + w / 2 - 34},${y + h * .5 - 6})" fill="none" stroke="#1A1E1B" stroke-width="2.5"><path d="M0 0 H68"/><path d="M0 14 H68" opacity=".5"/></g>`;
+        break;
+      case 'raised':
+        g += `<rect x="${x + 5}" y="${y + 5}" width="${w - 10}" height="${h - 10}" rx="8" fill="none" stroke="#1A1E1B" stroke-width="2" stroke-dasharray="8 5"/>`;
+        break;
+      case 'galley':
+        g += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="${fin}" stroke="#1A1E1B" stroke-width="1.8"/><rect x="${x + 4}" y="${y + 4}" width="${w - 8}" height="${h - 8}" rx="2" fill="${shade(fin, .08)}"/>`;
+        if (w > 150) g += `<circle cx="${x + 30}" cy="${y + h / 2}" r="14" fill="#2A2D2A" stroke="#1A1E1B"/><circle cx="${x + 30}" cy="${y + h / 2}" r="7" fill="none" stroke="#666" stroke-width="2"/><circle cx="${x + 66}" cy="${y + h / 2}" r="14" fill="#2A2D2A" stroke="#1A1E1B"/><circle cx="${x + 66}" cy="${y + h / 2}" r="7" fill="none" stroke="#666" stroke-width="2"/>`;
+        g += `<rect x="${x + w - 64}" y="${y + 18}" width="50" height="${h - 36}" rx="8" fill="#B8BDB8" stroke="#1A1E1B" stroke-width="1.5"/><circle cx="${x + w - 39}" cy="${y + h / 2}" r="3.5" fill="#1A1E1B"/>`;
+        break;
+      case 'fridge':
+        g += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="${shade(fin, -.06)}" stroke="#1A1E1B" stroke-width="1.8"/><rect x="${x + 7}" y="${y + 7}" width="${w - 14}" height="${h - 14}" rx="3" fill="none" stroke="#1A1E1B" stroke-opacity=".5" stroke-dasharray="4 3"/>`;
+        break;
+      case 'tower':
+        g += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="url(#p-hatch)" stroke="#1A1E1B" stroke-width="1.8"/>`;
+        break;
+      case 'bench':
+        g += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="10" fill="#6F7B5B" stroke="#1A1E1B" stroke-width="1.8"/><rect x="${x + 6}" y="${y + 6}" width="${w - 12}" height="${h - 12}" rx="7" fill="#7E8A6A"/>`;
+        break;
+      case 'table':
+        g += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="12" fill="${shade(fin, .1)}" stroke="#1A1E1B" stroke-width="1.8"/><circle cx="${x + w / 2}" cy="${y + h / 2}" r="5" fill="#1A1E1B" opacity=".5"/>`;
+        break;
+      case 'bath':
+        g += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="#D3DCD9" stroke="#1A1E1B" stroke-width="2"/><rect x="${x + w * .48}" y="${y + 8}" width="${w * .46}" height="${h - 16}" rx="6" fill="none" stroke="#1A1E1B" stroke-width="1.2" stroke-dasharray="4 3"/><circle cx="${x + w * .71}" cy="${y + h / 2}" r="5" fill="none" stroke="#1A1E1B" stroke-width="1.5"/><ellipse cx="${x + w * .24}" cy="${y + h * .4}" rx="${w * .14}" ry="${h * .2}" fill="#fff" stroke="#1A1E1B" stroke-width="1.5"/><path d="M${x} ${y + h} A${w * .42} ${w * .42} 0 0 0 ${x + w * .42} ${y + h + w * .42}" fill="none" stroke="#1A1E1B" stroke-opacity=".5" stroke-width="1.2" stroke-dasharray="3 3"/>`;
+        break;
+    }
+    if (m.l) {
+      const below = m.t === 'galley';
+      const fillHex = { bench: '#6F7B5B', galley: fin, fridge: shade(fin, -.06), tower: fin, table: shade(fin, .1) }[m.t];
+      const inv = !below && fillHex && lum(fillHex) < .38 ? ' inv' : '';
+      const lines = m.l.split('|'), ly = below ? y + h + 16 : y + h * (m.ly ?? .5), lh = 15, top = ly - (lines.length - 1) * lh / 2 + 4;
+      g += lines.map((t, k) => `<text class="pl-label${inv}" x="${x + w / 2}" y="${top + k * lh}" text-anchor="middle"${k ? ' style="font-size:10.5px"' : ' font-weight="700"'}>${t}</text>`).join('');
+    }
+    s += `<g class="mod" style="animation-delay:${(i++) * 55}ms">${g}</g>`;
+  });
+  if (state.roof === 'pop') {
+    const x = X(70), y = Y(28), w = 200 * K, h = 120 * K;
+    s += `<g class="mod" style="animation-delay:${i * 55 + 80}ms"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="10" fill="#CF5427" fill-opacity=".06" stroke="#CF5427" stroke-width="2.5" stroke-dasharray="10 6"/></g><g transform="translate(640,474)"><rect width="26" height="8" fill="#CF5427" fill-opacity=".1" stroke="#CF5427" stroke-width="1.5" stroke-dasharray="5 3"/><text class="pl-dim" x="34" y="8" style="fill:#A8401B">Pop-top bed upstairs · 200 × 120 cm</text></g>`;
+  }
+  s += extra.join('');
+  if (state.roof === 'high') s += `<g transform="translate(700,474)"><rect width="26" height="8" fill="none" stroke="#1A1E1B" stroke-dasharray="3 3"/><text class="pl-dim" x="34" y="8">Overhead lockers</text></g>`;
+  // dimensions
+  s += `<g stroke="#1A1E1B" stroke-width="1.2"><path d="M${OX} 46 H${X(345)} M${OX} 40 V52 M${X(345)} 40 V52"/><path d="M76 ${OY} V${Y(176)} M70 ${OY} H82 M70 ${Y(176)} H82" opacity="0"/></g>`;
+  s += `<rect x="${(OX + X(345)) / 2 - 92}" y="36" width="184" height="18" fill="#E9E1CE"/><text class="pl-dim" x="${(OX + X(345)) / 2}" y="50" text-anchor="middle">Living space · 345 cm</text>`;
+  s += `<text class="pl-dim" x="986" y="30" text-anchor="end">Front →</text>`;
+  s += `<g transform="translate(14,474)"><rect width="${100 * K}" height="6" fill="#1A1E1B"/><rect width="${50 * K}" height="6" fill="#E9E1CE" stroke="#1A1E1B"/><text class="pl-dim" x="${100 * K + 8}" y="7">1 m</text></g>`;
+  $('#plan').innerHTML = s;
+}
+
+/* ======================= EXTERIOR SVG ======================= */
+const E = {};
+['veh', 'bodyG', 'bodyP', 'bodyClip', 'cap', 'canvas', 'canvasWin', 'popG', 'highRib', 'rackP', 'solarP', 'solarHi', 'starP', 'lbarR', 'lbarL', 'awnBox', 'awnCanopy', 'awnVal', 'awnPoles', 'ladderP', 'wheelR', 'wheelF', 'shadow', 'sky1', 'sky2', 'sun', 'moon', 'stars', 'mtnFar', 'mtnMid', 'snow', 'trees', 'ground', 'track', 'nightOv', 'glowVeh', 'glowBody', 'gwRear', 'gwSlide', 'gwCanvas', 'beam', 'strLights', 'campProps', 'lantern', 'decalWord', 'decal44', 'st1', 'st2', 'st3', 'pebbles']
+  .forEach(id => E[id] = document.getElementById(id));
+
+function hex2rgb(h) { h = h.replace('#', ''); return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16)); }
+function mix(a, b, t) { const A = hex2rgb(a), B = hex2rgb(b); return '#' + A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, '0')).join(''); }
+
+// procedural scenery
+(function scenery() {
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  let st = ''; for (let i = 0; i < 70; i++) st += `<circle cx="${(rnd() * 1000).toFixed(1)}" cy="${(rnd() * 250).toFixed(1)}" r="${(rnd() * 1.4 + .4).toFixed(2)}" fill="#fff" opacity="${(rnd() * .6 + .4).toFixed(2)}"/>`;
+  E.stars.innerHTML = st;
+  let tr = '';
+  for (let i = 0; i < 46; i++) {
+    const x = rnd() * 1040 - 20, h = 26 + rnd() * 58, w = h * .36, b = 434 - rnd() * 12;
+    tr += `<path d="M${x} ${b - h} L${x + w * .55} ${b - h * .62} L${x + w * .28} ${b - h * .62} L${x + w * .8} ${b - h * .3} L${x + w * .4} ${b - h * .3} L${x + w} ${b} L${x - w} ${b} L${x - w * .4} ${b - h * .3} L${x - w * .8} ${b - h * .3} L${x - w * .28} ${b - h * .62} L${x - w * .55} ${b - h * .62} Z"/>`;
+  }
+  E.trees.innerHTML = tr;
+  let pb = ''; for (let i = 0; i < 60; i++) pb += `<ellipse cx="${(rnd() * 1000).toFixed(1)}" cy="${(458 + rnd() * 40).toFixed(1)}" rx="${(rnd() * 4 + 1.5).toFixed(1)}" ry="${(rnd() * 1.6 + .8).toFixed(1)}" fill="#000" opacity="${(rnd() * .15 + .08).toFixed(2)}"/>`;
+  E.pebbles.innerHTML = pb;
+  let sl = ''; for (let i = 0; i < 14; i++) sl += `<circle r="3.2" fill="#FFE29A"/>`;
+  E.strLights.innerHTML = sl;
+})();
+
+// wheels
+function wheelMarkup() {
+  return `<g class="wscale">
+    <circle r="46" fill="#151715"/>
+    <circle r="44" fill="none" stroke="#2C302C" stroke-width="5" stroke-dasharray="7 5" class="tread" opacity="0"/>
+    <circle r="39" fill="none" stroke="#262926" stroke-width="2"/>
+    <circle r="27" fill="#A3A6A0" stroke="#1A1E1B" stroke-width="1.5"/>
+    <circle r="27" fill="#2B2D2B" class="atrim" opacity="0"/>
+    <g class="spin"><circle r="23" fill="none" stroke="#CF5427" stroke-width="2" stroke-dasharray="2 6" class="atrim" opacity="0"/>
+      ${[0, 60, 120, 180, 240, 300].map(a => `<ellipse cx="0" cy="-16" rx="4.5" ry="6.5" fill="#55584F" transform="rotate(${a})"/>`).join('')}
+      <circle r="9" fill="#6D706B" stroke="#1A1E1B"/><circle r="3.5" fill="#1A1E1B"/></g>
+  </g>`;
+}
+E.wheelR.innerHTML = wheelMarkup(); E.wheelF.innerHTML = wheelMarkup();
+const W = [E.wheelR, E.wheelF].map((g, i) => ({ g, x: i ? 745 : 290, sc: $('.wscale', g), spin: $('.spin', g), at: $$('.tread,.atrim', g) }));
+
+// animated params
+const A = { r: 200, popOn: 1, pop: 0, awn: 0, lift: 0, rack: 0, night: 0, x: -1150 };
+const peek = { pop: 0, awn: 0 };
+let scene = 'day', drive = { start: null, from: -1150 }, dirty = true;
+
+function targets(now) {
+  const camp = scene === 'camp';
+  return {
+    r: state.roof === 'high' ? 140 : 200,
+    popOn: state.roof === 'pop' ? 1 : 0,
+    pop: state.roof === 'pop' && (camp || now < peek.pop) ? 1 : 0,
+    awn: has('awning') && (camp || now < peek.awn) ? 1 : 0,
+    lift: has('lift') ? 1 : 0,
+    rack: has('rack') ? 1 : 0,
+    night: camp ? 1 : 0,
+  };
+}
+function bodyD(r) {
+  return `M160 393 L158 ${r + 18} Q158 ${r} 178 ${r} L712 ${r} C742 ${r} 758 ${r + 8} 764 222 L838 292 Q872 298 878 326 L884 366 Q886 393 862 393 Z`;
+}
+function draw() {
+  const r = A.r, dy = -20 * A.lift, R = 46 + 7 * A.lift, p = A.pop, po = A.popOn, n = A.night;
+  const vt = `translate(${A.x.toFixed(2)},0)`, bt = `translate(0,${dy.toFixed(2)})`;
+  E.veh.setAttribute('transform', vt); E.glowVeh.setAttribute('transform', vt);
+  E.bodyG.setAttribute('transform', bt); E.glowBody.setAttribute('transform', bt);
+  E.campProps.setAttribute('transform', vt);
+  const d = bodyD(r); E.bodyP.setAttribute('d', d); E.bodyClip.setAttribute('d', d);
+  E.highRib.setAttribute('d', `M162 ${r + 22} H706`); E.highRib.style.opacity = clamp((200 - r) / 60);
+
+  // pop-top
+  const bR = r - 66 * p, bF = r - 20 * p;
+  E.cap.setAttribute('d', `M296 ${bR} L296 ${bR - 12} Q296 ${bR - 16} 304 ${bR - 16} L712 ${bF - 16} Q738 ${bF - 15} 744 ${bF + 1} Z`);
+  E.canvas.setAttribute('d', `M306 ${r + 1} L306 ${bR} L724 ${bF} L724 ${r + 1} Z`);
+  const ly = x => bR + (bF - bR) * ((x - 306) / 418);
+  E.canvasWin.setAttribute('d', `M420 ${ly(420) + 9} L600 ${ly(600) + 9} L600 ${r - 7} L420 ${r - 7} Z`);
+  E.canvasWin.style.opacity = clamp((p - .45) / .55);
+  E.popG.style.opacity = po;
+  E.gwCanvas.setAttribute('d', `M420 ${ly(420) + 9} L600 ${ly(600) + 9} L600 ${r - 7} L420 ${r - 7} Z`);
+  E.gwCanvas.style.opacity = n * clamp((p - .45) / .55) * po * .9;
+
+  // roof line for accessories
+  const capTop = x => bR + (bF - bR) * ((x - 296) / 448) - 16;
+  const T = x => r + (capTop(x) - r) * po;
+  const x0 = 196 + 122 * po, x1 = 704 + 8 * po;
+  let rk = `M${x0} ${T(x0) - 14} L${x1} ${T(x1) - 14}`;
+  for (let i = 0; i <= 4; i++) { const xi = x0 + 6 + (x1 - x0 - 12) * i / 4; rk += ` M${xi} ${T(xi) - 1} L${xi} ${T(xi) - 14}`; }
+  E.rackP.setAttribute('d', rk);
+  const so = 3 + 15 * A.rack, sx0 = 222 + 110 * po, sx1 = 580, mid = (sx0 + sx1) / 2;
+  const panel = (a, b) => `M${a} ${T(a) - so} L${b} ${T(b) - so} L${b} ${T(b) - so - 7} L${a} ${T(a) - so - 7} Z`;
+  E.solarP.setAttribute('d', panel(sx0, mid - 6) + panel(mid + 6, sx1));
+  E.solarHi.setAttribute('d', `M${sx0} ${T(sx0) - so - 7} L${mid - 6} ${T(mid - 6) - so - 7} M${mid + 6} ${T(mid + 6) - so - 7} L${sx1} ${T(sx1) - so - 7}`);
+  const sb = x => T(x) - 16;
+  E.starP.setAttribute('d', `M604 ${sb(604)} L652 ${sb(652)} L650 ${sb(652) - 6} Q628 ${sb(628) - 13} 606 ${sb(604) - 6} Z`);
+  const lbY = T(718) - (A.rack > .5 ? 26 : 12);
+  E.lbarR.setAttribute('x', 690); E.lbarR.setAttribute('y', lbY);
+  E.lbarL.setAttribute('x', 693); E.lbarL.setAttribute('y', lbY + 2.5);
+  E.beam.setAttribute('d', `M746 ${lbY + 1} L1000 ${lbY - 50} L1000 ${lbY + 130} L746 ${lbY + 9} Z`);
+  E.beam.style.opacity = n * (has('lightbar') ? .55 : 0);
+
+  // awning
+  const ay = r + 10, e = A.awn, by = ay + 11 + 52 * e;
+  E.awnBox.setAttribute('y', ay);
+  E.awnCanopy.setAttribute('d', `M300 ${ay + 7} L692 ${ay + 7} L${692 + 22 * e} ${by} L${300 - 22 * e} ${by} Z`);
+  E.awnVal.setAttribute('d', `M${300 - 22 * e} ${by} L${692 + 22 * e} ${by} L${692 + 22 * e} ${by + 9 * e} L${300 - 22 * e} ${by + 9 * e} Z`);
+  E.awnCanopy.style.opacity = E.awnVal.style.opacity = clamp(e * 4);
+  E.awnPoles.setAttribute('d', `M${306 - 22 * e} ${by + 8} V${440 - dy} M${686 + 22 * e} ${by + 8} V${440 - dy}`);
+  E.awnPoles.style.opacity = Math.pow(e, 4);
+  const sls = E.strLights.children, sn = sls.length;
+  for (let i = 0; i < sn; i++) { const t = i / (sn - 1), xx = 300 - 22 * e + t * (392 + 44 * e); sls[i].setAttribute('cx', xx); sls[i].setAttribute('cy', by + 14 + Math.sin(t * Math.PI * 4) * 3); }
+  E.strLights.style.opacity = n * e * (has('awning') ? 1 : 0);
+
+  // ladder
+  let ld = `M140 ${r - 12} V372 M152 ${r - 12} V372 M152 ${r - 12} H166`;
+  for (let y = r + 6; y < 368; y += 22) ld += ` M140 ${y} H152`;
+  E.ladderP.setAttribute('d', ld);
+
+  // wheels
+  const rot = (A.x / R) * 180 / Math.PI;
+  W.forEach(w => {
+    w.g.setAttribute('transform', `translate(${w.x},${440 - R})`);
+    w.sc.setAttribute('transform', `scale(${(R / 46).toFixed(4)})`);
+    w.spin.setAttribute('transform', `rotate(${rot.toFixed(2)})`);
+    w.at.forEach(el => el.style.opacity = A.lift);
+  });
+  E.shadow.setAttribute('ry', 9 - 2 * A.lift);
+
+  // scene / night
+  E.sky1.setAttribute('stop-color', mix('#B9CFCB', '#34426E', n));
+  E.sky2.setAttribute('stop-color', mix('#F2E2BF', '#E9946A', n));
+  E.mtnFar.setAttribute('fill', mix('#A3B4AA', '#4A5478', n));
+  E.mtnMid.setAttribute('fill', mix('#71877A', '#2E3656', n));
+  E.trees.setAttribute('fill', mix('#3D5242', '#1E2440', n));
+  E.ground.setAttribute('fill', mix('#BCA47A', '#5E4C44', n));
+  E.track.setAttribute('fill', mix('#D7C49C', '#73605A', n));
+  E.snow.style.opacity = 1 - n * .5;
+  E.sun.setAttribute('cy', 110 + 250 * n); E.sun.setAttribute('fill', mix('#F7C65A', '#F08A4B', n));
+  E.moon.style.opacity = clamp(n * 1.4 - .3); E.stars.style.opacity = n;
+  E.nightOv.style.opacity = n * .42;
+  E.gwRear.style.opacity = E.gwSlide.style.opacity = n * .88;
+  E.campProps.style.opacity = clamp(n * 1.5 - .5);
+  E.lantern.style.opacity = clamp(n * 1.5 - .5);
+  E.lantern.setAttribute('transform', `translate(${A.x},0)`);
+}
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min(.05, (now - last) / 1000); last = now;
+  const T = targets(now);
+  const k = reduced ? 1 : 1 - Math.exp(-dt * 7);
+  for (const key in T) {
+    const diff = T[key] - A[key];
+    if (Math.abs(diff) > .0008) { A[key] += diff * (key === 'night' ? Math.min(1, k * .55) : k); dirty = true; }
+    else if (A[key] !== T[key]) { A[key] = T[key]; dirty = true; }
+  }
+  if (drive.start !== null) {
+    const t = clamp((now - drive.start) / 2600), ease = 1 - Math.pow(1 - t, 3);
+    A.x = drive.from * (1 - ease); dirty = true;
+    if (t >= 1) { A.x = 0; drive.start = null; }
+  }
+  if (dirty) { draw(); dirty = false; }
+  requestAnimationFrame(frame);
+}
+
+function applyPaint() {
+  const c = byId(COLORS, state.color).hex;
+  $$('#van .paint').forEach(el => el.style.fill = c);
+  const light = lum(c) > .45;
+  E.decalWord.setAttribute('fill', light ? '#1A1E1B' : '#ECE5D3');
+  E.decalWord.style.opacity = .78;
+  E.decal44.setAttribute('fill', light ? '#CF5427' : '#F0B23A');
+  E.decal44.style.opacity = state.drive === 'awd' ? 1 : 0;
+  const stripe = state.color === 'ember' ? ['#1A1E1B', '#F0B23A', '#ECE5D3'] : lum(c) < .2 ? ['#CF5427', '#F0B23A', '#ECE5D3'] : ['#CF5427', '#F0B23A', '#1A1E1B'];
+  [E.st1, E.st2, E.st3].forEach((el, i) => el.setAttribute('fill', stripe[i]));
+  const vis = { bikesG: 'bikes', spareG: 'spare', snorkelG: 'snorkel', ladderP: 'ladder', rackP: 'rack', solarG: 'solar', starP: 'starlink', lbarG: 'lightbar', awnG: 'awning', flares: 'lift' };
+  for (const id in vis) document.getElementById(id).style.opacity = has(vis[id]) ? 1 : 0;
+  dirty = true;
+}
+
+/* ======================= UI SYNC ======================= */
+let shownTotal = null, priceAnim = null, deltaTimer = null, prevTotal = null;
+function animatePrice(total) {
+  const from = shownTotal ?? total, t0 = performance.now(), dur = reduced ? 1 : 650;
+  if (prevTotal !== null && total !== prevTotal) {
+    const dEl = $('#delta'), diff = total - prevTotal;
+    dEl.textContent = (diff > 0 ? '+' : '−') + fmt(Math.abs(diff));
+    dEl.classList.toggle('neg', diff < 0); dEl.classList.add('show');
+    clearTimeout(deltaTimer); deltaTimer = setTimeout(() => dEl.classList.remove('show'), 1600);
+  }
+  prevTotal = total;
+  cancelAnimationFrame(priceAnim);
+  const step = now => {
+    const t = clamp((now - t0) / dur), e = 1 - Math.pow(1 - t, 3), v = from + (total - from) * e;
+    shownTotal = v;
+    $$('.js-total').forEach(el => el.textContent = fmt(v));
+    $$('.js-monthly').forEach(el => el.textContent = fmt(monthly(v)) + '/mo');
+    if (t < 1) priceAnim = requestAnimationFrame(step);
+  };
+  priceAnim = requestAnimationFrame(step);
+}
+function setReadout(id, html) {
+  const el = document.getElementById(id);
+  if (el.innerHTML !== html) { el.innerHTML = html; el.classList.add('flash'); setTimeout(() => el.classList.remove('flash'), 700); }
+}
+function sync() {
+  $$('input[name=drive]').forEach(i => i.checked = i.value === state.drive);
+  $$('input[name=color]').forEach(i => i.checked = i.value === state.color);
+  $$('input[name=roof]').forEach(i => i.checked = i.value === state.roof);
+  $$('input[name=layout]').forEach(i => i.checked = i.value === state.layout);
+  $$('input[name=finish]').forEach(i => i.checked = i.value === state.finish);
+  $$('input[name=addon]').forEach(i => i.checked = has(i.value));
+  const d = byId(DRIVES, state.drive), c = byId(COLORS, state.color), r = byId(ROOFS, state.roof), l = byId(LAYOUTS, state.layout);
+  const pt = p => p ? '+' + fmt(p) : 'Incl.';
+  $('#selDrive').textContent = `${d.name} · ${pt(d.price)}`;
+  $('#selColor').textContent = `${c.name} · ${pt(c.price)}`;
+  $('#selRoof').textContent = `${r.name} · ${pt(r.price)}`;
+  $('#selLayout').textContent = `${l.name} · ${pt(l.price + byId(FINISHES, state.finish).price)}`;
+  const addSum = ADDONS.filter(a => has(a.id)).reduce((s, a) => s + a.price, 0);
+  $('#selAddons').textContent = `${state.addons.size} selected · +${fmt(addSum)}`;
+
+  const items = lineItems(), total = totalOf(items);
+  $('#sumList').innerHTML = items.map(i => `<li class="${i.base ? 'base' : ''}"><span>${i.label}</span><span class="dots"></span><span class="p">${i.base ? fmt(i.price) : i.price ? '+' + fmt(i.price) : 'Incl.'}</span></li>`).join('');
+  animatePrice(total);
+
+  const s = specs();
+  setReadout('rSleeps', String(s.sleeps));
+  setReadout('rHead', s.head.toFixed(2) + '<small>m</small>');
+  setReadout('rGrid', (s.days >= 21 ? '21+' : s.days >= 3 ? Math.round(s.days) : s.days.toFixed(1)) + '<small>days</small>');
+  setReadout('rHeight', s.height.toFixed(2) + '<small>m</small>');
+  setReadout('rPay', Math.round(s.payload) + '<small>kg</small>');
+  const pb = $('#rPayBar'); pb.style.width = clamp(s.payload / (BASE.gvw - BASE.kg)) * 100 + '%'; pb.classList.toggle('warn', s.payload < 420);
+
+  const e = eta(); $('#eta').textContent = `${e.label} · ${e.weeks} wks`;
+  const code = buildCode(); $('#buildCode').textContent = code; $('#pbCode').textContent = code;
+  $('#pbSummary').textContent = [d.name, c.name, r.name, l.name, state.addons.size ? `${state.addons.size} add-ons` : 'no add-ons'].join(' · ');
+  $('#heroMo').textContent = fmt(monthly(BASE.price));
+
+  applyPaint();
+  renderPlan();
+  $('#viewTag').textContent = currentView === 'plan' ? `Floor plan · ${l.name}` : 'Exterior · driver side';
+  history.replaceState(null, '', '#c=' + encode());
+}
+
+/* ======================= VIEW / SCENE ======================= */
+let currentView = 'side', hintTimer;
+function setView(v) {
+  currentView = v;
+  $('#views').dataset.view = v;
+  $$('[data-view]').forEach(b => b.matches('button') && b.setAttribute('aria-pressed', b.dataset.view === v));
+  const l = byId(LAYOUTS, state.layout);
+  $('#viewTag').textContent = v === 'plan' ? `Floor plan · ${l.name}` : 'Exterior · driver side';
+}
+function setScene(s) {
+  scene = s;
+  $$('[data-scene]').forEach(b => b.setAttribute('aria-pressed', b.dataset.scene === s));
+  if (currentView !== 'side') setView('side');
+}
+function hint(text) {
+  const h = $('#viewHint'); h.textContent = text; h.classList.add('show');
+  clearTimeout(hintTimer); hintTimer = setTimeout(() => h.classList.remove('show'), 2200);
+}
+let toastTimer;
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+/* ======================= EVENTS ======================= */
+$('#panel').addEventListener('change', e => {
+  const i = e.target; if (!i.name) return;
+  const now = performance.now();
+  if (i.name === 'addon') {
+    const a = byId(ADDONS, i.value);
+    if (i.checked) {
+      state.addons.add(a.id);
+      if (a.excl && has(a.excl)) { state.addons.delete(a.excl); toast(`${byId(ADDONS, a.excl).name} removed. It shares the rear-door mount.`); }
+      if (a.needs && !has(a.needs)) { state.addons.add(a.needs); toast(`Roof rack added. The ${a.name.toLowerCase()} mounts to it.`); }
+      if (a.id === 'awning' && scene !== 'camp') { peek.awn = now + 2400; }
+    } else {
+      state.addons.delete(a.id);
+      if (a.id === 'rack' && has('starlink')) { state.addons.delete('starlink'); toast('Satellite mount removed too. It needs the roof rack.'); }
+    }
+    if (a.vis) { setView('side'); hint(i.checked ? `+ ${a.name}` : `− ${a.name}`); }
+    else hint(i.checked ? `+ ${a.name} (inside)` : `− ${a.name}`);
+  } else if (i.name === 'finish') {
+    state.finish = i.value; setView('plan');
+  } else {
+    state[i.name] = i.value;
+    if (i.name === 'layout') setView('plan');
+    else setView('side');
+    if (i.name === 'roof' && i.value === 'pop' && scene !== 'camp') { peek.pop = now + 2400; hint('Pop-top raised for preview'); }
+    if (i.name === 'drive' && i.value === 'awd') hint('4×4 badge applied');
+  }
+  sync();
+});
+$$('[data-view]').forEach(b => b.matches('button') && b.addEventListener('click', () => setView(b.dataset.view)));
+$$('[data-scene]').forEach(b => b.addEventListener('click', () => { setScene(b.dataset.scene); if (b.dataset.scene === 'camp') hint('Camp mode · dusk'); }));
+$$('[data-preset]').forEach(b => b.addEventListener('click', () => {
+  const p = PRESETS[b.dataset.preset];
+  state = { ...p, addons: new Set(p.addons) };
+  sync(); setView('side'); toast(`${b.textContent} build loaded. Make it yours.`);
+  if (b.closest('.hero')) $('#build').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
+}));
+$('#resetBtn').addEventListener('click', () => { state = { ...DEFAULT, addons: new Set(DEFAULT.addons) }; sync(); setView('side'); toast('Configuration reset'); });
+$('#copyBtn').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText(location.href); toast('Link copied. Your build is saved in it.'); }
+  catch { toast('Copy failed. You can copy the address bar instead.'); }
+});
+
+/* reserve dialog */
+const dlg = $('#dlg');
+function openReserve() {
+  const items = lineItems(), total = totalOf(items), s = specs(), e = eta(), code = buildCode();
+  $('#dlgSheet').innerHTML = `<span class="mono" style="color:var(--rust)">Build sheet · ${code}</span><h3 id="dlgTitle">Your Kestrel K1</h3>
+    <ul class="sum">${items.filter(i => i.price || i.base).map(i => `<li><span>${i.label}</span><span class="dots"></span><span class="p">${i.base ? fmt(i.price) : '+' + fmt(i.price)}</span></li>`).join('')}</ul>
+    <div class="total-box"><div><div class="mono" style="color:var(--ink-3)">Total</div><div class="big">${fmt(total)}</div></div><div style="text-align:right"><div class="mono" style="color:var(--ink-3)">or</div><b>${fmt(monthly(total))}/mo</b></div></div>
+    <div class="meta-grid" style="margin-bottom:0"><div><span class="mono">Sleeps · headroom</span><b>${s.sleeps} · ${s.head.toFixed(2)} m</b></div><div><span class="mono">Handover</span><b>${e.label}</b></div></div>`;
+  $('#dlgForm').innerHTML = `<button class="dlg-x" type="button" aria-label="Close" data-close>×</button>
+    <span class="mono" style="color:var(--ink-3)">Step 02 · Reserve</span><h3>Hold your build slot</h3>
+    <form id="resForm">
+      <label class="field"><span class="mono">Full name</span><input name="name" required autocomplete="name"></label>
+      <label class="field"><span class="mono">Email</span><input name="email" type="email" required autocomplete="email"></label>
+      <label class="field"><span class="mono">Delivery country</span><select name="country"><option>Germany</option><option>France</option><option>Netherlands</option><option>Spain</option><option>Portugal</option><option>Italy</option><option>Austria</option><option>Norway</option><option>Sweden</option><option>Other EU</option></select></label>
+      <button class="btn btn-rust" type="submit" style="width:100%;justify-content:center;margin-top:6px">Reserve for €500 →</button>
+      <p class="fine">Fully refundable until your spec call. This is a demo, so nothing is charged or sent.</p>
+    </form>`;
+  dlg.showModal();
+  $('#resForm').addEventListener('submit', ev => {
+    ev.preventDefault();
+    const name = new FormData(ev.target).get('name').toString().split(' ')[0];
+    const ok = document.createElement('div'); ok.className = 'ok';
+    ok.innerHTML = `<div class="tick">✓</div><h3>Slot held${name ? ', ' + name.replace(/[<>&"]/g, '') : ''}</h3><p style="color:var(--ink-2);margin:0 0 16px">Build <b>${code}</b> is reserved for the ${e.label} batch. A builder will be in touch within two working days to book your spec call.</p><button class="btn btn-ink" type="button" data-close>Back to my build</button>`;
+    ev.target.replaceWith(ok);
+  });
+}
+dlg.addEventListener('click', e => { if (e.target === dlg || e.target.closest('[data-close]')) dlg.close(); });
+$('#reserveBtn').addEventListener('click', openReserve);
+$('#pbReserve').addEventListener('click', openReserve);
+
+/* observers */
+const pricebar = $('#pricebar');
+new IntersectionObserver(([en]) => pricebar.classList.toggle('show', en.isIntersecting), { rootMargin: '-20% 0px -10% 0px' }).observe($('#build'));
+new IntersectionObserver(([en]) => {
+  if (en.isIntersecting && drive.start === null && A.x !== 0) { if (reduced) { A.x = 0; dirty = true; } else drive.start = performance.now(); }
+}, { threshold: .35 }).observe($('#views'));
+const stepIO = new IntersectionObserver(ents => {
+  ents.forEach(en => { if (en.isIntersecting) $$('.stepnav a').forEach(a => a.classList.toggle('on', a.dataset.step === en.target.id)); });
+}, { rootMargin: '-35% 0px -55% 0px' });
+$$('.step').forEach(s => stepIO.observe(s));
+const revIO = new IntersectionObserver(ents => ents.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); revIO.unobserve(en.target); } }), { threshold: .15 });
+$$('.reveal').forEach((el, i) => { el.style.transitionDelay = (i % 5) * 70 + 'ms'; revIO.observe(el); });
+
+/* topo lines in hero */
+(function topo() {
+  const svg = $('#topo'); const w = 1600, h = 900; svg.setAttribute('viewBox', `0 0 ${w} ${h}`); svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+  let seed = 31; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const centers = [[1180, 380, 15], [260, 760, 9], [820, -40, 7]];
+  let out = '';
+  centers.forEach(([cx, cy, rings]) => {
+    const ph = [rnd() * 6, rnd() * 6, rnd() * 6];
+    for (let k = 1; k <= rings; k++) {
+      const base = 26 * k + 10; let d = '';
+      for (let i = 0; i <= 96; i++) {
+        const a = i / 96 * Math.PI * 2;
+        const rr = base * (1 + .16 * Math.sin(a * 2 + ph[0]) + .09 * Math.sin(a * 3 + ph[1] + k * .12) + .05 * Math.sin(a * 5 + ph[2] - k * .2)) * (1.25 + .05 * k / rings);
+        d += (i ? 'L' : 'M') + (cx + Math.cos(a) * rr * 1.35).toFixed(1) + ' ' + (cy + Math.sin(a) * rr).toFixed(1);
+      }
+      out += `<path d="${d}Z" fill="none" stroke="${k % 5 === 0 ? '#CF5427' : '#1A1E1B'}" stroke-opacity="${k % 5 === 0 ? .35 : .11}" stroke-width="${k % 5 === 0 ? 1.4 : 1}"/>`;
+    }
+  });
+  svg.innerHTML = out;
+})();
+
+/* ======================= INIT ======================= */
+buildPanel();
+const m = location.hash.match(/c=([^&]+)/);
+if (m && decode(decodeURIComponent(m[1]))) setTimeout(() => toast('Your saved build has been restored'), 600);
+sync();
+prevTotal = totalOf(lineItems());
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

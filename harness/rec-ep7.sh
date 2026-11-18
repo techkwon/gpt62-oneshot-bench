@@ -7,7 +7,7 @@ for M in "$@"; do
     [[ -f $B/runs/ep7-$T/$M/index.html ]] || continue
     case $T in
       three) $B/scripts/rec-ego.sh ep7-$T $M 24 $B/scripts/act-ep7-three.json ;;
-      game)  $B/scripts/rec-ego.sh ep7-$T $M 28 $B/scripts/act-ep7-game3.json ;;
+      game)  $B/scripts/rec-ego.sh ep7-$T $M 28 $B/scripts/act-ep7-game4.json ;;
       *)     $B/scripts/rec-ego.sh ep7-$T $M 18 $B/scripts/act-ep7-$( [[ $T == motion ]] && echo motion || echo still ).json ;;
     esac
     echo "REC ep7-$T $M"

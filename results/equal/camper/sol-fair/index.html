@@ -1,0 +1,1330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f5f1e7">
+<title>Build a Waypoint | Roamworks</title>
+<style>
+:root{color-scheme:light;--paper:#f5f1e7;--ink:#1d2a23;--muted:#5d6559;--line:#d9d4c7;--pop:#e7794d;--focus:#a83b1b;--dark:#20362d;--light:#f8f3e6;--mono:ui-monospace,SFMono-Regular,Consolas,monospace;--head:Impact,"Arial Narrow",Haettenschweiler,sans-serif;--body:"Helvetica Neue",Arial,sans-serif}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-bottom:100px}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:14px}
+button,input{font:inherit}
+button{color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible,canvas:focus-visible,input:focus-visible+span,input:focus-visible+.roof-art{outline:2px solid var(--focus);outline-offset:4px}
+button:disabled{cursor:default}
+button,fieldset{margin:0}
+fieldset{border:0;padding:0;min-width:0}
+[hidden]{display:none!important}
+.shell{min-height:100svh;display:flex;flex-direction:column}
+.tag,.meta,.chip,.stage-tools button,.summary-link,.price-label{font:600 10px/1.3 var(--mono);letter-spacing:.115em;text-transform:uppercase}
+.topbar{height:70px;display:flex;align-items:center;justify-content:space-between;gap:25px;padding:0 36px;border-bottom:1px solid #cbc7b8;background:var(--paper)}
+.brand{display:inline-flex;align-items:center;gap:10px;user-select:none}
+.icon.brand-mark{width:33px;height:33px;color:var(--ink);background:var(--pop);border-radius:4px;padding:5px}
+.brand-name{font-family:var(--head);font-size:27px;font-weight:400;letter-spacing:.028em;line-height:1}
+.top-label{position:absolute;left:50%;transform:translateX(-50%);color:#4d584b;display:flex;align-items:center;gap:10px;white-space:nowrap}
+.top-label::before{content:"";width:6px;height:6px;background:#b86746;border-radius:50%}
+.summary-link{display:flex;align-items:center;gap:9px;background:none;border:1px solid var(--line);border-radius:3px;padding:10px 13px;white-space:nowrap}
+.summary-link:hover{border-color:var(--ink);background:#ebe5d7}
+.icon{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
+.workspace{display:grid;grid-template-columns:minmax(0,1fr) minmax(400px,34.4%);flex:1;min-height:max(658px,calc(100svh - 157px))}
+.stage{position:relative;isolation:isolate;overflow:hidden;background:radial-gradient(ellipse at 51% 56%,#3b5242 0%,#2b4438 39%,#20362d 73%,#1c3028 100%);color:var(--light);min-width:0}
+#topography{position:absolute;inset:0;width:100%;height:100%;opacity:.65;pointer-events:none}
+.stage-copy{position:absolute;z-index:2;top:40px;left:clamp(27px,4vw,66px);pointer-events:none;animation:enter .65s ease-out both}
+.stage-tag{color:#edb294;display:flex;align-items:center;gap:9px;margin:0 0 10px}
+.stage-tag::before{content:"";width:19px;height:2px;background:var(--pop)}
+.stage h1{margin:0;font:400 clamp(70px,7.25vw,121px)/.96 var(--head);letter-spacing:.004em}
+.stage-copy p{margin:14px 0 0;color:#e0e0ce;font-size:15px;letter-spacing:.015em}
+.stage-badge{position:absolute;z-index:2;top:43px;right:clamp(25px,3.2vw,51px);padding:8px 10px;color:#e5e4d5;border:1px solid #adbd9f58;border-radius:3px;white-space:nowrap;pointer-events:none}
+.viewer{position:absolute;inset:147px 0 55px;animation:enter .8s .08s ease-out both}
+#vehicle,#fallback-vehicle{display:block;width:100%;height:100%;outline-offset:-4px;touch-action:pan-y;cursor:grab}
+#vehicle:active{cursor:grabbing}
+#vehicle:focus-visible{outline:1px dashed #f5e9cc8c}
+.stage-bottom{position:absolute;z-index:2;bottom:26px;left:clamp(27px,4vw,66px);right:clamp(25px,3.2vw,51px);display:flex;justify-content:space-between;align-items:center;gap:16px}
+.stage-tools{display:flex;gap:3px;padding:3px;border:1px solid #e0e4cc35;background:#1b2c25a8;border-radius:5px}
+.stage-tools button{background:transparent;border:1px solid transparent;color:#dddccc;display:flex;align-items:center;gap:8px;border-radius:3px;padding:8px 11px;white-space:nowrap}
+.stage-tools button:hover{background:#ffffff14}
+.stage-tools button[aria-pressed="true"]{background:var(--light);color:var(--ink)}
+.stage-tools .icon{width:16px;height:16px}
+.stage-tools button:focus-visible,.orbit button:focus-visible{outline-color:var(--light)}
+.orbit{display:flex;align-items:center;gap:7px;color:#dedecd}
+.orbit button{position:relative;border:1px solid #dddfce35;background:#1b2c2550;color:var(--light);border-radius:3px;padding:6px;display:grid;place-items:center}
+.orbit button:hover{background:#ffffff24}
+.orbit .icon{width:15px;height:15px}
+.orbit .meta{margin:0 5px 0 0;white-space:nowrap}
+.builder{display:flex;flex-direction:column;padding:39px clamp(25px,3vw,50px) 25px;border-left:1px solid #23362e;background:var(--paper)}
+.builder-intro .tag{color:#9c4329;margin:0 0 11px}
+.builder h2{margin:0;font:400 clamp(44px,4.15vw,68px)/.98 var(--head);letter-spacing:.006em}
+.builder-intro p{margin:13px 0 25px;color:var(--muted);font-size:14px;line-height:1.5}
+.tabs{display:flex;border-bottom:1px solid #cdc7ba;gap:24px}
+.tabs button{position:relative;min-height:40px;padding:0 0 11px;border:0;background:none;display:flex;gap:7px;align-items:center;color:var(--muted);font-weight:650;white-space:nowrap}
+.tabs .icon{width:16px;height:16px}
+.tabs button:hover,.tabs button[aria-selected="true"]{color:var(--ink)}
+.tabs button[aria-selected="true"]::after{content:"";position:absolute;bottom:-1px;left:0;right:0;height:3px;background:#b85a38}
+.tab-panel{padding-top:24px;animation:panel-in .24s ease-out both}
+.option-title{padding:0;display:flex;align-items:center;gap:9px;font-size:18px;font-weight:750;letter-spacing:-.024em}
+.option-title::before{content:"";display:block;width:4px;height:14px;background:#c45f3b;border-radius:1px}
+.option-caption{margin:7px 0 0;font-size:13px;line-height:1.45;color:var(--muted)}
+.paint-choices{display:flex;align-items:center;gap:13px;margin:17px 0 13px}
+.paint-option{width:50px;height:50px;display:grid;place-items:center;position:relative;cursor:pointer}
+.paint-option input,.roof-option input,.layout-option input,.addon-option input{position:absolute;width:1px;height:1px;opacity:0}
+.swatch{width:100%;height:100%;display:block;position:relative;border:1px solid #25332826;border-radius:6px;background:var(--swatch);transition:transform .18s ease}
+.paint-option:hover .swatch{transform:translateY(-2px)}
+.swatch::after{content:"";inset:-4px;position:absolute;border-radius:9px;border:2px solid transparent}
+.paint-option input:checked+.swatch::after{border-color:#a64f32}
+.paint-option input:checked+.swatch .icon{display:block}
+.swatch .icon{display:none;position:absolute;right:6px;bottom:5px;width:17px;height:17px;color:#201d14;stroke-width:2.4}
+.swatch.dark .icon{color:#fff}
+.paint-data{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:13px}
+.paint-data strong{font-weight:700}
+.included{color:var(--muted);white-space:nowrap;font-size:12px}
+.rule{height:1px;border:0;background:var(--line);margin:23px 0 22px}
+.roof-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.roof-option,.layout-option{position:relative;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;border:1px solid #d0cbbe;border-radius:5px;min-width:0;padding:12px 11px 11px;background:#f8f5ed;transition:border-color .18s ease,background .18s ease}
+.roof-option:hover,.layout-option:hover{border-color:#a88d76}
+.roof-option:has(input:checked),.layout-option:has(input:checked){border-color:#a65034;background:#f2e7d7;box-shadow:inset 0 0 0 1px #a65034}
+.roof-option:has(input:focus-visible),.layout-option:has(input:focus-visible),.addon-option:has(input:focus-visible){outline:2px solid var(--focus);outline-offset:3px}
+.roof-art{width:75px;height:35px;color:#394237;pointer-events:none}
+.option-row{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:8px}
+.option-row strong{font-size:13px;line-height:1.3}
+.radio-marker{width:13px;height:13px;border:1px solid #9b9a89;border-radius:50%;flex:none}
+input:checked~.option-row .radio-marker{border:4px solid #ac5537}
+.option-price{display:block;margin-top:4px;font-size:11px;color:var(--muted)}
+.layout-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:17px}
+.layout-option{padding:10px 11px 13px}
+.layout-outline{width:100%;height:66px;display:block;color:#575e4e}
+.layout-description{margin:7px 0 0;color:var(--muted);font-size:12px;line-height:1.4}
+.addon-list{display:grid;gap:8px;margin-top:15px}
+.addon-option{position:relative;display:flex;align-items:center;gap:11px;padding:12px;border:1px solid #d0cbbe;background:#f8f5ed;border-radius:5px;cursor:pointer}
+.addon-option:has(input:checked){border-color:#ad5c3f;background:#f2e7d7}
+.addon-option:hover{border-color:#a88d76}
+.addon-icon{width:29px;height:29px;padding:4px;color:#526052}
+.addon-details{min-width:0;flex:1}
+.addon-details strong,.addon-details small{display:block}
+.addon-details small{margin-top:3px;font-size:11px;color:var(--muted)}
+.addon-price{font-size:12px;font-weight:650;white-space:nowrap}
+.checkbox-marker{display:grid;place-items:center;width:15px;height:15px;border:1px solid #8a8e7e;border-radius:3px;flex:none}
+.checkbox-marker .icon{width:12px;height:12px;opacity:0;stroke-width:2.2}
+input:checked~.checkbox-marker{background:#a75033;border-color:#a75033;color:#fff}
+input:checked~.checkbox-marker .icon{opacity:1}
+.builder-bottom{margin-top:auto;padding-top:21px}
+.next-link{width:100%;display:flex;justify-content:space-between;align-items:center;min-height:41px;border:0;border-top:1px solid var(--line);background:transparent;font-size:13px;font-weight:700;text-align:left;padding:9px 0 0}
+.next-link:hover{color:#9a3a21}
+.next-link .icon{transition:transform .15s ease}
+.next-link:hover .icon{transform:translateX(4px)}
+.orderbar{position:sticky;z-index:4;bottom:0;min-height:87px;border-top:1px solid #141e18;background:#192720;color:var(--light);display:flex;align-items:center;gap:30px;padding:13px 36px}
+.orderbar .tag,.price-label{color:#c8cdbc;display:block;margin:0 0 5px}
+.build-record{flex:1;min-width:0}
+.build-record p{margin:0;font-size:13px;line-height:1.4;color:#f2f0df}
+.sleep-stat{display:flex;align-items:center;gap:9px;border-left:1px solid #536155;padding-left:23px;margin-right:15px;font-size:12px;white-space:nowrap;color:#f2f0df}
+.sleep-stat .icon{color:#bac4af;width:20px;height:20px}
+.estimate{min-width:150px;text-align:left}
+.estimate output{font:400 35px/1 var(--head);letter-spacing:.04em;white-space:nowrap}
+.action{display:flex;justify-content:space-between;align-items:center;gap:22px;border:1px solid transparent;border-radius:4px;padding:14px 18px;background:var(--pop);color:#19241c;font-weight:800;min-height:49px;white-space:nowrap;transition:background .17s ease,transform .17s ease}
+.action:hover{background:#fa9166;transform:translateY(-1px)}
+.action:active{transform:translateY(1px)}
+.orderbar .action{min-width:190px}
+.orderbar button:focus-visible{outline-color:var(--light)}
+dialog{width:min(485px,calc(100% - 28px));max-height:calc(100svh - 32px);overflow:auto;padding:28px;border:1px solid var(--line);border-radius:7px;background:var(--paper);color:var(--ink);box-shadow:0 20px 70px #13201888}
+dialog[open]{animation:panel-in .2s ease-out both}
+dialog::backdrop{background:#101a16a8;backdrop-filter:blur(3px)}
+.dialog-top{display:flex;justify-content:space-between;align-items:start;gap:18px}
+.dialog-top .tag{margin:0 0 8px;color:#9c4329}
+.dialog-top h2{margin:0;font:400 45px/1 var(--head)}
+.close-button{background:none;border:1px solid var(--line);border-radius:4px;padding:6px;display:grid;place-items:center}
+.close-button:hover{background:#ebe5d7}
+#summary-lines{margin:20px 0 15px}
+#summary-lines div{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:10px 0;line-height:1.4}
+#summary-lines dd{margin:0;text-align:right;white-space:nowrap;font-weight:650}
+.summary-total{display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:700}
+.summary-total strong{font:400 34px/1 var(--head)}
+.dialog-note{margin:12px 0 20px;color:var(--muted);font-size:12px;line-height:1.5}
+.dialog-actions{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.subtle-button{border:0;background:none;text-decoration:underline;text-underline-offset:3px;padding:7px 0}
+@keyframes enter{from{opacity:0;translate:0 9px}to{opacity:1;translate:0 0}}
+@keyframes panel-in{from{opacity:.3;translate:0 4px}to{opacity:1;translate:0 0}}
+@media (min-width:1250px){.builder{padding-top:48px}.tabs{gap:29px}.paint-choices{gap:15px}.roof-option{padding:12px 14px}.workspace{min-height:max(680px,calc(100svh - 157px))}}
+@media (max-width:1050px){.workspace{grid-template-columns:minmax(0,1fr) minmax(366px,42%)}.stage-badge{top:auto;bottom:85px;font-size:9px}.stage h1{font-size:clamp(62px,8.8vw,93px)}.orbit .meta{display:none}.orderbar{gap:19px}.sleep-stat{padding-left:15px;margin-right:0}.tabs{gap:19px}}
+@media (max-width:800px){.topbar{height:57px;padding:0 17px}.icon.brand-mark{width:29px;height:29px}.brand-name{font-size:24px}.top-label{display:none}.summary-link{padding:7px 9px}.workspace{display:block;min-height:0}.stage{height:clamp(400px,88vw,540px)}.stage-copy{top:24px;left:22px}.stage-tag{margin-bottom:7px;font-size:9px}.stage h1{font-size:clamp(54px,10vw,80px)}.stage-copy p{margin-top:8px;font-size:13px}.viewer{inset:101px -10px 43px}.stage-bottom{bottom:15px;left:17px;right:17px}.stage-badge{display:none}.stage-tools button{padding:8px;font-size:9px}.orbit button{padding:9px}.builder{border-left:0;border-top:1px solid #21372c;padding:28px 22px 20px;min-height:505px}.builder h2{font-size:50px}.builder-intro p{margin:10px 0 16px}.tab-panel{padding-top:21px}.tabs{gap:25px}.orderbar{gap:10px;min-height:69px;padding:9px 17px}.build-record,.sleep-stat{display:none}.estimate{flex:1;min-width:0}.estimate output{font-size:29px}.price-label{margin-bottom:3px}.orderbar .action{min-width:0;min-height:44px;padding:9px 12px;gap:13px}}
+@media (max-width:365px){.stage{height:383px}.stage-copy{left:17px}.builder{padding-inline:17px}.tabs{gap:19px}.summary-link .icon{display:none}.estimate output{font-size:26px}.price-label{letter-spacing:.06em}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" style="position:absolute;overflow:hidden">
+<defs>
+<symbol id="i-logo" viewBox="0 0 24 24"><path d="M2 19 8.8 7.3l3.2 5.1 3.8-7.3L22 19H2Z" stroke-width="1.9"/><path d="m6.5 14.1 2.4 2 2.5-1.8m2.7-3.9 2.1 2 1.9-1.25"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6"/></symbol>
+<symbol id="i-up" viewBox="0 0 24 24"><path d="M6 18 18 6M7 6h11v11"/></symbol>
+<symbol id="i-van" viewBox="0 0 24 24"><path d="M4 17H2.5v-4l2-1.2 3.2-5.1h10.9l2.9 3.6V17h-2.4m-4.2 0H9m-3.9-5h5V7M15 8.7h3l1.3 1.6V12H15Z"/><circle cx="6.9" cy="17.3" r="2.1"/><circle cx="17.2" cy="17.3" r="2.1"/></symbol>
+<symbol id="i-layout" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M10 4v16m0-8h11"/></symbol>
+<symbol id="i-addon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/><rect x="3" y="3" width="18" height="18" rx="3"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+<symbol id="i-left" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></symbol>
+<symbol id="i-right" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+<symbol id="i-bed" viewBox="0 0 24 24"><path d="M3 18V7m18 11v-5a2 2 0 0 0-2-2h-8v5M3 16h18M5 11h3v3H5z"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+<symbol id="i-solar" viewBox="0 0 24 24"><path d="M6 6h12l4 11H2L6 6Zm-2 5.5h16M10 6l-1 11m5-11 1 11m-3 0v4m-4 0h8"/></symbol>
+<symbol id="i-awning" viewBox="0 0 24 24"><path d="M3 20V5h11l7 6H3m17 0v9M7 5l4 6m1-6 5 6"/></symbol>
+<symbol id="i-ladder" viewBox="0 0 24 24"><path d="M7 3v18M17 3v18M7 6h10M7 10h10M7 14h10M7 18h10"/></symbol>
+</defs>
+</svg>
+<div class="shell">
+<header class="topbar">
+  <div class="brand" aria-label="Roamworks"><svg class="icon brand-mark" aria-hidden="true"><use href="#i-logo"/></svg><span class="brand-name" aria-hidden="true">ROAMWORKS</span></div>
+  <span class="top-label tag">Camper van configurator</span>
+  <button class="summary-link" type="button" data-review>Build summary<svg class="icon" aria-hidden="true"><use href="#i-up"/></svg></button>
+</header>
+<main class="workspace">
+  <section class="stage" aria-labelledby="vehicle-title">
+    <canvas id="topography" aria-hidden="true"></canvas>
+    <div class="stage-copy">
+      <div class="tag stage-tag">Adventure camper van</div>
+      <h1 id="vehicle-title">WAYPOINT</h1>
+      <p>Built for wherever the road ends.</p>
+    </div>
+    <span class="stage-badge chip">AWD &nbsp;·&nbsp; 144″ WB</span>
+    <div class="viewer">
+      <canvas id="vehicle" tabindex="0" aria-label="Interactive Waypoint preview. Drag or use the left and right arrow keys to rotate."></canvas>
+    </div>
+    <div class="stage-bottom">
+      <div class="stage-tools" role="group" aria-label="Vehicle view">
+        <button type="button" data-view="exterior" aria-pressed="true"><svg class="icon" aria-hidden="true"><use href="#i-van"/></svg>Exterior</button>
+        <button type="button" data-view="cutaway" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-layout"/></svg>Cutaway</button>
+      </div>
+      <div class="orbit" role="group" aria-label="Rotate the camper">
+        <span class="meta">Drag to rotate</span>
+        <button type="button" data-orbit="-1" aria-label="Rotate left"><svg class="icon" aria-hidden="true"><use href="#i-left"/></svg></button>
+        <button type="button" data-orbit="1" aria-label="Rotate right"><svg class="icon" aria-hidden="true"><use href="#i-right"/></svg></button>
+      </div>
+    </div>
+  </section>
+  <section class="builder" aria-labelledby="builder-title">
+    <div class="builder-intro">
+      <div class="tag">The build shop</div>
+      <h2 id="builder-title">BUILD YOUR VAN.</h2>
+      <p>Make the Waypoint yours.</p>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Build options">
+      <button type="button" role="tab" id="tab-exterior" aria-controls="panel-exterior" aria-selected="true" data-tab="exterior"><svg class="icon" aria-hidden="true"><use href="#i-van"/></svg>Exterior</button>
+      <button type="button" role="tab" id="tab-interior" aria-controls="panel-interior" aria-selected="false" tabindex="-1" data-tab="interior"><svg class="icon" aria-hidden="true"><use href="#i-layout"/></svg>Interior</button>
+      <button type="button" role="tab" id="tab-addons" aria-controls="panel-addons" aria-selected="false" tabindex="-1" data-tab="addons"><svg class="icon" aria-hidden="true"><use href="#i-addon"/></svg>Add-ons</button>
+    </div>
+    <div class="tab-panel" id="panel-exterior" data-panel="exterior" role="tabpanel" aria-labelledby="tab-exterior">
+      <fieldset>
+        <legend class="option-title">Body colour</legend>
+        <div class="paint-choices">
+          <label class="paint-option" title="Drift Sand"><input type="radio" name="color" value="sand" aria-label="Drift Sand, included" checked><span class="swatch" style="--swatch:#b6a382"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></span></label>
+          <label class="paint-option" title="Pine Moss"><input type="radio" name="color" value="moss" aria-label="Pine Moss, plus 750 dollars"><span class="swatch dark" style="--swatch:#59664c"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></span></label>
+          <label class="paint-option" title="Basalt Grey"><input type="radio" name="color" value="slate" aria-label="Basalt Grey, plus 750 dollars"><span class="swatch dark" style="--swatch:#515759"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></span></label>
+          <label class="paint-option" title="Alpine White"><input type="radio" name="color" value="snow" aria-label="Alpine White, included"><span class="swatch" style="--swatch:#e2ded2"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></span></label>
+        </div>
+        <div class="paint-data"><strong id="selected-color">Drift Sand</strong><span class="included" id="paint-price">Included</span></div>
+      </fieldset>
+      <hr class="rule">
+      <fieldset>
+        <legend class="option-title">Roof type</legend>
+        <p class="option-caption">Choose your roof height and sleeping capacity.</p>
+        <div class="roof-choices">
+          <label class="roof-option">
+            <input type="radio" name="roof" value="low" checked>
+            <svg class="roof-art" viewBox="0 0 77 35" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 26H2v-7l8-3 9-10h45q6 0 6 5v15h-5m-9 0H17M21 6l-4 12m-7-2h6m8-6h18v8H22m24-8h19v8H46"/><circle cx="12" cy="26" r="4.5"/><circle cx="61" cy="26" r="4.5"/><path d="M28 3h33" stroke="#af583c"/></svg>
+            <span class="option-row"><strong>Touring Roof</strong><span class="radio-marker" aria-hidden="true"></span></span>
+            <span class="option-price">Included · Sleeps 2</span>
+          </label>
+          <label class="roof-option">
+            <input type="radio" name="roof" value="pop">
+            <svg class="roof-art" viewBox="0 0 77 35" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 28H2v-6l8-3 9-9h45q6 0 6 5v13h-5m-9 0H17M21 10l-4 11m-7-2h6m8-5h18v7H22m24-7h19v7H46"/><circle cx="12" cy="28" r="4.5"/><circle cx="61" cy="28" r="4.5"/><path d="M23 10 65 2l2 2v6M42 8l20-4v4" stroke="#af583c"/></svg>
+            <span class="option-row"><strong>Pop-Top Roof</strong><span class="radio-marker" aria-hidden="true"></span></span>
+            <span class="option-price">+$5,200 · Sleeps 4</span>
+          </label>
+        </div>
+      </fieldset>
+    </div>
+    <div class="tab-panel" id="panel-interior" data-panel="interior" role="tabpanel" aria-labelledby="tab-interior" hidden>
+      <fieldset>
+        <legend class="option-title">Interior layout</legend>
+        <p class="option-caption">Switch to the cutaway to see how each floor plan fits.</p>
+        <div class="layout-choices">
+          <label class="layout-option">
+            <input type="radio" name="layout" value="weekender" checked>
+            <svg class="layout-outline" viewBox="0 0 112 58" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><rect x="4" y="7" width="104" height="44" rx="8"/><path d="M25 7v44M9 17v10h10V17zm0 16v10h10V33z"/><path d="M33 9h30v13H33zm35 0h37v40H68z" fill="#d6bc95"/><path d="M96 9v40M35 40h25v9H35z"/></svg>
+            <span class="option-row"><strong>The Weekender</strong><span class="radio-marker" aria-hidden="true"></span></span>
+            <span class="option-price">Included</span><span class="layout-description">Fixed double bed, galley and gear garage.</span>
+          </label>
+          <label class="layout-option">
+            <input type="radio" name="layout" value="traverse">
+            <svg class="layout-outline" viewBox="0 0 112 58" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><rect x="4" y="7" width="104" height="44" rx="8"/><path d="M25 7v44M9 17v10h10V17zm0 16v10h10V33z"/><path d="M32 9h29v12H32zm37 0h34v10H69zm0 30h34v10H69z" fill="#b2b69d"/><rect x="74" y="23" width="25" height="12" rx="2"/><path d="M33 37h23v12H33z" fill="#d6bc95"/></svg>
+            <span class="option-row"><strong>The Traverse</strong><span class="radio-marker" aria-hidden="true"></span></span>
+            <span class="option-price">+$3,400</span><span class="layout-description">Convertible dinette, galley and enclosed washroom.</span>
+          </label>
+        </div>
+      </fieldset>
+    </div>
+    <div class="tab-panel" id="panel-addons" data-panel="addons" role="tabpanel" aria-labelledby="tab-addons" hidden>
+      <fieldset>
+        <legend class="option-title">Expedition gear</legend>
+        <p class="option-caption">Outfit the Waypoint for the way you travel.</p>
+        <div class="addon-list">
+          <label class="addon-option"><input type="checkbox" name="addon" value="solar"><svg class="icon addon-icon" aria-hidden="true"><use href="#i-solar"/></svg><span class="addon-details"><strong>Solar Kit</strong><small>400 W roof-mounted array</small></span><span class="addon-price">+$1,450</span><span class="checkbox-marker" aria-hidden="true"><svg class="icon"><use href="#i-check"/></svg></span></label>
+          <label class="addon-option"><input type="checkbox" name="addon" value="awning"><svg class="icon addon-icon" aria-hidden="true"><use href="#i-awning"/></svg><span class="addon-details"><strong>Side Awning</strong><small>Roll-out shade with two supports</small></span><span class="addon-price">+$950</span><span class="checkbox-marker" aria-hidden="true"><svg class="icon"><use href="#i-check"/></svg></span></label>
+          <label class="addon-option"><input type="checkbox" name="addon" value="ladder"><svg class="icon addon-icon" aria-hidden="true"><use href="#i-ladder"/></svg><span class="addon-details"><strong>Rear Ladder</strong><small>Easy access to roof-mounted gear</small></span><span class="addon-price">+$780</span><span class="checkbox-marker" aria-hidden="true"><svg class="icon"><use href="#i-check"/></svg></span></label>
+        </div>
+      </fieldset>
+    </div>
+    <div class="builder-bottom"><button class="next-link" type="button" id="next-step"><span>Continue to interior</span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button></div>
+  </section>
+</main>
+<footer class="orderbar" aria-label="Build estimate">
+  <div class="build-record"><span class="tag">Your Waypoint</span><p id="build-spec">Drift Sand · Touring Roof · The Weekender</p></div>
+  <div class="sleep-stat"><svg class="icon" aria-hidden="true"><use href="#i-bed"/></svg><span>Sleeps <strong id="sleep-capacity">2</strong></span></div>
+  <div class="estimate"><span id="price-label" class="price-label">Estimated total · USD</span><output id="total-price" aria-labelledby="price-label" aria-live="polite" aria-atomic="true">$84,900</output></div>
+  <button class="action" type="button" data-review>Review build<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+</footer>
+</div>
+<dialog id="build-dialog" aria-labelledby="dialog-title">
+  <div class="dialog-top"><div><div class="tag">Roamworks Waypoint</div><h2 id="dialog-title">YOUR BUILD</h2></div><button class="close-button" type="button" data-close aria-label="Close build summary" autofocus><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></div>
+  <dl id="summary-lines"></dl>
+  <div class="summary-total"><span>Estimated total · USD</span><strong id="summary-total"></strong></div>
+  <p class="dialog-note">Estimate excludes taxes, registration and delivery.</p>
+  <div class="dialog-actions"><button type="button" id="reset-build" class="subtle-button">Reset build</button><button type="button" class="action" id="download-build">Download estimate<svg class="icon" aria-hidden="true"><use href="#i-download"/></svg></button></div>
+</dialog>
+<script id="vehicle-renderer">
+(() => {
+  const topo = document.querySelector('#topography');
+  const map = topo.getContext('2d');
+  function drawContours() {
+    const w = topo.clientWidth, h = topo.clientHeight;
+    if (!w || !h) return;
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    topo.width = Math.round(w * dpr);
+    topo.height = Math.round(h * dpr);
+    map.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const grid = 7, columns = Math.ceil(w/grid), rows = Math.ceil(h/grid);
+    const field = Array.from({length: rows+1}, (_,j) =>
+      Array.from({length: columns+1}, (_,i) => {
+        const x = i*grid/w, y = j*grid/h;
+        const ax = (x-.79)*1.20 + (y-.08)*.16, ay = (y-.08)*.78 - (x-.79)*.16;
+        const bx = (x-.08)*1.04 - (y-.88)*.31, by = (y-.88)*.83 + (x-.08)*.21;
+        return .87*Math.exp(-9*(ax*ax+ay*ay)) + .78*Math.exp(-9*(bx*bx+by*by)) +
+          .043*Math.sin(18*x + 9*y) + .036*Math.cos(23*y - 10*x) +
+          .022*Math.cos(36*x + 24*y) + .014*Math.sin(57*x - 29*y);
+      })
+    );
+    for (let c=0;c<27;c++) {
+      const level = .11 + c*.035;
+      map.beginPath();
+      for (let j=0;j<rows;j++) for (let i=0;i<columns;i++) {
+        const a = field[j][i], b = field[j][i+1], d = field[j+1][i], e = field[j+1][i+1];
+        const pts = [];
+        if ((a<level)!==(b<level)) pts.push([i+(level-a)/(b-a),j]);
+        if ((b<level)!==(e<level)) pts.push([i+1,j+(level-b)/(e-b)]);
+        if ((d<level)!==(e<level)) pts.push([i+(level-d)/(e-d),j+1]);
+        if ((a<level)!==(d<level)) pts.push([i,j+(level-a)/(d-a)]);
+        for (let k=0;k+1<pts.length;k+=2) {
+          map.moveTo(pts[k][0]*grid,pts[k][1]*grid);
+          map.lineTo(pts[k+1][0]*grid,pts[k+1][1]*grid);
+        }
+      }
+      map.lineWidth = c%5===0 ? 1 : .72;
+      map.strokeStyle = c%5===0 ? '#adb58a3e' : '#a3b2882c';
+      map.stroke();
+    }
+    const fade = map.createLinearGradient(0, 0, 0, h);
+    fade.addColorStop(0,'#0005'); fade.addColorStop(.29,'#0000');
+    fade.addColorStop(.76,'#0000'); fade.addColorStop(1,'#0008');
+    map.globalCompositeOperation = 'destination-out';
+    map.fillStyle = fade; map.fillRect(0,0,w,h);
+    map.globalCompositeOperation = 'source-over';
+  }
+  new ResizeObserver(drawContours).observe(topo);
+  drawContours();
+
+  const canvas = document.querySelector('#vehicle');
+  const gl = canvas.getContext('webgl', {alpha:true, antialias:true});
+
+  const V = {
+    add:(a,b)=>a.map((v,i)=>v+b[i]), sub:(a,b)=>a.map((v,i)=>v-b[i]),
+    mul:(a,s)=>a.map(v=>v*s), dot:(a,b)=>a.reduce((r,v,i)=>r+v*b[i],0),
+    cross:(a,b)=>[a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]],
+    unit(a){return this.mul(a,1/(Math.hypot(...a)||1));},
+    mix:(a,b,t)=>a.map((v,i)=>v+(b[i]-v)*t)
+  };
+  const vertex = `
+    attribute vec3 position, normal, tint;
+    attribute vec2 material;
+    uniform vec3 right, up, forward, target;
+    uniform vec2 frame;
+    varying vec3 vNormal, vTint, vPos;
+    varying vec2 vMaterial;
+    void main(){
+      vec3 p = position-target;
+      gl_Position = vec4(dot(p,right)/frame.x,dot(p,up)/frame.y,dot(p,forward)/12.0,1.);
+      vPos=position; vNormal=normal; vTint=tint; vMaterial=material;
+    }`;
+  const fragment = `
+    precision mediump float;
+    uniform vec3 eye;
+    varying vec3 vNormal, vTint, vPos;
+    varying vec2 vMaterial;
+    void main(){
+      if(vMaterial.y > 0.5){
+        vec2 p=vPos.xz;
+        float a=exp(-dot(p*vec2(.48,1.21),p*vec2(.48,1.21)))*.63;
+        vec2 p1=(p-vec2(-1.94,.89))*vec2(1.85,4.1);
+        vec2 p2=(p-vec2(1.79,.89))*vec2(1.85,4.1);
+        a += .4*exp(-dot(p1,p1)) + .4*exp(-dot(p2,p2));
+        gl_FragColor=vec4(.025,.045,.036,min(.80,a));return;
+      }
+      vec3 N=normalize(vNormal), E=normalize(eye-vPos);
+      vec3 L=normalize(vec3(-.56,.90,.53));
+      float diff=max(dot(N,L),0.);
+      float sky=.5+.5*N.y;
+      float rim=pow(1.-max(dot(N,E),0.),3.);
+      float spec=pow(max(dot(N,normalize(L+E)),0.),13.);
+      float ground=mix(.74,1.,smoothstep(.05,1.72,vPos.y));
+      vec3 rgb=vTint*(.58+.19*sky+.34*diff)*ground;
+      if(vMaterial.x>1.5){
+        float band = smoothstep(.27,.44,reflect(-E,N).y);
+        float stripe = smoothstep(.65,.74,reflect(-E,N).y)-smoothstep(.76,.83,reflect(-E,N).y);
+        rgb += vec3(.14,.19,.184)*(band*.64+stripe*.25+rim*.36);
+        rgb += spec*vec3(.12,.14,.125);
+      } else {
+        rgb += (vec3(.22,.24,.24)*spec+vec3(.085,.105,.088)*rim)*vMaterial.x;
+        rgb += vec3(.045,.036,.024)*diff*vMaterial.x;
+      }
+      gl_FragColor=vec4(rgb,1.);
+    }`;
+  function compile(type, source) {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source); gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(shader));
+    return shader;
+  }
+  function setupGPU() {
+    const program = gl.createProgram();
+    gl.attachShader(program,compile(gl.VERTEX_SHADER,vertex));
+    gl.attachShader(program,compile(gl.FRAGMENT_SHADER,fragment));
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program,gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(program));
+    gl.useProgram(program);
+    const uniforms = Object.fromEntries(['right','up','forward','target','frame','eye'].map(name => [name,gl.getUniformLocation(program,name)]));
+    const attributes = Object.fromEntries(['position','normal','tint','material'].map(name => [name,gl.getAttribLocation(program,name)]));
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER,buffer);
+    for (const [name,size,offset] of [['position',3,0],['normal',3,3],['tint',3,6],['material',2,9]]) {
+      gl.enableVertexAttribArray(attributes[name]);
+      gl.vertexAttribPointer(attributes[name],size,gl.FLOAT,false,44,offset*4);
+    }
+    return {uniforms, buffer};
+  }
+  let gpu = gl ? setupGPU() : null;
+  let rasterize = gpu ? null : softwareRenderer();
+
+  const rgb = hex => [0,2,4].map(i=>parseInt(hex.slice(i,i+2),16)/255);
+  const paints = {sand:'b4a080',moss:'657454',slate:'5a6468',snow:'dedbd0'};
+  const swatch = (hex,finish=.35) => [rgb(hex),finish,0];
+  const trim = swatch('343b37',.32), rubber = swatch('222825',.22);
+  const dark = swatch('202724',.4), seam = swatch('514b3a',.04);
+  const metal = swatch('858d87',.63), silver = swatch('b9bfba',.82);
+  const glass = swatch('273934',2), glassTint = swatch('354541',2);
+  const cream = swatch('dcd3bd',.2), orange = swatch('c16a44',.25);
+  const wheelXs = [-1.88,1.76];
+  const initial = {color:'sand',roof:'low',layout:'weekender',addons:[],view:'exterior'};
+  let state = initial, mesh = [], model, vertexCount = 0;
+  function emit(p,n,material) {mesh.push(...p,...n,...material[0],material[1],material[2]);}
+  function face(points,material,outward,normals) {
+    if (points.length<3) return;
+    let n=V.unit(V.cross(V.sub(points[1],points[0]),V.sub(points[2],points[0])));
+    if (outward && V.dot(n,outward)<0) n=V.mul(n,-1);
+    for (let i=1;i<points.length-1;i++){
+      for (const j of [0,i,i+1]) emit(points[j],normals ? normals[j] : n,material);
+    }
+  }
+  function box(x,y,z,dx,dy,dz,m) {
+    const X=x+dx,Y=y+dy,Z=z+dz;
+    face([[x,y,Z],[X,y,Z],[X,Y,Z],[x,Y,Z]],m,[0,0,1]);
+    face([[X,y,z],[x,y,z],[x,Y,z],[X,Y,z]],m,[0,0,-1]);
+    face([[x,y,z],[x,y,Z],[x,Y,Z],[x,Y,z]],m,[-1,0,0]);
+    face([[X,y,Z],[X,y,z],[X,Y,z],[X,Y,Z]],m,[1,0,0]);
+    face([[x,Y,Z],[X,Y,Z],[X,Y,z],[x,Y,z]],m,[0,1,0]);
+    face([[x,y,z],[X,y,z],[X,y,Z],[x,y,Z]],m,[0,-1,0]);
+  }
+  function pipe(a,b,r,m,sides=9,r2=r) {
+    const axis=V.unit(V.sub(b,a));
+    const u=V.unit(V.cross(axis,Math.abs(axis[1])<.8?[0,1,0]:[1,0,0])), v=V.cross(axis,u);
+    const around=Array.from({length:sides},(_,i)=>V.add(V.mul(u,Math.cos(i*2*Math.PI/sides)),V.mul(v,Math.sin(i*2*Math.PI/sides))));
+    const A=around.map(n=>V.add(a,V.mul(n,r))), B=around.map(n=>V.add(b,V.mul(n,r2)));
+    for(let i=0;i<sides;i++) {
+      const j=(i+1)%sides;
+      face([A[i],A[j],B[j],B[i]],m,null,[around[i],around[j],around[j],around[i]]);
+    }
+    face(A,m,V.mul(axis,-1)); face(B,m,axis);
+  }
+  function shoebox(x, y, z, dx, dy, dz, m, r=.07) {
+    const bottom=rounded(x,z,x+dx,z+dz,r).map(([X,Z])=>[X,y,Z]);
+    const top=bottom.map(p=>[p[0],y+dy,p[2]]);
+    for(let i=0;i<bottom.length;i++){
+      const j=(i+1)%bottom.length;
+      const n=[(bottom[i][0]+bottom[j][0])/2-(x+dx/2),0,(bottom[i][2]+bottom[j][2])/2-(z+dz/2)];
+      face([bottom[i],bottom[j],top[j],top[i]],m,n);
+    }
+    face(top,m,[0,1,0]);face(bottom,m,[0,-1,0]);
+  }
+  function rounded(x1,y1,x2,y2,r) {
+    const centers=[[x2-r,y1+r,-Math.PI/2],[x2-r,y2-r,0],[x1+r,y2-r,Math.PI/2],[x1+r,y1+r,Math.PI]];
+    return centers.flatMap(([x,y,t])=>Array.from({length:5},(_,i)=>[x+Math.cos(t+i*Math.PI/8)*r,y+Math.sin(t+i*Math.PI/8)*r]));
+  }
+
+  // The van's longitudinal stations describe the rounded shell from bumper to rear doors.
+  const stations = [
+    [-3.04,1.46,.965],[-2.99,1.55,1.00],[-2.84,1.62,1.065],
+    [-2.41,1.72,1.091],[-2.33,1.81,1.097],[-1.72,2.77,1.112],[-1.55,2.954,1.122],
+    [-1.32,3.045,1.127],[-.94,3.063,1.127],[2.74,3.063,1.122],
+    [2.98,3.002,1.105],[3.10,2.913,1.069],[3.145,2.813,1.014]
+  ];
+  function shape(x){
+    let j=1;
+    while(j<stations.length-1 && stations[j][0]<x) j++;
+    const a=stations[j-1],b=stations[j],t=(x-a[0])/(b[0]-a[0]);
+    return [a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t];
+  }
+  function wheelCut(x, radius=.637) {
+    return Math.max(.566,...wheelXs.map(cx=>.57+Math.sqrt(Math.max(0,radius*radius-(cx-x)**2))));
+  }
+  function section(x) {
+    const [top,w]=shape(x), y=wheelCut(x), shoulder=Math.max(y+.10,top-.215);
+    const lower=[y,Math.max(y+.019,.72),Math.max(y+.035,.96),Math.max(y+.06,Math.min(1.32,shoulder-.035))];
+    return [
+      [lower[0],.943*w],[lower[1],.987*w],[lower[2],w],[lower[3],w],
+      [shoulder,.970*w],[top-.092,.914*w],[top-.034,.805*w],
+      [top,.59*w],[top+.013,.28*w],[top+.017,0]
+    ];
+  }
+  function skin(x,y,s=1,gap=.011) {
+    const sec=section(x);
+    for (let i=1;i<sec.length;i++) if(sec[i][0]>=y) {
+      const [a,z]=sec[i-1], [b,Z]=sec[i];
+      const t=Math.max(0,(y-a)/(b-a||1));
+      return [x,y,(z+(Z-z)*t+gap)*s];
+    }
+    return [x,y,gap*s];
+  }
+  function lid(x,z,gap=.012) {
+    const sec=section(x);
+    for(let i=1;i<sec.length;i++) if (sec[i][1]<=Math.abs(z)) {
+      const [a,u]=sec[i-1], [b,v]=sec[i];
+      if(u<=v) continue;
+      return [x,a+(b-a)*Math.min(1,(u-Math.abs(z))/(u-v))+gap,z];
+    }
+    return [x,sec.at(-1)[0]+gap,z];
+  }
+  function surfaceFace(points, project, material, outward) {
+    function normalAt([a,b]){
+      const u=V.sub(project([a+.048,b]),project([a-.048,b]));
+      const v=V.sub(project([a,b+.048]),project([a,b-.048]));
+      const n=V.unit(V.cross(u,v));
+      return V.dot(n,outward)<0 ? V.mul(n,-1) : n;
+    }
+    function triangle(a,b,c){
+      const ab=Math.hypot(a[0]-b[0],a[1]-b[1]);
+      const bc=Math.hypot(b[0]-c[0],b[1]-c[1]);
+      const ca=Math.hypot(c[0]-a[0],c[1]-a[1]);
+      const longest=Math.max(ab,bc,ca);
+      if(longest<.115){
+        const corners=[a,b,c];
+        face(corners.map(project),material,outward,material[1]>1.5 ? corners.map(normalAt) : null);
+      } else if(longest===ab){
+        const middle=V.mix(a,b,.5);
+        triangle(a,middle,c); triangle(middle,b,c);
+      } else if(longest===bc){
+        const middle=V.mix(b,c,.5);
+        triangle(a,b,middle); triangle(a,middle,c);
+      } else {
+        const middle=V.mix(a,c,.5);
+        triangle(a,b,middle); triangle(middle,b,c);
+      }
+    }
+    for(let i=1;i<points.length-1;i++) triangle(points[0],points[i],points[i+1]);
+  }
+  function sideShape(points,m,s=1,gap=.017){
+    surfaceFace(points,([x,y])=>skin(x,y,s,gap),m,[0,0,s]);
+  }
+  function sideLine(points,m,s=1,r=.008,gap=.019) {
+    for(let i=1;i<points.length;i++){
+      pipe(skin(...points[i-1],s,gap),skin(...points[i],s,gap),r,m,5);
+    }
+  }
+  function body(paint, cutaway) {
+    const xs=[];
+    for(let i=1;i<stations.length;i++){
+      const a=stations[i-1][0],b=stations[i][0], count=Math.ceil((b-a)/.052);
+      for(let j=0;j<count;j++) xs.push(a+(b-a)*j/count);
+    }
+    xs.push(stations.at(-1)[0]);
+    const rows=xs.map(section);
+    for(const s of [1,-1]){
+      function point(i,j){return [xs[i],rows[i][j][0],rows[i][j][1]*s];}
+      function normal(i,j){
+        const dx=V.sub(point(Math.min(i+1,xs.length-1),j),point(Math.max(0,i-1),j));
+        const dy=V.sub(point(i,Math.min(j+1,9)),point(i,Math.max(j-1,0)));
+        const n=V.unit(V.mul(V.cross(dx,dy),s));
+        return j===9 ? V.unit([n[0],n[1],0]) : n;
+      }
+      for(let i=0;i<xs.length-1;i++) for(let j=0;j<9;j++){
+        const x=xs[i];
+        if(cutaway && x>-.97 && ((s===1 && j>=2) || j>=6)) continue;
+        const material=j<=1 ? trim : paint;
+        face([point(i,j),point(i+1,j),point(i+1,j+1),point(i,j+1)],material,null,
+          [normal(i,j),normal(i+1,j),normal(i+1,j+1),normal(i,j+1)]);
+      }
+    }
+    for(const [i,s] of [[0,-1],[xs.length-1,1]]){
+      const r=rows[i], x=xs[i];
+      if(cutaway && s===1) continue;
+      for(let j=0;j<9;j++){
+        const [a,z]=r[j], [b,Z]=r[j+1];
+        face([[x,a,-z],[x,a,z],[x,b,Z],[x,b,-Z]],j<2?trim:paint,[s,0,0]);
+      }
+    }
+    box(-2.88,.53,-.81,5.84,.17,1.62,dark);
+    for(const s of [-1,1]){
+      for(const cx of wheelXs) {
+        for(let j=0;j<34;j++) {
+          const a=j*Math.PI/34, b=(j+1)*Math.PI/34;
+          const p=(r,t)=>{const x=cx+r*Math.cos(t);return skin(x,.565+r*Math.sin(t),s,.025);};
+          face([p(.629,a),p(.712,a),p(.712,b),p(.629,b)],trim,[0,0,s]);
+        }
+      }
+      sideLine([[-1.17,.737],[1.07,.737]],trim,s,.026,.019);
+      sideLine([[-1.17,.795],[1.07,.795]],metal,s,.007,.020);
+    }
+  }
+
+  function wheel(x,s){
+    const y=.55;
+    const tireProfile=[[.71,.413],[.758,.504],[.82,.546],[.97,.553],[1.105,.547],[1.171,.51],[1.193,.405],[1.194,.335]];
+    const rings=tireProfile.map(([Z,r])=>Array.from({length:64},(_,i)=>{
+      const t=i*Math.PI/32;return [x+r*Math.cos(t),y+r*Math.sin(t),Z*s];
+    }));
+    for(let i=0;i<rings.length-1;i++)for(let j=0;j<64;j++){
+      const k=(j+1)%64;
+      const n=t=>V.unit([Math.cos(t*Math.PI/32),Math.sin(t*Math.PI/32),Math.max(0,i-2)*.46*s]);
+      face([rings[i][j],rings[i][k],rings[i+1][k],rings[i+1][j]],rubber,null,[n(j),n(k),n(k),n(j)]);
+    }
+    const tread1=swatch('353c37',.18),tread2=swatch('2b312e',.17),sidewall=swatch('414743',.09);
+    for(let j=0;j<40;j++){
+      const a=j*Math.PI/20;
+      const tread=(t,r,Z)=>[x+Math.cos(t)*r,y+Math.sin(t)*r,Z*s];
+      const t=j%2===0?.034:-.034;
+      face([tread(a-.037,.542,1.17),tread(a+.05,.544,1.17),tread(a+.063+t,.56,1.039),tread(a-.047+t,.56,1.039)],tread1,[Math.cos(a),Math.sin(a),s*.55]);
+      face([tread(a-.056+t,.56,1.028),tread(a+.052+t,.56,1.028),tread(a+.064,.56,.854),tread(a-.045,.56,.854)],tread2,[Math.cos(a),Math.sin(a),0]);
+      if(j%2===0){
+        face([tread(a-.024,.463,1.186),tread(a+.056,.463,1.186),tread(a+.065,.436,1.193),tread(a-.019,.436,1.193)],sidewall,[0,0,s]);
+      }
+    }
+    const c=[x,y,1.192*s];
+    pipe([x,y,1.05*s],c,.338,swatch('68726e',.72),48);
+    pipe(c,[x,y,1.2*s],.311,swatch('323a37',.55),48);
+    pipe([x,y,1.2*s],[x,y,1.207*s],.264,dark,42);
+    for(let j=0;j<8;j++){
+      const a=j*Math.PI/4;
+      const p=(r,t,Z)=>[x+Math.cos(a+t)*r,y+Math.sin(a+t)*r,Z*s];
+      face([p(.083,-.26,1.242),p(.267,-.11,1.216),p(.287,.06,1.211),p(.105,.26,1.233)],metal,[0,0,s]);
+      face([p(.093,.26,1.232),p(.287,.06,1.211),p(.272,.14,1.21),p(.106,.41,1.23)],trim,[0,0,s]);
+      const bolt=p(.307,0,1.211);
+      pipe(bolt,[bolt[0],bolt[1],1.227*s],.012,silver,6);
+    }
+    pipe([x,y,1.205*s],[x,y,1.258*s],.106,metal,22,.086);
+    pipe([x,y,1.258*s],[x,y,1.27*s],.052,trim,18);
+    for(let j=0;j<5;j++){
+      const a=j*2*Math.PI/5, X=x+.064*Math.cos(a), Y=y+.064*Math.sin(a);
+      pipe([X,Y,1.253*s],[X,Y,1.271*s],.014,silver,6);
+    }
+  }
+
+  function exterior(paint,cutaway){
+    const windshield = [[-2.348,-.76],[-2.348,.76],[-2.302,.85],[-1.658,.874],[-1.582,.798],[-1.582,-.798],[-1.658,-.874],[-2.302,-.85]];
+    surfaceFace(windshield,([x,z])=>lid(x,z,.025),dark,[-1,1,0]);
+    surfaceFace(windshield,([x,z])=>lid(-1.96+(x+1.96)*.948,z*.941,.047),glass,[-1,1,0]);
+    const glassLine = (a,b,m,r=.012) => pipe(lid(...a,.064),lid(...b,.064),r,m,6);
+    for(const s of [-1,1]){
+      glassLine([-2.273,s*.26],[-2.17,s*.64],dark);
+      glassLine([-2.195,s*.16],[-2.172,s*.68],dark,.009);
+      const cab = [[-2.25,1.805],[-2.242,1.909],[-1.725,2.674],[-1.652,2.723],[-1.068,2.735],[-1.016,2.664],[-1.053,1.908],[-1.12,1.853]];
+      sideShape(cab,dark,s);
+      sideShape(cab.map(([x,y])=>[-1.6+(x+1.6)*.953,2.30+(y-2.30)*.951]),glass,s,.044);
+      sideLine([[-1.264,1.89],[-1.254,2.717]],dark,s,.020,.050);
+      sideLine([[-2.25,1.805],[-2.36,1.50],[-2.43,1.018],[-1.16,1.003],[-1.039,1.081],[-.993,1.911],[-.972,2.68]],seam,s,.007,.015);
+      sideShape(rounded(-1.333,1.716,-1.099,1.78,.019),dark,s,.027);
+      sideLine([[-1.298,1.756],[-1.133,1.756]],metal,s,.008,.031);
+      pipe(skin(-2.162,1.854,s),[-2.162,1.884,s*1.314],.028,dark,8);
+      shoebox(-2.26,1.848,s*1.31-.13,.16,.245,.26,dark,.056);
+      const mirrorX=-2.089;
+      face([[mirrorX,1.88,s*1.24],[mirrorX,1.88,s*1.41],[mirrorX,2.053,s*1.41],[mirrorX,2.053,s*1.24]],glassTint,[1,0,0]);
+      sideLine([[-2.22,1.906],[-2.143,1.906]],cream,s,.009,.316);
+      if(cutaway && s===1) continue;
+
+      for(const [x1,x2] of [[-.76,.86],[1.052,2.712]]){
+        sideShape(rounded(x1,1.948,x2,2.71,.087),dark,s,.019);
+        sideShape(rounded(x1+.035,1.982,x2-.035,2.674,.063),glass,s,.031);
+        sideLine([[x1+.045,2.052],[x2-.045,2.052]],swatch('506059',.4),s,.005,.033);
+        sideLine([[x1+.48,2.055],[x1+.48,2.655]],dark,s,.011,.034);
+      }
+      sideLine([[-.849,2.798],[-.851,1.13],[-.812,1.023],[.929,1.022],[.966,1.11],[.966,2.801]],seam,s,.006,.013);
+      sideLine([[1.034,1.81],[2.819,1.81]],trim,s,.022,.021);
+      sideLine([[1.048,1.826],[2.806,1.826]],metal,s,.005,.025);
+      sideShape(rounded(-.781,1.683,-.531,1.76,.029),dark,s,.023);
+      sideLine([[-.744,1.733],[-.583,1.733]],metal,s,.008,.025);
+      sideShape(rounded(2.457,1.497,2.756,1.747,.023),seam,s,.014);
+      sideShape(rounded(2.474,1.514,2.739,1.727,.021),paint,s,.020);
+      sideLine([[2.621,1.53],[2.714,1.53]],seam,s,.006,.028);
+      sideShape(rounded(2.938,1.026,3.102,1.633,.045),dark,s,.028);
+      sideShape(rounded(2.962,1.082,3.098,1.594,.032),swatch('8f3528',.76),s,.037);
+      for(const y of [1.15,1.27,1.45,1.535]) sideLine([[2.971,y],[3.089,y]],swatch('cd6447',.7),s,.011,.044);
+
+      // Three ridgelines from the Roamworks badge sit above the rocker panel.
+      const stripe = swatch('6b6650',.14);
+      const lightStripe = swatch('a77b56',.14);
+      sideShape([[-.62,1.381],[-.31,1.381],[.57,1.207],[.562,1.167]],stripe,s,.018);
+      sideShape([[.57,1.207],[1.027,1.207],[1.027,1.167],[.562,1.167]],stripe,s,.018);
+      sideShape([[-.62,1.337],[-.42,1.337],[.52,1.155],[.515,1.123]],lightStripe,s,.019);
+      sideShape([[.52,1.155],[1.017,1.155],[1.017,1.123],[.515,1.123]],lightStripe,s,.019);
+      sideLine([[2.34,1.249],[2.48,1.433],[2.55,1.341],[2.627,1.451],[2.78,1.249],[2.34,1.249]],dark,s,.009,.025);
+    }
+    // Recessed grille, segmented lamps, front recovery hooks and a skid plate.
+    const front = (points,m,x=-3.056) => face(points.map(([z,y])=>[x,y,z]),m,[-1,0,0]);
+    front(rounded(-.936,.648,.936,1.217,.093),trim,-3.072);
+    front(rounded(-.659,1.013,.659,1.355,.058),dark,-3.084);
+    const slat = swatch('76807b',.69);
+    for(const y of [1.057,1.119,1.182,1.246,1.306]){
+      pipe([-3.095,y,-.582],[-3.095,y,.582],.009,slat,6);
+    }
+    front(rounded(-.57,.712,.57,.965,.047),dark,-3.09);
+    front(rounded(-.373,.662,.373,.708,.013),metal,-3.105);
+    for(const y of [.773,.827,.882]) pipe([-3.101,y,-.511],[-3.101,y,.511],.006,trim,6);
+    pipe([-3.091,1.21,0],[-3.112,1.21,0],.075,swatch('a9aa96',.65),6);
+    pipe([-3.112,1.21,0],[-3.119,1.21,0],.056,trim,6);
+    for(const s of [-1,1]){
+      const headlamp = [[.615,1.128],[.889,1.124],[.948,1.194],[.942,1.367],[.783,1.34],[.631,1.285]].map(([z,y])=>[z*s,y]);
+      front(headlamp,dark,-3.077);
+      front(headlamp.map(([z,y])=>[s*.786+(z-s*.786)*.83,1.25+(y-1.25)*.75]),swatch('afbeba',.77),-3.088);
+      pipe([-3.10,1.183,.648*s],[-3.10,1.165,.899*s],.015,cream,8);
+      pipe([-3.10,1.244,.697*s],[-3.10,1.272,.896*s],.01,glassTint,7);
+      sideShape([[-3.009,1.174],[-2.81,1.215],[-2.766,1.411],[-2.957,1.372]],dark,s,.019);
+      sideShape([[-2.989,1.205],[-2.837,1.24],[-2.803,1.386],[-2.951,1.347]],swatch('9aaea6',.8),s,.024);
+      sideLine([[-2.96,1.221],[-2.836,1.263]],cream,s,.011,.030);
+      front(rounded((s<0?-.831:.693),.765,(s<0?-.693:.831),.903,.036),dark,-3.101);
+      pipe([-3.105,.834,.761*s],[-3.117,.834,.761*s],.045,swatch('abb6ab',.74),14);
+      pipe([-3.08,.659,.54*s],[-3.128,.647,.54*s],.030,orange,8);
+    }
+    for(let j=0;j<14;j++) {
+      const x=-2.396+j*.041,X=x+.041;
+      for(const s of [-1,1]) pipe(lid(x,.66*s),lid(X,.676*s),.0055,seam,5);
+    }
+    if(!cutaway){
+      const back=(points,m,x=3.157)=>face(points.map(([z,y])=>[x,y,z]),m,[1,0,0]);
+      for(const s of [-1,1]){
+        const low=s===1?.102:-.842,hi=s===1?.842:-.102;
+        back(rounded(low,1.868,hi,2.578,.092),dark);
+        back(rounded(low+.036,1.909,hi-.036,2.538,.064),glass,3.161);
+        pipe([3.157,1.114,.887*s],[3.157,2.665,.887*s],.009,seam,6);
+        pipe([3.16,1.5,.02*s],[3.177,1.5,.175*s],.024,trim,7);
+        back(rounded((s===1?.88:-.974),1.013,(s===1?.974:-.88),1.61,.023),orange,3.165);
+      }
+      pipe([3.163,1.019,0],[3.163,2.799,0],.009,seam,6);
+      back(rounded(-.996,.64,.996,.874,.037),trim,3.201);
+      back(rounded(-.304,1.127,.304,1.303,.016),dark);
+      back(rounded(-.236,1.15,.236,1.283,.015),cream,3.162);
+      back(rounded(-.165,2.706,.165,2.756,.01),orange,3.163);
+    }
+  }
+
+  function roof(paint,pop,solar,cutaway) {
+    if(cutaway) return;
+    const base=3.096;
+    const rise=x=>pop?Math.max(.075,.15+(x+1.12)*.242):.026;
+    const top=(x,z,dy=0)=>[x,base+rise(x)+dy,z];
+    if(pop){
+      const corners=[[-1.12,-.862],[2.635,-.915],[2.635,.915],[-1.12,.862]];
+      const fabric=swatch('938873',.06), fabricDark=swatch('3c4338',.11);
+      for(let i=0;i<corners.length;i++){
+        const [x,z]=corners[i], [X,Z]=corners[(i+1)%corners.length];
+        const outward=[(x+X)/2-.75,0,(z+Z)/2];
+        face([[x,base,z],[X,base,Z],top(X,Z),top(x,z)],fabric,outward);
+        pipe([x,base,z],[X,base,Z],.023,trim,7);
+        pipe(top(x,z,-.063),top(X,Z,-.063),.017,trim,7);
+        for(const t of [.22,.55,.81]){
+          const a=V.mix([x,base,z],[X,base,Z],t);
+          pipe(a,top(a[0],a[2]),.009,fabricDark,5);
+        }
+      }
+      for(const s of [-1,1]){
+        const glassPoly=[[.33,.13],[2.42,.13],[2.42,rise(2.42)-.133],[.37,rise(.37)-.12]];
+        face(glassPoly.map(([x,y])=>[x,base+y,(.865+(x+1.12)*.014)*s]),fabricDark,[0,0,s]);
+        pipe([.49,base+.17,.89*s],[2.40,base+.17,.92*s],.010,metal,6);
+      }
+      const edges=rounded(-1.24,-.969,2.749,.969,.115);
+      const underside=edges.map(([x,z])=>top(x,z,-.01)), cap=edges.map(([x,z])=>top(x,z,.093));
+      for(let i=0;i<edges.length;i++){
+        const j=(i+1)%edges.length;
+        face([underside[i],underside[j],cap[j],cap[i]],paint,[(edges[i][0]+edges[j][0])/2-.76,0,edges[i][1]+edges[j][1]]);
+      }
+      face(cap,paint,[0,1,0]);
+    }
+    for(const s of [-1,1]){
+      const z=s*.83;
+      for(const x of [-.85,.46,1.80,2.48]){
+        const y=top(x,z,pop?.10:0)[1];
+        box(x-.051,y-.026,z-.042,.102,.090,.084,trim);
+      }
+      pipe(top(-.98,z,pop?.174:.067),top(2.61,z,pop?.174:.067),.039,dark,9);
+    }
+    for(const x of [-.70,.31,1.41,2.37]){
+      const offset=pop?.183:.104;
+      const a=top(x,-.841,offset),b=top(x,.841,offset);
+      pipe(a,b,.029,trim,7);
+    }
+    if(!pop){
+      shoebox(-.27,3.084,-.372,.73,.103,.72,trim,.097);
+      shoebox(-.208,3.181,-.31,.61,.025,.60,swatch('667067',.35),.070);
+    }
+    if(solar){
+      const panel=swatch('283749',.52);
+      const line=swatch('7c9099',.45);
+      for(const x0 of [.53,1.52]){
+        const a=x0,b=x0+.88,c=-.672,d=.672,offset=pop?.223:.139;
+        const p=(x,z,lift=0)=>top(x,z,offset+lift);
+        face([p(a,c),p(b,c),p(b,d),p(a,d)],panel,[0,1,0]);
+        for(const z of [c,d]) pipe(p(a,z,.014),p(b,z,.014),.017,silver,6);
+        for(const x of [a,b]) pipe(p(x,c,.014),p(x,d,.014),.017,silver,6);
+        for(let i=1;i<7;i++){
+          const z=c+(d-c)*i/7;
+          pipe(p(a+.02,z,.004),p(b-.02,z,.004),.003,line,5);
+        }
+        for(let i=1;i<4;i++){
+          const x=a+(b-a)*i/4;
+          pipe(p(x,c+.02,.004),p(x,d-.02,.004),.003,line,5);
+        }
+      }
+    }
+  }
+  function gear(addons,cutaway){
+    if(cutaway) return;
+    if(addons.includes('awning')){
+      pipe([-.75,2.879,1.121],[2.655,2.879,1.121],.065,trim,12);
+      pipe([-.69,2.889,1.174],[2.584,2.889,1.174],.017,metal,8);
+      const shade=swatch('ada085',.08);
+      face([[-.69,2.863,1.154],[2.56,2.863,1.154],[2.56,2.656,2.58],[-.69,2.656,2.58]],shade,[0,1,0]);
+      pipe([-.702,2.65,2.59],[2.574,2.65,2.59],.024,trim,7);
+      for(const x of [-.672,2.548]){
+        pipe([x,.025,2.59],[x,2.661,2.59],.020,metal,8);
+        pipe([x,.021,2.53],[x,.021,2.65],.023,trim,7);
+      }
+    }
+    if(addons.includes('ladder')){
+      for(const z of [.215,.685]){
+        pipe([3.286,.835,z],[3.286,2.94,z],.032,metal,9);
+        pipe([3.286,2.94,z],[3.147,3.115,z],.032,metal,9);
+        pipe([3.147,3.115,z],[3.052,3.115,z],.032,metal,9);
+        for(const y of [.96,2.63]) pipe([3.15,y,z],[3.278,y,z],.035,trim,8);
+      }
+      for(let y=1.02;y<=2.84;y+=.255) pipe([3.291,y,.215],[3.291,y,.685],.028,metal,8);
+    }
+  }
+
+  function interior(layout,paint,pop){
+    const wood=swatch('ad8053',.16), panel=swatch('d4af76',.18),
+      ply=swatch('e0c095',.22), seat=swatch('79836b',.07), linen=swatch('e8d8b3',.08),
+      floor=swatch('a88056',.07), wall=swatch('dbc5a3',.11), white=swatch('c8c0aa',.27);
+    box(-1.12,.858,-1.002,4.19,.09,2.01,floor);
+    for(let z=-.94;z<1;z+=.147) box(-.96,.946,z,3.99,.006,.008,wood);
+    box(2.991,.89,-.98,.096,1.91,1.90,wall);
+    box(-.96,.948,-1.068,3.96,.81,.064,wall);
+    box(-.96,2.65,-1.002,3.97,.22,.074,wall);
+    box(-1.017,.91,-.983,.091,1.88,1.925,paint);
+    for(const x of [-.835,1.012,2.792]){
+      pipe([x,.94,.982],[x,2.877,.958],.032,paint,7);
+      pipe([x,2.877,.958],[x,2.949,-.98],.022,paint,7);
+    }
+
+    // Tall galley with drawers, a sink and a two-burner hob.
+    shoebox(-.785,.948,-.981,1.52,.72,.64,wood,.045);
+    shoebox(-.84,1.663,-.998,1.65,.066,.72,ply,.054);
+    for(let i=0;i<3;i++){
+      const y=1.025+i*.195;
+      box(-.697,y,-.341,1.319,.165,.020,panel);
+      pipe([-.152,y+.11,-.315],[.116,y+.11,-.315],.012,dark,8);
+    }
+    shoebox(-.671,1.728,-.896,.524,.025,.458,metal,.047);
+    shoebox(-.632,1.752,-.864,.447,.007,.380,trim,.038);
+    pipe([-.389,1.748,-.935],[-.389,1.949,-.935],.014,metal,8);
+    pipe([-.389,1.949,-.935],[-.389,1.94,-.804],.014,metal,8);
+    shoebox(.123,1.726,-.892,.53,.025,.457,dark,.037);
+    for(const x of [.259,.50]) pipe([x,1.747,-.674],[x,1.756,-.674],.081,metal,18);
+    shoebox(-.77,2.248,-.974,1.566,.362,.34,ply,.052);
+    for(const x of [-.697,-.225,.281]){
+      box(x,2.298,-.632,.434,.245,.016,panel);
+      pipe([x+.152,2.313,-.613],[x+.302,2.313,-.613],.011,dark,6);
+    }
+    if(layout==='weekender'){
+      shoebox(1.055,.962,-.971,1.904,.643,1.943,wood,.05);
+      for(const x of [1.18,2.14]){
+        box(x,1.063,.975,.74,.427,.021,panel);
+        pipe([x+.236,1.39,1.004],[x+.505,1.39,1.004],.014,dark,7);
+      }
+      shoebox(1.07,1.601,-.957,1.854,.211,1.864,linen,.124);
+      shoebox(1.176,1.804,-.918,1.136,.033,1.785,seat,.095);
+      for(const z of [-.811,.046]) shoebox(2.393,1.814,z,.45,.135,.70,white,.111);
+    } else {
+      for(const z of [-.971,.471]){
+        shoebox(1.248,.944,z,1.704,.42,.477,wood,.043);
+        shoebox(1.242,1.352,z,1.722,.153,.481,seat,.064);
+        shoebox(1.264,1.474,z<0?z:z+.343,1.682,.390,.146,seat,.042);
+      }
+      pipe([2.33,.949,.013],[2.33,1.773,.013],.053,metal,10);
+      shoebox(1.747,1.762,-.319,1.093,.067,.681,ply,.093);
+      shoebox(-.776,.944,.357,.928,1.588,.617,white,.062);
+      box(-.732,1.003,.982,.852,1.458,.020,panel);
+      pipe([-.019,1.617,1.007],[-.019,1.776,1.007],.015,dark,7);
+    }
+    if(pop) pipe([2.84,1.874,-.85],[2.84,2.955,-.85],.027,silver,7);
+  }
+
+  function rebuild(){
+    mesh=[];
+    face([[-7,-.017,-5],[7,-.017,-5],[7,-.017,5],[-7,-.017,5]],[[0,0,0],0,1],[0,1,0]);
+    const paint=swatch(paints[state.color]||paints.sand,.66);
+    const cutaway=state.view==='cutaway', pop=state.roof==='pop';
+    body(paint,cutaway);
+    for(const x of wheelXs) for(const s of [-1,1]) wheel(x,s);
+    exterior(paint,cutaway);
+    roof(paint,pop,state.addons.includes('solar'),cutaway);
+    gear(state.addons,cutaway);
+    if(cutaway) interior(state.layout,paint,pop);
+    vertexCount=mesh.length/11;
+    model=new Float32Array(mesh);
+    if(gpu){
+      gl.bindBuffer(gl.ARRAY_BUFFER,gpu.buffer);
+      gl.bufferData(gl.ARRAY_BUFFER,model,gl.STATIC_DRAW);
+    }
+    mesh=[];
+  }
+
+  const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
+  let yaw=-.62, goalYaw=yaw, pitch=.21, goalPitch=pitch, focusY=1.61, goalY=focusY, raf=null, drag=null;
+  function framedWidth(aspect, aim, right, up) {
+    const bounds=[];
+    const take=(x,y,z)=>bounds.push([x,y-aim[1],z]);
+    const lateral=(x,y,z)=>{take(x,y,z);take(x,y,-z);};
+    lateral(-3.13,.60,1.02); lateral(-3.04,1.48,1.02);
+    lateral(-2.16,2.03,1.42); lateral(-1.31,3.08,1.095);
+    lateral(3.17,2.87,1.10); lateral(3.20,.59,1.03);
+    for(const x of [-2.29,-1.53,1.43,2.1]) lateral(x,.035,1.22);
+    const outside=state.view==='exterior';
+    const pop=outside&&state.roof==='pop';
+    if(outside){
+      lateral(-1.16,pop?3.49:3.23,.95);
+      lateral(2.70,pop?4.33:3.23,.99);
+    }
+    if(outside&&state.addons.includes('awning')){
+      for(const x of [-.69,2.57]){take(x,0,2.59);take(x,2.67,2.59);}
+    }
+    if(outside&&state.addons.includes('ladder')){
+      take(3.32,3.01,.70);take(3.32,.82,.70);
+    }
+    let width=Math.max(3.83,aspect*2.05);
+    for(const p of bounds){
+      width=Math.max(width,Math.abs(V.dot(p,right))+.16,(Math.abs(V.dot(p,up))+.105)*aspect);
+    }
+    return width;
+  }
+  function draw() {
+    raf=null;
+    const spring=reducedMotion.matches?1:.19;
+    yaw+=(goalYaw-yaw)*spring;
+    pitch+=(goalPitch-pitch)*spring;
+    focusY+=(goalY-focusY)*spring;
+    const w=canvas.clientWidth,h=canvas.clientHeight;
+    if(!w||!h) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2);
+    const pw=Math.round(w*dpr),ph=Math.round(h*dpr);
+    if(canvas.width!==pw||canvas.height!==ph){canvas.width=pw;canvas.height=ph;}
+    const aim=[0,focusY,0];
+    const toEye=[Math.sin(yaw)*Math.cos(pitch),Math.sin(pitch),Math.cos(yaw)*Math.cos(pitch)];
+    const right=V.unit(V.cross([0,1,0],toEye));
+    const up=V.cross(toEye,right);
+    const aspect=w/h, halfWidth=framedWidth(aspect,aim,right,up);
+    const eye=V.add(aim,V.mul(toEye,11));
+    if(gpu){
+      const {uniforms}=gpu;
+      gl.viewport(0,0,pw,ph);
+      gl.clearColor(0,0,0,0);
+      gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+      gl.uniform3fv(uniforms.eye,eye);
+      gl.uniform3fv(uniforms.target,aim);
+      gl.uniform3fv(uniforms.right,right);gl.uniform3fv(uniforms.up,up);
+      gl.uniform3fv(uniforms.forward,V.mul(toEye,-1));
+      gl.uniform2f(uniforms.frame,halfWidth,halfWidth/aspect);
+      gl.disable(gl.DEPTH_TEST);
+      gl.enable(gl.BLEND);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);
+      gl.drawArrays(gl.TRIANGLES,0,6);
+      gl.disable(gl.BLEND);gl.enable(gl.DEPTH_TEST);
+      gl.drawArrays(gl.TRIANGLES,6,vertexCount-6);
+    }else{
+      rasterize(w,h,model,{right,up,toEye,aim,halfWidth,eye});
+    }
+    if(Math.abs(goalYaw-yaw)>.002||Math.abs(goalPitch-pitch)>.002||Math.abs(goalY-focusY)>.003) schedule();
+  }
+  function schedule(){if(raf===null) raf=requestAnimationFrame(draw);}
+  function wrapAngle(value) {return value+Math.round((goalYaw-value)/(2*Math.PI))*2*Math.PI;}
+  window.updateVehicle = next => {
+    const viewChanged=next.view!==state.view;
+    const ladderAdded=next.addons.includes('ladder')&&!state.addons.includes('ladder');
+    const solarAdded=next.addons.includes('solar')&&!state.addons.includes('solar');
+    const awningAdded=next.addons.includes('awning')&&!state.addons.includes('awning');
+    const roofChanged=next.roof!==state.roof;
+    state=next;
+    if(viewChanged){
+      goalYaw=wrapAngle(state.view==='cutaway'?-.21:-.62);
+      goalPitch=state.view==='cutaway'?.30:.21;
+    }
+    if(state.view==='exterior'){
+      if(ladderAdded){goalYaw=wrapAngle(1.04);goalPitch=.28;}
+      else if(solarAdded){goalYaw=wrapAngle(-.52);goalPitch=.51;}
+      else if(awningAdded){goalYaw=wrapAngle(-.5);goalPitch=.23;}
+      else if(roofChanged){goalYaw=wrapAngle(-.62);goalPitch=.21;}
+    }
+    goalY=state.roof==='pop'&&state.view==='exterior'?1.985:1.61;
+    rebuild();
+    schedule();
+  };
+  function orbit(dir){ goalYaw+=dir*.54; schedule(); }
+  canvas.addEventListener('pointerdown', event=>{
+    if(event.button!==0) return;
+    drag={x:event.clientX,y:event.clientY,yaw:goalYaw,pitch:goalPitch,id:event.pointerId};
+    canvas.setPointerCapture(event.pointerId);
+  });
+  canvas.addEventListener('pointermove',event=>{
+    if(!drag||drag.id!==event.pointerId)return;
+    goalYaw=drag.yaw-(event.clientX-drag.x)*.011;
+    goalPitch=Math.max(-.03,Math.min(.83,drag.pitch+(event.clientY-drag.y)*.009));
+    schedule();
+  });
+  for(const type of ['pointerup','pointercancel','lostpointercapture']) canvas.addEventListener(type,()=>{drag=null;});
+  canvas.addEventListener('keydown',event=>{
+    const dir={ArrowLeft:-1,ArrowRight:1}[event.key];
+    if(!dir)return;
+    event.preventDefault();orbit(dir);
+  });
+  for(const button of document.querySelectorAll('[data-orbit]')) button.addEventListener('click',()=>orbit(Number(button.dataset.orbit)));
+  new ResizeObserver(schedule).observe(canvas);
+  canvas.addEventListener('webglcontextlost',event=>{
+    event.preventDefault();
+    gpu=null;
+    rasterize=softwareRenderer();
+    schedule();
+  },{once:true});
+  rebuild();
+  schedule();
+  // Use the same geometry and depth test when hardware rendering is unavailable.
+  function softwareRenderer() {
+    const layer=document.createElement('canvas');
+    layer.id='fallback-vehicle';
+    layer.setAttribute('aria-hidden','true');
+    layer.style.cssText='position:absolute;inset:0;pointer-events:none';
+    canvas.before(layer);
+    const ctx=layer.getContext('2d',{willReadFrequently:true});
+    const light=V.unit([-.56,.90,.53]);
+    const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+    const smooth=(a,b,x)=>{const t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t);};
+    let image, depth;
+    return (width,height,data,camera) => {
+      const scale=Math.min(1.35,900/width,680/height);
+      const w=Math.round(width*scale),h=Math.round(height*scale);
+      if(!image||layer.width!==w||layer.height!==h){
+        layer.width=w;layer.height=h;
+        image=ctx.createImageData(w,h);
+        depth=new Float32Array(w*h);
+      }
+      const pixels=image.data;
+      const {right,up,toEye,aim,halfWidth,eye}=camera;
+      const zoom=w/(2*halfWidth), centerX=w/2, centerY=h/2;
+      const u=(x,y,z)=>x*right[0]+y*right[1]+z*right[2];
+      const v=(x,y,z)=>x*up[0]+y*up[1]+z*up[2];
+      const d=(x,y,z)=>x*toEye[0]+y*toEye[1]+z*toEye[2];
+
+      pixels.fill(0);depth.fill(-Infinity);
+      const shadow=ctx.createRadialGradient(0,0,.07,0,0,1);
+      shadow.addColorStop(0,'#0c1814d9');shadow.addColorStop(.55,'#0a171476');shadow.addColorStop(1,'#0a171400');
+      ctx.clearRect(0,0,w,h);
+      ctx.save();
+      ctx.translate(centerX,centerY-v(0,-aim[1],0)*zoom);
+      ctx.scale(3.72*zoom,(.35+Math.abs(toEye[1])*1.3)*zoom);
+      ctx.fillStyle=shadow;ctx.fillRect(-1,-1,2,2);
+      ctx.restore();
+      pixels.set(ctx.getImageData(0,0,w,h).data);
+
+      const stride=11;
+      const projected=new Float32Array(data.length/stride*3);
+      for(let i=6*stride,j=18;i<data.length;i+=stride,j+=3){
+        const x=data[i],y=data[i+1]-aim[1],z=data[i+2];
+        projected[j]=centerX+u(x,y,z)*zoom;
+        projected[j+1]=centerY-v(x,y,z)*zoom;
+        projected[j+2]=d(x,y,z);
+      }
+      for(let i=6*stride,j=18;i<data.length;i+=3*stride,j+=9){
+        const ax=projected[j],ay=projected[j+1],az=projected[j+2];
+        const bx=projected[j+3],by=projected[j+4],bz=projected[j+5];
+        const cx=projected[j+6],cy=projected[j+7],cz=projected[j+8];
+        const denom=(by-cy)*(ax-cx)+(cx-bx)*(ay-cy);
+        if(Math.abs(denom)<.018)continue;
+        const xmin=Math.max(0,Math.ceil(Math.min(ax,bx,cx)-.5));
+        const xmax=Math.min(w-1,Math.floor(Math.max(ax,bx,cx)-.5));
+        const ymin=Math.max(0,Math.ceil(Math.min(ay,by,cy)-.5));
+        const ymax=Math.min(h-1,Math.floor(Math.max(ay,by,cy)-.5));
+        if(xmin>xmax||ymin>ymax)continue;
+
+        const B=i+stride,C=B+stride;
+        const p=[(data[i]+data[B]+data[C])/3,(data[i+1]+data[B+1]+data[C+1])/3,(data[i+2]+data[B+2]+data[C+2])/3];
+        const n=V.unit([data[i+3]+data[B+3]+data[C+3],data[i+4]+data[B+4]+data[C+4],data[i+5]+data[B+5]+data[C+5]]);
+        const e=V.unit(V.sub(eye,p)), ne=V.dot(n,e);
+        const diff=Math.max(V.dot(n,light),0);
+        const rim=(1-Math.max(ne,0))**3;
+        const spec=Math.max(V.dot(n,V.unit(V.add(light,e))),0)**13;
+        const finish=data[i+9];
+        const base=(.58+.19*(.5+.5*n[1])+.34*diff)*(.74+.26*smooth(.05,1.72,p[1]));
+        let effect;
+        if(finish>1.5){
+          const reflection=2*ne*n[1]-e[1];
+          const band=smooth(.27,.44,reflection);
+          const stripe=smooth(.65,.74,reflection)-smooth(.76,.83,reflection);
+          const sky=band*.64+stripe*.25+rim*.36;
+          effect=[.14*sky+.12*spec,.19*sky+.14*spec,.184*sky+.125*spec];
+        }else{
+          effect=[(.22*spec+.085*rim+.045*diff)*finish,(.24*spec+.105*rim+.036*diff)*finish,(.24*spec+.088*rim+.024*diff)*finish];
+        }
+        const red=255*(data[i+6]*base+effect[0]),green=255*(data[i+7]*base+effect[1]),blue=255*(data[i+8]*base+effect[2]);
+        const da=(by-cy)/denom,db=(cy-ay)/denom;
+        for(let y=ymin;y<=ymax;y++){
+          let a=((by-cy)*(xmin+.5-cx)+(cx-bx)*(y+.5-cy))/denom;
+          let b=((cy-ay)*(xmin+.5-cx)+(ax-cx)*(y+.5-cy))/denom;
+          for(let x=xmin;x<=xmax;x++,a+=da,b+=db){
+            const c=1-a-b;
+            if(a<-.0001||b<-.0001||c<-.0001)continue;
+            const z=a*az+b*bz+c*cz,k=y*w+x;
+            if(z<=depth[k])continue;
+            depth[k]=z;
+            pixels[k*4]=red;pixels[k*4+1]=green;pixels[k*4+2]=blue;pixels[k*4+3]=255;
+          }
+        }
+      }
+      ctx.putImageData(image,0,0);
+    };
+  }
+})();
+</script>
+<script>
+(() => {
+  const basePrice = 84900;
+  const catalog = {
+    color: {
+      sand: { name: 'Drift Sand', price: 0 },
+      moss: { name: 'Pine Moss', price: 750 },
+      slate: { name: 'Basalt Grey', price: 750 },
+      snow: { name: 'Alpine White', price: 0 }
+    },
+    roof: {
+      low: { name: 'Touring Roof', price: 0 },
+      pop: { name: 'Pop-Top Roof', price: 5200 }
+    },
+    layout: {
+      weekender: { name: 'The Weekender', price: 0 },
+      traverse: { name: 'The Traverse', price: 3400 }
+    },
+    addon: {
+      solar: { name: 'Solar Kit', price: 1450 },
+      awning: { name: 'Side Awning', price: 950 },
+      ladder: { name: 'Rear Ladder', price: 780 }
+    }
+  };
+
+  const byId = id => document.getElementById(id);
+  const tabs = [...document.querySelectorAll('[data-tab]')];
+  const panels = [...document.querySelectorAll('[data-panel]')];
+  const viewButtons = [...document.querySelectorAll('[data-view]')];
+  const inputs = [...document.querySelectorAll('input[name="color"], input[name="roof"], input[name="layout"], input[name="addon"]')];
+  const dialog = byId('build-dialog');
+  const nextStep = byId('next-step');
+  const priceFormat = new Intl.NumberFormat('en-US', {
+    style: 'currency', currency: 'USD', maximumFractionDigits: 0
+  });
+  const money = amount => priceFormat.format(amount);
+  let view = 'exterior';
+
+  function readBuild() {
+    const selected = name => inputs.find(input => input.name === name && input.checked)?.value;
+    return {
+      color: selected('color') ?? 'sand',
+      roof: selected('roof') ?? 'low',
+      layout: selected('layout') ?? 'weekender',
+      addons: inputs.filter(input => input.name === 'addon' && input.checked).map(input => input.value),
+      view
+    };
+  }
+
+  function quote(build) {
+    const { color, roof, layout, addons } = build;
+    const options = [
+      catalog.color[color],
+      catalog.roof[roof],
+      catalog.layout[layout],
+      ...addons.map(addon => catalog.addon[addon])
+    ];
+    const lines = [{ name: 'Waypoint AWD', price: basePrice }, ...options];
+    return { lines, total: lines.reduce((sum, item) => sum + item.price, 0) };
+  }
+
+  function write(id, value) {
+    const element = byId(id);
+    if (element && element.textContent !== value) element.textContent = value;
+  }
+
+  function render() {
+    const build = readBuild();
+    const paint = catalog.color[build.color];
+    const { total } = quote(build);
+    write('total-price', money(total));
+    write('selected-color', paint.name);
+    write('paint-price', paint.price ? '+' + money(paint.price) : 'Included');
+    write('build-spec', [paint.name, catalog.roof[build.roof].name, catalog.layout[build.layout].name].join(' · '));
+    write('sleep-capacity', build.roof === 'pop' ? '4' : '2');
+
+    for (const button of viewButtons) {
+      button.setAttribute('aria-pressed', String(button.dataset.view === view));
+    }
+    window.updateVehicle?.(build);
+  }
+
+  function selectTab(active, focus = false) {
+    const name = active.dataset.tab;
+    nextStep.querySelector('span').textContent = {exterior: 'Continue to interior', interior: 'Continue to add-ons', addons: 'Review your build'}[name];
+    for (const tab of tabs) {
+      tab.setAttribute('aria-selected', String(tab === active));
+      tab.tabIndex = tab === active ? 0 : -1;
+    }
+    for (const panel of panels) panel.hidden = panel.dataset.panel !== name;
+    view = name === 'interior' ? 'cutaway' : 'exterior';
+    if (focus) active.focus();
+    render();
+  }
+
+  function onTabKey(event, index) {
+    const last = tabs.length - 1;
+    const destinations = {
+      ArrowLeft: index === 0 ? last : index - 1,
+      ArrowRight: index === last ? 0 : index + 1,
+      Home: 0,
+      End: last
+    };
+    if (!Object.hasOwn(destinations, event.key)) return;
+    event.preventDefault();
+    selectTab(tabs[destinations[event.key]], true);
+  }
+
+  for (const [index, tab] of tabs.entries()) {
+    tab.addEventListener('click', () => selectTab(tab));
+    tab.addEventListener('keydown', event => onTabKey(event, index));
+  }
+
+  for (const button of viewButtons) {
+    button.addEventListener('click', () => {
+      view = button.dataset.view;
+      render();
+    });
+  }
+
+  for (const input of inputs) {
+    input.addEventListener('change', () => {
+      if (input.name === 'layout') view = 'cutaway';
+      if (input.name === 'roof' || input.name === 'addon') view = 'exterior';
+      render();
+    });
+  }
+
+  function showSummary() {
+    const { lines, total } = quote(readBuild());
+    const summary = byId('summary-lines');
+    if (summary) {
+      const entries = lines.map(({ name, price }) => {
+        const term = document.createElement('dt');
+        const value = document.createElement('dd');
+        term.textContent = name;
+        value.textContent = price ? money(price) : 'Included';
+        const row = document.createElement('div');
+        row.append(term, value);
+        return row;
+      });
+      summary.replaceChildren(...entries);
+    }
+    write('summary-total', money(total));
+    if (dialog && !dialog.open) dialog.showModal();
+  }
+
+  function downloadBuild() {
+    const { lines, total } = quote(readBuild());
+    const text = [
+      'ROAMWORKS / WAYPOINT',
+      'Camper van build estimate (USD)',
+      '',
+      ...lines.map(({ name, price }) => name + ' — ' + (price ? money(price) : 'Included')),
+      '',
+      'Estimated total — ' + money(total),
+      'Estimate excludes taxes, registration and delivery.',
+      ''
+    ].join('\n');
+    const url = URL.createObjectURL(new Blob([text], { type: 'text/plain;charset=utf-8' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'roamworks-waypoint-estimate.txt';
+    document.body.append(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  for (const button of document.querySelectorAll('[data-review]')) {
+    button.addEventListener('click', showSummary);
+  }
+  for (const button of document.querySelectorAll('[data-close]')) {
+    button.addEventListener('click', () => dialog?.close());
+  }
+  byId('download-build')?.addEventListener('click', downloadBuild);
+  nextStep.addEventListener('click', () => {
+    const index = tabs.findIndex(tab => tab.getAttribute('aria-selected') === 'true');
+    if (index === tabs.length - 1) {
+      showSummary();
+      return;
+    }
+    selectTab(tabs[index + 1], true);
+  });
+
+  const firstTab = tabs.find(tab => tab.dataset.tab === 'exterior');
+  byId('reset-build')?.addEventListener('click', () => {
+    const defaults = { color: 'sand', roof: 'low', layout: 'weekender' };
+    for (const input of inputs) input.checked = defaults[input.name] === input.value;
+    view = 'exterior';
+    if (dialog?.open) dialog.close();
+    if (firstTab) selectTab(firstTab);
+    else render();
+  });
+
+  if (firstTab) selectTab(firstTab);
+  else render();
+})();
+</script>
+</body>
+</html>

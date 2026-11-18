@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Club Fauna: a field guide to school-club merch</title>
+<style>
+:root{
+  --paper:#F7F1E3; --panel:#EFE7D3; --ink:#101820; --ink-2:#47505C;
+  --cream:#F1E6B2; --green:#43B02A; --coral:#E04E39; --blue:#0077C8; --yellow:#FFC72C;
+  /* mascot paint slots: a = lead colour, b = accent, c = cream, k = ink fill, ln = outline */
+  --a:#43B02A; --b:#E04E39; --c:#F1E6B2; --k:#101820; --ln:#101820; --sw:5px; --wash:#EFE7D3;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:"Avenir Next","Gill Sans","Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:#14171c;overflow:hidden;font-family:var(--serif);color:var(--ink);-webkit-font-smoothing:antialiased}
+.stage{position:fixed;left:50%;top:50%;width:1920px;height:1080px;margin:-540px 0 0 -960px;transform-origin:50% 50%}
+
+/* ---------- slide frame ---------- */
+.slide{position:absolute;inset:0;padding:50px 104px 0 80px;overflow:hidden;opacity:0;visibility:hidden;
+  background:var(--paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .38 0 0 0 0 .3 0 0 0 0 .18 0 0 0 .11 0'/%3E%3C/filter%3E%3Crect width='320' height='320' filter='url(%23n)'/%3E%3C/svg%3E")}
+.slide.on{opacity:1;visibility:visible}
+.anim .slide{transition:opacity .26s ease,visibility 0s .26s}
+.anim .slide.on{transition:opacity .26s ease}
+.rh{display:flex;justify-content:space-between;align-items:center;height:44px;padding-bottom:14px;border-bottom:2px solid var(--ink);
+  font:600 20px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+.chip{display:inline-block;width:18px;height:18px;border-radius:50%;background:var(--a);border:2px solid var(--ink);margin-right:12px;vertical-align:-3px}
+.title{font:600 56px/64px var(--serif);letter-spacing:-.012em;margin:22px 0 0;height:128px;max-width:1660px;text-wrap:balance}
+.body{position:absolute;left:80px;right:104px;top:266px;bottom:84px}
+.ft{position:absolute;left:80px;right:104px;bottom:30px;display:flex;justify-content:space-between;
+  font:600 20px/1 var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
+.tabs{position:absolute;right:0;top:266px;display:grid;gap:10px;justify-items:end}
+.tabs i{display:block;width:20px;height:150px;background:var(--t);border:2px solid var(--ink);border-right:0;border-radius:10px 0 0 10px}
+.tabs i.on{width:46px}
+.h{font:600 21px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;margin:0;padding-bottom:13px;border-bottom:2px solid var(--ink)}
+.lab{font:600 20px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+
+/* ---------- mascot paint system ---------- */
+.m *{stroke-linejoin:round;stroke-linecap:round}
+.m .fa{fill:var(--a)} .m .fb{fill:var(--b)} .m .fc{fill:var(--c)} .m .fk{fill:var(--k)}
+.m .fa,.m .fb,.m .fc,.m .fk,.m .ln{stroke:var(--ln);stroke-width:var(--sw)}
+.m .ln{fill:none}
+.m .th{stroke-width:calc(var(--sw) + 2.5px)}
+.m .hair{stroke-width:calc(var(--sw) * .55)}
+.m .so{fill:none;stroke:var(--ln);stroke-width:calc(var(--sw) * 2 + var(--w))}
+.m .si{fill:none;stroke-width:var(--w)}
+.m .ia{stroke:var(--a)} .m .ib{stroke:var(--b)} .m .ik{stroke:var(--k)}
+.m .glint{fill:none;stroke:var(--c);stroke-width:3px}
+.m .ns{stroke:none}
+
+/* ---------- text inside mock-ups ---------- */
+.t-caps{font:600 14px var(--sans);letter-spacing:.16em;fill:var(--ink)}
+.t-name{font:600 25px var(--serif);fill:var(--ink)}
+.t-call{font:italic 16px var(--serif);fill:var(--ink)}
+.t-dim{font:600 14px var(--sans);letter-spacing:.04em;fill:var(--ink)}
+.sl-mono{font-family:var(--mono);font-weight:700}
+.sl-sans{font-family:var(--sans);font-weight:800}
+.t-no{font:italic 600 30px var(--serif);fill:var(--ink)}
+.mark{font:italic 25px var(--serif);fill:var(--ink)}
+.lead{fill:none;stroke:var(--ink);stroke-width:1.8}
+.dot{fill:var(--paper);stroke:var(--ink);stroke-width:2.5}
+.pl{font:600 19px var(--sans);letter-spacing:.2em;fill:var(--ink-2)}
+
+/* ---------- cover ---------- */
+.kicker{font:600 22px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);margin:24px 0 0}
+.cover .title{font:600 78px/86px var(--serif);height:172px;margin-top:16px;max-width:1700px}
+.lede{font:30px/1.35 var(--serif);margin:16px 0 0;max-width:1500px;color:var(--ink-2)}
+.cover .body{top:432px;display:grid;grid-template-columns:repeat(4,1fr);gap:40px;align-items:end}
+.arch{margin:0;text-align:center}
+.arch svg{display:block;width:100%;height:auto}
+.arch b{display:block;font:600 36px/1.1 var(--serif);margin-top:14px}
+.arch span{display:block;font:600 20px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);margin-top:10px}
+
+/* ---------- key to the guide ---------- */
+.key{display:grid;grid-template-columns:640px 1fr;grid-template-rows:auto auto;gap:34px 56px;align-content:space-between}
+.index ol{list-style:none;margin:0;padding:0}
+.index li{display:grid;grid-template-columns:96px 1fr auto;align-items:center;gap:22px;padding:11px 0;border-bottom:1px solid rgba(16,24,32,.35)}
+.index li svg{display:block;width:96px;height:96px;background:var(--wash);border:2px solid var(--ink);border-radius:50%}
+.index b{display:block;font:600 34px/1.15 var(--serif)}
+.index span{font:24px/1.3 var(--serif);color:var(--ink-2)}
+.index em{font:600 20px/1 var(--sans);letter-spacing:.12em;text-transform:uppercase;font-style:normal;color:var(--ink-2)}
+.formats{display:flex;flex-direction:column}
+.fcards{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:20px}
+.fcard{background:var(--panel);border:2.5px solid var(--ink);border-radius:6px;padding:26px 26px 22px}
+.fcard svg{display:block;width:120px;height:120px}
+.fcard h4{font:600 34px/1.1 var(--serif);margin:22px 0 10px}
+.fcard p{font:25px/1.34 var(--serif);margin:0}
+.rules{grid-column:1/-1}
+.rules ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:44px;counter-reset:r}
+.rules li{counter-increment:r;font:25px/1.34 var(--serif);padding:16px 0 0 56px;position:relative}
+.rules li::before{content:counter(r);position:absolute;left:0;top:17px;width:40px;height:40px;border:2px solid var(--ink);border-radius:50%;
+  font:600 20px/37px var(--sans);text-align:center;background:var(--paper)}
+
+/* ---------- species plate ---------- */
+.plate-grid{display:grid;grid-template-columns:980px 1fr;gap:56px}
+.plate{margin:0;background:var(--wash);border:2.5px solid var(--ink);border-radius:6px;position:relative;overflow:hidden}
+.plate svg{display:block;width:100%;height:100%}
+.plate::after{content:"";position:absolute;inset:9px;border:1px solid var(--ink);border-radius:2px;pointer-events:none}
+.notes{display:flex;flex-direction:column;min-height:0}
+.eyebrow{font:600 21px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);margin:6px 0 18px}
+.sp{font:600 76px/1 var(--serif);margin:0;letter-spacing:-.015em}
+.bin{font:italic 34px/1.2 var(--serif);color:var(--ink-2);margin:10px 0 0}
+.fn{margin:26px 0 0;border-top:2px solid var(--ink)}
+.fn>div{display:grid;grid-template-columns:180px 1fr;gap:16px;padding:15px 0;border-bottom:1px solid rgba(16,24,32,.35)}
+.fn dt{font:600 20px/36px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+.fn dd{margin:0;font:27px/36px var(--serif)}
+.call{margin-top:auto;position:relative;background:var(--wash);border:2.5px solid var(--ink);border-radius:6px;padding:22px 28px 24px 48px;overflow:hidden}
+.call::before{content:"";position:absolute;left:0;top:0;bottom:0;width:18px;background:var(--a);border-right:2.5px solid var(--ink)}
+.call p{font:600 42px/1.16 var(--serif);margin:12px 0 0;letter-spacing:-.005em}
+
+/* ---------- three formats ---------- */
+.fmt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:36px}
+.fmt{margin:0;display:flex;flex-direction:column;min-width:0}
+.mock{height:590px;background:var(--wash);border:2.5px solid var(--ink);border-radius:6px;overflow:hidden}
+.mock svg{display:block;width:100%;height:100%}
+.fmt figcaption{margin-top:20px}
+.fmt figcaption p{font:27px/1.3 var(--serif);margin:10px 0 0}
+
+/* ---------- overview ---------- */
+.over{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:22px 36px}
+.quad{background:var(--wash);border:2.5px solid var(--ink);border-radius:6px;padding:14px 22px 16px;display:flex;flex-direction:column;min-height:0}
+.quad header{display:flex;align-items:baseline;font:600 28px/1.2 var(--serif);margin-bottom:8px}
+.quad header span{font:600 19px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);margin-left:auto}
+.quad .row{flex:1;min-height:0;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.quad .row svg{display:block;width:100%;height:100%;min-height:0}
+.quad .row svg.bag{border:2px solid var(--ink);border-radius:6px}
+
+/* ---------- production ---------- */
+.prod{display:grid;grid-template-columns:1fr 1fr;gap:24px 56px;align-content:space-between}
+.spec{margin:0}
+.spec>div{display:grid;grid-template-columns:150px 1fr;gap:18px;padding:12px 0;border-bottom:1px solid rgba(16,24,32,.35)}
+.spec dt{font:600 20px/32px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
+.spec dd{margin:0;font:24px/32px var(--serif)}
+.spec b{font-weight:700}
+.sw{list-style:none;margin:16px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:12px 20px}
+.sw li{display:grid;grid-template-columns:56px 1fr;gap:14px;align-items:center}
+.sw i{display:block;width:56px;height:56px;border:2.5px solid var(--ink);border-radius:6px;background:var(--s)}
+.sw b{display:block;font:700 23px/1.2 var(--sans)}
+.sw span{display:block;font:500 20px/1.25 var(--sans);color:var(--ink-2)}
+.crules{list-style:none;margin:16px 0 0;padding:0}
+.crules li{font:23px/30px var(--serif);padding:5px 0 5px 26px;position:relative}
+.crules li::before{content:"";position:absolute;left:2px;top:16px;width:10px;height:10px;border-radius:50%;background:var(--ink)}
+.ptab{grid-column:1/-1;width:100%;border-collapse:collapse;border-top:2px solid var(--ink)}
+.ptab th{font:600 19px/1 var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);text-align:left;padding:12px 14px 10px 0;border-bottom:2px solid var(--ink)}
+.ptab td{font:23px/1.2 var(--serif);padding:5px 14px 5px 0;border-bottom:1px solid rgba(16,24,32,.35);vertical-align:middle;white-space:nowrap}
+.ptab td:first-child{font-weight:600}
+.ptab svg{width:40px;height:40px;vertical-align:middle;margin-right:12px;background:var(--wash);border:2px solid var(--ink);border-radius:50%}
+.ptab small{font:inherit;font-weight:400;color:var(--ink-2)}
+.fill{display:inline-block;margin-right:20px}
+.fill i{display:inline-block;width:20px;height:20px;border-radius:50%;border:2px solid var(--ink);background:var(--s);vertical-align:-3px;margin-right:8px}
+
+/* ---------- controls ---------- */
+.nav{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);display:flex;gap:14px;z-index:5}
+.nav button{width:42px;height:42px;padding:0;border-radius:50%;border:2px solid var(--ink);background:var(--paper);color:var(--ink);cursor:pointer;display:grid;place-items:center}
+.nav button svg{width:18px;height:18px}
+.nav button:hover:not(:disabled){background:var(--ink);color:var(--paper)}
+.nav button:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.nav button:disabled{opacity:.3;cursor:default}
+.bar{position:absolute;left:0;bottom:0;height:8px;background:var(--ink);z-index:5}
+.anim .bar{transition:width .3s ease}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media (prefers-reduced-motion:reduce){.anim .slide,.anim .slide.on,.anim .bar{transition:none}}
+@media print{
+  @page{size:1920px 1080px;margin:0}
+  html,body{height:auto;overflow:visible;background:#fff}
+  .stage{position:static;margin:0;transform:none!important;height:auto}
+  .slide{position:relative;inset:auto;width:1920px;height:1080px;opacity:1;visibility:visible;break-after:page}
+  .nav,.bar{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- Shared artwork: four mascots and three textile textures, drawn once and reused on every format -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<defs>
+  <pattern id="twill" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+    <line x1="1" y1="0" x2="1" y2="6" stroke="#101820" stroke-opacity=".1" stroke-width="2"/>
+  </pattern>
+  <pattern id="thread" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(-62)">
+    <line x1="1" y1="0" x2="1" y2="4" stroke="#fff" stroke-opacity=".3" stroke-width="1.4"/>
+  </pattern>
+  <pattern id="weave" width="8" height="8" patternUnits="userSpaceOnUse">
+    <path d="M0 .5H8M0 4.5H8" stroke="#fff" stroke-opacity=".06"/>
+    <path d="M.5 0V8M4.5 0V8" stroke="#000" stroke-opacity=".12"/>
+  </pattern>
+
+  <!-- Debug Frog (coding) -->
+  <g id="m-frog" class="m">
+    <path class="fa" d="M52 118C24 120 12 148 22 170c6 12 30 12 40 2z"/>
+    <path class="fa" d="M148 118c28 2 40 30 30 52-6 12-30 12-40 2z"/>
+    <ellipse class="fa" cx="36" cy="177" rx="19" ry="7.5"/>
+    <ellipse class="fa" cx="164" cy="177" rx="19" ry="7.5"/>
+    <ellipse class="fa" cx="100" cy="138" rx="56" ry="42"/>
+    <ellipse class="fc" cx="100" cy="147" rx="35" ry="29"/>
+    <path class="ln" d="M93 133q-6 0-6 6v4q0 5-5 5 5 0 5 5v4q0 6 6 6"/>
+    <path class="ln" d="M107 133q6 0 6 6v4q0 5 5 5-5 0-5 5v4q0 6-6 6"/>
+    <ellipse class="fa" cx="72" cy="177" rx="17" ry="7.5"/>
+    <ellipse class="fa" cx="128" cy="177" rx="17" ry="7.5"/>
+    <path class="fa" d="M32 94C32 80 36 72 42 66 40 44 54 32 66 32c14 0 24 10 24 22 6-2 14-2 20 0 0-12 10-22 24-22 12 0 26 12 24 34 6 6 10 14 10 28 0 26-32 38-68 38S32 120 32 94z"/>
+    <circle class="fc" cx="66" cy="57" r="16"/>
+    <circle class="fc" cx="134" cy="57" r="16"/>
+    <circle class="fk ns" cx="70" cy="56" r="8.5"/>
+    <circle class="fk ns" cx="138" cy="56" r="8.5"/>
+    <circle class="fc ns" cx="73" cy="53" r="2.8"/>
+    <circle class="fc ns" cx="141" cy="53" r="2.8"/>
+    <circle class="fk ns" cx="94" cy="80" r="2"/>
+    <circle class="fk ns" cx="106" cy="80" r="2"/>
+    <path class="ln" d="M50 100Q100 124 150 100"/>
+    <path class="so" style="--w:8px" d="M128 108C160 116 180 100 176 78"/>
+    <path class="si ib" style="--w:8px" d="M128 108C160 116 180 100 176 78"/>
+    <path class="ln hair" d="M171 60l-6-4M171 68l-6 3M185 60l6-4M185 68l6 3M175 57l-2-6M181 57l2-6"/>
+    <ellipse class="fk" cx="178" cy="64" rx="8" ry="6.5"/>
+  </g>
+
+  <!-- Gripper Crab (robotics) -->
+  <g id="m-crab" class="m">
+    <path class="so" style="--w:6px" d="M56 122L26 124 14 142M58 136L30 146 20 168M66 146L48 164 44 186M144 122L174 124 186 142M142 136L170 146 180 168M134 146L152 164 156 186"/>
+    <path class="si ia" style="--w:6px" d="M56 122L26 124 14 142M58 136L30 146 20 168M66 146L48 164 44 186M144 122L174 124 186 142M142 136L170 146 180 168M134 146L152 164 156 186"/>
+    <path class="fa" d="M50 116L28 84 42 74 64 102z"/>
+    <path class="fa" d="M150 116L172 84 158 74 136 102z"/>
+    <g transform="translate(34 56) rotate(-18)">
+      <path class="fa" d="M1 4L-8.9-18.4A26 26 0 1 0 13-16.5z"/>
+      <circle class="fb" cx="1" cy="15" r="5.5"/>
+    </g>
+    <g transform="translate(166 56) rotate(18) scale(-1 1)">
+      <path class="fa" d="M1 4L-8.9-18.4A26 26 0 1 0 13-16.5z"/>
+      <circle class="fb" cx="1" cy="15" r="5.5"/>
+    </g>
+    <path class="fa" d="M38 118C38 86 66 76 100 76s62 10 62 42c0 24-28 36-62 36s-62-12-62-36z"/>
+    <path class="ln th" d="M84 80L80 60M116 80l4-20"/>
+    <circle class="fc" cx="79" cy="48" r="13"/>
+    <circle class="fc" cx="121" cy="48" r="13"/>
+    <circle class="fk ns" cx="82" cy="49" r="6"/>
+    <circle class="fk ns" cx="124" cy="49" r="6"/>
+    <circle class="fc ns" cx="84" cy="47" r="2"/>
+    <circle class="fc ns" cx="126" cy="47" r="2"/>
+    <path class="fb" d="M111.2 102.4L116.4 102.8L116.4 107.2L111.2 107.6L109.8 111.1L113.1 115.0L110.0 118.1L106.1 114.8L102.6 116.2L102.2 121.4L97.8 121.4L97.4 116.2L93.9 114.8L90.0 118.1L86.9 115.0L90.2 111.1L88.8 107.6L83.6 107.2L83.6 102.8L88.8 102.4L90.2 98.9L86.9 95.0L90.0 91.9L93.9 95.2L97.4 93.8L97.8 88.6L102.2 88.6L102.6 93.8L106.1 95.2L110.0 91.9L113.1 95.0L109.8 98.9z"/>
+    <circle class="fa hair" cx="100" cy="105" r="4.2"/>
+    <path class="ln" d="M86 132q14 12 28 0"/>
+  </g>
+
+  <!-- Mic-Check Macaw (broadcasting) -->
+  <g id="m-parrot" class="m">
+    <path class="fa" d="M50 188C46 150 58 122 84 110h42c24 12 30 46 26 78q-52 10-102 0z"/>
+    <path class="fb" d="M98 193c2-33 14-59 36-77 16 16 22 44 18 72q-27 5-54 5z"/>
+    <path class="ln" d="M62 150c2 16 10 28 22 34"/>
+    <circle class="fa" cx="98" cy="76" r="48"/>
+    <path class="fc" d="M110 44c20-4 33 10 33 30 0 22-12 34-26 32S97 90 98 72c1-14 4-25 12-28z"/>
+    <circle class="fb" cx="119" cy="68" r="9"/>
+    <circle class="fk ns" cx="120" cy="68" r="4.6"/>
+    <circle class="fc ns" cx="121.6" cy="66.4" r="1.6"/>
+    <path class="fk" d="M136 48c32-4 50 28 34 66-4-14-14-20-30-21 2-15 1-31-4-45z"/>
+    <path class="glint" d="M152 60c12 5 17 17 15 30"/>
+    <path class="fk" d="M136 98c8 0 16 4 18 12-6 8-16 4-20-4z"/>
+    <path class="so" style="--w:5px" d="M80 70C76 54 82 36 96 27"/>
+    <path class="si ik" style="--w:5px" d="M80 70C76 54 82 36 96 27"/>
+    <path class="ln" d="M84 102c12 32 50 36 76 28"/>
+    <ellipse class="fk" cx="80" cy="84" rx="15" ry="19"/>
+    <ellipse class="fb ns" cx="80" cy="84" rx="7" ry="10"/>
+    <circle class="fb" cx="164" cy="129" r="8"/>
+  </g>
+
+  <!-- Lab Partner (science) -->
+  <g id="m-lab" class="m">
+    <path class="so" style="--w:7px" d="M70 150q30 30 60 0"/>
+    <path class="si ib" style="--w:7px" d="M70 150q30 30 60 0"/>
+    <path class="fa" d="M52 56C26 52 12 92 22 128c4 10 16 8 22 0 10-16 14-40 16-58z"/>
+    <path class="fa" d="M148 56c26-4 40 36 30 72-4 10-16 8-22 0-10-16-14-40-16-58z"/>
+    <path class="fa" d="M100 30c38 0 58 26 56 64-2 40-24 64-56 64s-54-24-56-64c-2-38 18-64 56-64z"/>
+    <ellipse class="fc" cx="100" cy="124" rx="34" ry="27"/>
+    <path class="fk" d="M88 104q12-6 24 0-1 12-12 15-11-3-12-15z"/>
+    <path class="ln" d="M100 119v8"/>
+    <rect class="fc" x="44" y="128" width="112" height="16" rx="8"/>
+    <path class="fb" d="M98 128h50a8 8 0 0 1 0 16H98z"/>
+    <rect class="fc" x="38" y="124" width="9" height="24" rx="3"/>
+    <path class="ln th" d="M46 74l11 2M154 74l-11 2M96 77q4-4 8 0"/>
+    <circle class="fb th" cx="76" cy="78" r="20"/>
+    <circle class="fb th" cx="124" cy="78" r="20"/>
+    <circle class="fk ns" cx="78" cy="81" r="6"/>
+    <circle class="fk ns" cx="122" cy="81" r="6"/>
+    <circle class="fc ns" cx="80" cy="79" r="2"/>
+    <circle class="fc ns" cx="124" cy="79" r="2"/>
+    <path class="glint" d="M62 72q3-9 11-11M110 72q3-9 11-11"/>
+    <path class="fc" d="M100 164l9 5.2v10.4l-9 5.2-9-5.2v-10.4z"/>
+  </g>
+</defs>
+</svg>
+
+<main class="stage" id="stage" aria-roledescription="slide deck" aria-label="Club Fauna merch pitch">
+
+  <!-- 1 · Cover -->
+  <section class="slide cover" data-sec="Frontispiece">
+    <p class="kicker">Merch pitch · coding, robotics, broadcasting and science clubs</p>
+    <h1 class="title">Club Fauna gives every club its own animal, on a pin, a tee and a patch</h1>
+    <p class="lede">Twelve pieces in all. Each mascot carries one light joke and draws from one shared six-colour palette, so the range reads as a single collection.</p>
+    <div class="body" id="arches"></div>
+  </section>
+
+  <!-- 2 · Key to the guide -->
+  <section class="slide" data-sec="Key to the guide">
+    <h2 class="title">Every club gets the same treatment: one mascot, one joke, three formats</h2>
+    <div class="body key">
+      <div class="index">
+        <h3 class="h">Species in this guide</h3>
+        <ol id="index"></ol>
+      </div>
+      <div class="formats">
+        <h3 class="h">Three formats per species</h3>
+        <div class="fcards">
+          <div class="fcard">
+            <svg viewBox="0 0 120 120" aria-hidden="true"><path d="M60 86v28" stroke="#101820" stroke-width="4" stroke-linecap="round"/><circle cx="60" cy="50" r="40" fill="#C9A04A" stroke="#101820" stroke-width="3.5"/><circle cx="60" cy="50" r="29" fill="#F1E6B2" stroke="#101820" stroke-width="3"/><path d="M43 43q6-11 19-12" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/></svg>
+            <h4>Enamel pin</h4>
+            <p>The collectible. 32 mm of hard enamel on gold, sold on a printed backing card.</p>
+          </div>
+          <div class="fcard">
+            <svg viewBox="0 0 120 120" aria-hidden="true"><g transform="translate(3 -3) scale(.22)"><path d="M205 52L130 78 36 168 92 232 138 192V520Q260 532 382 520V192L428 232 484 168 390 78 315 52Q260 98 205 52z" fill="#F1E6B2" stroke="#101820" stroke-width="16" stroke-linejoin="round"/><path d="M205 52Q260 98 315 52" fill="none" stroke="#101820" stroke-width="34" stroke-linecap="round"/><path d="M205 52Q260 98 315 52" fill="none" stroke="#F1E6B2" stroke-width="8" stroke-linecap="round"/></g></svg>
+            <h4>T-shirt</h4>
+            <p>The club-day uniform. One front print, with the joke spelled out underneath.</p>
+          </div>
+          <div class="fcard">
+            <svg viewBox="0 0 120 120" aria-hidden="true"><rect x="14" y="14" width="92" height="92" rx="24" fill="#F1E6B2" stroke="#101820" stroke-width="3.5"/><rect x="26" y="26" width="68" height="68" rx="15" fill="none" stroke="#101820" stroke-width="2.6" stroke-dasharray="7 5.5" stroke-linecap="round"/></svg>
+            <h4>Backpack patch</h4>
+            <p>The everyday badge. Embroidered and sewn on, in a shape that belongs to the club.</p>
+          </div>
+        </div>
+      </div>
+      <div class="rules">
+        <h3 class="h">House rules</h3>
+        <ol>
+          <li>Six spot colours across the range, and no more than four fills in any one design.</li>
+          <li>One outline weight throughout, drawn heavy enough to survive a 32 mm pin.</li>
+          <li>No lettering on pins or patches. The joke lives on the tee and the backing card.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <template id="clubs-here"></template>
+
+  <!-- 11 · Collection overview -->
+  <section class="slide" data-sec="The collection">
+    <h2 class="title">Seen together, the twelve pieces read as one collection with four clear identities</h2>
+    <div class="body over" id="over"></div>
+  </section>
+
+  <!-- 12 · Production -->
+  <section class="slide" data-sec="Production notes">
+    <h2 class="title">Six spot colours and three standard sizes cover all twelve pieces</h2>
+    <div class="body prod">
+      <div>
+        <h3 class="h">Proposed dimensions</h3>
+        <dl class="spec">
+          <div><dt>Enamel pin</dt><dd><b>32&nbsp;mm</b> on the longest side. Hard enamel on polished gold, metal lines at least 0.3&nbsp;mm wide, backing card 50&nbsp;×&nbsp;70&nbsp;mm.</dd></div>
+          <div><dt>T-shirt</dt><dd><b>280&nbsp;mm</b> maximum print width, top edge 70&nbsp;mm below the collar. Screen print on Ink or Natural tees.</dd></div>
+          <div><dt>Patch</dt><dd><b>70 to 80&nbsp;mm</b> across. Embroidered on cream twill with a 3&nbsp;mm merrowed border. Sew-on backing, no heat seal.</dd></div>
+          <div><dt>Outline</dt><dd><b>One weight</b> on every piece: about 0.9&nbsp;mm at pin size, scaled up in proportion on tees and patches.</dd></div>
+        </dl>
+      </div>
+      <div>
+        <h3 class="h">Colour instructions</h3>
+        <ul class="sw" id="swatches"></ul>
+        <ul class="crules">
+          <li>Four fills per design plus the outline: Black 6 C on tees and patches, polished gold metal on pins.</li>
+          <li>On Ink tees, print a cream 7499 C underbase that runs 3&nbsp;mm past the outline.</li>
+          <li>Patch borders take the club’s lead colour, stitched over cream twill.</li>
+          <li>Pantone numbers are nearest Solid Coated matches picked on screen. Check them against a swatch book at proof stage.</li>
+        </ul>
+      </div>
+      <table class="ptab">
+        <thead><tr><th scope="col">Club and mascot</th><th scope="col">Pin</th><th scope="col">Tee</th><th scope="col">Patch</th><th scope="col">Fills, lead colour first</th></tr></thead>
+        <tbody id="ptab"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="nav">
+    <button type="button" id="prev" aria-label="Previous slide"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M11.5 3L5.5 9l6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <button type="button" id="next" aria-label="Next slide"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M6.5 3l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+  <div class="bar" id="bar"></div>
+  <div class="sr" id="live" aria-live="polite"></div>
+</main>
+
+<script>
+(() => {
+'use strict';
+
+/* ---------- collection data ---------- */
+const INK = '#101820', CREAM = '#F1E6B2';
+const COL = {
+  ink:   ['Ink',    'PMS Black 6 C', '#101820'],
+  cream: ['Cream',  'PMS 7499 C',    '#F1E6B2'],
+  green: ['Green',  'PMS 361 C',     '#43B02A'],
+  coral: ['Coral',  'PMS 7417 C',    '#E04E39'],
+  blue:  ['Blue',   'PMS 3005 C',    '#0077C8'],
+  yellow:['Yellow', 'PMS 123 C',     '#FFC72C']
+};
+// Artwork bounds of each mascot inside its 200 × 200 drawing box.
+const M = {
+  frog:  {x:15, y:30, w:178, h:158},
+  crab:  {x:5,  y:28, w:190, h:166},
+  parrot:{x:47, y:20, w:132, h:176},
+  lab:   {x:16, y:28, w:168, h:160}
+};
+const CLUBS = [
+  { id:'frog', n:1, club:'Coding club', name:'Debug Frog', latin:'Hyla debuggens',
+    a:'#43B02A', b:'#E04E39', wash:'#DEE8C9', tee:'ink', teeName:'Ink', shape:'key', shapeName:'Keycap', patchMM:'75 × 75 mm',
+    plateTitle:'The coding club gets a tree frog, because frogs eat bugs for breakfast',
+    fmtTitle:'The Debug Frog survives the jump from 32 mm pin to chest print to keycap patch',
+    habitat:'Computer lab, back row, nearest the charger.',
+    diet:'Bugs. Strictly bugs.',
+    marksText:'Curly-brace belly, tongue mid-catch, one very unlucky bug.',
+    call:'It’s not a bug. It’s breakfast.',
+    marks:[{at:'lt',x:60,y:44,t:['Eyes adapted','to dark mode']},{at:'rt',x:181,y:60,t:['One bug, also','known as breakfast']},{at:'lb',x:88,y:152,t:['Curly-brace','belly markings']}],
+    slogan:[{t:'// not a bug.',f:'mono',fs:17,tl:133},{t:'// it’s breakfast.',f:'mono',fs:17,tl:184}], sloganAnchor:'start',
+    cap:{pin:'32 mm hard enamel on gold metal. The joke rides on the backing card.',
+         tee:'Front print on an Ink tee, with the slogan set as a code comment.',
+         patch:'75 mm keycap-shaped patch, sewn on. No lettering, so nothing to fray.'},
+    fills:[['green','body'],['cream','belly'],['coral','tongue'],['ink','bug']] },
+  { id:'crab', n:2, club:'Robotics club', name:'Gripper Crab', latin:'Carcinus servo',
+    a:'#E04E39', b:'#FFC72C', wash:'#F4DACB', tee:'natural', teeName:'Natural', shape:'hex', shapeName:'Hex nut', patchMM:'80 × 70 mm',
+    plateTitle:'The robotics club gets a crab, because it was born with grippers',
+    fmtTitle:'The Gripper Crab keeps its grip on a pin, a tee and a hex-nut patch',
+    habitat:'Workshop floor, usually under the competition table.',
+    diet:'Loose bolts, zip ties and spare batteries.',
+    marksText:'Bolted gripper claws, a yellow gear on the shell, six busy legs.',
+    call:'Get a grip.',
+    marks:[{at:'lt',x:33,y:70,t:['Claws upgraded to','two-finger grippers']},{at:'rt',x:124,y:44,t:['Stalk eyes track','the scoreboard']},{at:'rb',x:179,y:156,t:['Walks sideways','on purpose']}],
+    slogan:[{t:'GET A GRIP.',f:'sans',fs:27,tl:172}],
+    cap:{pin:'32 mm hard enamel. The claw bolts and the shell gear fill in yellow.',
+         tee:'Front print on a Natural tee, with a three-word instruction underneath.',
+         patch:'80 mm hex-nut patch. Six flat sides make it easy to sew on straight.'},
+    fills:[['coral','shell'],['cream','eyes'],['yellow','gear'],['ink','pupils']] },
+  { id:'parrot', n:3, club:'Broadcasting club', name:'Mic-Check Macaw', latin:'Ara iterata',
+    a:'#0077C8', b:'#FFC72C', wash:'#D4E0DF', tee:'natural', teeName:'Natural', shape:'dial', shapeName:'Dial', patchMM:'75 mm round',
+    plateTitle:'The broadcasting club gets a macaw, because nobody repeats a mic check better',
+    fmtTitle:'The Mic-Check Macaw repeats itself on a pin, a tee and a round dial patch',
+    habitat:'The studio booth, perched beside the ON AIR light.',
+    diet:'Morning announcements, taken twice.',
+    marksText:'Studio headset, boom mic, blue and yellow plumage, beak ajar.',
+    call:'Testing, testing. Testing, testing.', callHtml:'Testing, testing.<br>Testing, testing.',
+    marks:[{at:'lt',x:76,y:82,t:['Headset stays on,','even off air']},{at:'rt',x:171,y:74,t:['Beak, usually','mid-announcement']},{at:'rb',x:166,y:131,t:['Boom mic for the','second “testing”']}],
+    slogan:[{t:'TESTING, TESTING.',f:'sans',fs:17,tl:178},{t:'TESTING, TESTING.',f:'sans',fs:17,tl:178,fill:'#0077C8'}],
+    cap:{pin:'32 mm tall hard enamel. Headset and beak stay solid Ink for contrast.',
+         tee:'Front print on a Natural tee. The echo line prints in blue.',
+         patch:'75 mm round patch, shaped like a studio dial and sewn on at the rim.'},
+    fills:[['blue','head'],['yellow','chest'],['cream','face'],['ink','beak']] },
+  { id:'lab', n:4, club:'Science club', name:'Lab Partner', latin:'Canis laboratorius',
+    a:'#FFC72C', b:'#0077C8', wash:'#F8EBC9', tee:'ink', teeName:'Ink', shape:'crest', shapeName:'Crest', patchMM:'70 × 80 mm',
+    plateTitle:'The science club gets a Labrador, because every experiment needs a Lab partner',
+    fmtTitle:'The Lab Partner fetches the same result on a pin, a tee and a crest patch',
+    habitat:'Lab bench three, right next to the eyewash station.',
+    diet:'Results, fetched on request.',
+    marksText:'Safety goggles, a test tube carried like a stick, hexagon ID tag.',
+    call:'Will fetch results.',
+    marks:[{at:'rt',x:139,y:66,t:['Safety goggles,','worn even at lunch']},{at:'lb',x:43,y:136,t:['Test tube, carried','like a stick']},{at:'rb',x:105,y:178,t:['ID tag shaped like','a benzene ring']}],
+    slogan:[{t:'LAB PARTNER.',f:'sans',fs:23,tl:172},{t:'WILL FETCH RESULTS.',f:'sans',fs:14.5,tl:172}],
+    cap:{pin:'32 mm hard enamel. Lenses and sample share a single blue fill.',
+         tee:'Front print on an Ink tee. A cream underbase keeps the yellow bright.',
+         patch:'80 mm crest patch, cut like a lab safety badge and sewn on at the edge.'},
+    fills:[['yellow','coat'],['cream','muzzle'],['blue','lenses'],['ink','nose']] }
+];
+CLUBS.forEach(c => c.vars = `--a:${c.a};--b:${c.b};--wash:${c.wash}`);
+
+/* ---------- artwork helpers ---------- */
+let uid = 0;
+const r1 = v => Math.round(v * 10) / 10;
+const solid = c => `--a:${c};--b:${c};--c:${c};--k:${c};--ln:${c};`;
+// Place a mascot so its artwork is centred on (cx, cy) and its longest side measures `size`.
+function place(id, cx, cy, size, style = '') {
+  const b = M[id], s = size / Math.max(b.w, b.h);
+  const tx = cx - (b.x + b.w / 2) * s, ty = cy - (b.y + b.h / 2) * s;
+  return `<use href="#m-${id}" transform="translate(${r1(tx)} ${r1(ty)}) scale(${s.toFixed(4)})"${style ? ` style="${style}"` : ''}/>`;
+}
+const icon = c => `<svg viewBox="0 0 100 100" aria-hidden="true">${place(c.id, 50, 51, 74)}</svg>`;
+
+/* Enamel pin on its backing card */
+function pin(c) {
+  const u = 'g' + (++uid), b = M[c.id], size = 192, s = size / Math.max(b.w, b.h);
+  const cx = 260, cy = 264, hw = b.w * s / 2, hh = b.h * s / 2, by = r1(cy + hh + 24);
+  const mm = Math.round(32 * b.w / Math.max(b.w, b.h));
+  return `<svg viewBox="0 0 520 560" role="img" aria-label="${c.name} enamel pin on its printed backing card">
+  <defs><mask id="${u}" maskUnits="userSpaceOnUse" x="0" y="0" width="520" height="560"><rect width="520" height="560" fill="#000"/>${place(c.id, cx, cy, size, solid('#fff'))}</mask></defs>
+  <g transform="rotate(-4 260 280)">
+    <rect x="117" y="79" width="300" height="420" rx="12" fill="${INK}" opacity=".2"/>
+    <rect x="110" y="70" width="300" height="420" rx="12" fill="#FCF9EF" stroke="${INK}" stroke-width="2.5"/>
+    <rect x="123" y="83" width="274" height="394" rx="5" fill="none" stroke="${INK}" stroke-width="1"/>
+    <circle cx="260" cy="106" r="10" fill="var(--wash)" stroke="${INK}" stroke-width="2.5"/>
+    <text x="260" y="142" text-anchor="middle" class="t-caps">CLUB FAUNA · No. ${c.n}</text>
+    <g transform="translate(4 7)" opacity=".3">${place(c.id, cx, cy, size, solid(INK) + '--sw:15px')}</g>
+    ${place(c.id, cx, cy, size, solid('#A67F2E') + '--sw:15px')}
+    ${place(c.id, cx, cy, size, '--ln:#DDB95F;--sw:4.6px')}
+    <g mask="url(#${u})"><path d="M244 150h34l-80 230h-34z" fill="#fff" opacity=".15"/><path d="M296 150h10l-80 230h-10z" fill="#fff" opacity=".15"/></g>
+    <path d="M${r1(cx - hw)} ${by - 6}v12M${r1(cx + hw)} ${by - 6}v12M${r1(cx - hw)} ${by}H${r1(cx + hw)}" fill="none" stroke="${INK}" stroke-width="1.6"/>
+    <rect x="${cx - 32}" y="${by - 10}" width="64" height="20" fill="#FCF9EF"/>
+    <text x="${cx}" y="${by + 5}" text-anchor="middle" class="t-dim">${mm} mm</text>
+    <text x="260" y="437" text-anchor="middle" class="t-name">${c.name}</text>
+    <text x="260" y="462" text-anchor="middle" class="t-call">“${c.call}”</text>
+  </g></svg>`;
+}
+
+/* T-shirt, flat lay */
+function tee(c) {
+  const dark = c.tee === 'ink', b = M[c.id];
+  const body = dark ? '#18222E' : '#F3EBC8', rib = dark ? '#243140' : '#E9DEB2', inner = dark ? '#0A1017' : '#D8CC9C', seam = dark ? '#3F4D5F' : '#B5A878', txt = dark ? CREAM : INK;
+  const size = 166, cx = 260, cy = 240, s = size / Math.max(b.w, b.h);
+  let y = cy + b.h * s / 2 + 38;
+  const start = c.sloganAnchor === 'start';
+  const lines = c.slogan.map((l, i) => {
+    const out = `<text x="${start ? cx - 92 : cx}" y="${r1(y)}" text-anchor="${start ? 'start' : 'middle'}" class="sl-${l.f}" font-size="${l.fs}" textLength="${l.tl}" lengthAdjust="spacingAndGlyphs" fill="${l.fill || txt}">${l.t}</text>`;
+    y += (c.slogan[i + 1] ? c.slogan[i + 1].fs : 0) + 9;
+    return out;
+  }).join('');
+  return `<svg viewBox="0 0 520 560" role="img" aria-label="${c.name} T-shirt, ${c.teeName} colourway, with the slogan ${c.slogan.map(l => l.t).join(' ')}">
+  <path d="M205 52Q260 36 315 52Q260 98 205 52z" fill="${inner}" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M205 52L130 78 36 168 92 232 138 192V520Q260 532 382 520V192L428 232 484 168 390 78 315 52Q260 98 205 52z" fill="${body}" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M205 52Q260 98 315 52L326 56Q260 118 194 56z" fill="${rib}" stroke="${INK}" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M130 78Q126 140 138 192M390 78Q394 140 382 192" fill="none" stroke="${seam}" stroke-width="2"/>
+  <path d="M47 158L103 222M473 158L417 222M138 506Q260 518 382 506" fill="none" stroke="${seam}" stroke-width="2" stroke-dasharray="6 5"/>
+  ${dark ? place(c.id, cx, cy, size, solid(CREAM) + '--sw:13px') : ''}
+  ${place(c.id, cx, cy, size)}
+  ${lines}</svg>`;
+}
+
+/* Embroidered patch, sewn to the front pocket of a backpack */
+const SHAPES = {
+  key:   a => `<rect x="-104" y="-104" width="208" height="208" rx="46" ${a}/>`,
+  hex:   a => `<path d="M-120 0-60-104H60L120 0 60 104H-60z" ${a}/>`,
+  dial:  a => `<circle r="110" ${a}/>`,
+  crest: a => `<path d="M-100-117H100V-1C100 59 58 95 0 117-58 95-100 59-100-1z" ${a}/>`
+};
+const FIT = { key:{size:152, dy:2}, hex:{size:150, dy:2}, dial:{size:150, dy:0}, crest:{size:160, dy:-16} };
+function patch(c) {
+  const u = 'g' + (++uid), sh = SHAPES[c.shape], f = FIT[c.shape];
+  const dark = '#27313F';
+  return `<svg class="bag" viewBox="0 0 520 560" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${c.name} embroidered patch, ${c.shapeName.toLowerCase()} shape, sewn onto a backpack pocket">
+  <defs><mask id="${u}" maskUnits="userSpaceOnUse" x="-140" y="-140" width="280" height="280"><rect x="-140" y="-140" width="280" height="280" fill="#000"/>${place(c.id, 0, f.dy, f.size, solid('#fff'))}</mask></defs>
+  <rect width="520" height="560" fill="#3F4C5F"/><rect width="520" height="560" fill="url(#weave)"/>
+  <path d="M-10 96Q260 26 530 96" fill="none" stroke="${dark}" stroke-width="14"/>
+  <path d="M-10 96Q260 26 530 96" fill="none" stroke="#9BA7B7" stroke-width="4" stroke-dasharray="3 4"/>
+  <path d="M46 580V196q0-40 40-40h348q40 0 40 40v384z" fill="#4A586D" stroke="${dark}" stroke-width="3"/>
+  <path d="M46 580V196q0-40 40-40h348q40 0 40 40v384z" fill="url(#weave)"/>
+  <path d="M60 580V200q0-30 30-30h340q30 0 30 30v380" fill="none" stroke="#C9D1DC" stroke-opacity=".55" stroke-width="2" stroke-dasharray="7 6"/>
+  <path d="M94 206H426" stroke="${dark}" stroke-width="13" stroke-linecap="round"/>
+  <path d="M98 206H422" stroke="#9BA7B7" stroke-width="4" stroke-dasharray="3 4"/>
+  <rect x="96" y="198" width="16" height="16" rx="3" fill="#C9CED6" stroke="${dark}" stroke-width="2"/>
+  <path d="M104 214v10" stroke="#C9CED6" stroke-width="3"/>
+  <rect x="97" y="222" width="14" height="30" rx="5" fill="var(--a)" stroke="${INK}" stroke-width="2.5"/>
+  <g transform="translate(260 394)">
+    ${sh(`fill="${INK}" stroke="${INK}" stroke-width="16" stroke-linejoin="round" opacity=".35" transform="translate(5 8)"`)}
+    ${sh(`fill="#F5EED2" stroke="var(--a)" stroke-width="16" stroke-linejoin="round"`)}
+    ${sh(`fill="url(#twill)"`)}
+    ${sh(`fill="none" stroke="${INK}" stroke-opacity=".3" stroke-width="16" stroke-dasharray="2 3.5" stroke-linejoin="round"`)}
+    ${place(c.id, 0, f.dy, f.size)}
+    <rect x="-140" y="-140" width="280" height="280" fill="url(#thread)" mask="url(#${u})"/>
+    ${sh(`fill="none" stroke="${INK}" stroke-opacity=".8" stroke-width="2.4" stroke-dasharray="8 7" stroke-linecap="round" stroke-linejoin="round"`)}
+  </g>
+  <g transform="translate(456 64)" fill="none" stroke="${INK}" stroke-width="2.6" stroke-linejoin="round">
+    <circle r="42" fill="#F7F1E3"/>
+    <path d="M-9-21q0-11 9-11t9 11"/>
+    <rect x="-19" y="-21" width="38" height="47" rx="11" fill="#F7F1E3"/>
+    <rect x="-12" y="1" width="24" height="18" rx="4"/>
+    <circle cy="10" r="5.5" fill="var(--a)"/>
+  </g></svg>`;
+}
+
+/* Annotated specimen for the species plate */
+function specimen(c) {
+  const cx = 490, cy = 374, size = 410, b = M[c.id], s = size / Math.max(b.w, b.h);
+  const pt = (x, y) => [r1(cx + (x - (b.x + b.w / 2)) * s), r1(cy + (y - (b.y + b.h / 2)) * s)];
+  const slot = {
+    lt:{x:48,  anchor:'start', rule:138, text:88,  from:48,  to:292},
+    rt:{x:932, anchor:'end',   rule:138, text:88,  from:932, to:688},
+    lb:{x:48,  anchor:'start', rule:606, text:642, from:48,  to:292},
+    rb:{x:932, anchor:'end',   rule:606, text:642, from:932, to:688}
+  };
+  const notes = c.marks.map(m => {
+    const sl = slot[m.at], [tx, ty] = pt(m.x, m.y);
+    return `<path class="lead" d="M${sl.from} ${sl.rule}H${sl.to}L${tx} ${ty}"/><circle class="dot" cx="${tx}" cy="${ty}" r="7"/>
+    <text class="mark" text-anchor="${sl.anchor}"><tspan x="${sl.x}" y="${sl.text}">${m.t[0]}</tspan><tspan x="${sl.x}" y="${sl.text + 32}">${m.t[1]}</tspan></text>`;
+  }).join('');
+  const dots = c.fills.map((f, i) => `<circle cx="${445 + i * 30}" cy="92" r="10.5" fill="${COL[f[0]][2]}" stroke="${INK}" stroke-width="2"/>`).join('');
+  const desc = c.marks.map(m => m.t.join(' ')).join('; ');
+  return `<svg viewBox="0 0 980 730" role="img" aria-label="${c.name}, annotated specimen drawing. ${desc}.">
+  <text class="pl" x="490" y="60" text-anchor="middle">SPECIMEN No. ${c.n}</text>${dots}
+  <ellipse cx="${cx}" cy="${r1(cy + b.h * s / 2 + 6)}" rx="${r1(b.w * s * .42)}" ry="11" fill="${INK}" opacity=".14"/>
+  ${place(c.id, cx, cy, size)}
+  ${notes}</svg>`;
+}
+
+/* Arched frame for the cover frieze */
+function arch(c) {
+  const b = M[c.id], size = 224, s = size / Math.max(b.w, b.h), cy = 246;
+  return `<svg viewBox="0 0 380 400" aria-hidden="true">
+  <path d="M24 398V186a166 166 0 0 1 332 0v212z" fill="var(--wash)" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M37 398V186a153 153 0 0 1 306 0v212" fill="none" stroke="${INK}" stroke-width="1.2"/>
+  <text x="190" y="92" text-anchor="middle" class="t-no">No. ${c.n}</text>
+  <ellipse cx="190" cy="${r1(cy + b.h * s / 2 + 5)}" rx="${r1(b.w * s * .42)}" ry="8" fill="${INK}" opacity=".14"/>
+  ${place(c.id, 190, cy, size)}</svg>`;
+}
+
+/* ---------- build slides ---------- */
+const $ = id => document.getElementById(id);
+const ROMAN = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV'];
+
+$('arches').innerHTML = CLUBS.map(c =>
+  `<figure class="arch" style="${c.vars}">${arch(c)}<figcaption><b>${c.name}</b><span>${c.club}</span></figcaption></figure>`).join('');
+
+$('index').innerHTML = CLUBS.map((c, i) =>
+  `<li style="${c.vars}">${icon(c)}<div><b>${c.name}</b><span>${c.club} · <i>${c.latin}</i></span></div><em>Plates ${ROMAN[2 + i * 2]}–${ROMAN[3 + i * 2]}</em></li>`).join('');
+
+$('clubs-here').insertAdjacentHTML('beforebegin', CLUBS.map(c => `
+  <section class="slide" data-sec="${c.club}" data-club="${c.id}" style="${c.vars}">
+    <h2 class="title">${c.plateTitle}</h2>
+    <div class="body plate-grid">
+      <figure class="plate">${specimen(c)}</figure>
+      <div class="notes">
+        <p class="eyebrow"><i class="chip"></i>Species No. ${c.n} · ${c.club}</p>
+        <h3 class="sp">${c.name}</h3>
+        <p class="bin">${c.latin}</p>
+        <dl class="fn">
+          <div><dt>Habitat</dt><dd>${c.habitat}</dd></div>
+          <div><dt>Diet</dt><dd>${c.diet}</dd></div>
+          <div><dt>Field marks</dt><dd>${c.marksText}</dd></div>
+        </dl>
+        <div class="call"><span class="lab">Call</span><p>“${c.callHtml || c.call}”</p></div>
+      </div>
+    </div>
+  </section>
+  <section class="slide" data-sec="${c.club}" data-club="${c.id}" style="${c.vars}">
+    <h2 class="title">${c.fmtTitle}</h2>
+    <div class="body fmt-grid">
+      <figure class="fmt"><div class="mock">${pin(c)}</div><figcaption><span class="lab">Fig. 1 · Enamel pin</span><p>${c.cap.pin}</p></figcaption></figure>
+      <figure class="fmt"><div class="mock">${tee(c)}</div><figcaption><span class="lab">Fig. 2 · T-shirt</span><p>${c.cap.tee}</p></figcaption></figure>
+      <figure class="fmt"><div class="mock">${patch(c)}</div><figcaption><span class="lab">Fig. 3 · Backpack patch</span><p>${c.cap.patch}</p></figcaption></figure>
+    </div>
+  </section>`).join(''));
+
+$('over').innerHTML = CLUBS.map(c =>
+  `<div class="quad" style="${c.vars}"><header>${c.name}<span>${c.club}</span></header><div class="row">${pin(c)}${tee(c)}${patch(c)}</div></div>`).join('');
+
+$('swatches').innerHTML = Object.values(COL).map(([n, p, h]) =>
+  `<li><i style="--s:${h}"></i><div><b>${n}</b><span>${p}</span></div></li>`).join('');
+
+$('ptab').innerHTML = CLUBS.map(c => {
+  const b = M[c.id], k = 32 / Math.max(b.w, b.h);
+  const fills = c.fills.map(([col, part]) => `<span class="fill"><i style="--s:${COL[col][2]}"></i>${COL[col][0]} ${part}</span>`).join('');
+  return `<tr style="${c.vars}"><td>${icon(c)}${c.name} <small>· ${c.club}</small></td><td>${Math.round(b.w * k)} × ${Math.round(b.h * k)} mm</td><td>${c.teeName}</td><td>${c.shapeName}, ${c.patchMM}</td><td>${fills}</td></tr>`;
+}).join('');
+
+/* ---------- chrome, navigation ---------- */
+const stage = $('stage'), slides = [...stage.querySelectorAll('.slide')], N = slides.length;
+slides.forEach((s, i) => {
+  const sec = s.dataset.sec || '';
+  s.setAttribute('aria-roledescription', 'slide');
+  s.setAttribute('aria-label', `Slide ${i + 1} of ${N}`);
+  s.insertAdjacentHTML('afterbegin',
+    `<header class="rh"><span>Club Fauna · a field guide to school-club merch</span><span>${s.dataset.club ? '<i class="chip"></i>' : ''}Plate ${ROMAN[i]}${sec ? ' · ' + sec : ''}</span></header>`);
+  s.insertAdjacentHTML('beforeend',
+    `<footer class="ft"><span>${i === 0 ? 'Use the ← and → keys to turn the page' : ''}</span><span>${i + 1} / ${N}</span></footer>
+     <div class="tabs" aria-hidden="true">${CLUBS.map(c => `<i style="--t:${c.a}"${c.id === s.dataset.club ? ' class="on"' : ''}></i>`).join('')}</div>`);
+});
+
+let cur = -1;
+function go(n) {
+  n = Math.max(0, Math.min(N - 1, n));
+  if (n === cur) return;
+  cur = n;
+  slides.forEach((s, i) => { s.classList.toggle('on', i === n); s.inert = i !== n; });
+  $('bar').style.width = ((n + 1) / N * 100) + '%';
+  $('prev').disabled = n === 0;
+  $('next').disabled = n === N - 1;
+  const t = slides[n].querySelector('.title');
+  $('live').textContent = `Slide ${n + 1} of ${N}: ${t ? t.textContent : ''}`;
+  if (location.hash !== '#' + (n + 1)) history.replaceState(null, '', '#' + (n + 1));
+}
+const fromHash = () => (parseInt(location.hash.slice(1), 10) || 1) - 1;
+function fit() {
+  stage.style.transform = `scale(${Math.min(innerWidth / 1920, innerHeight / 1080)})`;
+}
+addEventListener('keydown', e => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const k = e.key;
+  if (k === 'ArrowRight' || k === 'ArrowDown' || k === 'PageDown' || (k === ' ' && !e.shiftKey && e.target.tagName !== 'BUTTON')) { e.preventDefault(); go(cur + 1); }
+  else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp' || (k === ' ' && e.shiftKey)) { e.preventDefault(); go(cur - 1); }
+  else if (k === 'Home') { e.preventDefault(); go(0); }
+  else if (k === 'End') { e.preventDefault(); go(N - 1); }
+  else if (k === 'f' || k === 'F') { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.(); }
+});
+$('prev').addEventListener('click', () => go(cur - 1));
+$('next').addEventListener('click', () => go(cur + 1));
+let tx0 = null;
+addEventListener('touchstart', e => { tx0 = e.touches[0].clientX; }, {passive:true});
+addEventListener('touchend', e => {
+  if (tx0 === null) return;
+  const dx = e.changedTouches[0].clientX - tx0; tx0 = null;
+  if (Math.abs(dx) > 50) go(cur + (dx < 0 ? 1 : -1));
+}, {passive:true});
+addEventListener('hashchange', () => go(fromHash()));
+addEventListener('resize', fit);
+fit();
+go(fromHash());
+requestAnimationFrame(() => requestAnimationFrame(() => document.body.classList.add('anim')));
+})();
+</script>
+</body>
+</html>
