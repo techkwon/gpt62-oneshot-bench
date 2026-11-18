@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f9f6">
+  <meta name="description" content="테크권의 AI 코딩 대결 실험 기록. 같은 과제를 받은 모델들의 실행 영상, 블라인드 투표, 비용과 시간을 확인하세요.">
+  <title>AI 코딩 대결 실험 리포트 · 누구나쉽게</title>
+  <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="evidence.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">본문으로 건너뛰기</a>
+  <header class="site-head"><div class="wrap head-inner">
+    <a class="brand" href="#main" aria-label="누구나쉽게 처음으로"><img src="assets/mark.svg" width="30" height="30" alt="">누구나쉽게</a>
+    <nav aria-label="주요 메뉴"><a href="#scoreboard">종합 결과</a><a href="#evidence">과제별 기록</a><a href="#costs">비용·시간</a><a href="#method">실험 방법</a></nav>
+    <a class="data-link" href="data.json" download><span aria-hidden="true">{ }</span> 원본 데이터 <span aria-hidden="true">↓</span></a>
+  </div></header>
+  <main id="main">
+    <div id="status" role="status" class="wrap">실험 기록을 불러오고 있어요.</div>
+    <noscript><p class="wrap">실험 기록을 보려면 브라우저에서 자바스크립트를 켜 주세요.</p></noscript>
+    <div id="report" hidden>
+      <section class="hero wrap" aria-labelledby="title">
+        <div class="hero-copy"><div class="meta"><span class="stamp"><i></i> 실험 리포트</span><time id="report-date"></time></div>
+          <h1 id="title">AI 코딩 대결<span class="period">.</span><br><span>한 번의 프롬프트</span></h1>
+          <p>GPT-6.2 출시일, Astra·Sol과 Claude Fable·Opus에 같은 코딩 과제를 맡겼어요. 실행 영상과 블라인드 투표를 직접 확인해 보세요.</p>
+          <div class="hero-actions"><a href="#scoreboard" class="button primary">종합 결과 보기 <span aria-hidden="true">↓</span></a><a href="#evidence" class="button secondary">과제별 기록 <span aria-hidden="true">↗</span></a></div>
+        </div>
+        <article class="feature" aria-label="과제 녹화 미리보기">
+          <button type="button" class="feature-screen" id="feature-play"><img id="feature-img" width="800" height="500" alt="">
+            <span class="footage-tag"><i></i> 실행 영상</span><span class="play-icon" aria-hidden="true"></span>
+          </button>
+          <div class="feature-caption"><div aria-live="polite"><strong id="feature-title"></strong><span class="feature-model" id="feature-model"></span></div>
+            <div class="film-controls"><button type="button" aria-label="이전 영상" id="prev">‹</button><span id="scene-count"></span><button type="button" aria-label="다음 영상" id="next">›</button></div>
+          </div>
+        </article>
+      </section>
+      <div class="stats-strip"><dl id="stats" class="wrap"></dl></div>
+      <section class="score-section wrap" id="scoreboard" aria-labelledby="score-heading">
+        <div class="score-intro"><div><div class="section-kicker"><i></i> 블라인드 평가</div><h2 id="score-heading">라운드별 종합 결과</h2></div><div id="round-switch" role="group" aria-label="결과를 볼 라운드"></div></div>
+        <div class="score-layout"><div class="ranking"><div class="ranking-header"><h3>모델 순위</h3><span><i></i> 보르다 총점 기준</span></div><div id="scores"></div></div>
+        <aside class="round-note" id="round-note" aria-live="polite"></aside></div>
+        <p class="tool-condition"><strong>도구 사용 조건</strong> GPT는 Codex에서 명령어를 실행하고 브라우저로 결과를 직접 테스트할 수 있었어요. Claude는 파일 쓰기·수정·읽기(Write/Edit/Read)만 가능해 GPT에 유리한 조건이었어요.</p>
+        <details class="score-help"><summary>점수는 어떻게 읽나요?</summary><p>심사 모델마다 순위를 매겨요. 보르다 총점은 각 표에서 내 아래에 놓인 모델 수를 모두 더한 값이에요. ‘자기표 제외’는 각 모델이 자기 결과물에 준 점수만 뺀 값이고, ‘1위 표’는 가장 잘 만들었다고 뽑힌 횟수예요. 비용과 시간은 해당 라운드의 과제별 기록을 더했어요.</p></details>
+      </section>
+      <section id="evidence"></section>
+      <div id="records-sections"></div>
+    </div>
+  </main>
+  <footer><div class="wrap"><strong>누구나쉽게 · 테크권</strong><p>각 결과는 한 번씩 실행해 얻은 기록이에요. 과학적인 벤치마크로 일반화하기는 어려워요.</p><a href="#main">맨 위로 ↑</a></div></footer>
+  <dialog id="viewer" aria-labelledby="video-title"><div class="viewer-head"><h2 id="video-title"></h2><button id="close-viewer" aria-label="영상 닫기">×</button></div><video controls muted playsinline preload="none"></video><a id="view-evidence" href="#evidence">이 과제의 평가 보기 →</a></dialog>
+</body>
+</html>
