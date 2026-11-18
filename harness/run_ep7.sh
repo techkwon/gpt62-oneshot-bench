@@ -2,8 +2,8 @@
 # usage: run_ep7.sh <astra|sol> <task: motion|physics|svg|three|game> <workdir>
 # ep.7 (Fable 5.2 test) prompts, unchanged, run on GPT-6.2 via codex exec -> runs-ep7/<task>/<model>
 M=$1; T=$2
-P7=/Users/techkwon/Developer/MyApps/Youtube/fable52-lecture/samples/prompts
-BASE=/Users/techkwon/Developer/MyApps/Youtube/gpt62-lecture/samples
+P7=../fable52-lecture/samples/prompts
+BASE=${BENCH_DIR:-.}
 WORK="$3/ep7/$T/$M"; mkdir -p "$WORK"; cd "$WORK"
 [[ $M == astra ]] && GM=gpt-6.2-astra || GM=gpt-6.2-sol
 START=$(date +%s)

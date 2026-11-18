@@ -3,7 +3,7 @@
 # labels shuffled, seeded by set+task. plain: 6.2 Astra/Sol vs Fable 5.2/Opus 5.5; fair: same with GPT image tool off; ep7: ep.7 prompts, 5 models.
 import sys, os, json, random, subprocess
 from PIL import Image, ImageDraw, ImageFont
-B = '/Users/techkwon/Developer/MyApps/Youtube/gpt62-lecture/samples'
+B = '${BENCH_DIR:-.}'
 st, task = sys.argv[1], sys.argv[2]; n = int(sys.argv[3]) if len(sys.argv) > 3 else 6
 models = {'plain': ['astra', 'sol', 'fable', 'opus'], 'fair': ['astra-fair', 'sol-fair', 'fable', 'opus'],
           'ep7': ['astra', 'sol', 'fable', 'opus', 'gpt61']}[st]

@@ -117,9 +117,14 @@ function methodSection(data) {
   return section('method', '실험 방법', `<dl class="method-list">${data.method.map(statement => {
     const [term, explanation] = methodTranslations.get(statement) || ['실험 조건', statement];
     return `<div><dt>${escape(term)}</dt><dd>${escape(explanation)}</dd></div>`;
-  }).join('')}</dl><p class="records-links"><a href="data.json" download>원본 데이터 내려받기 ↓</a> <a href="harness/tally.py" download>점수 집계 코드 ↓</a> <a href="harness/cost_table.py" download>비용 계산 코드 ↓</a></p>`);
+  }).join('')}</dl>`);
+}
+
+function downloadsSection(data) {
+  const items = data.downloads.map(item => `<li><a href="${escape(item.href)}" download><strong>${escape(item.title)}</strong><span>${escape(item.detail)}${item.size ? ` · ${escape(item.size)}` : ''}</span><b aria-hidden="true">↓</b></a></li>`).join('');
+  return section('downloads', '원본 자료 받기', `<p>이 페이지의 모든 결과물, 녹화 영상, 심사 시트와 투표 원문, 실행 스크립트를 그대로 내려받을 수 있어요. 결과물 파일은 모델이 만든 그대로이고 손대지 않았어요.</p><ul class="download-list">${items}</ul><p class="records-links"><a href="${escape(data.repo)}" target="_blank" rel="noopener noreferrer">GitHub 저장소 열기 ↗</a> <a href="harness/tally.py" download>점수 집계 코드 ↓</a> <a href="harness/cost_table.py" download>비용 계산 코드 ↓</a></p>`);
 }
 
 export function renderRecords(data) {
-  return costSection(data) + speedSection(data) + officialSection(data) + methodSection(data);
+  return costSection(data) + speedSection(data) + officialSection(data) + methodSection(data) + downloadsSection(data);
 }

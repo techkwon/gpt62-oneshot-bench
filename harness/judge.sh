@@ -1,8 +1,8 @@
 #!/bin/zsh
 # usage: judge.sh <set: plain|fair|ep7> <task> <judge: astra|sol|fable|opus>  -> judge/<set>-<task>/vote-<judge>.json
-B=/Users/techkwon/Developer/MyApps/Youtube/gpt62-lecture/samples
+B=${BENCH_DIR:-.}
 S=$1; T=$2; J=$3; D=$B/judge/$S-$T
-if [[ $S == ep7 ]]; then PF=/Users/techkwon/Developer/MyApps/Youtube/fable52-lecture/samples/prompts/$T.txt; else PF=$B/prompts/$T.txt; fi
+if [[ $S == ep7 ]]; then PF=../fable52-lecture/samples/prompts/$T.txt; else PF=$B/prompts/$T.txt; fi
 P="$(sed -n '1,/^$/p' $PF | sed '/^$/d')"
 N=$(python3 -c "import json;print(len(json.load(open('$D/mapping.json'))))")
 LABS=$(python3 -c "print(', '.join('ABCDE'[:$N]))")

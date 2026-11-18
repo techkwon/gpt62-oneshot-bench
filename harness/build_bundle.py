@@ -4,7 +4,7 @@ import json, os, shutil, glob, csv, subprocess
 B = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 L = os.path.dirname(B)
 S = f'{L}/site'
-F52 = '/Users/techkwon/Developer/MyApps/Youtube/fable52-lecture/samples/prompts'
+F52 = '../fable52-lecture/samples/prompts'
 os.makedirs(S, exist_ok=True)
 subprocess.run(['python3', f'{B}/scripts/cost_table.py'], check=True, capture_output=True)
 subprocess.run(['python3', f'{B}/scripts/tally.py'], check=True, capture_output=True)
@@ -54,20 +54,23 @@ for st, info in SETS.items():
             shutil.copy(f'{d}/{fn}', dst)
             c = cost.get((st, t, m)) or cost.get(('plain', t, m)) or {}
             rec = f'ep7-{t}-{m}.mp4' if st == 'ep7' else f'{t}-{m}.mp4'
-            runs.append({'model': m, 'file': f'results/{st}/{t}/{m}/{fn}', 'video': f'rec/{rec}' if os.path.exists(f'{S}/rec/{rec}') else None,
+            runs.append({'model': m, 'file': f'results/{st}/{t}/{m}/{fn}', 'bytes': os.path.getsize(f'{d}/{fn}'), 'video': f'rec/{rec}' if os.path.exists(f'{S}/rec/{rec}') else None,
                          'seconds': int(float(c['seconds'])) if c.get('seconds') else None,
                          'usd': float(c['usd']) if c.get('usd') else None, 'usage': c.get('note', '')})
         jd = f'{B}/judge/{st}-{t}'
         votes = {}
+        vdir = f'judge/votes/{st}-{t}'
         if os.path.isdir(jd):
             shutil.copy(f'{jd}/sheet.jpg', f'{S}/judge/{st}-{t}.jpg')
+            os.makedirs(f'{S}/{vdir}', exist_ok=True)
+            for f in glob.glob(f'{jd}/vote-*.json') + glob.glob(f'{jd}/raw-*.txt') + [f'{jd}/mapping.json']: shutil.copy(f, f'{S}/{vdir}/')
             mp = json.load(open(f'{jd}/mapping.json'))
             for vf in sorted(glob.glob(f'{jd}/vote-*.json')):
                 v = json.load(open(vf)); j = vf.split('vote-')[1][:-5]
                 votes[j] = {'ranking': v['models'], 'reasons': {mp[k]: r for k, r in v.get('reasons', {}).items() if k in mp}}
             labels = mp
         else: labels = {}
-        tasks.append({'id': t, 'prompt': prompt(st, t), 'runs': runs, 'sheet': f'judge/{st}-{t}.jpg', 'sheet_labels': labels, 'votes': votes})
+        tasks.append({'id': t, 'prompt': prompt(st, t), 'runs': runs, 'sheet': f'judge/{st}-{t}.jpg', 'sheet_labels': labels, 'votes': votes, 'votes_dir': vdir})
     data['sets'][st] = {**info, 'tasks': tasks, 'tally': tally.get(st, {})}
     data['sets'][st].pop('votes', None)
     data['sets'][st]['tally'].pop('votes', None)
@@ -95,6 +98,42 @@ H = f'{S}/harness'; os.makedirs(H, exist_ok=True)
 for f in ['run_one.sh', 'run_fair.sh', 'run_ep7.sh']: shutil.copy(f'{B}/{f}', H)
 for f in glob.glob(f'{B}/scripts/*'):
     if os.path.isfile(f) and not f.endswith('.pyc'): shutil.copy(f, H)
+# published copies: replace the owner's local folders with paths relative to the lecture folder
+YT = '../'
+for f in glob.glob(f'{H}/*'):
+    txt = open(f, encoding='utf8').read()
+    txt = txt.replace(YT + 'gpt62-lecture/samples', '${BENCH_DIR:-.}').replace(YT, '../')
+    txt = txt.replace('/tmp/', '/tmp/')
+    open(f, 'w', encoding='utf8').write(txt)
+open(f'{H}/README.txt', 'w').write('Paths: ${BENCH_DIR:-.} is the samples/ folder of this experiment; ../fable52-lecture is the earlier video\'s folder (ep7 prompts are in prompts/ep7-*.txt here).\n')
 os.makedirs(f'{S}/prompts', exist_ok=True)
 for f in glob.glob(f'{B}/prompts/*.txt'): shutil.copy(f, f'{S}/prompts/')
+for f in glob.glob(f'{F52}/*.txt'): shutil.copy(f, f'{S}/prompts/ep7-' + os.path.basename(f))
+# downloadable archives (originals, untouched)
+import zipfile
+D = f'{S}/downloads'; os.makedirs(D, exist_ok=True)
+def zipdir(name, roots):
+    out = f'{D}/{name}'
+    with zipfile.ZipFile(out, 'w', zipfile.ZIP_DEFLATED) as z:
+        for r in roots:
+            for dp, _, fs in os.walk(f'{S}/{r}'):
+                for f in sorted(fs):
+                    full = os.path.join(dp, f); z.write(full, os.path.relpath(full, S))
+    return out
+def human(p):
+    b = os.path.getsize(p); return f'{b/1e6:.1f} MB' if b > 1e6 else f'{b/1e3:.0f} KB'
+dl = []
+for name, roots, title, detail in [
+    ('results.zip', ['results'], '결과물 원본 전체', '모델 5종이 만든 HTML·SVG 원본 그대로 (라운드별 폴더)'),
+    ('recordings.zip', ['rec'], '녹화 영상 전체', 'MP4 55개 (960×600, 소리 없음)'),
+    ('judging.zip', ['judge'], '블라인드 심사 자료', '심사 시트 15장, 글자-모델 대응표, 투표 JSON과 답변 원문'),
+    ('harness.zip', ['harness', 'prompts'], '프롬프트와 실험 스크립트', '실행·녹화·심사·집계 스크립트와 프롬프트')]:
+    dl.append({'href': f'downloads/{name}', 'title': title, 'detail': detail, 'size': human(zipdir(name, roots))})
+dl.append({'href': 'data.json', 'title': 'data.json', 'detail': '이 페이지의 모든 숫자와 심사 이유', 'size': human(f'{S}/data.json')})
+data['downloads'] = dl
+data['repo'] = 'https://github.com/techkwon/gpt62-oneshot-bench'
+for _ in range(3):  # data.json lists its own size: write until the number is stable
+    json.dump(data, open(f'{S}/data.json', 'w'), ensure_ascii=False, indent=1)
+    dl[-1]['size'] = human(f'{S}/data.json')
+json.dump(data, open(f'{S}/data.json', 'w'), ensure_ascii=False, indent=1)
 print('bundle ok', sum(len(s['tasks']) for s in data['sets'].values()), 'tasks')

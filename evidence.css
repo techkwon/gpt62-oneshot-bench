@@ -145,3 +145,35 @@
   #evidence .ev-model-info > span { font-size: .77rem }
   #evidence .ev-filters { display: grid; grid-template-columns: minmax(0, 1.13fr) minmax(0,1fr); width: 100% }
 }
+
+#evidence .ev-links { display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: flex-end }
+#evidence .ev-raw { margin-top: 10px; font-size: .82rem; color: var(--ev-muted); line-height: 1.7 }
+#evidence .ev-raw a { color: inherit; text-decoration: underline; text-underline-offset: 3px }
+
+#evidence .ev-grid-head { margin: clamp(30px, 4vw, 48px) 0 14px }
+#evidence .ev-grid-head h3 { font-size: 1.1rem; margin: 0 0 4px; letter-spacing: -.035em }
+#evidence .ev-grid-head p { margin: 0; color: var(--ev-muted); font-size: .9rem }
+#evidence .ev-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; margin-bottom: clamp(26px, 3vw, 40px) }
+#evidence .ev-card { border: 1px solid var(--ev-line); background: rgba(255,255,255,.55); display: flex; flex-direction: column }
+#evidence .ev-card.is-top { border-color: var(--ev-blue); box-shadow: inset 0 3px 0 var(--ev-blue) }
+#evidence .ev-card video { border-radius: 0 }
+#evidence .ev-card-body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 6px; flex: 1 }
+#evidence .ev-card-name { display: flex; justify-content: space-between; align-items: baseline; gap: 8px }
+#evidence .ev-card-name strong { font-size: .98rem; letter-spacing: -.03em }
+#evidence .ev-card-pts { font-size: .8rem; font-weight: 700; color: var(--ev-blue); white-space: nowrap }
+#evidence .ev-card-meta { margin: 0; font-size: .82rem; color: var(--ev-muted) }
+#evidence .ev-card-actions { margin-top: auto; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; padding-top: 6px }
+#evidence .ev-card-actions a { color: var(--ev-blue); font-size: .86rem; font-weight: 650; text-underline-offset: 3px }
+#evidence .ev-card-actions .ev-open { padding: 8px 12px; background: var(--ev-blue); color: #fff; text-decoration: none; border-radius: 3px }
+#evidence .ev-card-actions .ev-open:hover, #evidence .ev-card-actions .ev-open:focus-visible { filter: brightness(1.12) }
+
+#evidence .ev-mode { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 10px }
+#evidence .ev-mode button { font: inherit; font-size: .86rem; font-weight: 650; padding: 7px 13px; border: 1px solid var(--ev-line); background: transparent; color: inherit; border-radius: 3px; cursor: pointer }
+#evidence .ev-mode button[aria-pressed="true"] { background: var(--ev-blue); border-color: var(--ev-blue); color: #fff }
+#evidence .ev-mode-hint { font-size: .8rem; color: var(--ev-muted); margin-left: 4px }
+#evidence .ev-live { position: relative; width: 100%; aspect-ratio: 8 / 5; overflow: hidden; background: #131417; border-radius: 3px }
+#evidence .ev-live iframe { position: absolute; top: 0; left: 0; width: 1280px; height: 800px; border: 0; transform-origin: 0 0; background: #fff }
+
+#evidence .ev-live-svg { display: flex; align-items: center; justify-content: center; background: #fff }
+#evidence .ev-live-svg img { width: 100%; height: 100%; object-fit: contain }
+#evidence .ev-big { font-size: .82rem; color: var(--ev-muted) }

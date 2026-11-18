@@ -50,7 +50,7 @@ function initScores(data) {
       const cost=runs.reduce((sum,r)=>sum+r.usd,0);
       return '<tr><td class="rank">'+(i+1)+'</td><th scope="row">'+shortName(data.models[id])+'</th><td class="points"><b>'+score+'</b><span><i style="width:'+score/entries[0][1]*100+'%"></i></span></td><td>'+noself[id]+'</td><td>'+(first_votes[id]??0)+'</td><td>'+currency(cost)+'</td><td>'+Math.floor(seconds/60)+'분 '+seconds%60+'초</td></tr>';
     }).join('');
-    el('scores').innerHTML='<div class="table-wrap" role="region" tabindex="0" aria-label="라운드 모델별 결과, 작은 화면에서는 가로로 스크롤하세요"><table aria-label="'+roundNames[key]+' 점수와 실행 기록"><thead><tr><th>순위</th><th>모델</th><th>총점</th><th>자기표 제외</th><th>1위 표</th><th>비용 합계</th><th>시간 합계</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+    el('scores').innerHTML='<div class="table-wrap" role="region" tabindex="0" aria-label="라운드 모델별 결과, 작은 화면에서는 가로로 스크롤하세요"><table aria-label="'+roundNames[key]+' 점수와 실행 기록"><thead><tr><th scope="col">순위</th><th scope="col">모델</th><th scope="col">총점</th><th scope="col">자기표 제외</th><th scope="col">1위 표</th><th scope="col">비용 합계</th><th scope="col">시간 합계</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
     const [winner,points]=entries[0];
     el('round-note').innerHTML='<span class="note-top">'+icon('<path d="M8 3h8v5a4 4 0 0 1-8 0zM8 5H4v2a4 4 0 0 0 5 4m7-6h4v2a4 4 0 0 1-5 4m-3 1v5m-5 3h10m-8-3h6"/>')+' 라운드 우승</span><h3>'+shortName(data.models[winner])+'</h3><p class="winner-tally">총점 <b>'+points+'점</b> · 자기표 제외 <b>'+noself[winner]+'점</b></p><p>'+labels[key]+'</p>';
   }

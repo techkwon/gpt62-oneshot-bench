@@ -1,6 +1,6 @@
 // ep7 svg: whole drawing fitted in 1280x800 (object-fit: contain), same for every model -> rec/ep7-svg-<m>.png
 const fs = await import("node:fs");
-const B = "/Users/techkwon/Developer/MyApps/Youtube/gpt62-lecture/samples";
+const B = "${BENCH_DIR:-.}";
 const task = await taskSpace("gpt62 svgfit"); const page = task.page("p1");
 await page.cdp("Emulation.setDeviceMetricsOverride", { width: 1280, height: 800, deviceScaleFactor: 1, mobile: false });
 for (const m of ["fable","opus","gpt61","astra","sol"]) {

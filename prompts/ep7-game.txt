@@ -1,0 +1,3 @@
+Create a complete, playable Phaser.js 3 game as a single HTML file. Player is a blue circle that moves with WASD/arrow keys. Red circles spawn from screen edges and chase the player with simple AI (seek behavior). Score increases by 1 every second. Collision with any red circle = game over. Press R to restart after game over. Enemies wrap around screen edges. Player wraps around screen edges too. Enemies speed up gradually as score increases. Player has a subtle glow/pulse effect. Dark theme. 680x480. Centered canvas with instructions below.
+
+Save the result as one self-contained file named index.html in the current directory. Do it in one go, do not ask questions.

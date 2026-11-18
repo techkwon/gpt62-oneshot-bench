@@ -1,7 +1,7 @@
 #!/bin/zsh
 # usage: rec-ego.sh <task> <model> <seconds> [actions.json]  -> rec/<task>-<model>.mp4  (Ego Lite only)
 # needs: python3 -m http.server 8766 --bind 127.0.0.1 --directory $B/runs  (started by caller)
-B=/Users/techkwon/Developer/MyApps/Youtube/gpt62-lecture/samples
+B=${BENCH_DIR:-.}
 T=$1; M=$2; S=$3; A=$4
 [[ -f $B/runs/$T/$M/index.html ]] || { echo "missing $T/$M"; exit 1; }
 O=$B/rec/tmp-$T-$M

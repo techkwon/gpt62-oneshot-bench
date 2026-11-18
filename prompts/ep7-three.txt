@@ -1,0 +1,3 @@
+Create a single HTML file with an interactive 3D basketball free throw game using Three.js.
+
+Save the result as one self-contained file named index.html in the current directory. Do it in one go, do not ask questions.
