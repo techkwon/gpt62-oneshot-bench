@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10191e">
+  <title>Spinning Hexagon</title>
+  <style>
+    * { box-sizing: border-box }
+    body {
+      margin: 0; min-height: 100vh; min-height: 100svh; overflow: hidden;
+      display: grid; place-items: center; background-color: #10191e;
+      background-image: radial-gradient(ellipse at 46% 40%, #26363a 0%, #19272c 40%, #10191e 80%);
+    }
+    #scene { display: block; width: min(100vw, 98vh); width: min(100vw, 98svh); height: auto }
+    button {
+      position: fixed; right: max(18px, env(safe-area-inset-right)); bottom: max(18px, env(safe-area-inset-bottom));
+      width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%;
+      border: 1px solid #74898866; background: #17272b; color: #d1e1d9; cursor: pointer;
+    }
+    button:hover { background: #263e42 }
+    button:focus-visible { outline: 2px solid #ffd49f; outline-offset: 4px }
+    button svg { width: 16px; height: 16px; fill: currentColor }
+  </style>
+</head>
+<body>
+  <svg id="scene" xmlns="http://www.w3.org/2000/svg" viewBox="-400 -400 800 800" role="img" aria-labelledby="title desc">
+    <title id="title">Spinning hexagon</title>
+    <desc id="desc">Ten numbered billiard balls bounce off each other and the walls of a rotating hexagonal table.</desc>
+    <defs>
+      <radialGradient id="felt" cx="44%" cy="37%" r="70%">
+        <stop stop-color="#2c726e"/><stop offset=".72" stop-color="#205956"/><stop offset="1" stop-color="#154541"/>
+      </radialGradient>
+      <linearGradient id="rim" x2=".25" y2="1" gradientUnits="objectBoundingBox">
+        <stop stop-color="#abc8ba"/><stop offset=".09" stop-color="#728f83"/>
+        <stop offset=".54" stop-color="#364e49"/><stop offset="1" stop-color="#68847a"/>
+      </linearGradient>
+      <pattern id="weave" width="4" height="4" patternUnits="userSpaceOnUse">
+        <circle cx="1" cy="1" r=".56" fill="#d1f3de" opacity=".17"/>
+      </pattern>
+      <radialGradient id="shade" cx="32%" cy="24%" r="81%">
+        <stop stop-color="white" stop-opacity=".35"/><stop offset=".45" stop-color="white" stop-opacity=".02"/>
+        <stop offset=".74" stop-color="#293631" stop-opacity=".12"/><stop offset="1" stop-color="#102623" stop-opacity=".58"/>
+      </radialGradient>
+      <radialGradient id="shadow"><stop stop-color="#031b1a" stop-opacity=".8"/><stop offset=".59" stop-color="#031b1a" stop-opacity=".45"/><stop offset="1" stop-color="#031b1a" stop-opacity="0"/></radialGradient>
+      <filter id="table-shadow" x="-30%" y="-30%" width="160%" height="175%">
+        <feGaussianBlur stdDeviation="12"/>
+      </filter>
+      <clipPath id="ball-clip"><circle r="20"/></clipPath>
+    </defs>
+    <g transform="translate(1 14)" opacity=".65" filter="url(#table-shadow)"><polygon id="silhouette" fill="#030a0c"/></g>
+    <g id="table"></g>
+    <g id="shadows"></g>
+    <g id="balls"></g>
+  </svg>
+  <button id="toggle" type="button" aria-label="Pause animation" title="Pause animation">
+    <svg viewBox="0 0 16 16" aria-hidden="true"><path id="icon" d="M4 2h3v12H4z M9 2h3v12H9z"/></svg>
+  </button>
+  <script>
+    'use strict';
+    const byId = id => document.getElementById(id);
+    const tau = 2 * Math.PI;
+    const radius = 306;
+    const ballRadius = 20;
+    const apothem = radius * Math.cos(Math.PI / 6);
+    const angularSpeed = 0.22;
+    const step = 1 / 180;
+    let angle = -0.12;
+
+    function svg(tag, attrs, parent) {
+      const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+      for (const [name, value] of Object.entries(attrs)) el.setAttribute(name, value);
+      parent.appendChild(el);
+      return el;
+    }
+
+    function points(r) {
+      return Array.from({length: 6}, (_, i) => {
+        const a = i * tau / 6;
+        return [r * Math.cos(a), r * Math.sin(a)].join(',');
+      }).join(' ');
+    }
+
+    const table = byId('table');
+    function hex(r, fill, stroke, width) {
+      svg('polygon', {points: points(r), fill, stroke, 'stroke-width': width, 'stroke-linejoin': 'round'}, table);
+    }
+    byId('silhouette').setAttribute('points', points(330));
+    hex(331, '#1d302f', '#172422', 4);
+    hex(328, 'url(#rim)', '#9eb5aa', 1.4);
+    hex(319, '#2b4941', '#344d45', 1.2);
+    hex(radius + 4, '#102f2e', '#749588', 1);
+    hex(radius, 'url(#felt)', '#143b38', 1);
+    hex(radius, 'url(#weave)', 'none', 0);
+    hex(radius - 12, 'none', '#91c2ab55', .9);
+
+    // Small sights sit in the rail, like the inlays on a billiard table.
+    for (let i = 0; i < 6; i++) {
+      const edge = svg('g', {transform: 'rotate(' + (i * 60 + 30) + ')'}, table);
+      for (const offset of [-80, 0, 80]) {
+        svg('path', {d: 'M280 ' + offset + 'l3 -2.1 3 2.1 -3 2.1z', fill: '#d0dac5'}, edge);
+      }
+    }
+    const palette = ['#f9b05f', '#70c9c9', '#f3e4bf', '#eb8056', '#a6c6a6'];
+    const seeds = [
+      [-135,-125, 91, 46], [0,-170,-62, 88], [133,-111,-87,-49],
+      [-192,  10, 65,-80], [-54, -39, 73, 82], [77,-13,-46,105],
+      [189,  45,-93, 52], [-127,142, 95,-51], [0,108, 53,-97], [99,169,-82,-73]
+    ];
+
+    const balls = seeds.map(([x,y,vx,vy], i) => {
+      const shadow = svg('ellipse', {rx: 27, ry: 24, fill: 'url(#shadow)'}, byId('shadows'));
+      const node = svg('g', {}, byId('balls'));
+      const face = svg('g', {'clip-path': 'url(#ball-clip)'}, node);
+      const paint = palette[i % palette.length];
+      svg('circle', {r: ballRadius, fill: i < 5 ? paint : '#f1e5c9'}, face);
+      if (i >= 5) svg('rect', {x:-21, y:-12.5, width:42, height:25, fill:paint}, face);
+      svg('circle', {r:8.1, fill:'#fff1d2'}, face);
+      svg('text', {x:0, y:3.6, 'text-anchor':'middle', fill:'#263d37', 'font-family':'Helvetica, Arial, sans-serif', 'font-size':10.5, 'font-weight':700}, face).textContent = i + 1;
+      svg('circle', {r:ballRadius, fill:'url(#shade)'}, node);
+      svg('ellipse', {cx:-7.5, cy:-12, rx:4.7, ry:2, transform:'rotate(-27 -7.5 -12)', fill:'white', opacity:0.6}, node);
+      return {x,y,vx,vy,node,face,shadow,spin:i * 0.44,spinRate:(i % 2 ? 1 : -1) * .54};
+    });
+
+    function collidePair(a, b) {
+      const dx = b.x - a.x, dy = b.y - a.y;
+      const distance = Math.hypot(dx, dy);
+      const overlap = 2 * ballRadius - distance;
+      if (overlap <= 0) return;
+      const nx = distance ? dx / distance : 1, ny = distance ? dy / distance : 0;
+      a.x -= nx * overlap / 2; a.y -= ny * overlap / 2;
+      b.x += nx * overlap / 2; b.y += ny * overlap / 2;
+      const approach = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny;
+      if (approach >= 0) return;
+      a.vx += nx * approach; a.vy += ny * approach;
+      b.vx -= nx * approach; b.vy -= ny * approach;
+    }
+
+    function advance() {
+      angle = (angle + angularSpeed * step) % tau;
+      const normals = Array.from({length:6}, (_, i) => {
+        const a = angle + (i + .5) * tau / 6;
+        return [Math.cos(a), Math.sin(a)];
+      });
+      for (const b of balls) {
+        b.x += b.vx * step; b.y += b.vy * step;
+        b.spin += b.spinRate * step;
+      }
+      for (let pass = 0; pass < 3; pass++) {
+        for (let i = 0; i < balls.length; i++) {
+          for (let j = i + 1; j < balls.length; j++) collidePair(balls[i], balls[j]);
+        }
+        for (const b of balls) {
+          for (const [nx,ny] of normals) {
+            const penetration = b.x * nx + b.y * ny + ballRadius - apothem;
+            if (penetration <= 0) continue;
+            b.x -= nx * penetration; b.y -= ny * penetration;
+            // Reflect velocity in the moving wall's frame at the contact point.
+            const wallX = -angularSpeed * (b.y + ballRadius * ny);
+            const wallY = angularSpeed * (b.x + ballRadius * nx);
+            const approach = (b.vx - wallX) * nx + (b.vy - wallY) * ny;
+            if (approach > 0) {
+              b.vx -= 2 * approach * nx; b.vy -= 2 * approach * ny;
+            }
+          }
+        }
+      }
+    }
+
+    function draw() {
+      const rotation = 'rotate(' + angle * 180 / Math.PI + ')';
+      table.setAttribute('transform', rotation);
+      byId('silhouette').setAttribute('transform', rotation);
+      for (const b of balls) {
+        b.node.setAttribute('transform', 'translate(' + b.x + ' ' + b.y + ')');
+        b.face.setAttribute('transform', 'rotate(' + b.spin * 180 / Math.PI + ')');
+        b.shadow.setAttribute('cx', b.x + 3);
+        b.shadow.setAttribute('cy', b.y + 6);
+      }
+    }
+
+    let previous = null, remainder = 0, frameId;
+    let paused = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function frame(time) {
+      if (previous !== null) remainder += Math.min((time - previous) / 1000, .05);
+      previous = time;
+      while (remainder >= step) { advance(); remainder -= step; }
+      draw();
+      frameId = requestAnimationFrame(frame);
+    }
+    function syncPlayback() {
+      cancelAnimationFrame(frameId);
+      previous = null;
+      const label = paused ? 'Play animation' : 'Pause animation';
+      byId('toggle').setAttribute('aria-label', label);
+      byId('toggle').title = label;
+      byId('icon').setAttribute('d', paused ? 'M4 2l10 6-10 6z' : 'M4 2h3v12H4z M9 2h3v12H9z');
+      if (!paused && !document.hidden) frameId = requestAnimationFrame(frame);
+    }
+    byId('toggle').addEventListener('click', () => { paused = !paused; syncPlayback(); });
+    document.addEventListener('visibilitychange', syncPlayback);
+    draw();
+    syncPlayback();
+  </script>
+</body>
+</html>

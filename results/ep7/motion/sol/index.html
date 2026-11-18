@@ -1,0 +1,933 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0d090b">
+<title>VELOCITY — Motion Design Reel</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 100%; height: 100%; }
+  body {
+    display: grid; place-items: center; overflow: hidden; background: #0b090a;
+    color: #fff5ef; font-family: ui-monospace, "SF Mono", Consolas, monospace;
+  }
+  .player {
+    position: relative; width: min(100vw, calc(100dvh * 16 / 9)); aspect-ratio: 16 / 9;
+    isolation: isolate; background: #12090b; overflow: hidden;
+  }
+  canvas { display: block; width: 100%; height: 100%; }
+  .controls {
+    position: absolute; inset: auto 0 0; display: grid; grid-template-columns: auto 1fr auto auto auto;
+    align-items: center; gap: clamp(4px, 1.15vw, 18px); padding: 14px 4.4% 10px;
+    background: linear-gradient(transparent, #100b0edb 62%, #100b0e);
+    opacity: 0; transition: opacity .22s ease; pointer-events: none;
+  }
+  .player:hover .controls, .player:focus-within .controls, .player[data-paused] .controls {
+    opacity: 1; pointer-events: auto;
+  }
+  .controls button {
+    appearance: none; display: grid; place-items: center; width: 40px; height: 38px;
+    color: inherit; background: transparent; border: 0; border-radius: 4px; cursor: pointer;
+  }
+  .controls button:hover { background: #ffffff24; }
+  .controls button:focus-visible, .scrub:focus-visible { outline: 2px solid #ff6d57; outline-offset: 2px; }
+  .icon { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.65; stroke-linecap: round; stroke-linejoin: round; }
+  [hidden] { display: none !important; }
+  .time { font-size: 11px; color: #fbefea; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .scrub { appearance: none; width: 100%; min-width: 0; margin: 0; height: 24px; background: transparent; cursor: pointer; }
+  .scrub::-webkit-slider-runnable-track { background: linear-gradient(90deg,#ff6352 var(--progress),#ffffff43 var(--progress)); height: 2px; }
+  .scrub::-webkit-slider-thumb { appearance: none; margin-top: -4px; height: 10px; width: 10px; background: #fff2e9; border: 0; border-radius: 50%; }
+  .scrub::-moz-range-track { background: #ffffff43; height: 2px; }
+  .scrub::-moz-range-progress { background: #ff6352; height: 2px; }
+  .scrub::-moz-range-thumb { height: 10px; width: 10px; background: #fff2e9; border: 0; border-radius: 50%; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .player:fullscreen { width: 100%; height: 100%; display: grid; place-items: center; background: #0b090a; }
+  .player:fullscreen canvas { width: min(100vw, calc(100dvh * 16 / 9)); height: auto; }
+  @media (max-width: 600px) { .controls { padding: 6px 3% 3px; } .controls button { width: 33px; height: 34px; } .time { font-size: 10px; } }
+  @media (pointer: coarse) { .controls { opacity: 1; pointer-events: auto; } }
+  @media (prefers-reduced-motion: reduce) { .controls { transition: none; } }
+</style>
+</head>
+<body>
+<main class="player" aria-label="Velocity, a 15-second motion design reel">
+  <canvas id="film" width="1600" height="900" role="img" aria-label="Velocity. A red metallic knot, kinetic type, chrome gyroscopes, and a red waveform cut to a glowing end title.">
+    Velocity is a 15-second motion design showreel.
+  </canvas>
+  <div class="controls" role="group" aria-label="Playback controls">
+    <button id="play" type="button" aria-label="Pause" title="Pause (Space)">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path id="play-shape" d="M9 5v14l11-7z" fill="currentColor" hidden/>
+        <path id="pause-shape" d="M9 5v14m6-14v14" stroke-width="3"/>
+        <path id="replay-shape" d="M4 11a8 8 0 1 1 2 6M4 5v6h6" hidden/>
+      </svg>
+    </button>
+    <input id="scrub" class="scrub" type="range" min="0" max="15" step="0.01" value="0" style="--progress:0%" aria-label="Seek">
+    <span id="time" class="time" aria-hidden="true">0:00 / 0:15</span>
+    <button id="sound" type="button" aria-label="Unmute" title="Unmute (M)">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M3 9v6h4l5 4V5L7 9z"/>
+        <path id="muted-shape" d="m16 9 5 6m0-6-5 6"/>
+        <path id="sound-shape" d="M16 9a4 4 0 0 1 0 6m3-9a8 8 0 0 1 0 12" hidden/>
+      </svg>
+    </button>
+    <button id="fullscreen" type="button" aria-label="Enter fullscreen" title="Fullscreen (F)">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path id="full-shape" d="M9 4H4v5m11-5h5v5M4 15v5h5m11-5v5h-5"/></svg>
+    </button>
+  </div>
+  <p class="sr-only">Space toggles playback. Left and right arrows seek. M toggles sound. F toggles fullscreen.</p>
+</main>
+<script>
+'use strict';
+
+const W = 1600, H = 900, DURATION = 15;
+const PI = Math.PI, TAU = 2 * PI;
+const canvas = document.querySelector('#film');
+const ctx = canvas.getContext('2d', { alpha: false });
+const player = document.querySelector('.player');
+const clamp = (x, min = 0, max = 1) => Math.max(min, Math.min(max, x));
+const mix = (a, b, t) => a + (b - a) * t;
+const smooth = x => (x = clamp(x), x * x * (3 - 2 * x));
+const out = x => 1 - (1 - clamp(x)) ** 3;
+const phase = (x, start, end) => clamp((x - start) / (end - start));
+const ivory = '#fff0e7';
+const ink = '#141616';
+const font = '900 200px "Arial Black", "Helvetica Neue", Arial, sans-serif';
+
+function rng(seed) {
+  return () => {
+    seed = (Math.imul(1664525, seed) + 1013904223) >>> 0;
+    return seed / 4294967296;
+  };
+}
+
+function rect(x, y, w, h, color) {
+  ctx.fillStyle = color;
+  ctx.fillRect(x, y, w, h);
+}
+function line(x, y, xx, yy, color, width = 1) {
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(xx, yy);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.stroke();
+}
+function poly(points, color) {
+  ctx.beginPath();
+  ctx.moveTo(points[0][0], points[0][1]);
+  for (let i = 1; i < points.length; i++) ctx.lineTo(points[i][0], points[i][1]);
+  ctx.closePath();
+  ctx.fillStyle = color;
+  ctx.fill();
+}
+function circle(x, y, r, color, stroke = false, width = 1) {
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, TAU);
+  if (stroke) {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.stroke();
+  } else {
+    ctx.fillStyle = color;
+    ctx.fill();
+  }
+}
+function halo(x, y, radius, stops) {
+  const g = ctx.createRadialGradient(x, y, 0, x, y, radius);
+  for (const [at, color] of stops) g.addColorStop(at, color);
+  rect(x - radius, y - radius, radius * 2, radius * 2, g);
+}
+function micro(value, x, y, color, size = 14, align = 'left') {
+  ctx.font = `500 ${size}px "Courier New",monospace`;
+  ctx.letterSpacing = '2px';
+  ctx.textBaseline = 'alphabetic';
+  ctx.textAlign = align;
+  ctx.fillStyle = color;
+  ctx.fillText(value, x, y);
+  ctx.letterSpacing = '0px';
+}
+function title(word, x, y, width, height, color, outline = 0, align = 'left') {
+  ctx.save();
+  ctx.font = font;
+  ctx.textAlign = align;
+  ctx.textBaseline = 'alphabetic';
+  ctx.letterSpacing = '-9px';
+  const measured = ctx.measureText(word);
+  const sx = width / measured.width;
+  const sy = height / (ctx.measureText('H').actualBoundingBoxAscent || 146);
+  ctx.translate(x, y);
+  ctx.scale(sx, sy);
+  if (outline) {
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = outline / Math.max(sx, sy);
+    ctx.strokeStyle = color;
+    ctx.strokeText(word, 0, 0);
+  } else {
+    ctx.fillStyle = color;
+    ctx.fillText(word, 0, 0);
+  }
+  ctx.restore();
+}
+function clipRect(x, y, w, h) {
+  ctx.beginPath();
+  ctx.rect(x, y, w, h);
+  ctx.clip();
+}
+function cross(x, y, s, color) {
+  line(x - s, y, x + s, y, color);
+  line(x, y - s, x, y + s, color);
+}
+function frame(number, chapter, tint, accent) {
+  const yTop = 89, yBottom = 779;
+  rect(90, 52, 9, 9, accent);
+  micro('VELOCITY', 111, 62, tint);
+  micro('MOTION STUDIES', 800, 62, tint, 14, 'center');
+  micro('SHOWREEL / 00:15', 1510, 62, tint, 14, 'right');
+  line(90, yTop, 1510, yTop, tint);
+  line(90, yBottom, 1510, yBottom, tint);
+  cross(90, yTop, 5, tint);
+  cross(1510, yTop, 5, tint);
+  cross(90, yBottom, 5, tint);
+  cross(1510, yBottom, 5, tint);
+  micro(number, 90, 817, accent, 16);
+  micro(chapter, 141, 817, tint);
+  for (let i = 0; i < 5; i++) rect(1434 + 16 * i, 805, 10, 3, i === Number(number) - 1 ? accent : tint);
+}
+
+const grain = document.createElement('canvas');
+grain.width = 192;
+grain.height = 192;
+const grainContext = grain.getContext('2d');
+const grainData = grainContext.createImageData(grain.width, grain.height);
+const noise = rng(15);
+for (let i = 0; i < grainData.data.length; i += 4) {
+  const grey = noise() < .52 ? 0 : 255;
+  grainData.data[i] = grainData.data[i + 1] = grainData.data[i + 2] = grey;
+  grainData.data[i + 3] = noise() * 50;
+}
+grainContext.putImageData(grainData, 0, 0);
+const grainPattern = ctx.createPattern(grain, 'repeat');
+function texture(t, opacity) {
+  ctx.save();
+  ctx.globalAlpha = opacity;
+  const shift = Math.floor(t * 18);
+  ctx.translate(-((shift * 73) % 192), -((shift * 41) % 192));
+  rect(0, 0, W + 192, H + 192, grainPattern);
+  ctx.restore();
+}
+
+// Mesh surfaces store positions and normals for the software renderer.
+function surface(rows, columns, point, poles = false) {
+  const vertices = [];
+  const faces = [];
+  const stride = columns + Number(poles);
+  for (let i = 0; i < rows; i++) {
+    const u = i / rows * TAU;
+    for (let j = 0; j < stride; j++) {
+      const v = poles ? PI / 2 - j / columns * PI : j / columns * TAU;
+      const p = point(u, v), a = point(u + .001, v), b = point(u, v + .001);
+      const normal = poles ? unit(p) : unit(cross3(sub(b, p), sub(a, p)));
+      vertices.push(p.concat(normal));
+      if (j === columns) continue;
+      const next = (j + 1) % stride;
+      const aRow = i * stride, bRow = (i + 1) % rows * stride;
+      faces.push([aRow + j, aRow + next, bRow + next, bRow + j]);
+    }
+  }
+  return { vertices, faces };
+}
+function sub(a, b) { return [a[0] - b[0], a[1] - b[1], a[2] - b[2]]; }
+function cross3(a, b) {
+  return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+}
+function unit(v) { const l = Math.hypot(...v) || 1; return v.map(x => x / l); }
+function knotCenter(u) {
+  const r = 1.52 + .62 * Math.cos(3 * u);
+  return [r * Math.cos(2 * u), r * Math.sin(2 * u), .68 * Math.sin(3 * u)];
+}
+function signedPow(x, p) { return Math.sign(x) * Math.abs(x) ** p; }
+const knot = surface(152, 32, (u, v) => {
+  const p = knotCenter(u);
+  const tangent = unit(sub(knotCenter(u + .001), p));
+  const across = unit(cross3(tangent, [Math.cos(2 * u), Math.sin(2 * u), 0]));
+  const above = cross3(tangent, across);
+  const twist = 2 * u + .58 * Math.sin(3 * u);
+  const a = signedPow(Math.cos(v), .78) * (.40 + .075 * Math.cos(6 * u));
+  const b = signedPow(Math.sin(v), .73) * .265;
+  const x = a * Math.cos(twist) - b * Math.sin(twist);
+  const y = a * Math.sin(twist) + b * Math.cos(twist);
+  return p.map((n, i) => n + x * across[i] + y * above[i]);
+});
+const ring = (radius, thickness, depth) => surface(112, 24, (u, v) => {
+  const r = radius + thickness * signedPow(Math.cos(v), .48);
+  return [r * Math.cos(u), r * Math.sin(u), -depth * signedPow(Math.sin(v), .62)];
+});
+const rings = [ring(2.32, .12, .17), ring(1.85, .13, .13), ring(1.37, .16, .18)];
+// A closed surface of revolution with rounded poles.
+const sphere = surface(88, 40, (u, v) => [
+  .67 * Math.cos(u) * Math.cos(v),
+  .67 * Math.sin(u) * Math.cos(v),
+  .67 * Math.sin(v)
+], true);
+function rotation(ax, ay, az) {
+  const a = Math.cos(ax), b = Math.sin(ax), c = Math.cos(ay), d = Math.sin(ay);
+  const e = Math.cos(az), f = Math.sin(az);
+  return [
+    c * e, b * d * e - a * f, a * d * e + b * f,
+    c * f, b * d * f + a * e, a * d * f - b * e,
+    -d, b * c, a * c
+  ];
+}
+
+const meshCanvas = document.createElement('canvas');
+const MW = meshCanvas.width = 1200, MH = meshCanvas.height = 675;
+const meshContext = meshCanvas.getContext('2d');
+const meshFrame = meshContext.createImageData(MW, MH);
+const meshPixels = new Uint32Array(meshFrame.data.buffer);
+const zBuffer = new Float32Array(MW * MH);
+
+function rasterTriangle(a, b, c) {
+  const abx = b[0] - a[0], aby = b[1] - a[1];
+  const acx = c[0] - a[0], acy = c[1] - a[1];
+  const area = abx * acy - aby * acx;
+  if (area < .002) return;
+  const minX = Math.max(0, Math.ceil(Math.min(a[0], b[0], c[0]) - .5));
+  const maxX = Math.min(MW - 1, Math.floor(Math.max(a[0], b[0], c[0]) - .5));
+  const minY = Math.max(0, Math.ceil(Math.min(a[1], b[1], c[1]) - .5));
+  const maxY = Math.min(MH - 1, Math.floor(Math.max(a[1], b[1], c[1]) - .5));
+  const wBx = acy / area, wBy = -acx / area;
+  const wCx = -aby / area, wCy = abx / area;
+  const bz = b[2] - a[2], cz = c[2] - a[2];
+  const br = b[3] - a[3], cr = c[3] - a[3];
+  const bg = b[4] - a[4], cg = c[4] - a[4];
+  const bb = b[5] - a[5], cb = c[5] - a[5];
+  const x0 = minX + .5 - a[0], y0 = minY + .5 - a[1];
+  let rowB = x0 * wBx + y0 * wBy, rowC = x0 * wCx + y0 * wCy;
+  for (let y = minY; y <= maxY; y++, rowB += wBy, rowC += wCy) {
+    let wB = rowB, wC = rowC;
+    let index = y * MW + minX;
+    for (let x = minX; x <= maxX; x++, index++, wB += wBx, wC += wCx) {
+      if (wB < -1e-6 || wC < -1e-6 || wB + wC > 1.000001) continue;
+      const z = a[2] + bz * wB + cz * wC;
+      if (z <= zBuffer[index]) continue;
+      zBuffer[index] = z;
+      const r = a[3] + br * wB + cr * wC;
+      const g = a[4] + bg * wB + cg * wC;
+      const blue = a[5] + bb * wB + cb * wC;
+      meshPixels[index] = 0xff000000 | (blue << 16) | (g << 8) | r;
+    }
+  }
+}
+
+function projectMesh(mesh, m, cx, cy, scale, material) {
+  const points = mesh.vertices.map(([x, y, z, nx, ny, nz]) => {
+    const depth = m[6] * x + m[7] * y + m[8] * z;
+    const p = scale * 7 / (7 - depth);
+    const color = material(
+      m[0] * nx + m[1] * ny + m[2] * nz,
+      m[3] * nx + m[4] * ny + m[5] * nz,
+      m[6] * nx + m[7] * ny + m[8] * nz, depth);
+    return [
+      (cx + (m[0] * x + m[1] * y + m[2] * z) * p) * MW / W,
+      (cy + (m[3] * x + m[4] * y + m[5] * z) * p) * MH / H,
+      depth, color[0], color[1], color[2]
+    ];
+  });
+  for (const [i, j, k, l] of mesh.faces) {
+    rasterTriangle(points[i], points[j], points[k]);
+    rasterTriangle(points[i], points[k], points[l]);
+  }
+}
+
+function metal(x, y, z, depth, cold) {
+  const key = Math.max(0, -.34 * x - .66 * y + .66 * z);
+  const rim = (1 - Math.abs(z)) ** 2.5;
+  const side = Math.max(0, .7 * x + .30 * y + .6 * z);
+  const strip = Math.exp(-((y + .42 + .18 * x) ** 2) * 78) * clamp(z + .35);
+  const gleam = Math.exp(-((y - .39 + .24 * x) ** 2) * 68) * clamp(.84 - x);
+  const spec = key ** 12 + strip * .85 + gleam * .35;
+  const reflected = .51 + .49 * Math.cos(10 * y + 3 * x + .6 * depth);
+  const dark = .29 + .71 * reflected;
+  const r = cold ? 8 + 69 * key * dark + 220 * spec + 70 * rim : 30 + 168 * key * dark + 163 * side + 135 * spec + 64 * rim;
+  const g = cold ? 14 + 97 * key * dark + 220 * spec + 117 * rim : 5 + 27 * key * dark + 23 * side + 166 * spec + 14 * rim;
+  const b = cold ? 27 + 149 * key * dark + 252 * spec + 142 * rim : 9 + 31 * key * dark + 8 * side + 127 * spec + 12 * rim;
+  return [Math.min(255, r), Math.min(255, g), Math.min(255, b)];
+}
+const hotMetal = (x, y, z, d) => metal(x, y, z, d, false);
+const coldMetal = (x, y, z, d) => metal(x, y, z, d, true);
+function startMeshes() {
+  meshPixels.fill(0);
+  zBuffer.fill(-Infinity);
+}
+function paintMeshes() {
+  meshContext.putImageData(meshFrame, 0, 0);
+  ctx.drawImage(meshCanvas, 0, 0, W, H);
+}
+const particleRand = rng(728);
+const particles = Array.from({ length: 275 }, () => [particleRand(), particleRand(), particleRand(), particleRand()]);
+function ellipse(x, y, rx, ry, rotationAngle, start, end, color, width = 1) {
+  ctx.beginPath();
+  ctx.ellipse(x, y, rx, ry, rotationAngle, start, end);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.stroke();
+}
+
+function opening(t) {
+  rect(0, 0, W, H, '#10090c');
+  halo(1117, 420, 763, [[0, '#731e1b'], [.36, '#381011'], [.68, '#1b0b0d'], [1, '#10090c00']]);
+  halo(1390, 606, 460, [[0, '#c029182d'], [1, '#c0291800']]);
+  const cx = 1162 + 29 * Math.sin(t * 1.22), cy = 428 + 17 * Math.cos(t * 1.5);
+  for (const [u, v, a, b] of particles) {
+    const drift = (u + t * (.009 + b * .012)) % 1;
+    const x = 96 + 1430 * drift, y = 107 + v * 653 + 10 * Math.sin(t * 1.8 + u * 42);
+    const strength = (.13 + .7 * a) * (.24 + .76 * u);
+    ctx.globalAlpha = strength * (.57 + .43 * Math.cos(t * 3 + b * 31) ** 2);
+    ctx.fillStyle = a > .86 ? '#ffb091' : '#ee5042';
+    ctx.fillRect(x, y, a > .93 ? 3 + b * 6 : 1.35, a > .93 ? 2 : 1.35);
+  }
+  ctx.globalAlpha = 1;
+  for (let i = 0; i < 4; i++) {
+    ellipse(cx - 17, cy + 1, 330 + i * 42, 103 + i * 27, -.36 + .17 * i, 0, TAU, '#fd816733');
+  }
+  ellipse(cx - 17, cy + 1, 398, 137, -.36, 3.6 + t * .92, 4.34 + t * .92, '#ff9e78b9', 1.65);
+  line(715, cy, 1510, cy, '#e38b6940');
+  line(cx, 128, cx, 748, '#e38b6930');
+  cross(1469, 309, 8, '#df8c75');
+  cross(772, 638, 6, '#df8c75');
+  micro('FIG. 01', 1444, 333, '#edac9b', 12, 'right');
+
+  const enter = out((t + .30) / .83);
+  const leave = smooth(phase(t, 2.72, 3.28));
+  const x = 89 - (1 - enter) * 41 - leave * 78;
+  micro('SELECTED MOTION WORK', x + 5, 250, '#ff9a84', 15);
+  ctx.save();
+  clipRect(65, 270, 1030, 372);
+  title('MOTION', x, 455 + (1 - enter) * 80, 766, 148, ivory);
+  title('DESIGN', x, 602 + (1 - enter) * 103, 765, 133, '#ff937d', 1.9);
+  ctx.restore();
+
+  startMeshes();
+  projectMesh(knot, rotation(.30 + .30 * Math.sin(t * 1.22), -.48 + t * .41, -.29 + t * .48),
+    cx + leave * 90, cy, (144 + 9 * Math.sin(t * .88) + 9 * enter) * (1 + leave * .17), hotMetal);
+  paintMeshes();
+  ellipse(cx - 17, cy + 1, 372, 130, -.44, .22 + t * .16, 1.15 + t * .16, '#ffb08d79', 1.2);
+  cross(1333, 664, 8, '#ffb098');
+  circle(1333, 664, 15, '#ff9a7359', true);
+  micro('X / Y / Z', 1508, 749, '#bc7b70', 12, 'right');
+  frame('01', 'KINETIC IDENTITY', '#e9b1a8a8', '#ff674f');
+  texture(t, .30);
+}
+
+function checkerWheel(cx, cy, t) {
+  const size = 370;
+  const cell = (angle, radius) => {
+    const ca = Math.cos(angle), sa = Math.sin(angle);
+    const turn = angle + .85 * radius + t * .75;
+    const perspective = 1 + .16 * Math.sin(turn) * radius;
+    const r = size * radius / perspective;
+    return [cx + r * Math.cos(turn) + 32 * sa * radius, cy + r * Math.sin(turn) * .89 + 32 * ca * radius];
+  };
+  const sectors = 22, bands = 9;
+  for (let i = 0; i < bands; i++) {
+    const r = .31 + i * .078, R = r + .079;
+    for (let j = 0; j < sectors; j++) {
+      if ((i + j) % 2) continue;
+      const a = j / sectors * TAU, b = (j + 1) / sectors * TAU;
+      const path = [];
+      for (let k = 0; k <= 5; k++) path.push(cell(mix(a, b, k / 5), r));
+      for (let k = 5; k >= 0; k--) path.push(cell(mix(a, b, k / 5), R));
+      poly(path, i < 6 ? '#171b10' : '#252a16');
+    }
+  }
+}
+
+function typeStudy(t) {
+  const acid = '#dffb54';
+  rect(0, 0, W, H, acid);
+  halo(1195, 355, 775, [[0, '#f1ff9d'], [.66, '#e9ff6b69'], [1, '#e9ff6b00']]);
+  for (let i = 0; i < 22; i++) {
+    const y = 121 + 29 * i;
+    line(90, y, 1510, y, '#18250719');
+  }
+  for (let i = 0; i < 24; i++) {
+    const x = 91 + 61.5 * i;
+    line(x, 94, x, 778, '#18250718');
+  }
+  const entry = out(t / .57), end = smooth(phase(t, 2.44, 2.75));
+  const cx = 1210 + 135 * (1 - entry) + 105 * end, cy = 433;
+  ctx.save();
+  clipRect(90, 90, 1420, 688);
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(-.14 + .14 * Math.sin(t * 1.4));
+  ctx.scale(.88 + .12 * entry + .13 * end, .88 + .12 * entry + .13 * end);
+  checkerWheel(0, 0, t);
+  circle(0, 0, 100, '#e9fc85', true, 1.5);
+  circle(0, 0, 57, '#18200e', true, 1.5);
+  cross(0, 0, 34, '#18200e');
+  ctx.restore();
+
+  const x = 86 - 60 * (1 - entry);
+  const wobble = Math.sin(t * 10) * Math.exp(-3.0 * t);
+  const cut = smooth(phase(t, .86, 1.35)) * (1 - smooth(phase(t, 1.79, 2.22)));
+  ctx.save();
+  clipRect(88, 150, 1118, 341);
+  for (let i = 0; i < 8; i++) {
+    ctx.save();
+    clipRect(84, 151 + 42.6 * i, 1130, 43);
+    const shift = cut * (i % 2 ? 27 : -12) * Math.sin(.56 + i * .55);
+    title('TYPE', x + shift - 32 * end, 479 + 226 * (1 - entry) + 37 * wobble,
+      779 + 26 * cut, 278 - 22 * cut, ink);
+    ctx.restore();
+  }
+  ctx.restore();
+
+  const subEntry = out((t - .15) / .6);
+  ctx.save();
+  clipRect(89, 507, 970, 200);
+  title('IN MOTION.', 90 + 22 * end, 653 + 145 * (1 - subEntry), 853, 109, ink);
+  ctx.restore();
+  ctx.restore();
+  rect(95, 142, 26, 3, '#222712');
+  micro('SCALE / STRETCH / REPEAT', 136, 150, '#253008', 14);
+  micro('FIG. 02', 1509, 749, '#333e16', 12, 'right');
+  micro('24 FPS → ∞', 93, 749, '#333e16', 12);
+  frame('02', 'KINETIC TYPOGRAPHY', '#28340db8', '#272d0c');
+  texture(t + 4, .29);
+}
+
+function orbitStudy(t) {
+  rect(0, 0, W, H, '#07111d');
+  halo(1088, 443, 750, [[0, '#203f57'], [.37, '#102536'], [.75, '#091420'], [1, '#09142000']]);
+  const gridColor = '#b5d8e71c';
+  for (let x = 90; x < 1511; x += 56.8) line(x, 89, x, 779, gridColor);
+  for (let y = 89; y < 780; y += 53) line(90, y, 1510, y, gridColor);
+  const entry = out(t / .61), leave = smooth(phase(t, 3.04, 3.5));
+  const cx = 1040 + 40 * Math.sin(t * .9), cy = 433 + 15 * Math.sin(t * 1.58);
+  for (let i = 0; i < 7; i++) {
+    circle(cx, cy, 96 + 39 * i, i === 6 ? '#d1edff55' : '#b5d8e729', true);
+  }
+  for (let i = 0; i < 72; i++) {
+    const a = i * TAU / 72 + t * .12;
+    const c = Math.cos(a), s = Math.sin(a);
+    const n = i % 6 === 0 ? 17 : 6;
+    line(cx + 331 * c, cy + 331 * s, cx + (331 - n) * c, cy + (331 - n) * s, '#acdae081');
+  }
+  // Fine orbital markers are composited underneath the metal.
+  for (const [u, v, a] of particles.slice(0, 120)) {
+    const angle = TAU * u + t * (.18 + a * .35);
+    const radius = 210 + v * 160;
+    circle(cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius * .85,
+      a > .91 ? 1.8 : .8, a > .91 ? '#c7f4ffd4' : '#9ed4ef65');
+  }
+
+  micro('SPATIAL STUDY / A–03', 94, 270, '#9bddfb', 15);
+  ctx.save();
+  clipRect(82, 282, 814, 315);
+  title('FORM', 86 - 60 * (1 - entry), 478 + 155 * (1 - entry), 745, 161, '#dbf1f5');
+  title('IN 3D', 90, 583 + 127 * (1 - entry), 455, 78, '#a0d0e4', 1.55);
+  ctx.restore();
+  line(95, 629, 325, 629, '#99c6e55c');
+  micro('PERSPECTIVE / 07', 94, 654, '#a8c9d9', 12);
+
+  const scale = (127 + 19 * entry) * (1 + leave * .15);
+  startMeshes();
+  projectMesh(rings[0], rotation(1.14 + .58 * Math.sin(t * 1.72), .15 + t * .71, -.52 + t * .42),
+    cx, cy, scale, coldMetal);
+  projectMesh(rings[1], rotation(.89 + t * .78, -.74 + .42 * Math.sin(t * 1.55), .44 - t * .61),
+    cx, cy, scale, coldMetal);
+  projectMesh(rings[2], rotation(-.77 + t * .87, .56 - t * .44, -1.29 + t * 1.01),
+    cx, cy, scale, coldMetal);
+  projectMesh(sphere, rotation(.2, t * .9, .1), cx, cy, scale, coldMetal);
+  paintMeshes();
+  ellipse(cx, cy, 348, 147, -.36, .02 + t * .21, 2.15 + t * .21, '#c8f4fd70', 1.4);
+  cross(1447, 309, 9, '#a2e6f7');
+  micro('FIG. 03', 1470, 332, '#a2d6e6', 12);
+  frame('03', 'DIMENSIONAL MOTION', '#b3d9e3a8', '#a6e7f6');
+  texture(t + 7, .31);
+}
+
+function signalStudy(t) {
+  rect(0, 0, W, H, '#f5e9dd');
+  halo(1084, 456, 690, [[0, '#ff563528'], [.57, '#ff9d7527'], [1, '#ff9d7500']]);
+  const entry = out(t / .48), leave = smooth(phase(t, 2.44, 2.77));
+  const cx = 1090 + 50 * Math.sin(t * 1.73), cy = 429;
+  for (let i = 0; i < 11; i++) {
+    circle(cx, cy, 47 + i * 25, i % 5 === 0 ? '#aa382673' : '#b840282f', true);
+  }
+  for (let i = 0; i < 88; i++) {
+    const a = i / 88 * TAU + t * .13;
+    const r = 298 + (i % 4 === 0 ? 0 : 4);
+    line(cx + r * Math.cos(a), cy + r * Math.sin(a), cx + 311 * Math.cos(a), cy + 311 * Math.sin(a), '#96332268');
+  }
+  for (let i = 0; i <= 18; i++) line(91, 141 + i * 31, 1510, 141 + i * 31, '#71362016');
+  line(91, cy, 1510, cy, '#8e271944');
+  line(cx, 95, cx, 779, '#8e271944');
+
+  const x = 91 - 47 * (1 - entry);
+  micro('AMPLITUDE / FREQUENCY', x + 4, 213, '#a13626', 14);
+  ctx.save();
+  clipRect(84, 236, 760, 418);
+  title('FEEL', x, 427 + 87 * (1 - entry), 595, 172, '#231b17');
+  title('THE CUT.', x + 2, 588 + 148 * (1 - entry), 704, 113, '#bd3523');
+  ctx.restore();
+  micro('FIG. 04', 1505, 751, '#9e402c', 12, 'right');
+
+  ctx.save();
+  clipRect(744, 90, 770, 687);
+  const redWash = ctx.createLinearGradient(750, 0, 1510, 0);
+  redWash.addColorStop(0, '#cb302000');
+  redWash.addColorStop(.26, '#ca332572');
+  redWash.addColorStop(.5, '#f4482e');
+  redWash.addColorStop(.75, '#ca332587');
+  redWash.addColorStop(1, '#cb302000');
+  const amp = entry * (1 + .11 * Math.sin(17 * t)) * (1 + leave * .4);
+  for (let j = 0; j < 27; j++) {
+    const q = (j - 13) / 13;
+    const points = [];
+    for (let i = 0; i <= 214; i++) {
+      const f = i / 214;
+      const u = (f - .53) * 2;
+      const e = Math.exp(-u * u * 5.1);
+      const theta = 23.5 * u - 9 * t + q * 1.25;
+      const y = cy + 95 * q * e * amp + 175 * amp * e * Math.sin(theta + 2 * Math.sin(u * 4 + t))
+        * (.75 + .25 * Math.cos(q * PI)) + 17 * q;
+      points.push([746 + f * 777, y]);
+    }
+    ctx.beginPath();
+    ctx.moveTo(...points[0]);
+    for (let i = 1; i < points.length; i++) ctx.lineTo(...points[i]);
+    ctx.strokeStyle = redWash;
+    ctx.lineWidth = j === 13 ? 2.5 : 1.3;
+    ctx.globalAlpha = j === 13 ? 1 : .39 + .54 * (1 - Math.abs(q));
+    ctx.stroke();
+  }
+  ctx.restore();
+  circle(cx, cy, 6, '#f5e9dd');
+  circle(cx, cy, 6, '#d44c32', true, 1.5);
+  cross(1424, 626, 9, '#9f3627');
+  frame('04', 'RHYTHM & SOUND', '#803628ab', '#cb3e26');
+  texture(t + 10, .35);
+}
+
+function closing(t) {
+  rect(0, 0, W, H, '#10090c');
+  const enter = out(t / .76);
+  const cx = 800, cy = 434;
+  halo(cx, cy, 746, [[0, '#5e1b17'], [.42, '#2d1114'], [.8, '#160a0d'], [1, '#160a0d00']]);
+  const turn = -.27 + .20 * Math.sin(t * 1.15);
+  ctx.save();
+  clipRect(90, 90, 1420, 688);
+  for (let i = 0; i < 38; i++) {
+    const f = i / 37;
+    const r = (185 + 500 * f) * (.8 + .2 * enter);
+    const angle = turn + f * .12;
+    const spread = .35 + .16 * Math.sin(t * 1.1 + f * 2.8);
+    ellipse(cx, cy, r, r * spread, angle, 0, TAU, i % 6 === 0 ? '#fc775a70' : '#ff634122', i % 6 === 0 ? 1.5 : .75);
+    if (i % 3 === 0) {
+      const start = f * 8 + t * (1.1 - .4 * f);
+      ellipse(cx, cy, r, r * spread, angle, start, start + (.17 + .22 * f), '#ff936691', 1.25);
+    }
+  }
+  for (const [u, v, a, b] of particles) {
+    const angle = u * TAU + t * (.2 + .2 * b), radius = 98 + v * 610;
+    circle(cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius * (.47 + b * .17), a > .95 ? 2 : .85, a > .95 ? '#ffac7c' : '#ed745c6b');
+  }
+  halo(cx, cy + 14, 365, [[0, '#19090eca'], [.59, '#19090e67'], [1, '#19090e00']]);
+  ctx.restore();
+
+  const reveal = smooth(phase(t, .07, .81));
+  ctx.save();
+  clipRect(91, 283, 1418, 283);
+  title('VELOCITY', cx, 505 + (1 - enter) * 168, 1110 + (1 - enter) * 180, 179, ivory, 0, 'center');
+  ctx.restore();
+  ctx.save();
+  ctx.globalAlpha = reveal;
+  line(486, 583, 589, 583, '#ff8b728e');
+  line(1011, 583, 1114, 583, '#ff8b728e');
+  micro('MOTION DESIGN SHOWREEL', 800, 589, '#ffc7b8', 17, 'center');
+  cross(800, 244, 12, '#ff9b83');
+  circle(800, 244, 22, '#ff9b835e', true);
+  ctx.restore();
+
+  frame('05', 'END OF REEL', '#e9b1a8a8', '#ff674f');
+  texture(13 + t, .30);
+}
+
+const cuts = [0, 3.25, 6, 9.5, 12.25];
+const shots = [opening, typeStudy, orbitStudy, signalStudy, closing];
+const flecks = ['#e2fa5a', '#b7f1ff', '#f1452c', '#ff6c50'];
+
+function transition(i, elapsed) {
+  const p = phase(elapsed, 0, .30);
+  if (p === 1) return;
+  ctx.save();
+  if (i === 1 || i === 3) {
+    for (let j = 0; j < 7; j++) {
+      const local = clamp((p - j * .052) / .68);
+      const x = (j % 2 ? out(local) : -out(local)) * W;
+      rect(x, j * H / 7, W, H / 7 + 1, j % 2 ? '#181217' : flecks[i - 1]);
+    }
+  } else {
+    const x = mix(-900, 2480, out(p));
+    poly([[x - 460, 0], [x + 270, 0], [x - 150, H], [x - 880, H]], '#100c10');
+    poly([[x + 270, 0], [x + 300, 0], [x - 120, H], [x - 150, H]], flecks[i - 1]);
+  }
+  ctx.restore();
+}
+
+function render(t) {
+  let i = cuts.length - 1;
+  while (t < cuts[i] && i > 0) i--;
+  shots[i](t - cuts[i]);
+  if (i > 0) transition(i, t - cuts[i]);
+}
+
+// The score is synthesized locally and its playback offset follows the picture.
+const SAMPLE_RATE = 32000;
+function makeScore(audio) {
+  const track = audio.createBuffer(1, DURATION * SAMPLE_RATE, SAMPLE_RATE);
+  const samples = track.getChannelData(0);
+  const random = rng(910);
+  function add(at, duration, sample) {
+    const start = Math.round(at * SAMPLE_RATE);
+    const count = Math.min(samples.length - start, Math.floor(duration * SAMPLE_RATE));
+    for (let i = 0; i < count; i++) samples[start + i] += sample(i / SAMPLE_RATE, i / count);
+  }
+  function kick(at, amp) {
+    add(at, .37, t => amp * Math.sin(TAU * (47 * t + 3.9 * (1 - Math.exp(-t * 29))))
+      * Math.exp(-t * 12) * Math.min(1, t * 680));
+  }
+  function snare(at, amp) {
+    let previous = 0;
+    add(at, .21, t => {
+      const now = random() - .5, high = now - previous * .57;
+      previous = now;
+      return amp * (high * .94 + .27 * Math.sin(TAU * (165 * t + .8 * (1 - Math.exp(-t * 36)))))
+        * Math.exp(-t * 20) * Math.min(1, t * 690);
+    });
+  }
+  function hat(at, amp, open = false) {
+    let last = 0;
+    add(at, open ? .20 : .072, t => {
+      const current = random() - .5;
+      const value = current - last;
+      last = current;
+      return amp * value * Math.exp(-t * (open ? 31 : 67)) * Math.min(1, t * 950);
+    });
+  }
+  function note(at, length, hz, amp, decay, voice) {
+    add(at, length, (t, p) => {
+      const angle = TAU * hz * t;
+      const env = smooth(t * 120) * Math.exp(-t * decay) * smooth((1 - p) * 7);
+      return amp * env * (Math.sin(angle + Math.sin(angle * voice) * Math.exp(-t * 5) * .58)
+        + .27 * Math.sin(angle * 2.003) + .14 * Math.sin(angle * 3.007));
+    });
+  }
+  function sweep(at, length, amp) {
+    let filtered = 0;
+    add(at, length, (t, p) => {
+      const n = random() - .5;
+      filtered = mix(filtered, n, .13 + .33 * p);
+      return amp * (filtered + .30 * Math.sin(TAU * (43 * t + 133 * t * t))) * p * p
+        * smooth((1 - p) * 21);
+    });
+  }
+
+  const root = [36.71, 43.65, 32.70, 41.20, 36.71];
+  const intervals = [1, 1.5, 1.1892, 2, 1, .8909, 1.5, 1.1892];
+  for (let i = 0; i < cuts.length; i++) {
+    const start = cuts[i];
+    const end = cuts[i + 1] || DURATION;
+    if (i) sweep(start - .31, .31, .23);
+    kick(start, i === 4 ? .85 : .73);
+    note(start, Math.min(1.8, end - start), root[i] * 2, .19, 3.2, 2);
+    for (let step = 0; start + .12 + step * .125 < end - .06; step++) {
+      const at = start + step * .125;
+      const bar = step % 16;
+      const accent = bar === 0 || bar === 6 || bar === 10;
+      if (i < 4 && step > 0 && accent) kick(at, .54);
+      if (i < 4 && (bar === 4 || bar === 12)) snare(at, .33);
+      if (i < 4 || step < 10) hat(at, step % 4 === 2 ? .18 : .085, step % 8 === 6);
+      if (i === 1 && bar % 2 === 1) note(at, .18, root[i] * 8 * intervals[step % 8], .087, 13, 2.4);
+      if (i === 2 && step % 3 === 0) note(at, .63, root[i] * 12 * intervals[step % 8], .061, 7.4, 1.42);
+      if (i === 3 && bar % 2 === 0) note(at, .21, root[i] * (bar % 4 === 0 ? 2 : 4), .16, 9, 2);
+      if (i === 0 && bar % 4 === 0) note(at, .52, root[i] * 4 * intervals[(step / 4) % 8], .093, 6, 2.02);
+    }
+  }
+  for (let i = 0; i < 4; i++) {
+    note(12.47 + i * .05, 2.32, 220 * [1, 1.1892, 1.5, 2][i], .068, 1.6, 2.003);
+  }
+  for (let i = 0; i < samples.length; i++) {
+    const fade = smooth((samples.length - i) / (SAMPLE_RATE * .23));
+    samples[i] = fade * Math.tanh(samples[i] * 1.07) * .82;
+  }
+  return track;
+}
+
+const $ = selector => document.querySelector(selector);
+const play = $('#play'), sound = $('#sound'), scrub = $('#scrub'), time = $('#time');
+const full = $('#fullscreen');
+const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+let position = 0;
+let playing = !reduced.matches;
+let origin = performance.now();
+let animation = 0;
+let muted = true, audio, score, source;
+
+function stopAudio() {
+  if (!source) return;
+  source.stop();
+  source.disconnect();
+  source = null;
+}
+function syncAudio() {
+  stopAudio();
+  if (muted || !playing || !audio || audio.state !== 'running') return;
+  const offset = currentPosition();
+  if (offset >= DURATION) return;
+  source = audio.createBufferSource();
+  source.buffer = score;
+  source.connect(audio.destination);
+  source.start(0, offset);
+}
+
+const playShape = $('#play-shape'), pauseShape = $('#pause-shape'), replayShape = $('#replay-shape');
+const mutedShape = $('#muted-shape'), soundShape = $('#sound-shape'), fullShape = $('#full-shape');
+function showControls() {
+  const ended = position >= DURATION;
+  player.toggleAttribute('data-paused', !playing);
+  playShape.toggleAttribute('hidden', playing || ended);
+  pauseShape.toggleAttribute('hidden', !playing);
+  replayShape.toggleAttribute('hidden', !ended);
+  const label = playing ? 'Pause' : ended ? 'Replay' : 'Play';
+  play.setAttribute('aria-label', label);
+  play.title = label + ' (Space)';
+}
+function showTime() {
+  scrub.value = position;
+  scrub.style.setProperty('--progress', `${position / DURATION * 100}%`);
+  const seconds = Math.floor(position);
+  const stamp = '0:' + String(seconds).padStart(2, '0');
+  const display = stamp + ' / 0:15';
+  if (time.textContent !== display) time.textContent = display;
+  scrub.setAttribute('aria-valuetext', `${seconds} of 15 seconds`);
+}
+function currentPosition(now = performance.now()) {
+  return playing ? clamp((now - origin) / 1000, 0, DURATION) : position;
+}
+function draw() {
+  render(position);
+  showTime();
+}
+function tick(now) {
+  position = currentPosition(now);
+  draw();
+  if (position >= DURATION) {
+    playing = false;
+    animation = 0;
+    stopAudio();
+    showControls();
+  } else {
+    animation = requestAnimationFrame(tick);
+  }
+}
+function togglePlayback() {
+  if (playing) {
+    position = currentPosition();
+    playing = false;
+    cancelAnimationFrame(animation);
+    animation = 0;
+    stopAudio();
+    draw();
+  } else {
+    if (position >= DURATION) position = 0;
+    origin = performance.now() - position * 1000;
+    playing = true;
+    syncAudio();
+    animation = requestAnimationFrame(tick);
+  }
+  showControls();
+}
+function seek(value) {
+  position = clamp(value, 0, DURATION);
+  origin = performance.now() - position * 1000;
+  if (position === DURATION && playing) {
+    cancelAnimationFrame(animation);
+    animation = 0;
+    playing = false;
+    showControls();
+  }
+  syncAudio();
+  draw();
+  showControls();
+}
+async function toggleSound() {
+  muted = !muted;
+  if (!muted) {
+    try {
+      if (!audio) {
+        const AudioEngine = window.AudioContext || window.webkitAudioContext;
+        audio = new AudioEngine();
+        score = makeScore(audio);
+      }
+      await audio.resume();
+    } catch {
+      muted = true;
+    }
+  }
+  const label = muted ? 'Unmute' : 'Mute';
+  sound.setAttribute('aria-label', label);
+  sound.title = label + ' (M)';
+  mutedShape.toggleAttribute('hidden', !muted);
+  soundShape.toggleAttribute('hidden', muted);
+  syncAudio();
+}
+async function toggleFullscreen() {
+  try {
+    if (document.fullscreenElement) await document.exitFullscreen();
+    else await player.requestFullscreen();
+  } catch {
+    // The reel remains playable if the browser blocks fullscreen.
+  }
+}
+
+play.addEventListener('click', togglePlayback);
+canvas.addEventListener('click', togglePlayback);
+sound.addEventListener('click', toggleSound);
+full.addEventListener('click', toggleFullscreen);
+scrub.addEventListener('input', () => seek(Number(scrub.value)));
+document.addEventListener('fullscreenchange', () => {
+  const active = Boolean(document.fullscreenElement);
+  full.setAttribute('aria-label', active ? 'Exit fullscreen' : 'Enter fullscreen');
+  fullShape.setAttribute('d', active ? 'M4 9h5V4m11 5h-5V4M9 20v-5H4m11 5v-5h5' : 'M9 4H4v5m11-5h5v5M4 15v5h5m11-5v5h-5');
+});
+document.addEventListener('keydown', event => {
+  if (event.altKey || event.ctrlKey || event.metaKey || event.repeat) return;
+  if (event.code === 'Space' && !event.target.matches('button, input')) {
+    event.preventDefault();
+    togglePlayback();
+  } else if (event.code === 'KeyM') {
+    toggleSound();
+  } else if (event.code === 'KeyF') {
+    toggleFullscreen();
+  } else if (event.target !== scrub && (event.code === 'ArrowRight' || event.code === 'ArrowLeft')) {
+    event.preventDefault();
+    seek(currentPosition() + (event.code === 'ArrowRight' ? 1 : -1));
+  }
+});
+reduced.addEventListener('change', () => {
+  if (reduced.matches && playing) togglePlayback();
+});
+
+draw();
+showControls();
+if (playing) {
+  origin = performance.now();
+  animation = requestAnimationFrame(tick);
+}
+</script>
+</body>
+</html>

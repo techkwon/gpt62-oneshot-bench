@@ -1,0 +1,1394 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Varde Vanworks — Build your adventure camper</title>
+<meta name="description" content="Varde builds four-season adventure camper vans to order. Configure paint, roof, layout and kit, and see the price as you go.">
+<meta name="theme-color" content="#ebe6d9">
+<script type="importmap">
+{ "imports": {
+  "three": "https://unpkg.com/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://unpkg.com/three@0.170.0/examples/jsm/"
+} }
+</script>
+<style>
+:root{
+  --paper:#ebe6d9; --paper-hi:#f5f1e7; --paper-lo:#ddd6c4;
+  --ink:#17211c; --ink-2:#48534c; --ink-3:#737c73;
+  --rule:rgba(23,33,28,.2); --rule-soft:rgba(23,33,28,.1);
+  --signal:#e4572e; --signal-ink:#b23c18; --moss:#6d7b5a;
+  --f-disp:"Avenir Next Condensed","Bahnschrift","Roboto Condensed","DIN Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"Avenir Next","Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --f-serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --f-mono:ui-monospace,"SF Mono","Cascadia Mono","JetBrains Mono",Menlo,Consolas,monospace;
+  --nav:58px; --bar:76px; --pad:clamp(16px,3.2vw,44px);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 var(--f-body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3,p,dl,dd,ul,ol{margin:0;padding:0}
+ul,ol{list-style:none}
+a{color:inherit}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--signal);outline-offset:3px}
+.skip{position:absolute;left:-999px;top:8px;z-index:100;background:var(--ink);color:var(--paper);padding:10px 14px}
+.skip:focus{left:8px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+.kicker{font:500 11px/1.4 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+.disp{font-family:var(--f-disp);font-stretch:condensed;font-weight:700;text-transform:uppercase;letter-spacing:-.005em;line-height:.92}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:48px;padding:0 22px;border:1px solid var(--ink);border-radius:3px;background:transparent;
+  font:700 15px/1 var(--f-disp);font-stretch:condensed;letter-spacing:.09em;text-transform:uppercase;text-decoration:none;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s,transform .15s}
+.btn:hover{background:var(--ink);color:var(--paper)}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--signal);border-color:var(--signal);color:var(--ink)}
+.btn-primary:hover{background:#f06a40;border-color:#f06a40;color:var(--ink)}
+.btn-ghost{border-color:var(--rule)}
+.btn-sm{height:38px;padding:0 14px;font-size:13px}
+
+/* ---------- nav ---------- */
+.nav{position:sticky;top:0;z-index:60;height:var(--nav);display:flex;align-items:center;gap:30px;padding:0 var(--pad);
+  background:rgba(235,230,217,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--rule)}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo svg{width:26px;height:26px;flex:none}
+.logo span{font:700 22px/1 var(--f-disp);font-stretch:condensed;letter-spacing:.2em}
+.logo small{display:block;font:500 8.5px/1 var(--f-mono);letter-spacing:.36em;text-transform:uppercase;color:var(--ink-2);margin-top:3px}
+.nav nav{display:flex;gap:26px;margin-left:auto}
+.nav nav a{font:500 12px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;text-decoration:none;padding:8px 0;border-bottom:1px solid transparent}
+.nav nav a:hover{border-color:var(--ink)}
+.nav-build{display:flex;align-items:center;gap:10px;height:36px;padding:0 6px 0 14px;border:1px solid var(--ink);border-radius:3px;text-decoration:none;font:500 11px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase}
+.nav-build b{font:700 17px/1 var(--f-disp);font-stretch:condensed;letter-spacing:.03em;background:var(--ink);color:var(--paper);padding:5px 9px;border-radius:2px;font-variant-numeric:tabular-nums}
+.nav-build:hover b{background:var(--signal);color:var(--ink)}
+
+/* ---------- hero ---------- */
+.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--ink)}
+.topo{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.hero-in{position:relative;display:grid;grid-template-columns:minmax(0,1.7fr) minmax(270px,.8fr);gap:20px clamp(24px,4vw,64px);align-items:end;padding:clamp(34px,6vw,74px) var(--pad) clamp(26px,3.6vw,44px)}
+.hero .kicker{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px 22px}
+.hero .kicker span+span::before{content:"/";margin-right:22px;color:var(--signal-ink)}
+.hero h1{font-family:var(--f-disp);font-stretch:condensed;font-weight:700;text-transform:uppercase;font-size:clamp(2.9rem,8vw,7.2rem);line-height:.86;letter-spacing:-.012em}
+.hero h1 em{display:block;font-family:var(--f-serif);font-style:italic;font-weight:400;text-transform:none;letter-spacing:-.03em;color:var(--signal-ink);font-size:.8em;line-height:1.02;margin-top:.06em}
+.lede{font-size:clamp(1rem,1.25vw,1.14rem);line-height:1.5;max-width:34em;color:var(--ink)}
+.hero-cta{display:flex;flex-wrap:wrap;align-items:center;gap:14px 18px;margin-top:22px}
+.from{font:500 12px/1.3 var(--f-mono);letter-spacing:.04em;color:var(--ink-2)}
+.from b{color:var(--ink)}
+.presets{position:relative;padding:0 var(--pad) clamp(26px,3.4vw,42px)}
+.presets>.kicker{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.presets>.kicker::after{content:"";flex:1;border-top:1px dashed var(--rule)}
+.preset-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.preset{position:relative;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);align-items:center;gap:4px 14px;padding:12px 16px 12px 10px;text-align:left;cursor:pointer;
+  background:rgba(245,241,231,.86);border:1px solid var(--rule);border-radius:4px;transition:border-color .15s,transform .2s,background .15s}
+.preset:hover{border-color:var(--ink);background:var(--paper-hi);transform:translateY(-2px)}
+.preset svg{width:100%;height:auto;display:block}
+.preset b{display:block;font:700 23px/1 var(--f-disp);font-stretch:condensed;text-transform:uppercase;letter-spacing:.02em}
+.preset i{display:block;font:500 10.5px/1.45 var(--f-mono);font-style:normal;letter-spacing:.04em;color:var(--ink-2);margin:5px 0 8px}
+.preset u{font:500 12px/1 var(--f-mono);text-decoration:none;letter-spacing:.04em;display:flex;justify-content:space-between;gap:8px;border-top:1px dashed var(--rule);padding-top:8px}
+.preset u span{color:var(--signal-ink)}
+
+/* ---------- configurator ---------- */
+.cfg{position:relative;scroll-margin-top:var(--nav);background:var(--paper)}
+.cfg-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 22px;padding:18px var(--pad) 14px;border-bottom:1px solid var(--rule)}
+.cfg-head h2{font-size:clamp(1.7rem,3vw,2.4rem)}
+.cfg-head p:last-child{margin-left:auto;font:500 12px/1.4 var(--f-mono);color:var(--ink-2);letter-spacing:.03em}
+.cfg-grid{display:grid;grid-template-columns:minmax(0,1fr) clamp(360px,33vw,480px);align-items:start}
+
+.stage{position:sticky;top:var(--nav);height:calc(100vh - var(--nav) - var(--bar));height:calc(100dvh - var(--nav) - var(--bar));min-height:420px;overflow:hidden;
+  background:radial-gradient(ellipse 75% 60% at 50% 58%,#faf7ef 0%,#efeadd 55%,#e3dccb 100%);border-right:1px solid var(--rule)}
+#gl{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity .5s;cursor:grab;touch-action:none}
+#gl:active{cursor:grabbing}
+.fallback{position:absolute;inset:8% 5% 20%;display:flex;align-items:center;justify-content:center;transition:opacity .4s}
+.fallback svg{width:100%;height:100%}
+.stage[data-mode="3d"] #gl{opacity:1}
+.stage[data-mode="3d"] .fallback{opacity:0;pointer-events:none}
+.crop{position:absolute;width:14px;height:14px;border:0 solid var(--ink);opacity:.55;pointer-events:none}
+.crop.tl{top:12px;left:12px;border-top-width:1px;border-left-width:1px}
+.crop.tr{top:12px;right:12px;border-top-width:1px;border-right-width:1px}
+.stage-tag{position:absolute;top:24px;left:30px;pointer-events:none}
+.stage-tag b{display:block;font:700 30px/1 var(--f-disp);font-stretch:condensed;text-transform:uppercase;letter-spacing:.02em}
+.stage-tag>span{display:flex;align-items:center;gap:8px;margin-top:6px;font:500 11px/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2)}
+.stage-tag i{width:10px;height:10px;border-radius:50%;border:1px solid var(--ink);background:var(--c,#8f9c7a)}
+.views{position:absolute;top:24px;right:30px;display:flex;border:1px solid var(--ink);border-radius:3px;background:var(--paper-hi);overflow:hidden}
+.views button{appearance:none;border:0;background:none;padding:9px 13px;font:500 11px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+.views button+button{border-left:1px solid var(--rule)}
+.views button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.views button:focus-visible{outline-offset:-3px}
+.hint{position:absolute;left:30px;bottom:96px;font:500 10.5px/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);display:none;align-items:center;gap:8px;pointer-events:none;transition:opacity .4s}
+.hint::before{content:"";width:22px;height:10px;border:1px solid currentColor;border-radius:6px;border-top-color:transparent}
+.stage[data-mode="3d"] .hint{display:flex}
+.stage.touched .hint{opacity:0}
+.stats{position:absolute;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--rule);background:rgba(245,241,231,.82);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.stats div{padding:11px 8px 12px 16px;border-left:1px solid var(--rule-soft);min-width:0}
+.stats div:first-child{border-left:0;padding-left:30px}
+.stats dt{font:500 10px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.stats dd{font:700 24px/1.05 var(--f-disp);font-stretch:condensed;letter-spacing:.01em;margin-top:5px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.stats dd small{font:500 10px/1.2 var(--f-mono);letter-spacing:.02em;color:var(--ink-2);display:block;margin-top:3px;white-space:normal;text-transform:none}
+.stats dd small.warn{color:var(--signal-ink)}
+.toast{position:absolute;left:50%;bottom:100px;transform:translate(-50%,12px);max-width:min(88%,460px);background:var(--ink);color:var(--paper);padding:10px 14px;border-radius:3px;font:500 12px/1.4 var(--f-mono);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:4;text-align:center}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+.panel{padding:0 clamp(18px,2.2vw,30px) 34px;min-width:0}
+.step{padding:24px 0 28px;border-bottom:1px solid var(--ink)}
+.step:last-child{border-bottom:0;padding-bottom:10px}
+.step-h{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
+.step-n{font:500 12px/1 var(--f-mono);color:var(--signal-ink);letter-spacing:.06em}
+.step-h h3{font:700 27px/1 var(--f-disp);font-stretch:condensed;text-transform:uppercase;letter-spacing:.02em}
+.step-v{margin-left:auto;font:500 11px/1.2 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);text-align:right}
+.step-note{font-size:14px;line-height:1.45;color:var(--ink-2);margin-bottom:16px;max-width:38em}
+.sub{font:500 10.5px/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin:18px 0 8px;display:flex;align-items:center;gap:12px}
+.sub::after{content:"";flex:1;border-top:1px dashed var(--rule)}
+
+.chips{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.chip{position:relative;display:block;cursor:pointer;background:var(--paper-hi);border:1px solid var(--rule);border-radius:3px;padding:5px 5px 8px;transition:border-color .15s,transform .15s}
+.chip input,.opt input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.chip-sw{display:block;height:46px;border-radius:2px;background:var(--c);box-shadow:inset 0 0 0 1px rgba(23,33,28,.16),inset 0 14px 18px -12px rgba(255,255,255,.4)}
+.chip-name{display:block;font:700 15px/1 var(--f-disp);font-stretch:condensed;text-transform:uppercase;letter-spacing:.04em;margin:8px 2px 3px}
+.chip-meta{display:block;font:500 9.5px/1.2 var(--f-mono);color:var(--ink-2);margin:0 2px;letter-spacing:.01em}
+.chip:hover{border-color:var(--ink-3)}
+.chip:has(input:checked){border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.chip:has(input:checked) .chip-sw::after{content:"";position:absolute;top:11px;right:11px;width:14px;height:14px;border-radius:50%;background:var(--paper-hi) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M3.6 7.3l2.3 2.3 4.6-5' fill='none' stroke='%2317211c' stroke-width='1.7'/%3E%3C/svg%3E") center/contain}
+.chip:has(input:focus-visible),.opt:has(input:focus-visible){outline:2px solid var(--signal);outline-offset:2px}
+
+.opts{display:grid;gap:8px}
+.opts.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.opt{position:relative;display:grid;gap:12px;align-items:center;padding:12px 14px;background:var(--paper-hi);border:1px solid var(--rule);border-radius:3px;cursor:pointer;transition:border-color .15s,background .15s}
+.opt:hover{border-color:var(--ink-3)}
+.opt:has(input:checked){border-color:var(--ink);box-shadow:0 0 0 1px var(--ink);background:#faf7ef}
+.opt b{display:block;font:700 19px/1.05 var(--f-disp);font-stretch:condensed;text-transform:uppercase;letter-spacing:.03em}
+.opt-d{display:block;font-size:13px;line-height:1.4;color:var(--ink-2);margin-top:4px}
+.opt-tags{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:7px;font:500 10px/1.2 var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--ink-2)}
+.opt-tags i{font-style:normal}
+.opt-tags i+i::before{content:"·";margin-right:10px}
+.opt-p{font:500 12px/1 var(--f-mono);white-space:nowrap;letter-spacing:.02em;align-self:start;padding-top:3px}
+.opt-p.inc{color:var(--ink-3)}
+.opt.roof{grid-template-columns:104px minmax(0,1fr) auto}
+.opt-fig{display:block}
+.opt-fig svg{display:block;width:100%;height:auto}
+.opt.lay{grid-template-columns:1fr;gap:8px;align-content:start;padding:10px 12px 12px}
+.opt.lay .opt-fig{border-bottom:1px dashed var(--rule);padding-bottom:8px}
+.opt.lay .opt-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.opt.add{grid-template-columns:20px minmax(0,1fr) auto;align-items:start}
+.box{width:20px;height:20px;border:1px solid var(--ink);border-radius:2px;background:var(--paper-hi);margin-top:1px;transition:background .12s}
+.opt.add:has(input:checked) .box{background:var(--signal) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M4.6 10.4l3.6 3.6 7-7.8' fill='none' stroke='%2317211c' stroke-width='2.2'/%3E%3C/svg%3E") center/contain}
+.opt-warn{display:none;font:500 10.5px/1.3 var(--f-mono);color:var(--signal-ink);margin-top:6px;letter-spacing:.02em}
+.opt.off{cursor:not-allowed;background:transparent;border-style:dashed}
+.opt.off b,.opt.off .opt-d,.opt.off .opt-p{opacity:.45}
+.opt.off .opt-warn{display:block}
+.opt.off input{cursor:not-allowed}
+
+.sheet{background:var(--paper-hi);border:1px solid var(--ink);border-radius:3px;padding:16px 16px 14px;font:500 12.5px/1.5 var(--f-mono);position:relative}
+.sheet::before,.sheet::after{content:"";position:absolute;left:-1px;right:-1px;height:7px;background:radial-gradient(circle at 5px 0,var(--paper) 4px,transparent 4.5px) 0 0/10px 7px repeat-x}
+.sheet::before{top:-1px}
+.sheet::after{bottom:-1px;transform:scaleY(-1)}
+.sheet-h{display:flex;justify-content:space-between;gap:10px;letter-spacing:.1em;text-transform:uppercase;font-size:10.5px;color:var(--ink-2);padding-bottom:10px;border-bottom:1px dashed var(--rule);margin-bottom:10px}
+.line{display:flex;align-items:baseline;gap:8px;padding:2px 0}
+.line span:first-child{min-width:0}
+.line::before{content:none}
+.line i{flex:1;border-bottom:1px dotted var(--rule);transform:translateY(-3px);min-width:14px}
+.line em{font-style:normal;white-space:nowrap;font-variant-numeric:tabular-nums}
+.line.dim{color:var(--ink-2)}
+.line.tot{margin-top:10px;padding-top:12px;border-top:1px dashed var(--rule);font-size:13px}
+.line.tot em{font:700 30px/1 var(--f-disp);font-stretch:condensed;letter-spacing:.01em}
+.glance{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:14px;border:1px solid var(--rule);border-radius:3px}
+.glance div{padding:9px 10px;border-left:1px solid var(--rule-soft)}
+.glance div:first-child{border-left:0}
+.glance dt{font:500 9.5px/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.glance dd{font:700 19px/1.1 var(--f-disp);font-stretch:condensed;margin-top:4px;white-space:nowrap}
+.actions{display:grid;grid-template-columns:1fr auto auto;gap:8px;margin-top:14px}
+.fine{font-size:12px;line-height:1.45;color:var(--ink-2);margin-top:12px}
+
+.bar{position:sticky;bottom:0;z-index:40;height:var(--bar);display:flex;align-items:center;gap:22px;padding:0 var(--pad);background:var(--ink);color:var(--paper)}
+.bar-what{min-width:0;flex:1}
+.bar-what .kicker{color:rgba(235,230,217,.6)}
+.bar-chips{font:700 19px/1.15 var(--f-disp);font-stretch:condensed;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px}
+.bar-chips span+span::before{content:"／";color:var(--signal);margin:0 8px;font-weight:400}
+.bar-price{position:relative;text-align:right;flex:none}
+.bar-price b{display:block;font:700 36px/1 var(--f-disp);font-stretch:condensed;letter-spacing:.01em;font-variant-numeric:tabular-nums}
+.bar-price small{font:500 10.5px/1 var(--f-mono);letter-spacing:.04em;color:rgba(235,230,217,.66);display:block;margin-top:4px}
+.delta{position:absolute;right:0;top:-22px;font:500 12px/1 var(--f-mono);background:var(--signal);color:var(--ink);padding:4px 7px;border-radius:2px;opacity:0;pointer-events:none;white-space:nowrap}
+.delta.go{animation:delta 1.5s ease-out}
+.delta.neg{background:var(--paper)}
+@keyframes delta{0%{opacity:0;transform:translateY(10px)}12%{opacity:1;transform:none}70%{opacity:1}100%{opacity:0;transform:translateY(-6px)}}
+
+/* ---------- content sections ---------- */
+.sec{padding:clamp(54px,8vw,104px) var(--pad);border-top:1px solid var(--ink);position:relative}
+.sec-h{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px clamp(24px,5vw,80px);align-items:end;margin-bottom:clamp(28px,4vw,48px)}
+.sec-h h2{font-size:clamp(2.3rem,5.6vw,4.6rem)}
+.sec-h h2 em{font-family:var(--f-serif);font-style:italic;font-weight:400;text-transform:none;letter-spacing:-.03em;color:var(--signal-ink)}
+.sec-h p:not(.kicker){max-width:36em;color:var(--ink-2)}
+.sec-h .kicker{grid-column:1/-1}
+.specs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--ink);border-left:1px solid var(--rule)}
+.specs li{padding:18px 18px 22px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.specs b{display:block;font:700 clamp(2.1rem,3.6vw,3.1rem)/1 var(--f-disp);font-stretch:condensed;letter-spacing:.005em}
+.specs b sup{font:500 12px/1 var(--f-mono);letter-spacing:.06em;margin-left:5px;vertical-align:top;position:relative;top:7px;color:var(--signal-ink)}
+.specs span{display:block;font:500 10.5px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin:12px 0 6px}
+.specs p{font-size:14px;line-height:1.45;color:var(--ink-2)}
+.dark{background:var(--ink);color:var(--paper);overflow:hidden}
+.dark .kicker{color:rgba(235,230,217,.62)}
+.dark .sec-h p:not(.kicker){color:rgba(235,230,217,.78)}
+.dark .sec-h h2 em{color:var(--signal)}
+.steps4{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;counter-reset:s}
+.steps4 li{counter-increment:s;padding:20px 22px 4px 0;border-top:1px solid rgba(235,230,217,.5);position:relative}
+.steps4 li::before{content:"0" counter(s);font:500 12px/1 var(--f-mono);color:var(--signal);letter-spacing:.06em}
+.steps4 li::after{content:"";position:absolute;top:-5px;left:0;width:9px;height:9px;border-radius:50%;background:var(--signal)}
+.steps4 h3{font:700 27px/1 var(--f-disp);font-stretch:condensed;text-transform:uppercase;letter-spacing:.03em;margin:12px 0 8px}
+.steps4 p{font-size:14.5px;line-height:1.5;color:rgba(235,230,217,.78);max-width:24em}
+.steps4 small{display:block;font:500 10.5px/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:rgba(235,230,217,.55);margin-top:12px}
+.faq{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:20px clamp(24px,5vw,80px)}
+.faq h2{font-size:clamp(2.3rem,5vw,4rem)}
+.faq details{border-top:1px solid var(--rule)}
+.faq details:last-child{border-bottom:1px solid var(--rule)}
+.faq summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:16px;padding:17px 0;font:700 21px/1.15 var(--f-disp);font-stretch:condensed;text-transform:uppercase;letter-spacing:.02em}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font:400 22px/1 var(--f-mono);color:var(--signal-ink);transition:transform .2s}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq details p{padding:0 40px 20px 0;color:var(--ink-2);max-width:44em}
+.closing{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:24px clamp(24px,5vw,80px);align-items:center}
+.closing>*{position:relative}
+.closing h2{font-size:clamp(2.6rem,7vw,6rem)}
+.closing h2 em{font-family:var(--f-serif);font-style:italic;font-weight:400;text-transform:none;letter-spacing:-.03em;color:var(--signal)}
+.closing-fig svg{width:100%;height:auto;display:block;max-height:300px}
+.closing-sum{font:500 12px/1.6 var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:rgba(235,230,217,.75);margin:16px 0 20px}
+.closing-row{display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px}
+.closing-row b{font:700 46px/1 var(--f-disp);font-stretch:condensed;font-variant-numeric:tabular-nums}
+.dark .btn:not(.btn-primary){border-color:rgba(235,230,217,.5);color:var(--paper)}
+.dark .btn:not(.btn-primary):hover{background:var(--paper);color:var(--ink)}
+footer{background:var(--ink);color:rgba(235,230,217,.7);border-top:1px solid rgba(235,230,217,.2);padding:26px var(--pad) 34px;display:flex;flex-wrap:wrap;gap:14px 40px;justify-content:space-between;font-size:13px;line-height:1.5}
+footer p{max-width:46em}
+footer .logo{color:var(--paper)}
+footer .logo small{color:rgba(235,230,217,.6)}
+
+/* ---------- dialog ---------- */
+dialog{border:1px solid var(--ink);border-radius:4px;background:var(--paper-hi);color:var(--ink);padding:0;width:min(480px,calc(100vw - 28px));max-height:calc(100dvh - 28px);overflow:auto}
+dialog::backdrop{background:rgba(23,33,28,.6);backdrop-filter:blur(3px)}
+.rs{padding:22px 24px 24px;position:relative}
+.rs-x{position:absolute;top:10px;right:10px;width:36px;height:36px;border:0;background:none;font:400 24px/1 var(--f-mono);cursor:pointer}
+.rs-fig{margin:6px 30px 4px 0}
+.rs-fig svg{width:100%;height:auto;max-height:170px;display:block}
+.rs h3{font:700 32px/1 var(--f-disp);font-stretch:condensed;text-transform:uppercase;margin:6px 0 8px}
+.rs-sum{font:500 12px/1.55 var(--f-mono);color:var(--ink-2);padding-bottom:14px;border-bottom:1px dashed var(--rule);margin-bottom:14px}
+.rs-sum b{color:var(--ink)}
+.rs label{display:block;font:500 10.5px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);margin-top:12px}
+.rs input,.rs select{display:block;width:100%;height:44px;margin-top:6px;padding:0 12px;border:1px solid var(--ink);border-radius:3px;background:#fff;font:16px/1 var(--f-body);letter-spacing:0;text-transform:none}
+.rs .btn{width:100%;margin-top:18px}
+.rs-done h3{margin-top:14px}
+.rs-done p{color:var(--ink-2);margin-bottom:8px}
+
+/* ---------- responsive ---------- */
+@media (max-width:1080px){
+  .nav nav{display:none}
+  .nav-build{margin-left:auto}
+  .stats{grid-template-columns:repeat(4,1fr)}
+  .stats div:nth-child(4){display:none}
+  .specs{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .steps4{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:34px}
+}
+@media (max-width:860px){
+  :root{--bar:66px}
+  .nav{position:static}
+  .hero-in{grid-template-columns:1fr}
+  .preset-row{grid-template-columns:1fr;gap:8px}
+  .preset{grid-template-columns:120px 1fr;padding:8px 12px 8px 6px}
+  .preset i{margin:3px 0 6px}
+  .cfg{scroll-margin-top:0}
+  .cfg-head p:last-child{display:none}
+  .cfg-grid{display:block}
+  .stage{top:0;height:42vh;height:42svh;min-height:250px;z-index:20;border-right:0;border-bottom:1px solid var(--ink)}
+  .fallback{inset:16% 4% 6%}
+  .stage-tag{top:12px;left:14px}
+  .stage-tag b{font-size:20px}
+  .stage-tag>span{margin-top:4px;font-size:10px}
+  .views{top:12px;right:12px}
+  .views button{padding:8px 9px;font-size:10px}
+  .crop,.stats,.hint{display:none !important}
+  .toast{bottom:12px}
+  .panel{padding-bottom:20px}
+  .bar{gap:12px}
+  .bar-what{display:none}
+  .bar-price{text-align:left;flex:1}
+  .bar-price b{font-size:28px}
+  .delta{right:auto;left:0}
+  .sec-h,.faq,.closing{grid-template-columns:1fr}
+  .steps4 li{padding-right:14px}
+}
+@media (max-width:420px){
+  .chips{gap:6px}
+  .chip-meta{font-size:8.5px}
+  .opts.two{gap:6px}
+  .opt.roof{grid-template-columns:78px minmax(0,1fr) auto;gap:10px;padding:10px}
+  .actions{grid-template-columns:1fr 1fr}
+  .actions .btn-primary{grid-column:1/-1}
+  .specs li{padding:14px 12px 16px}
+  .nav-build span{display:none}
+  .nav-build{padding-left:6px}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{transition-duration:.01ms !important;animation-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#build">Skip to the configurator</a>
+
+<header class="nav">
+  <a class="logo" href="#top" aria-label="Varde Vanworks — home">
+    <svg viewBox="0 0 28 28" aria-hidden="true"><g fill="currentColor"><rect x="2.5" y="18.4" width="23" height="7.2" rx="3.6"/><rect x="6.4" y="10.8" width="15" height="6.2" rx="3.1" transform="rotate(-4 14 14)"/><rect x="10.2" y="3.6" width="8" height="5.6" rx="2.8" transform="rotate(6 14 6)"/></g></svg>
+    <span>VARDE<small>Vanworks</small></span>
+  </a>
+  <nav aria-label="Main">
+    <a href="#build">Configurator</a>
+    <a href="#standard">What’s standard</a>
+    <a href="#process">How it works</a>
+    <a href="#faq">Questions</a>
+  </nav>
+  <a class="nav-build" href="#build"><span>Your build</span><b data-total>€64,900</b></a>
+</header>
+
+<main>
+<section class="hero" id="top">
+  <canvas class="topo" data-seed="5" aria-hidden="true"></canvas>
+  <div class="hero-in">
+    <p class="kicker"><span>Adventure campers, built to order</span><span>Workshop at 60°N</span><span>Since 2014</span></p>
+    <h1>Pick a colour.<br>Pick a roof.<em>Pick a direction.</em></h1>
+    <div>
+      <p class="lede">Varde builds four-season camper vans one at a time. Spec yours below in about three minutes. Every option is priced as you choose it, and the total you see is the total you pay.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#build">Start your build <span aria-hidden="true">↓</span></a>
+        <span class="from">V1 from <b>€64,900</b> incl. VAT<br>12-week build · 5-year warranty</span>
+      </div>
+    </div>
+  </div>
+  <div class="presets">
+    <p class="kicker">Or start from a build we’d take ourselves</p>
+    <div class="preset-row" id="presets"></div>
+  </div>
+</section>
+
+<section class="cfg" id="build" aria-labelledby="cfg-h">
+  <div class="cfg-head">
+    <p class="kicker">Configurator</p>
+    <h2 class="disp" id="cfg-h">Build your V1</h2>
+    <p>Four choices. The van and the price update as you make them.</p>
+  </div>
+  <div class="cfg-grid">
+    <div class="stage" id="stage" data-mode="2d">
+      <div class="fallback" id="fallback" role="img" aria-label="Preview of your camper"></div>
+      <canvas id="gl" aria-label="3D preview of your camper. Drag to rotate."></canvas>
+      <i class="crop tl"></i><i class="crop tr"></i>
+      <div class="stage-tag"><b>Varde V1</b><span><i id="tag-dot"></i><span id="tag-text">Lichen</span></span></div>
+      <div class="views" role="group" aria-label="Preview">
+        <button type="button" data-view="ext" aria-pressed="true">Exterior</button>
+        <button type="button" data-view="int" aria-pressed="false">Interior</button>
+        <button type="button" data-view="plan" aria-pressed="false">Plan</button>
+      </div>
+      <p class="hint">Drag to rotate</p>
+      <dl class="stats" id="stats"></dl>
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    </div>
+    <div class="panel" id="panel"></div>
+  </div>
+  <div class="bar">
+    <div class="bar-what"><p class="kicker">Your Varde V1 · <span data-code></span></p><p class="bar-chips" id="bar-chips"></p></div>
+    <div class="bar-price"><span class="delta" id="delta" aria-hidden="true"></span><b data-total>€64,900</b><small><span data-monthly></span> / month · handover <span data-handover></span></small></div>
+    <button class="btn btn-primary" type="button" data-reserve>Reserve this build</button>
+  </div>
+  <p class="sr" aria-live="polite" id="live"></p>
+</section>
+
+<section class="sec" id="standard">
+  <div class="sec-h">
+    <p class="kicker">Included in the €64,900 base price</p>
+    <h2 class="disp">Before you tick <em>a single box</em></h2>
+    <p>Every V1 leaves the workshop ready for a February night at altitude. The options above change how you travel. None of them are needed to make the van work.</p>
+  </div>
+  <ul class="specs">
+    <li><b>170<sup>HP</sup></b><span>Drivetrain</span><p>2.0 l turbodiesel, eight-speed automatic and selectable all-wheel drive.</p></li>
+    <li><b>−15<sup>°C</sup></b><span>Four-season shell</span><p>Wool and cork insulation with a 2 kW diesel heater, tested to fifteen below.</p></li>
+    <li><b>100<sup>AH</sup></b><span>House power</span><p>Lithium battery that charges while you drive, plus a 230 V hook-up.</p></li>
+    <li><b>60<sup>L</sup></b><span>Fresh water</span><p>Frost-protected tank, pressure pump and an outdoor shower point at the rear.</p></li>
+    <li><b>40<sup>L</sup></b><span>Galley</span><p>Compressor fridge, twin-burner hob and a steel sink in every layout.</p></li>
+    <li><b>360<sup>°</sup></b><span>Cab</span><p>Swivel front seats and fitted blackout blinds for every window.</p></li>
+    <li><b>3.5<sup>T</sup></b><span>Licence</span><p>Plated at 3,500 kg, so it drives on a standard car licence.</p></li>
+    <li><b>5<sup>YR</sup></b><span>Warranty</span><p>Covers the whole conversion and transfers to the next owner.</p></li>
+  </ul>
+</section>
+
+<section class="sec dark" id="process">
+  <canvas class="topo" data-seed="12" data-tone="light" aria-hidden="true"></canvas>
+  <div class="sec-h" style="position:relative">
+    <p class="kicker">How it works</p>
+    <h2 class="disp">Deposit to <em>driveway</em></h2>
+    <p>A varde is the stone cairn that marks a Norwegian mountain trail. Four of them stand between you and the keys.</p>
+  </div>
+  <ol class="steps4">
+    <li><h3>Configure</h3><p>Build the van on this page. Your link saves the exact spec, so you can send it to whoever needs convincing.</p><small>About 3 minutes</small></li>
+    <li><h3>Reserve</h3><p>A €1,000 deposit holds your build slot and fixes the price. It is fully refundable for 14 days.</p><small>€1,000 · refundable</small></li>
+    <li><h3>Build</h3><p>One team builds your van from bare metal to final polish. You get photos from the workshop floor every Friday.</p><small>12 to 18 weeks</small></li>
+    <li><h3>Handover</h3><p>Spend half a day with the person who built it, learning every valve and switch. Or we deliver it to your door.</p><small>Workshop or delivered</small></li>
+  </ol>
+</section>
+
+<section class="sec" id="faq">
+  <div class="faq">
+    <div><p class="kicker" style="margin-bottom:14px">Questions</p><h2 class="disp">Asked at every open day</h2></div>
+    <div>
+      <details open><summary>Can I change the spec after I reserve?</summary><p>Yes. Everything stays editable until the second week of your build, when we cut the roof and order the furniture panels. After that, add-ons can still be fitted, but roof and layout are fixed.</p></details>
+      <details><summary>Is the price on this page the final price?</summary><p>It is. The total includes VAT, registration and a full tank. Delivery to your door is quoted separately by distance. Collection from the workshop is free.</p></details>
+      <details><summary>Why can’t I have a roof rack on the Pop-Top?</summary><p>The elevating roof is rated for its own bed and two sleepers, not for cargo. Solar panels are fine because we use lightweight units bonded straight to the lid.</p></details>
+      <details><summary>Can I finance it?</summary><p>Yes. The monthly figure in the configurator assumes a 20% deposit over 84 months at 6.9% APR representative. We confirm a personal quote before you commit to anything.</p></details>
+      <details><summary>Can I see one before I order?</summary><p>The workshop is open on the first Saturday of every month, with one van in each roof type to climb around in. Bring the dog.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="sec dark">
+  <canvas class="topo" data-seed="31" data-tone="light" aria-hidden="true"></canvas>
+  <div class="closing">
+    <div>
+      <p class="kicker">Build <span data-code></span></p>
+      <h2 class="disp" style="margin-top:12px">Your V1, <em>as it stands</em></h2>
+      <p class="closing-sum" id="closing-sum"></p>
+      <div class="closing-row"><b data-total>€64,900</b><button class="btn btn-primary" type="button" data-reserve>Reserve this build</button><a class="btn" href="#build">Keep editing</a></div>
+    </div>
+    <div class="closing-fig" id="closing-fig"></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <a class="logo" href="#top" aria-label="Varde Vanworks — back to top">
+    <svg viewBox="0 0 28 28" aria-hidden="true"><g fill="currentColor"><rect x="2.5" y="18.4" width="23" height="7.2" rx="3.6"/><rect x="6.4" y="10.8" width="15" height="6.2" rx="3.1" transform="rotate(-4 14 14)"/><rect x="10.2" y="3.6" width="8" height="5.6" rx="2.8" transform="rotate(6 14 6)"/></g></svg>
+    <span>VARDE<small>Vanworks</small></span>
+  </a>
+  <p>Prices include VAT and are shown for illustration. Finance example: 20% deposit, 84 months, 6.9% APR representative. Heights are measured unladen with the roof closed.</p>
+</footer>
+
+<dialog id="reserve" aria-labelledby="rs-h">
+  <form class="rs" id="rs-form" novalidate>
+    <button type="button" class="rs-x" data-close aria-label="Close">×</button>
+    <div class="rs-fig" id="rs-fig"></div>
+    <p class="kicker">Build <span data-code></span></p>
+    <h3 id="rs-h">Hold this build slot</h3>
+    <p class="rs-sum" id="rs-sum"></p>
+    <label>Name<input name="name" required autocomplete="name"></label>
+    <label>Email<input name="email" type="email" required autocomplete="email"></label>
+    <label>Handover<select name="handover"><option>Collect from the workshop</option><option>Deliver to my door</option></select></label>
+    <button class="btn btn-primary" type="submit">Request deposit link</button>
+    <p class="fine">The €1,000 deposit is fully refundable for 14 days. Your spec stays editable until build week two.</p>
+  </form>
+  <div class="rs rs-done" id="rs-done" hidden>
+    <button type="button" class="rs-x" data-close aria-label="Close">×</button>
+    <p class="kicker">Build <span data-code></span></p>
+    <h3>Slot held</h3>
+    <p id="rs-msg"></p>
+    <button class="btn" type="button" data-close>Back to the van</button>
+  </div>
+</dialog>
+
+<noscript><p style="padding:24px;font-family:sans-serif">The configurator needs JavaScript to draw and price your van.</p></noscript>
+
+<script>
+(function(){
+'use strict';
+
+/* ================= data ================= */
+var BASE = 64900;
+var B = function(k,x0,x1,z0,z1,h,y,o){ var b={k:k,x0:x0,x1:x1,z0:z0,z1:z1,h:h,y:y||0}; if(o) for(var i in o) b[i]=o[i]; return b; };
+var DATA = {
+  paint: [
+    {id:'bone',   name:'Bone',    hex:'#e8e2d2', price:0,    fin:'solid',    finish:'Solid'},
+    {id:'glacier',name:'Glacier', hex:'#b4c3c4', price:0,    fin:'solid',    finish:'Solid'},
+    {id:'lichen', name:'Lichen',  hex:'#8f9c7a', price:0,    fin:'solid',    finish:'Solid'},
+    {id:'dune',   name:'Dune',    hex:'#c8a26b', price:950,  fin:'solid',    finish:'Solid'},
+    {id:'ember',  name:'Ember',   hex:'#cf4f24', price:950,  fin:'solid',    finish:'Solid'},
+    {id:'fjord',  name:'Fjord',   hex:'#2c5a72', price:1250, fin:'metallic', finish:'Metallic'},
+    {id:'spruce', name:'Spruce',  hex:'#223a2f', price:1250, fin:'metallic', finish:'Metallic'},
+    {id:'basalt', name:'Basalt',  hex:'#34383a', price:1900, fin:'matte',    finish:'Satin matte', weeks:1}
+  ],
+  roof: [
+    {id:'fixed', name:'Low Line', price:0, weeks:0, berths:0, top:1.99,
+      desc:'The standard steel roof. Low enough for car parks, ferries and height barriers.', tags:['1.38 m headroom','Lowest overall height']},
+    {id:'pop', name:'Pop-Top', price:6900, weeks:3, berths:2, top:2.08,
+      desc:'Elevating roof with a second double bed. Up in ten seconds, flat again for the drive.', tags:['+2 berths','2.10 m standing, raised']},
+    {id:'high', name:'High Line', price:4300, weeks:2, berths:0, top:2.41,
+      desc:'Moulded high roof with standing room all day and overhead lockers front to back.', tags:['1.92 m standing','Extra storage']}
+  ],
+  layout: [
+    {id:'weekender', name:'Weekender', price:0, weeks:0, seats:4, sleeps:2,
+      desc:'Rear bench folds flat into a double. Side galley and wardrobe.',
+      blocks:[
+        B('tall',-2.62,-1.02,-.88,-.42,1.15,0,{label:'Wardrobe'}),
+        B('cabinet',-.95,.5,-.88,-.42,.84,0,{label:'Galley'}),
+        B('sink',-.62,-.28,-.8,-.52,.02,.84), B('hob',-.05,.35,-.8,-.52,.015,.84),
+        B('ply',-2.62,-1.72,-.36,.88,.4,0), B('mattress',-2.6,-1.76,-.34,.86,.1,.4,{label:'Boot bed'}),
+        B('ply',-1.72,-1.02,-.36,.88,.3,0), B('cushion',-1.6,-1.02,-.36,.88,.14,.3,{label:'Bench'}),
+        B('cushion',-1.75,-1.59,-.36,.88,.56,.44),
+        B('table',-.82,-.34,.02,.56,.04,.68)
+      ]},
+    {id:'crew', name:'Crew', price:4600, weeks:1, seats:5, sleeps:3,
+      desc:'Belted three-seat second row, a fixed double in the back, galley in between.',
+      blocks:[
+        B('ply',-.4,.15,-.88,.3,.3,0), B('cushion',-.26,.15,-.88,.3,.14,.3,{label:'3-seat bench'}), B('cushion',-.42,-.26,-.88,.3,.58,.44),
+        B('cabinet',-1.45,-.62,-.88,-.42,.84,0,{label:'Galley'}),
+        B('sink',-1.38,-1.08,-.8,-.52,.02,.84), B('hob',-.98,-.7,-.8,-.52,.015,.84),
+        B('ply',-2.62,-1.5,-.88,.88,.5,0), B('mattress',-2.6,-1.52,-.86,.86,.14,.5,{label:'Double bed'}),
+        B('pillow',-2.52,-2.2,-.76,-.1,.08,.64), B('pillow',-2.52,-2.2,.1,.76,.08,.64),
+        B('ply',-1.42,-.72,.5,.88,.32,0), B('cushion',-1.42,-.72,.5,.88,.1,.32,{label:'Locker'})
+      ]},
+    {id:'longhaul', name:'Long Haul', price:7800, weeks:2, seats:2, sleeps:2,
+      desc:'Fixed bed over a gear garage, full-length galley and a fridge tower. For months, not weekends.',
+      blocks:[
+        B('ply',-2.62,-1.22,-.88,.88,.78,0), B('mattress',-2.6,-1.24,-.86,.86,.16,.78,{label:'Fixed bed · garage under'}),
+        B('pillow',-2.5,-1.98,-.8,-.44,.09,.94), B('pillow',-1.9,-1.38,-.8,-.44,.09,.94),
+        B('cabinet',-1.18,.5,-.88,-.42,.84,0,{label:'Galley'}),
+        B('sink',-.95,-.6,-.8,-.52,.02,.84), B('hob',-.2,.2,-.8,-.52,.015,.84),
+        B('tall',-1.18,-.64,.42,.88,1.2,0,{label:'Fridge'}),
+        B('table',0,.5,.14,.62,.04,.68,{label:'Table'})
+      ]},
+    {id:'hauler', name:'Gear Hauler', price:3200, weeks:0, seats:2, sleeps:2,
+      desc:'Open bay with floor rails for bikes and boards, a fold-down bed and a workbench.',
+      blocks:[
+        B('cabinet',-.5,.5,-.88,-.45,.84,0,{label:'Galley'}),
+        B('sink',-.42,-.12,-.8,-.54,.02,.84), B('hob',.05,.38,-.8,-.54,.015,.84),
+        B('mattress',-2.55,-.65,-.88,-.76,.95,.42,{label:'Fold-down bed',ly:.2}),
+        B('cabinet',-2.62,-1.55,.46,.88,.8,0,{label:'Workbench'}),
+        B('steel',-2.6,-.6,-.32,-.28,.012,0), B('steel',-2.6,-.6,.12,.16,.012,0),
+        B('bike',-2.45,-.75,-.33,-.27,1,.012,{c:'#e4572e'}), B('bike',-2.45,-.75,.11,.17,1,.012,{c:'#e8e2d2',flip:1}),
+        B('crate',-1.42,-.94,.5,.86,.3,0,{c:'#59624a'}), B('crate',-1.4,-.96,.52,.84,.26,.3,{c:'#e4572e'})
+      ]}
+  ],
+  addons: [
+    {id:'solar',  group:'Power & shelter', name:'Solar array 360 W', price:1850, desc:'Two 180 W panels and an MPPT controller. Roughly doubles your time off-grid.'},
+    {id:'awning', group:'Power & shelter', name:'Side awning 2.5 m', price:1150, desc:'Wind-out awning over the sliding door. Shade or rain cover in under a minute.'},
+    {id:'rack',   group:'Carry', name:'Roof rack & rear ladder', price:1450, desc:'Aluminium platform rated to 120 kg, with a door-mounted ladder.', notRoof:'pop', warn:'Not available with the Pop-Top roof'},
+    {id:'bikes',  group:'Carry', name:'Rear bike carrier', price:890, desc:'Hitch-mounted rack for two bikes. E-bike rated, and tilts clear of the doors.'},
+    {id:'spare',  group:'Carry', name:'Spare wheel & jerry can', price:1250, desc:'Full-size spare and a 20 l can carried on the rear doors.'},
+    {id:'terrain',group:'Trail', name:'All-terrain pack', price:3900, desc:'40 mm lift, all-terrain tyres on steel wheels, skid plate, arch flares and raised air intake.'},
+    {id:'winch',  group:'Trail', name:'Recovery bar & winch', price:2150, desc:'Steel front bar with a 4.5-tonne electric winch and rated recovery points.'},
+    {id:'lights', group:'Trail', name:'Roof light bar', price:640, desc:'LED bar above the windscreen, wired to a switch on the dash.'}
+  ]
+};
+var PRESETS = [
+  {name:'Dawn Patrol', line:'Friday-night escapes, two bikes on the back', cfg:{paint:'ember', roof:'fixed', layout:'weekender', addons:['awning','bikes']}},
+  {name:'Whole Crew',  line:'Five seats, five berths, one school holiday', cfg:{paint:'fjord', roof:'pop', layout:'crew', addons:['solar','awning','bikes']}},
+  {name:'Far North',   line:'Self-sufficient for a week past the tarmac', cfg:{paint:'basalt', roof:'high', layout:'longhaul', addons:['solar','rack','terrain','winch','lights','spare']}}
+];
+
+/* shared geometry: side profile in metres (x forward, y up) */
+var PROFILE = [['M',-2.72,.40],['L',-2.75,.55],['L',-2.75,1.85],['Q',-2.75,2.02,-2.58,2.02],['L',1.0,2.02],['Q',1.2,2.02,1.32,1.9],['L',1.98,1.22],['Q',2.05,1.13,2.2,1.1],['L',2.52,1.02],['Q',2.68,.98,2.68,.8],['L',2.68,.5],['Q',2.68,.4,2.58,.4]];
+var HIGH = [['M',-2.72,1.98],['L',-2.71,2.28],['Q',-2.71,2.44,-2.54,2.44],['L',.2,2.44],['Q',.48,2.44,.62,2.3],['L',.96,1.98]];
+function roundPoly(p,r){
+  var n=p.length,out=[];
+  for(var i=0;i<n;i++){
+    var a=p[(i+n-1)%n],b=p[i],c=p[(i+1)%n];
+    var l1=Math.hypot(a[0]-b[0],a[1]-b[1]),l2=Math.hypot(c[0]-b[0],c[1]-b[1]);
+    var s=[b[0]+(a[0]-b[0])/l1*r,b[1]+(a[1]-b[1])/l1*r],e=[b[0]+(c[0]-b[0])/l2*r,b[1]+(c[1]-b[1])/l2*r];
+    out.push([i?'L':'M',s[0],s[1]],['Q',b[0],b[1],e[0],e[1]]);
+  }
+  return out;
+}
+var box4=function(x0,y0,x1,y1){return [[x0,y0],[x1,y0],[x1,y1],[x0,y1]];};
+var WINDOWS = {
+  cab: roundPoly([[.78,1.22],[1.83,1.22],[1.25,1.84],[.78,1.84]],.07),
+  mid: roundPoly(box4(-.52,1.22,.6,1.84),.07),
+  rear: roundPoly(box4(-1.95,1.22,-.68,1.84),.07)
+};
+
+/* ================= state ================= */
+var DEFAULT = {paint:'lichen', roof:'fixed', layout:'weekender', addons:[]};
+var state = {paint:DEFAULT.paint, roof:DEFAULT.roof, layout:DEFAULT.layout, addons:new Set(), view:'ext'};
+var subs = [];
+var reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+var $ = function(s,r){return (r||document).querySelector(s);};
+var $$ = function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
+var get = function(k,id){return DATA[k].find(function(o){return o.id===id;});};
+var fmt = function(n){return '€'+Math.round(n).toLocaleString('en-GB');};
+var plus = function(n){return n? '+ '+fmt(n) : 'Included';};
+var r1 = function(v){return Math.round(v*10)/10;};
+function emit(ch){ subs.forEach(function(f){ try{ f(state,ch); }catch(e){ console.error(e); } }); }
+
+function quote(s){
+  s = s||state;
+  var A = s.addons instanceof Set ? s.addons : new Set(s.addons);
+  var p=get('paint',s.paint), r=get('roof',s.roof), l=get('layout',s.layout);
+  var adds = DATA.addons.filter(function(a){return A.has(a.id);});
+  var total = BASE+p.price+r.price+l.price+adds.reduce(function(t,a){return t+a.price;},0);
+  var weeks = 12+r.weeks+l.weeks+(p.weeks||0)+(adds.length>=4?1:0);
+  var d = new Date(); d.setDate(d.getDate()+weeks*7);
+  var i=.069/12, n=84, monthly = total*.8*i/(1-Math.pow(1+i,-n));
+  var extra = Math.max(A.has('rack')&&s.roof!=='pop'?.14:0, A.has('solar')?.05:0, A.has('lights')&&s.roof==='fixed'?.09:0);
+  var height = r.top+(A.has('terrain')?.07:0)+extra;
+  var code = DATA.paint.indexOf(p) | DATA.roof.indexOf(r)<<3 | DATA.layout.indexOf(l)<<5;
+  DATA.addons.forEach(function(a,k){ if(A.has(a.id)) code |= 1<<(7+k); });
+  return {paint:p, roof:r, layout:l, adds:adds, total:total, weeks:weeks, monthly:monthly, height:height,
+    handover:d.toLocaleDateString('en-GB',{month:'long',year:'numeric'}), handoverShort:d.toLocaleDateString('en-GB',{month:'short',year:'numeric'}),
+    sleeps:l.sleeps+r.berths, seats:l.seats, offgrid:A.has('solar')?5:2,
+    code:'V1-'+('0000'+code.toString(36).toUpperCase()).slice(-4)};
+}
+
+/* ================= 2D drawings (presets, option icons, fallback preview) ================= */
+function vanSVG(cfg){
+  var A = cfg.addons instanceof Set ? cfg.addons : new Set(cfg.addons||[]);
+  var terrain=A.has('terrain'), lift=terrain?.07:0, wr=terrain?.42:.37, roof=cfg.roof;
+  var X=function(x){return r1(330+x*100);}, Y=function(y){return r1(262-(y+lift)*100);};
+  var col=get('paint',cfg.paint).hex, ink='#17211c', glass='#22302f', trim='#262b28', sig='#e4572e', olive='#59624a';
+  var light = lum(col)>.42;
+  var P=function(c){return c.map(function(k){return k[0]==='Q'?'Q'+X(k[1])+' '+Y(k[2])+' '+X(k[3])+' '+Y(k[4]):k[0]+X(k[1])+' '+Y(k[2]);}).join('')+'Z';};
+  var R=function(x0,y0,x1,y1,f,rx,ex){return '<rect x="'+X(x0)+'" y="'+Y(y1)+'" width="'+r1((x1-x0)*100)+'" height="'+r1((y1-y0)*100)+'" rx="'+(rx||0)+'" fill="'+f+'" '+(ex||'')+'/>';};
+  var ST='stroke="'+ink+'" stroke-width="1.6" stroke-linejoin="round"';
+  var roofY = roof==='high'?2.44:2.02, onTop = roof!=='pop' && (A.has('rack')||A.has('solar'));
+  var topM = roof==='pop'?3.14:roof==='high'?2.5:2.1; if(onTop) topM += A.has('rack')?.36:.06; else if(A.has('lights')&&roof==='fixed') topM=2.16;
+  var x0 = A.has('bikes')?-48:(A.has('spare')||A.has('rack'))?22:38, x1 = A.has('winch')?634:614, y0 = Y(topM)-4;
+  var s='<svg viewBox="'+x0+' '+y0+' '+(x1-x0)+' '+r1(277-y0)+'" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">';
+  s+='<ellipse cx="'+r1((x0+x1)/2)+'" cy="264" rx="'+r1((x1-x0)/2-10)+'" ry="7" fill="rgba(23,33,28,.13)"/>';
+  if(A.has('bikes')){
+    s+=R(-3.55,.44,-2.7,.5,trim,2)+R(-3.335,.5,-3.295,1.42,trim,1);
+    [-3.2,-3.43].forEach(function(bx,i){ s+=R(bx-.028,.53,bx+.028,1.2,ink,3)+R(bx-.034,.9,bx+.034,1.4,i?'#e8e2d2':sig,3,ST)+R(bx-.1,1.4,bx+.1,1.45,ink,2); });
+  }
+  if(A.has('spare')) s+=R(-2.99,.73,-2.74,1.47,ink,11)+R(-2.92,.78,-2.74,1.24,olive,4,ST);
+  if(A.has('rack')&&roof!=='pop') s+=R(-2.83,.62,-2.79,roofY+.08,trim,1);
+  if(roof==='high') s+='<path d="'+P(HIGH)+'" fill="'+col+'" '+ST+'/>'+R(-1.7,2.12,-.5,2.31,glass,7);
+  s+='<path d="'+P(PROFILE)+'" fill="'+col+'" '+ST+'/>';
+  if(roof==='pop'){
+    var hx=X(-2.4), hy=Y(2.02), a=17.2*Math.PI/180, L=322, fx=r1(hx+L*Math.cos(a)), fy=r1(hy-L*Math.sin(a)), H=hy-fy;
+    s+='<path d="M'+hx+' '+hy+'L'+fx+' '+fy+'L'+fx+' '+hy+'Z" fill="'+sig+'" '+ST+'/>';
+    s+='<path d="M'+r1(hx+.5*(fx-hx))+' '+r1(hy-.1*H)+'L'+r1(hx+.9*(fx-hx))+' '+r1(hy-.1*H)+'L'+r1(hx+.9*(fx-hx))+' '+r1(hy-.66*H)+'L'+r1(hx+.5*(fx-hx))+' '+r1(hy-.36*H)+'Z" fill="#2c2f2b" opacity=".85"/>';
+    s+='<g transform="rotate(-17.2 '+hx+' '+hy+')"><rect x="'+hx+'" y="'+(hy-8)+'" width="326" height="8" rx="3" fill="'+col+'" '+ST+'/>';
+    if(A.has('solar')) s+='<rect x="'+(hx+120)+'" y="'+(hy-13)+'" width="200" height="5" rx="1" fill="#16223a"/>';
+    s+='</g>';
+  }
+  s+='<path d="'+P(WINDOWS.cab)+'" fill="'+glass+'"/><path d="'+P(WINDOWS.mid)+'" fill="'+glass+'"/><path d="'+P(WINDOWS.rear)+'" fill="'+glass+'"/>';
+  s+='<path d="M'+X(.69)+' '+Y(.62)+'V'+Y(1.95)+'M'+X(-.6)+' '+Y(.62)+'V'+Y(1.95)+'M'+X(-2.0)+' '+Y(1.12)+'H'+X(-.6)+'" fill="none" stroke="'+ink+'" stroke-opacity=".32" stroke-width="1.2"/>';
+  s+=R(.44,1.07,.58,1.1,trim,1)+R(.8,1.07,.94,1.1,trim,1);
+  s+='<text x="'+X(.08)+'" y="'+Y(.72)+'" text-anchor="middle" font-family="Avenir Next Condensed,Bahnschrift,Arial Narrow,sans-serif" font-weight="700" font-size="17" letter-spacing="6" fill="'+(light?ink:'#ebe6d9')+'" opacity=".82">VARDE</text>';
+  s+=R(-2.7,.39,2.45,.6,trim,2)+R(2.39,.38,2.73,.72,trim,7)+R(-2.82,.37,-2.62,.63,trim,5);
+  s+=R(2.56,.84,2.69,.97,'#f7e7b8',3,ST)+R(-2.77,1.05,-2.72,1.55,'#b3261a',2)+R(1.66,1.22,1.78,1.42,trim,4);
+  [1.72,-1.45].forEach(function(ax){
+    s+='<path d="M'+X(ax-.47)+' '+Y(.4)+'A47 47 0 0 1 '+X(ax+.47)+' '+Y(.4)+'Z" fill="#0d100e"/>';
+    if(terrain) s+='<path d="M'+X(ax-.5)+' '+Y(.42)+'A50 50 0 0 1 '+X(ax+.5)+' '+Y(.42)+'" fill="none" stroke="'+trim+'" stroke-width="8" stroke-linecap="round"/>';
+    var cx=r1(330+ax*100), cy=r1(262-wr*100);
+    s+='<circle cx="'+cx+'" cy="'+cy+'" r="'+r1(wr*100)+'" fill="#171a18"/>';
+    if(terrain) s+='<circle cx="'+cx+'" cy="'+cy+'" r="'+r1(wr*100)+'" fill="none" stroke="#171a18" stroke-width="5" stroke-dasharray="6 5"/>';
+    s+='<circle cx="'+cx+'" cy="'+cy+'" r="'+r1(wr*60)+'" fill="'+(terrain?'#2a2e2c':'#c9cbc6')+'" stroke="'+ink+'" stroke-width="1.4"/><circle cx="'+cx+'" cy="'+cy+'" r="6" fill="'+(terrain?sig:ink)+'"/>';
+  });
+  if(terrain) s+='<path d="M'+X(2.2)+' '+Y(.37)+'L'+X(2.68)+' '+Y(.45)+'" stroke="#b9bdbb" stroke-width="4" stroke-linecap="round"/>';
+  if(A.has('winch')) s+=R(2.72,.43,2.88,.69,trim,4)+'<path d="M'+X(2.82)+' '+Y(.69)+'L'+X(2.8)+' '+Y(1.0)+'" stroke="'+trim+'" stroke-width="6" stroke-linecap="round"/><circle cx="'+X(2.91)+'" cy="'+Y(.49)+'" r="4.5" fill="'+sig+'"/>';
+  if(A.has('awning')) s+=R(-1.85,1.9,.65,2.0,trim,5)+R(-1.78,1.94,.58,1.96,'#ded5bd',1);
+  if(A.has('lights')) s+=R(.965,2.04,1.035,2.11,trim,2)+R(1.03,2.055,1.046,2.095,'#ffe9a8',1);
+  if(roof!=='pop'){
+    var xa=-2.54;
+    if(A.has('solar')) s+=R(roof==='high'?-1.4:-1.08,roofY+.02,roof==='high'?.36:.88,roofY+.065,'#16223a',1);
+    if(A.has('rack')) s+=R(xa,roofY+.08,xa+1.05,roofY+.11,trim,1)+R(xa+.04,roofY,xa+.08,roofY+.08,trim)+R(xa+.97,roofY,xa+1.01,roofY+.08,trim)+R(xa+.2,roofY+.11,xa+.82,roofY+.35,olive,5,ST)+R(xa+.3,roofY+.2,xa+.72,roofY+.24,sig);
+  }
+  return s+'</svg>';
+}
+function lum(hex){ var n=parseInt(hex.slice(1),16); return (.299*(n>>16&255)+.587*(n>>8&255)+.114*(n&255))/255; }
+
+function planSVG(id,labels){
+  var lay=get('layout',id), ink='#17211c';
+  var X=function(x){return r1(300+x*100);}, Z=function(z){return r1(115+z*100);};
+  var FILL={cabinet:'#d9bd90',tall:'#2a3530',ply:'#d9bd90',cushion:'#c0603a',mattress:'#f4efe3',pillow:'#fffdf6',table:'#e6cfa8',steel:'#aeb3b0',sink:'#aeb3b0',hob:'#1c2220'};
+  var sw = labels?1.3:2.2;
+  var rect=function(x0,z0,x1,z1,f,rx,ex){return '<rect x="'+X(x0)+'" y="'+Z(z0)+'" width="'+r1((x1-x0)*100)+'" height="'+r1((z1-z0)*100)+'" rx="'+(rx==null?3:rx)+'" fill="'+f+'" stroke="'+ink+'" stroke-width="'+sw+'" '+(ex||'')+'/>';};
+  var s='<svg viewBox="12 6 566 '+(labels?230:218)+'" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">';
+  s+='<path d="M'+X(-2.75)+' '+Z(-.88)+'Q'+X(-2.75)+' '+Z(-.98)+' '+X(-2.65)+' '+Z(-.98)+'L'+X(2.15)+' '+Z(-.98)+'Q'+X(2.68)+' '+Z(-.95)+' '+X(2.68)+' '+Z(-.45)+'L'+X(2.68)+' '+Z(.45)+'Q'+X(2.68)+' '+Z(.95)+' '+X(2.15)+' '+Z(.98)+'L'+X(-2.65)+' '+Z(.98)+'Q'+X(-2.75)+' '+Z(.98)+' '+X(-2.75)+' '+Z(.88)+'Z" fill="#faf7ef" stroke="'+ink+'" stroke-width="'+(labels?2.4:3.2)+'"/>';
+  s+='<path d="M'+X(2.0)+' '+Z(-.9)+'Q'+X(2.16)+' '+Z(0)+' '+X(2.0)+' '+Z(.9)+'" fill="none" stroke="'+ink+'" stroke-width="'+sw+'"/>';
+  s+='<path d="M'+X(-.6)+' '+Z(.98)+'H'+X(.62)+'" stroke="#e4572e" stroke-width="'+(labels?5:7)+'"/>';
+  [-.48,.48].forEach(function(z){ s+=rect(.74,z-.25,1.24,z+.25,'#4a504c',9)+rect(.66,z-.24,.8,z+.24,'#3b403d',5); });
+  s+=rect(1.42,-.9,1.78,.9,'#262b28',5)+'<circle cx="'+X(1.36)+'" cy="'+Z(-.48)+'" r="15" fill="none" stroke="'+ink+'" stroke-width="'+(sw+1.4)+'"/>';
+  var txt='';
+  lay.blocks.forEach(function(b){
+    var cx=X((b.x0+b.x1)/2), cz=Z((b.z0+b.z1)/2);
+    if(b.k==='bike'){
+      s+='<path d="M'+X(b.x0)+' '+cz+'H'+X(b.x1)+'" stroke="'+ink+'" stroke-width="'+(labels?4:5)+'" stroke-linecap="round"/><path d="M'+X(b.x0+.3)+' '+cz+'H'+X(b.x1-.3)+'" stroke="'+b.c+'" stroke-width="2.5"/>';
+      var hx=X(b.flip?b.x0+.2:b.x1-.2); s+='<path d="M'+hx+' '+r1(cz-24)+'V'+r1(cz+24)+'" stroke="'+ink+'" stroke-width="3" stroke-linecap="round"/>';
+    } else if(b.k==='hob'){
+      s+=rect(b.x0,b.z0,b.x1,b.z1,FILL.hob,3)+'<circle cx="'+r1(cx-9)+'" cy="'+cz+'" r="6" fill="none" stroke="#ebe6d9" stroke-width="1.6"/><circle cx="'+r1(cx+9)+'" cy="'+cz+'" r="6" fill="none" stroke="#ebe6d9" stroke-width="1.6"/>';
+    } else if(b.k==='table'){
+      s+=rect(b.x0,b.z0,b.x1,b.z1,FILL.table,12);
+    } else if(b.k==='crate'){
+      s+=rect(b.x0,b.z0,b.x1,b.z1,b.c,3);
+    } else s+=rect(b.x0,b.z0,b.x1,b.z1,FILL[b.k]||'#d9bd90',b.k==='mattress'||b.k==='cushion'||b.k==='pillow'?7:3);
+    if(labels&&b.label){
+      var dark=b.k==='tall'||b.k==='cushion';
+      txt+='<text x="'+cx+'" y="'+r1(cz+3.5+(b.ly||0)*100)+'" text-anchor="middle" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="8.5" letter-spacing=".6" fill="'+(dark?'#f5f1e7':ink)+'">'+b.label.toUpperCase()+'</text>';
+    }
+  });
+  if(labels) txt+='<text x="'+X(0)+'" y="'+r1(Z(.98)+13)+'" text-anchor="middle" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="8.5" letter-spacing="1" fill="#b23c18">SLIDING DOOR</text>';
+  return s+txt+'</svg>';
+}
+
+/* topographic contour lines: a real height field traced with marching squares */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function drawTopo(cv,o){
+  o=o||{};
+  var w=o.w||cv.clientWidth, h=o.h||cv.clientHeight; if(!w||!h) return;
+  var dpr=o.dpr||Math.min(window.devicePixelRatio||1,2);
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  var c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0); c.clearRect(0,0,w,h);
+  var rnd=mulberry32(o.seed||1), S=Math.max(w,h), pk=[], i, j;
+  for(i=0;i<(o.peaks||7);i++) pk.push({x:rnd()*w,y:rnd()*h,s:(.12+rnd()*.22)*S,a:.4+rnd()*.9});
+  var f=function(x,y){ var v=0; for(var k=0;k<pk.length;k++){ var p=pk[k],dx=x-p.x,dy=y-p.y; v+=p.a*Math.exp(-(dx*dx+dy*dy)/(p.s*p.s)); } return v+.06*Math.sin(x*.011+1.3)*Math.cos(y*.013); };
+  var cell=o.cell||8, nx=Math.ceil(w/cell)+1, ny=Math.ceil(h/cell)+1, g=new Float32Array(nx*ny), mn=1e9, mx=-1e9;
+  for(j=0;j<ny;j++) for(i=0;i<nx;i++){ var v=f(i*cell,j*cell); g[j*nx+i]=v; if(v<mn)mn=v; if(v>mx)mx=v; }
+  var L=o.levels||14;
+  for(var l=0;l<L;l++){
+    var t=mn+(l+.5)*(mx-mn)/L; c.beginPath();
+    for(j=0;j<ny-1;j++) for(i=0;i<nx-1;i++){
+      var a=g[j*nx+i], b=g[j*nx+i+1], d=g[(j+1)*nx+i], e=g[(j+1)*nx+i+1], pts=[];
+      if((a>t)!==(b>t)) pts.push((i+(t-a)/(b-a))*cell, j*cell);
+      if((b>t)!==(e>t)) pts.push((i+1)*cell, (j+(t-b)/(e-b))*cell);
+      if((d>t)!==(e>t)) pts.push((i+(t-d)/(e-d))*cell, (j+1)*cell);
+      if((a>t)!==(d>t)) pts.push(i*cell, (j+(t-a)/(d-a))*cell);
+      for(var k=0;k+3<pts.length;k+=4){ c.moveTo(pts[k],pts[k+1]); c.lineTo(pts[k+2],pts[k+3]); }
+    }
+    c.strokeStyle = l%4===0 ? (o.bold||'rgba(23,33,28,.2)') : (o.stroke||'rgba(23,33,28,.1)');
+    c.lineWidth = l%4===0 ? 1.1 : .8; c.lineCap='round'; c.stroke();
+  }
+}
+function paintTopos(){
+  $$('canvas.topo').forEach(function(cv){
+    var lightTone = cv.dataset.tone==='light';
+    drawTopo(cv,{seed:+cv.dataset.seed, levels:15, stroke:lightTone?'rgba(235,230,217,.07)':'rgba(23,33,28,.1)', bold:lightTone?'rgba(235,230,217,.14)':'rgba(23,33,28,.2)'});
+  });
+}
+
+/* ================= build the page ================= */
+function renderPresets(){
+  $('#presets').innerHTML = PRESETS.map(function(p,i){
+    var q=quote(p.cfg);
+    return '<button type="button" class="preset" data-preset="'+i+'">'+vanSVG(p.cfg)+'<span><b>'+p.name+'</b><i>'+p.line+'</i><u>'+fmt(q.total)+'<span>Load build →</span></u></span></button>';
+  }).join('');
+}
+function renderPanel(){
+  var h='';
+  h+='<section class="step" role="group" aria-labelledby="s1"><header class="step-h"><span class="step-n">01</span><h3 id="s1">Paint</h3><span class="step-v" data-v="paint"></span></header>'+
+     '<p class="step-note">Eight colours mixed for dust, salt and low sun. Three are included in the base price.</p><div class="chips">'+
+     DATA.paint.map(function(p){return '<label class="chip" style="--c:'+p.hex+'"><input type="radio" name="paint" value="'+p.id+'"><span class="chip-sw"></span><span class="chip-name">'+p.name+'</span><span class="chip-meta">'+(p.price?'+ '+fmt(p.price):'Included')+'</span></label>';}).join('')+'</div></section>';
+  h+='<section class="step" role="group" aria-labelledby="s2"><header class="step-h"><span class="step-n">02</span><h3 id="s2">Roof</h3><span class="step-v" data-v="roof"></span></header>'+
+     '<p class="step-note">The roof decides how many people sleep in the van and which barriers you can drive under.</p><div class="opts">'+
+     DATA.roof.map(function(r){return '<label class="opt roof"><input type="radio" name="roof" value="'+r.id+'"><span class="opt-fig" data-roof-fig="'+r.id+'"></span><span><b>'+r.name+'</b><span class="opt-d">'+r.desc+'</span><span class="opt-tags">'+r.tags.map(function(t){return '<i>'+t+'</i>';}).join('')+'</span></span><span class="opt-p'+(r.price?'':' inc')+'">'+plus(r.price)+'</span></label>';}).join('')+'</div></section>';
+  h+='<section class="step" role="group" aria-labelledby="s3"><header class="step-h"><span class="step-n">03</span><h3 id="s3">Layout</h3><span class="step-v" data-v="layout"></span></header>'+
+     '<p class="step-note">Four floor plans in birch ply and wool felt. The preview switches to a cutaway so you can see each one.</p><div class="opts two">'+
+     DATA.layout.map(function(l){return '<label class="opt lay"><input type="radio" name="layout" value="'+l.id+'"><span class="opt-fig">'+planSVG(l.id,false)+'</span><span><span class="opt-top"><b>'+l.name+'</b><span class="opt-p'+(l.price?'':' inc')+'">'+plus(l.price)+'</span></span><span class="opt-d">'+l.desc+'</span><span class="opt-tags"><i>'+l.seats+' seats</i><i>Sleeps '+l.sleeps+'</i></span></span></label>';}).join('')+'</div></section>';
+  var groups=[]; DATA.addons.forEach(function(a){ if(groups.indexOf(a.group)<0) groups.push(a.group); });
+  h+='<section class="step" role="group" aria-labelledby="s4"><header class="step-h"><span class="step-n">04</span><h3 id="s4">Add-ons</h3><span class="step-v" data-v="addons"></span></header>'+
+     '<p class="step-note">Fitted in the workshop during your build. Everything here can also be added later.</p>'+
+     groups.map(function(g){return '<p class="sub">'+g+'</p><div class="opts">'+DATA.addons.filter(function(a){return a.group===g;}).map(function(a){
+       return '<label class="opt add" data-addon="'+a.id+'"><input type="checkbox" name="addon" value="'+a.id+'"><span class="box"></span><span><b>'+a.name+'</b><span class="opt-d">'+a.desc+'</span>'+(a.warn?'<span class="opt-warn">'+a.warn+'</span>':'')+'</span><span class="opt-p">+ '+fmt(a.price)+'</span></label>';}).join('')+'</div>';}).join('')+'</section>';
+  h+='<section class="step" aria-labelledby="s5"><header class="step-h"><span class="step-n">05</span><h3 id="s5">Your build</h3><span class="step-v" data-code></span></header>'+
+     '<p class="step-note">Itemised, VAT included. Nothing is added at checkout.</p><div class="sheet" id="sheet"></div><dl class="glance" id="glance"></dl>'+
+     '<div class="actions"><button class="btn btn-primary" type="button" data-reserve>Reserve this build</button><button class="btn btn-ghost" type="button" id="copy">Copy link</button><button class="btn btn-ghost" type="button" id="reset">Reset</button></div>'+
+     '<p class="fine">A €1,000 refundable deposit holds your build slot and fixes this price. From <span data-monthly></span> a month with 20% down.</p></section>';
+  $('#panel').innerHTML=h;
+}
+
+var shown=null, lastTotal=null, rafId=0, booted=false, toastT=0;
+function paintTotal(){ var t=fmt(shown); $$('[data-total]').forEach(function(el){ el.textContent=t; }); }
+function tweenTotal(to){
+  cancelAnimationFrame(rafId);
+  if(shown===null||reduced){ shown=to; paintTotal(); return; }
+  var from=shown, t0=performance.now();
+  (function step(t){ var p=Math.min(1,Math.max(0,(t-t0)/420)), e=1-Math.pow(1-p,3); shown=from+(to-from)*e; paintTotal(); if(p<1) rafId=requestAnimationFrame(step); })(t0);
+}
+function toast(msg){ var el=$('#toast'); el.textContent=msg; el.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(function(){ el.classList.remove('on'); },3800); }
+
+function refresh(){
+  var q=quote(), A=state.addons;
+  $$('#panel input').forEach(function(inp){
+    if(inp.name==='addon'){
+      var a=get('addons',inp.value), off=!!(a.notRoof&&a.notRoof===state.roof);
+      inp.checked=A.has(inp.value); inp.disabled=off; inp.closest('.opt').classList.toggle('off',off);
+    } else inp.checked = state[inp.name]===inp.value;
+  });
+  $('[data-v="paint"]').textContent=q.paint.name+' · '+q.paint.finish;
+  $('[data-v="roof"]').textContent=q.roof.name;
+  $('[data-v="layout"]').textContent=q.layout.name;
+  $('[data-v="addons"]').textContent=q.adds.length? q.adds.length+' selected · '+fmt(q.adds.reduce(function(t,a){return t+a.price;},0)) : 'None yet';
+  $$('[data-roof-fig]').forEach(function(el){ el.innerHTML=vanSVG({paint:state.paint,roof:el.dataset.roofFig,addons:[]}); });
+  $('#tag-dot').style.setProperty('--c',q.paint.hex); $('#tag-text').textContent=q.paint.name+' · '+q.paint.finish;
+  $$('.views button').forEach(function(b){ b.setAttribute('aria-pressed', String(b.dataset.view===state.view)); });
+  $('#stage').dataset.view=state.view;
+
+  var clear = q.height<=2.1 ? '<small>Clears 2.1 m barriers</small>' : '<small class="warn">Needs '+(Math.ceil(q.height*10)/10).toFixed(1)+' m clearance</small>';
+  $('#stats').innerHTML =
+    '<div><dt>Sleeps</dt><dd>'+q.sleeps+'<small>'+(q.roof.berths?'2 of them upstairs':'On the '+(state.layout==='hauler'?'fold-down bed':'main bed'))+'</small></dd></div>'+
+    '<div><dt>Belted seats</dt><dd>'+q.seats+'<small>'+(q.seats>2?'Including the cab':'Cab seats swivel')+'</small></dd></div>'+
+    '<div><dt>Overall height</dt><dd>'+q.height.toFixed(2)+' m'+clear+'</dd></div>'+
+    '<div><dt>Off-grid</dt><dd>'+q.offgrid+' days<small>'+(q.offgrid>2?'With the solar array':'On the house battery')+'</small></dd></div>'+
+    '<div><dt>Handover</dt><dd>'+q.handoverShort+'<small>'+q.weeks+'-week build</small></dd></div>';
+  $('#glance').innerHTML='<div><dt>Sleeps</dt><dd>'+q.sleeps+'</dd></div><div><dt>Seats</dt><dd>'+q.seats+'</dd></div><div><dt>Height</dt><dd>'+q.height.toFixed(2)+' m</dd></div><div><dt>Off-grid</dt><dd>'+q.offgrid+' days</dd></div>';
+
+  var line=function(a,b,cls){return '<div class="line '+(cls||'')+'"><span>'+a+'</span><i></i><em>'+b+'</em></div>';};
+  $('#sheet').innerHTML='<div class="sheet-h"><span>Build sheet</span><span>'+q.code+'</span></div>'+
+    line('Varde V1 base vehicle',fmt(BASE))+
+    line('Paint · '+q.paint.name, q.paint.price?fmt(q.paint.price):'Included', q.paint.price?'':'dim')+
+    line('Roof · '+q.roof.name, q.roof.price?fmt(q.roof.price):'Included', q.roof.price?'':'dim')+
+    line('Layout · '+q.layout.name, q.layout.price?fmt(q.layout.price):'Included', q.layout.price?'':'dim')+
+    q.adds.map(function(a){return line(a.name,fmt(a.price));}).join('')+
+    line('Total incl. VAT','<span data-total>'+fmt(shown===null?q.total:shown)+'</span>','tot')+
+    line('Estimated handover',q.handover,'dim')+line('Finance example','<span>'+fmt(q.monthly)+'</span> / month','dim');
+
+  $('#bar-chips').innerHTML='<span>'+q.paint.name+'</span><span>'+q.roof.name+'</span><span>'+q.layout.name+'</span><span>'+(q.adds.length?q.adds.length+' add-on'+(q.adds.length>1?'s':''):'No add-ons')+'</span>';
+  $$('[data-code]').forEach(function(el){ el.textContent=q.code; });
+  $$('[data-monthly]').forEach(function(el){ el.textContent=fmt(q.monthly); });
+  $$('[data-handover]').forEach(function(el){ el.textContent=q.handoverShort; });
+  $('#closing-sum').textContent=[q.paint.name+' '+q.paint.finish.toLowerCase()+' paint', q.roof.name+' roof', q.layout.name+' layout'].concat(q.adds.map(function(a){return a.name;})).join('  /  ');
+  $('#closing-fig').innerHTML=vanSVG(state);
+  $('#fallback').innerHTML = state.view==='ext' ? vanSVG(state) : planSVG(state.layout,true);
+
+  if(lastTotal!==null && lastTotal!==q.total){
+    var d=q.total-lastTotal, el=$('#delta');
+    el.textContent=(d>0?'+ ':'− ')+fmt(Math.abs(d)); el.classList.toggle('neg',d<0); el.classList.remove('go'); void el.offsetWidth; el.classList.add('go');
+    $('#live').textContent='Total '+fmt(q.total);
+  }
+  lastTotal=q.total; tweenTotal(q.total);
+
+  if(booted){ try{ history.replaceState(null,'',buildHash()); }catch(e){} }
+}
+function buildHash(){
+  return '#b='+[state.paint,state.roof,state.layout,Array.from(state.addons).join('-')].join('.')+(state.view!=='ext'?'&v='+state.view:'');
+}
+
+/* ================= actions ================= */
+function choose(kind,id){
+  if(state[kind]===id) return;
+  state[kind]=id; var note='';
+  if(kind==='roof'&&id==='pop'&&state.addons.has('rack')){ state.addons.delete('rack'); note='Roof rack removed. It can’t be fitted to the Pop-Top.'; }
+  var want = kind==='layout' ? (state.view==='plan'?'plan':'int') : 'ext', viewChanged = state.view!==want;
+  state.view=want; refresh(); emit({type:kind,id:id,viewChanged:viewChanged});
+  if(note) toast(note);
+}
+function toggle(id,on){
+  var a=get('addons',id); if(on&&a.notRoof===state.roof) return;
+  if(on) state.addons.add(id); else state.addons.delete(id);
+  var viewChanged = on && state.view!=='ext'; if(viewChanged) state.view='ext';
+  refresh(); emit({type:'addon',id:id,on:on,viewChanged:viewChanged});
+}
+function setView(v){ if(state.view===v) return; state.view=v; refresh(); emit({type:'view'}); }
+function load(cfg){
+  state.paint=get('paint',cfg.paint)?cfg.paint:DEFAULT.paint;
+  state.roof=get('roof',cfg.roof)?cfg.roof:DEFAULT.roof;
+  state.layout=get('layout',cfg.layout)?cfg.layout:DEFAULT.layout;
+  state.addons=new Set((cfg.addons||[]).filter(function(id){ var a=get('addons',id); return a && a.notRoof!==state.roof; }));
+  state.view = cfg.view||'ext';
+  refresh(); emit({type:'load'});
+}
+function fromHash(){
+  var m=location.hash.match(/b=([\w.-]*)/); if(!m) return null;
+  var p=m[1].split('.'), v=location.hash.match(/v=(ext|int|plan)/);
+  return {paint:p[0], roof:p[1], layout:p[2], addons:(p[3]||'').split('-').filter(Boolean), view:v?v[1]:'ext'};
+}
+
+renderPresets(); renderPanel();
+var start=fromHash(); if(start) load(start); else refresh();
+booted=true;
+paintTopos();
+var rz=0; window.addEventListener('resize',function(){ clearTimeout(rz); rz=setTimeout(paintTopos,180); });
+
+$('#panel').addEventListener('change',function(e){
+  var t=e.target; if(!t.name) return;
+  if(t.name==='addon') toggle(t.value,t.checked); else choose(t.name,t.value);
+});
+$$('.views button').forEach(function(b){ b.addEventListener('click',function(){ setView(b.dataset.view); }); });
+$('#presets').addEventListener('click',function(e){
+  var b=e.target.closest('[data-preset]'); if(!b) return;
+  load(PRESETS[+b.dataset.preset].cfg);
+  $('#build').scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'});
+});
+$('#reset').addEventListener('click',function(){ load(DEFAULT); toast('Back to the base V1.'); });
+$('#copy').addEventListener('click',function(){
+  var url=location.href.split('#')[0]+buildHash(), done=function(){ toast('Link copied. It opens this exact build.'); };
+  if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done,function(){ toast(url); });
+  else toast(url);
+});
+window.addEventListener('hashchange',function(){
+  var c=fromHash(); if(c){ load(c); return; }
+  // an in-page link (#build, #faq) replaced the build hash: put it back once the jump has happened
+  setTimeout(function(){ try{ history.replaceState(null,'',buildHash()); }catch(e){} },0);
+});
+
+/* reserve dialog */
+var dlg=$('#reserve');
+function openReserve(){
+  var q=quote();
+  $('#rs-fig').innerHTML=vanSVG(state);
+  $('#rs-sum').innerHTML='';
+  var sum=$('#rs-sum'), b=document.createElement('b'); b.textContent=fmt(q.total)+' incl. VAT';
+  sum.append(b, document.createElement('br'), [q.paint.name,q.roof.name,q.layout.name].concat(q.adds.map(function(a){return a.name;})).join(' · '), document.createElement('br'), q.weeks+'-week build, handover '+q.handover);
+  $('#rs-form').hidden=false; $('#rs-done').hidden=true;
+  if(dlg.showModal) dlg.showModal(); else dlg.setAttribute('open','');
+}
+function closeReserve(){ if(dlg.close) dlg.close(); else dlg.removeAttribute('open'); }
+document.addEventListener('click',function(e){
+  if(e.target.closest('[data-reserve]')) openReserve();
+  else if(e.target.closest('[data-close]')) closeReserve();
+  else if(e.target===dlg) closeReserve();
+});
+$('#rs-form').addEventListener('submit',function(e){
+  e.preventDefault();
+  var f=e.currentTarget; if(!f.checkValidity()){ f.reportValidity(); return; }
+  var q=quote(), name=f.elements.name.value.trim().split(/\s+/)[0]||'there';
+  $('#rs-msg').textContent='Thanks, '+name+'. Build '+q.code+' is held for 72 hours at '+fmt(q.total)+'. A deposit link is on its way to '+f.elements.email.value.trim()+'.';
+  f.hidden=true; $('#rs-done').hidden=false;
+});
+
+window.VARDE = {DATA:DATA, state:state, on:function(f){subs.push(f);}, get:get, lum:lum, reduced:reduced,
+  PROFILE:PROFILE, HIGH:HIGH, WINDOWS:WINDOWS, roundPoly:roundPoly, drawTopo:drawTopo};
+})();
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { toCreasedNormals } from 'three/addons/utils/BufferGeometryUtils.js';
+
+const V = window.VARDE, stageEl = document.getElementById('stage'), canvas = document.getElementById('gl'), statsEl = document.getElementById('stats');
+try { start(); } catch (err) { console.warn('[varde] 3D preview unavailable, showing the 2D drawing instead.', err); stageEl.dataset.mode = '2d'; }
+
+function start(){
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.NeutralToneMapping;
+  renderer.toneMappingExposure = 1.02;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.localClippingEnabled = true;
+
+  const scene = new THREE.Scene();
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  scene.environmentIntensity = 0.65;
+  const camera = new THREE.PerspectiveCamera(30, 1, 0.5, 90);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xcfc6b2, 0.6));
+  const sun = new THREE.DirectionalLight(0xfff2de, 2.2);
+  sun.position.set(4.5, 9.5, 6.5); sun.castShadow = true;
+  sun.shadow.mapSize.set(2048, 2048);
+  Object.assign(sun.shadow.camera, { left:-7, right:7, top:7, bottom:-7, near:1, far:30 });
+  sun.shadow.camera.updateProjectionMatrix();
+  sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.03;
+  scene.add(sun);
+
+  /* ---------- materials ---------- */
+  const clip = new THREE.Plane(new THREE.Vector3(0, -1, 0), 10);
+  const CP = { clippingPlanes:[clip], clipShadows:true };
+  const std = (color, o = {}, clipped = false) => new THREE.MeshStandardMaterial({ color, roughness:.7, ...o, ...(clipped ? CP : {}) });
+  const M = {
+    paint: new THREE.MeshPhysicalMaterial({ color:0x8f9c7a, roughness:.5, metalness:0, clearcoat:.7, clearcoatRoughness:.3, ...CP }),
+    glass: new THREE.MeshPhysicalMaterial({ color:0x0c1414, roughness:.07, metalness:.75, side:THREE.DoubleSide, ...CP }),
+    trim: std(0x1c201e, { roughness:.78 }, true),
+    seam: new THREE.MeshBasicMaterial({ color:0x000000, transparent:true, opacity:.32, ...CP }),
+    arch: new THREE.MeshBasicMaterial({ color:0x090b0a, side:THREE.DoubleSide }),
+    lamp: std(0xfff3d6, { emissive:0xffe2a8, emissiveIntensity:.7, roughness:.3 }, true),
+    tail: std(0xb3261a, { emissive:0x5a0c06, emissiveIntensity:.6, roughness:.35 }, true),
+    alu: std(0xb9bdbb, { metalness:.85, roughness:.35 }, true),
+    canvas: std(0xd9582b, { roughness:1, side:THREE.DoubleSide }, true),
+    mesh: std(0x2a2d2a, { roughness:1, side:THREE.DoubleSide }, true),
+    oliveC: std(0x59624a, { roughness:.85 }, true),
+    orangeC: std(0xe4572e, { roughness:.8 }, true),
+    liner: std(0xe3dccb, { roughness:.95, side:THREE.BackSide }, true),
+    cap: new THREE.MeshBasicMaterial({ color:0xe4572e }),
+    rubber: std(0x151716, { roughness:.92, side:THREE.DoubleSide }),
+    black: std(0x1b1e1d, { roughness:.6, metalness:.3 }),
+    steel: std(0xb9bdbb, { metalness:.85, roughness:.35 }),
+    alloy: std(0xc6c9c5, { metalness:.9, roughness:.28 }),
+    rimDark: std(0x242827, { metalness:.6, roughness:.5 }),
+    orange: std(0xe4572e, { roughness:.6 }),
+    olive: std(0x59624a, { roughness:.85 }),
+    floor: std(0x8f8876, { roughness:.9 }),
+    ply: std(0xd9bd90, { roughness:.75 }),
+    dark: std(0x27332d, { roughness:.7 }),
+    fabric: std(0xb9552f, { roughness:1 }),
+    mattress: std(0xece6d8, { roughness:1 }),
+    pillow: std(0xfbf8ef, { roughness:1 }),
+    seat: std(0x3b403d, { roughness:1 }),
+    hob: std(0x121514, { roughness:.2, metalness:.4 }),
+  };
+
+  /* ---------- helpers ---------- */
+  const trace = (target, cmds) => { for (const c of cmds) { if (c[0] === 'M') target.moveTo(c[1], c[2]); else if (c[0] === 'L') target.lineTo(c[1], c[2]); else target.quadraticCurveTo(c[1], c[2], c[3], c[4]); } target.closePath(); return target; };
+  const shapeOf = cmds => trace(new THREE.Shape(), cmds);
+  const rect = (x0, y0, x1, y1, r) => V.roundPoly([[x0, y0], [x1, y0], [x1, y1], [x0, y1]], r);
+  const add = (parent, geo, mat, x = 0, y = 0, z = 0) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); parent.add(m); return m; };
+  const box = (parent, sx, sy, sz, mat, x, y, z, r = 0) => add(parent, r ? new RoundedBoxGeometry(sx, sy, sz, 3, Math.min(r, Math.min(sx, sy, sz) / 2 - .002)) : new THREE.BoxGeometry(sx, sy, sz), mat, x, y, z);
+  const span = (parent, x0, x1, y0, y1, z0, z1, mat, r = 0) => box(parent, Math.abs(x1 - x0), Math.abs(y1 - y0), Math.abs(z1 - z0), mat, (x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2, r);
+  const UP = new THREE.Vector3(0, 1, 0);
+  const tube = (parent, a, b, r, mat) => { const A = new THREE.Vector3(...a), d = new THREE.Vector3(...b).sub(A), len = d.length(); const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, len, 10), mat); m.position.copy(A).addScaledVector(d, .5); m.quaternion.setFromUnitVectors(UP, d.normalize()); parent.add(m); return m; };
+  const group = (parent, x = 0, y = 0, z = 0) => { const g = new THREE.Group(); g.position.set(x, y, z); parent.add(g); return g; };
+
+  const W = 1.96, BV = .05, F = .62, CUT = 1.16;
+  const extrude = (cmds, width) => { const g = new THREE.ExtrudeGeometry(shapeOf(cmds), { depth:width - 2 * BV, bevelEnabled:true, bevelThickness:BV, bevelSize:BV, bevelOffset:-BV, bevelSegments:3, curveSegments:18 }); g.translate(0, 0, -(width - 2 * BV) / 2); return toCreasedNormals(g, .22); };
+
+  const van = group(scene), body = group(van);
+
+  /* ---------- hull ---------- */
+  const hullGeo = extrude(V.PROFILE, W);
+  add(body, hullGeo, M.paint);
+  const liner = add(body, hullGeo, M.liner); liner.scale.set(.985, 1, .945);
+  const capShape = shapeOf(rect(-2.75, -.98, 2.045, .98, .07));
+  capShape.holes.push(trace(new THREE.Path(), rect(-2.69, -.922, 1.985, .922, .04)));
+  const cap = add(body, new THREE.ShapeGeometry(capShape), M.cap, 0, CUT + .001, 0); cap.rotation.x = -Math.PI / 2;
+
+  for (const s of [1, -1]) {
+    for (const k of ['cab', 'mid', 'rear']) add(body, new THREE.ShapeGeometry(shapeOf(V.WINDOWS[k])), M.glass, 0, 0, s * (W / 2 + .004));
+    span(body, -2.7, 2.45, .39, .6, s * (W / 2 - .05), s * (W / 2 + .012), M.trim);
+    span(body, .684, .696, .62, 1.94, s * (W / 2 + .001), s * (W / 2 + .005), M.seam);
+    box(body, .14, .035, .02, M.trim, .87, 1.085, s * (W / 2 + .008));
+    box(body, .1, .2, .15, M.trim, 1.72, 1.32, s * (W / 2 + .1), .04);
+    box(body, .05, .05, .1, M.trim, 1.74, 1.26, s * (W / 2 + .03));
+    box(body, .05, .13, .34, M.lamp, 2.665, .9, s * .72, .02);
+    box(body, .03, .5, .09, M.tail, -2.755, 1.3, s * .91);
+    const rw = add(body, new THREE.ShapeGeometry(shapeOf(rect(.07, 1.25, .84, 1.82, .07))), M.glass, -2.755, 0, 0);
+    rw.rotation.y = -Math.PI / 2; rw.scale.x = s;
+  }
+  span(body, -.606, -.594, .62, 1.94, W / 2 + .001, W / 2 + .005, M.seam);
+  span(body, -2.0, -.6, 1.114, 1.126, W / 2 + .001, W / 2 + .005, M.seam);
+  box(body, .14, .035, .02, M.trim, .5, 1.085, W / 2 + .008);
+  span(body, -2.757, -2.752, .62, 1.9, -.006, .006, M.seam);
+  box(body, .34, .34, W + .04, M.trim, 2.56, .55, 0, .06);
+  box(body, .2, .26, W + .02, M.trim, -2.72, .5, 0, .05);
+  box(body, .03, .13, 1.0, M.trim, 2.688, .79, 0);
+  { // windscreen sits on the sloped part of the profile
+    const ws = add(body, new THREE.ShapeGeometry(shapeOf(V.roundPoly([[-.86, -.4], [.86, -.4], [.8, .4], [-.8, .4]], .08))), M.glass);
+    const yA = new THREE.Vector3(-.66, .68, 0).normalize(), zA = new THREE.Vector3(.68, .66, 0).normalize(), xA = new THREE.Vector3().crossVectors(yA, zA);
+    ws.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(xA, yA, zA));
+    ws.position.set(1.65, 1.56, 0).addScaledVector(zA, .006);
+  }
+
+  /* wheel arches, standard trims and all-terrain flares */
+  const AXLES = [1.72, -1.45], a0 = Math.asin(.04 / .47);
+  const archShape = new THREE.Shape(); archShape.absarc(0, 0, .47, a0, Math.PI - a0, false); archShape.closePath();
+  const archGeo = new THREE.ShapeGeometry(archShape, 28);
+  const stdTrims = group(body), terrainBits = group(body);
+  for (const ax of AXLES) for (const s of [1, -1]) {
+    add(body, archGeo, M.arch, ax, .36, s * (W / 2 + .003));
+    const t = add(stdTrims, new THREE.TorusGeometry(.475, .028, 8, 30, Math.PI - 2 * a0), M.trim, ax, .36, s * W / 2); t.rotation.z = a0;
+    const f = add(terrainBits, new THREE.TorusGeometry(.485, .06, 10, 30, Math.PI - 2 * a0), M.trim, ax, .36, s * (W / 2 + .005)); f.rotation.z = a0; f.scale.z = .8;
+  }
+  box(terrainBits, .52, .025, 1.3, M.steel, 2.44, .385, 0).rotation.z = .17;
+  tube(terrainBits, [2.12, 1.1, -1.0], [1.98, 1.25, -1.03], .04, M.trim);
+  tube(terrainBits, [1.98, 1.25, -1.03], [1.36, 1.89, -1.03], .04, M.trim);
+  box(terrainBits, .15, .12, .1, M.trim, 1.33, 1.95, -1.03, .03);
+
+  /* body lettering */
+  const decalTex = col => {
+    const c = document.createElement('canvas'); c.width = 760; c.height = 160; const x = c.getContext('2d');
+    x.fillStyle = col;
+    for (const e of [[92, 120, 74, 22, 0], [92, 76, 48, 18, -.08], [94, 40, 26, 14, .1]]) { x.beginPath(); x.ellipse(e[0], e[1], e[2], e[3], e[4], 0, Math.PI * 2); x.fill(); }
+    x.font = '700 120px "Avenir Next Condensed","Bahnschrift","Roboto Condensed","Arial Narrow",sans-serif'; x.textBaseline = 'middle';
+    let px = 205; for (const ch of 'VARDE') { x.fillText(ch, px, 86); px += x.measureText(ch).width + 36; }
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;
+  };
+  const decals = { dark:decalTex('#17211c'), light:decalTex('#ebe6d9') };
+  const decalMat = new THREE.MeshBasicMaterial({ map:decals.dark, transparent:true, opacity:.85, depthWrite:false, ...CP });
+  for (const s of [1, -1]) { const d = add(body, new THREE.PlaneGeometry(1.0, .21), decalMat, .1, .78, s * (W / 2 + .006)); if (s < 0) d.rotation.y = Math.PI; }
+
+  /* ---------- wheels ---------- */
+  const tyreGeo = (r, w) => new THREE.LatheGeometry([[r * .56, -w / 2], [r - .05, -w / 2], [r, -w / 2 + .05], [r, w / 2 - .05], [r - .05, w / 2], [r * .56, w / 2]].map(p => new THREE.Vector2(p[0], p[1])), 40);
+  function makeWheel(r, w, at) {
+    const g = new THREE.Group();
+    add(g, tyreGeo(r, w), M.rubber).rotation.x = Math.PI / 2;
+    add(g, new THREE.CylinderGeometry(r * .6, r * .6, w * .84, 32), at ? M.rimDark : M.alloy).rotation.x = Math.PI / 2;
+    for (const s of [1, -1]) {
+      const face = group(g, 0, 0, s * (w * .42 + .002)); if (s < 0) face.rotation.y = Math.PI;
+      add(face, new THREE.RingGeometry(r * .17, r * .52, 32), at ? M.black : M.rimDark);
+      if (at) { for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2; add(face, new THREE.CircleGeometry(r * .07, 12), M.arch, Math.cos(a) * r * .37, Math.sin(a) * r * .37, .002); } }
+      else { for (let i = 0; i < 5; i++) { const sp = box(face, r * .5, r * .13, .012, M.alloy, 0, 0, .004); sp.rotation.z = i / 5 * Math.PI * 2 + .3; sp.translateX(r * .32); } }
+      add(face, new THREE.CylinderGeometry(r * .15, r * .17, .03, 20), at ? M.orange : M.alloy, 0, 0, .012).rotation.x = Math.PI / 2;
+    }
+    if (at) {
+      const n = 26, tread = new THREE.InstancedMesh(new THREE.BoxGeometry(.034, .062, w * .9), M.rubber, n), m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), Z = new THREE.Vector3(0, 0, 1);
+      for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2; q.setFromAxisAngle(Z, a); m4.compose(new THREE.Vector3(Math.cos(a) * (r + .006), Math.sin(a) * (r + .006), 0), q, new THREE.Vector3(1, 1, 1)); tread.setMatrixAt(i, m4); }
+      g.add(tread);
+    }
+    return g;
+  }
+  const stdWheels = [], atWheels = [];
+  for (const ax of AXLES) for (const s of [1, -1]) {
+    const a = makeWheel(.37, .26, false); a.position.set(ax, .37, s * .9); van.add(a); stdWheels.push(a);
+    const b = makeWheel(.42, .3, true); b.position.set(ax, .42, s * .9); van.add(b); atWheels.push(b);
+  }
+
+  /* ---------- roofs ---------- */
+  const highGeo = extrude(V.HIGH, 1.84); highGeo.translate(0, -1.98, 0);
+  const high = add(body, highGeo, M.paint, 0, 1.98, 0);
+  for (const s of [1, -1]) add(high, new THREE.ShapeGeometry(shapeOf(rect(-1.7, .14, -.5, .33, .07))), M.glass, 0, 0, s * (.92 + .004));
+
+  const POP = .3, LID = 3.25, HX = -2.4;
+  const popG = group(body, HX, 2.02, 0), lidPivot = group(popG);
+  box(lidPivot, LID, .07, 1.8, M.paint, LID / 2, .04, 0, .03);
+  box(lidPivot, LID - .1, .02, 1.66, M.trim, LID / 2, 0, 0);
+  const wl = LID - .06, wedgeShape = new THREE.Shape(); wedgeShape.moveTo(0, 0); wedgeShape.lineTo(wl, 0); wedgeShape.lineTo(wl, 1); wedgeShape.closePath();
+  const wedgeGeo = new THREE.ExtrudeGeometry(wedgeShape, { depth:1.62, bevelEnabled:false }); wedgeGeo.translate(0, 0, -.81);
+  const wedge = add(popG, wedgeGeo, M.canvas);
+  for (const s of [1, -1]) add(wedge, new THREE.ShapeGeometry(shapeOf(V.roundPoly([[.5 * wl, .1], [.9 * wl, .1], [.9 * wl, .66], [.5 * wl, .36]], .03))), M.mesh, 0, 0, s * .814);
+
+  /* ---------- add-ons ---------- */
+  const kit = {};   // id -> groups that drop into place
+  const reg = (id, g, off) => { g.userData.base = g.position.clone(); g.userData.off = new THREE.Vector3(...off); (kit[id] = kit[id] || []).push(g); return g; };
+
+  const solarTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 256; const x = c.getContext('2d'); x.fillStyle = '#101a2c'; x.fillRect(0, 0, 256, 256); x.strokeStyle = '#2b3b58'; x.lineWidth = 2; for (let i = 0; i <= 6; i++) { x.beginPath(); x.moveTo(i * 256 / 6, 0); x.lineTo(i * 256 / 6, 256); x.stroke(); } for (let i = 0; i <= 10; i++) { x.beginPath(); x.moveTo(0, i * 25.6); x.lineTo(256, i * 25.6); x.stroke(); } const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; })();
+  M.solar = std(0xffffff, { map:solarTex, roughness:.25, metalness:.5 }, true);
+  const solarG = reg('solar', group(body), [0, .6, 0]);
+  for (const dx of [-.5, .5]) { box(solarG, .96, .035, 1.46, M.alu, dx, .05, 0); box(solarG, .9, .036, 1.4, M.solar, dx, .053, 0); for (const fx of [-.38, .38]) for (const fz of [-.62, .62]) box(solarG, .06, .04, .06, M.trim, dx + fx, .018, fz); }
+
+  const rackG = reg('rack', group(body), [0, .6, 0]);
+  for (const s of [1, -1]) { tube(rackG, [-.52, .1, s * .72], [.52, .1, s * .72], .02, M.trim); tube(rackG, [-.52, .22, s * .72], [.52, .22, s * .72], .016, M.trim); for (const x of [-.5, 0, .5]) tube(rackG, [x, .1, s * .72], [x, .22, s * .72], .012, M.trim); for (const x of [-.42, .42]) box(rackG, .06, .1, .06, M.trim, x, .05, s * .7); }
+  for (const x of [-.52, -.26, 0, .26, .52]) tube(rackG, [x, .1, -.72], [x, .1, .72], .016, M.trim);
+  tube(rackG, [-.52, .22, -.72], [-.52, .22, .72], .016, M.trim);
+  box(rackG, .64, .24, .52, M.oliveC, -.04, .24, -.34, .05);
+  const bag = add(rackG, new THREE.CapsuleGeometry(.13, .52, 6, 14), M.orangeC, 0, .25, .32); bag.rotation.z = Math.PI / 2;
+  const ladG = reg('rack', group(body, -2.79, .62, 0), [-.5, 0, 0]);
+  for (const z of [.58, .84]) { tube(ladG, [0, 0, z], [0, 1, z], .016, M.alu); tube(ladG, [0, 1, z], [.16, 1, z], .016, M.alu); }
+  for (let i = 1; i <= 6; i++) tube(ladG, [0, i / 6.6, .58], [0, i / 6.6, .84], .012, M.alu);
+
+  const lightG = reg('lights', group(body, 1.0, 2.02, 0), [0, .4, 0]);
+  box(lightG, .07, .07, 1.2, M.trim, 0, .085, 0, .02); box(lightG, .012, .045, 1.12, M.lamp, .038, .085, 0);
+  for (const z of [-.45, .45]) box(lightG, .03, .06, .03, M.trim, 0, .03, z);
+
+  const bikeMat = col => std(col, { roughness:.5, metalness:.2 });
+  function makeBike(col) {
+    const g = new THREE.Group(), fm = bikeMat(col);
+    for (const x of [-.53, .53]) { add(g, new THREE.TorusGeometry(.33, .022, 8, 36), M.rubber, x, .352, 0); add(g, new THREE.CylinderGeometry(.03, .03, .08, 10), M.steel, x, .352, 0).rotation.x = Math.PI / 2; }
+    const ra = [-.53, .352, 0], bb = [-.1, .33, 0], sc = [-.2, .76, 0], ht = [.36, .85, 0], hb = [.4, .72, 0], fa = [.53, .352, 0];
+    tube(g, ra, bb, .014, fm); tube(g, ra, sc, .012, fm); tube(g, bb, [-.235, .92, 0], .017, fm); tube(g, sc, ht, .017, fm); tube(g, bb, hb, .021, fm); tube(g, ht, hb, .02, fm);
+    tube(g, hb, fa, .014, M.steel); tube(g, ht, [.34, .93, 0], .014, M.black); tube(g, [.34, .93, -.29], [.34, .93, .29], .012, M.black);
+    box(g, .22, .035, .09, M.rubber, -.25, .94, 0, .015);
+    add(g, new THREE.CylinderGeometry(.075, .075, .012, 16), M.black, -.1, .33, .03).rotation.x = Math.PI / 2;
+    return g;
+  }
+  const bikeG = reg('bikes', group(body), [-.7, 0, 0]);
+  span(bikeG, -3.52, -2.7, .44, .5, -.04, .04, M.black);
+  for (const x of [-3.2, -3.43]) span(bikeG, x - .03, x + .03, .5, .53, -.8, .8, M.black);
+  tube(bikeG, [-3.315, .5, 0], [-3.315, 1.42, 0], .022, M.black); tube(bikeG, [-3.2, 1.4, 0], [-3.43, 1.4, 0], .016, M.black);
+  { const b1 = makeBike(0xe4572e); b1.rotation.y = Math.PI / 2; b1.position.set(-3.2, .53, 0); const b2 = makeBike(0xe8e2d2); b2.rotation.y = -Math.PI / 2; b2.position.set(-3.43, .53, 0); bikeG.add(b1, b2); }
+
+  const spareG = reg('spare', group(body), [-.5, 0, 0]);
+  add(spareG, tyreGeo(.37, .24), M.rubber, -2.9, 1.1, -.45).rotation.z = Math.PI / 2;
+  add(spareG, new THREE.CylinderGeometry(.22, .22, .2, 24), M.rimDark, -2.9, 1.1, -.45).rotation.z = Math.PI / 2;
+  add(spareG, new THREE.CylinderGeometry(.07, .07, .26, 16), M.orange, -2.9, 1.1, -.45).rotation.z = Math.PI / 2;
+  span(spareG, -2.8, -2.75, .82, 1.38, -.52, -.38, M.black);
+  box(spareG, .17, .46, .34, M.olive, -2.86, 1.0, .25, .035); box(spareG, .18, .05, .35, M.orange, -2.86, 1.02, .25);
+  add(spareG, new THREE.CylinderGeometry(.035, .035, .05, 12), M.black, -2.86, 1.25, .34);
+  span(spareG, -2.96, -2.75, .74, .77, .06, .44, M.black);
+
+  const winchG = reg('winch', group(body), [.6, 0, 0]);
+  box(winchG, .16, .26, 1.72, M.black, 2.8, .56, 0, .04);
+  for (const z of [-.42, .42]) tube(winchG, [2.84, .66, z], [2.8, 1.0, z], .028, M.black);
+  tube(winchG, [2.8, 1.0, -.434], [2.8, 1.0, .434], .028, M.black);
+  add(winchG, new THREE.CylinderGeometry(.06, .06, .36, 16), M.steel, 2.89, .6, 0).rotation.x = Math.PI / 2;
+  box(winchG, .03, .08, .26, M.steel, 2.9, .48, 0);
+  add(winchG, new THREE.TorusGeometry(.035, .012, 8, 16), M.orange, 2.935, .47, 0);
+  for (const z of [-.62, .62]) add(winchG, new THREE.TorusGeometry(.04, .014, 8, 16), M.orange, 2.895, .5, z).rotation.y = Math.PI / 2;
+
+  /* awning: cassette on the roof edge, fabric that winds out, legs on the ground */
+  const awnTex = (() => { const c = document.createElement('canvas'); c.width = 64; c.height = 8; const x = c.getContext('2d'); x.fillStyle = '#e6dec8'; x.fillRect(0, 0, 64, 8); x.fillStyle = '#e4572e'; x.fillRect(6, 0, 10, 8); x.fillRect(38, 0, 4, 8); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = THREE.RepeatWrapping; t.repeat.set(5, 1); return t; })();
+  M.awning = std(0xffffff, { map:awnTex, roughness:1 }, true);
+  const awnG = group(body); const AWN = 2.1, AWN_TILT = .1;
+  span(awnG, -1.85, .65, 1.9, 2.0, W / 2 + .01, W / 2 + .12, M.trim, .03);
+  const awnPivot = group(awnG, -.6, 1.94, W / 2 + .1); awnPivot.rotation.x = AWN_TILT;
+  const fabricGeo = new THREE.BoxGeometry(2.44, .012, 1); fabricGeo.translate(0, 0, .5);
+  const fabric = add(awnPivot, fabricGeo, M.awning), lead = box(awnPivot, 2.5, .05, .05, M.trim, 0, 0, 0);
+  const legs = [-1.8, .6].map(x => { const m = add(van, new THREE.CylinderGeometry(.018, .018, 1, 8), M.steel, x, 0, 0); return m; });
+
+  /* ---------- interior ---------- */
+  const interior = group(body);
+  span(interior, -2.68, 1.45, F - .05, F, -.915, .915, M.floor);
+  span(interior, 1.42, 2.0, F, F + .46, -.93, .93, M.black, .05);
+  for (const s of [1, -1]) {
+    span(interior, -1.9, -1.0, F, F + .28, s * .66, s * .93, M.mattress);
+    const g = group(interior, .98, F, s * .48);
+    box(g, .4, .26, .4, M.black, 0, .13, 0); box(g, .5, .13, .5, M.seat, 0, .32, 0, .05);
+    box(g, .13, .6, .48, M.seat, -.25, .66, 0, .05).rotation.z = .1; box(g, .1, .17, .26, M.seat, -.3, 1.05, 0, .04);
+  }
+  { const sw = group(interior, 1.36, F + .56, -.48); sw.rotation.z = .4; add(sw, new THREE.TorusGeometry(.17, .02, 8, 24), M.black).rotation.y = Math.PI / 2; tube(sw, [0, 0, 0], [.2, 0, 0], .02, M.black); }
+
+  function buildLayout(blocks) {
+    const g = new THREE.Group();
+    for (const b of blocks) {
+      const sx = b.x1 - b.x0, sz = b.z1 - b.z0, cx = (b.x0 + b.x1) / 2, cz = (b.z0 + b.z1) / 2, y0 = F + b.y, cy = y0 + b.h / 2;
+      const face = cz < 0 ? 1 : -1, fz = cz + face * (sz / 2 + .008);
+      switch (b.k) {
+        case 'cabinet': {
+          box(g, sx, b.h - .04, sz, M.dark, cx, y0 + (b.h - .04) / 2, cz); box(g, sx + .03, .04, sz + .03, M.ply, cx, y0 + b.h - .02, cz);
+          const n = Math.max(1, Math.round(sx / .5)); for (let i = 0; i < n; i++) { const px = b.x0 + (i + .5) * sx / n; box(g, sx / n - .05, .012, .012, M.ply, px, y0 + b.h - .13, fz); box(g, .012, b.h - .2, .008, M.ply, b.x0 + (i + 1) * sx / n - .006, y0 + (b.h - .2) / 2, fz - face * .006).visible = i < n - 1; }
+          break; }
+        case 'tall': box(g, sx, b.h, sz, M.dark, cx, cy, cz); box(g, sx + .02, .03, sz + .02, M.ply, cx, y0 + b.h + .015, cz); box(g, .012, b.h * .5, .012, M.ply, cx, y0 + b.h * .55, fz); break;
+        case 'ply': box(g, sx, b.h, sz, M.ply, cx, cy, cz); break;
+        case 'cushion': box(g, sx, b.h, sz, M.fabric, cx, cy, cz, .045); break;
+        case 'mattress': box(g, sx, b.h, sz, M.mattress, cx, cy, cz, .04); break;
+        case 'pillow': box(g, sx, b.h, sz, M.pillow, cx, cy, cz, .035); break;
+        case 'steel': box(g, sx, b.h, sz, M.steel, cx, cy, cz); break;
+        case 'crate': box(g, sx, b.h, sz, bikeMat(b.c), cx, cy, cz, .02); break;
+        case 'sink': box(g, sx, .012, sz, M.steel, cx, y0 + .006, cz); box(g, sx - .08, .014, sz - .08, M.rimDark, cx, y0 + .008, cz); tube(g, [cx, y0, b.z0 + .02], [cx, y0 + .16, b.z0 + .02], .012, M.steel); tube(g, [cx, y0 + .16, b.z0 + .02], [cx, y0 + .14, b.z0 + .12], .012, M.steel); break;
+        case 'hob': box(g, sx, .012, sz, M.hob, cx, y0 + .006, cz); for (const dx of [-.09, .09]) add(g, new THREE.TorusGeometry(.055, .008, 6, 20), M.steel, cx + dx, y0 + .016, cz).rotation.x = Math.PI / 2; break;
+        case 'table': box(g, sx, b.h, sz, M.ply, cx, cy, cz, .018); tube(g, [cx, F, cz], [cx, y0, cz], .025, M.steel); break;
+        case 'bike': { const bk = makeBike(b.c); bk.position.set(cx, y0, cz); if (b.flip) bk.rotation.y = Math.PI; g.add(bk); break; }
+      }
+    }
+    return g;
+  }
+  const layouts = {}; for (const l of V.DATA.layout) { layouts[l.id] = buildLayout(l.blocks); layouts[l.id].visible = false; interior.add(layouts[l.id]); }
+
+  van.traverse(o => { if (o.isMesh && o.material !== M.glass && !o.material.isMeshBasicMaterial) { o.castShadow = true; o.receiveShadow = true; } });
+
+  /* ---------- ground ---------- */
+  { const c = document.createElement('canvas');
+    V.drawTopo(c, { w:1024, h:1024, dpr:1, seed:9, cell:8, levels:18, peaks:9, stroke:'rgba(23,33,28,.17)', bold:'rgba(23,33,28,.3)' });
+    const x = c.getContext('2d');
+    x.save(); x.translate(512, 512); x.scale(1, .42); const sh = x.createRadialGradient(0, 0, 40, 0, 0, 250); sh.addColorStop(0, 'rgba(23,33,28,.26)'); sh.addColorStop(1, 'rgba(23,33,28,0)'); x.fillStyle = sh; x.beginPath(); x.arc(0, 0, 250, 0, 7); x.fill(); x.restore();
+    x.globalCompositeOperation = 'destination-in'; const g = x.createRadialGradient(512, 512, 150, 512, 512, 500); g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = g; x.fillRect(0, 0, 1024, 1024);
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+    const topo = add(scene, new THREE.PlaneGeometry(17, 17), new THREE.MeshBasicMaterial({ map:t, transparent:true, depthWrite:false, toneMapped:false }), 0, -.004, 0); topo.rotation.x = -Math.PI / 2; topo.renderOrder = -2;
+    const shadow = add(scene, new THREE.PlaneGeometry(30, 30), new THREE.ShadowMaterial({ opacity:.2 }), 0, 0, 0); shadow.rotation.x = -Math.PI / 2; shadow.receiveShadow = true; shadow.renderOrder = -1;
+  }
+
+  /* ---------- animation state ---------- */
+  const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2, easeOut = t => 1 - Math.pow(1 - t, 3);
+  const vals = { lift:0, pop:0, high:0, awning:0, cut:0, paint:1, layout:1 }, tw = {};
+  for (const id in kit) vals['a_' + id] = 0;
+  let dirty = true;
+  function to(k, target, ms) {
+    const cur = tw[k]; if ((cur ? cur.to : vals[k]) === target) return;
+    if (V.reduced || !ms) { vals[k] = target; delete tw[k]; } else tw[k] = { from:vals[k], to:target, t0:performance.now(), ms };
+    dirty = true;
+  }
+  function replay(k, ms) { vals[k] = 0; delete tw[k]; to(k, 1, ms); }
+  function stepTweens(t) { let active = false; for (const k in tw) { const w = tw[k], p = Math.min(1, Math.max(0, (t - w.t0) / w.ms)); vals[k] = w.from + (w.to - w.from) * p; if (p >= 1) delete tw[k]; active = true; } return active; }
+
+  const paintFrom = new THREE.Color(), paintTo = new THREE.Color(M.paint.color);
+  const FIN = { solid:{ metalness:0, roughness:.5, clearcoat:.7 }, metallic:{ metalness:.5, roughness:.42, clearcoat:1 }, matte:{ metalness:.15, roughness:.82, clearcoat:0 } };
+  let curPaint = null, curLayout = null, curRoof = null;
+
+  function apply() {
+    const st = V.state, lift = ease(vals.lift) * .07, at = vals.lift > .5;
+    body.position.y = lift;
+    for (const w of stdWheels) w.visible = !at; for (const w of atWheels) w.visible = at;
+    terrainBits.visible = at; stdTrims.visible = !at;
+    const p = ease(vals.pop), ang = p * POP;
+    popG.visible = p > .001 || st.roof === 'pop'; lidPivot.rotation.z = ang;
+    wedge.visible = p > .01; wedge.scale.set(Math.cos(ang), Math.max(.001, wl * Math.sin(ang)), 1);
+    const h = easeOut(vals.high); high.visible = h > .001; high.scale.y = Math.max(h, .001);
+    const c = ease(vals.cut); clip.constant = 3.7 + (CUT + lift - 3.7) * c;
+    liner.visible = interior.visible = c > .001; cap.visible = c > .985;
+    for (const id in kit) { const s = vals['a_' + id], e = easeOut(s); for (const g of kit[id]) { g.visible = s > .001; g.position.copy(g.userData.base).addScaledVector(g.userData.off, 1 - e); } }
+    const a = ease(vals.awning), len = AWN * a, show = vals.awning > .001 && c < .4;
+    awnG.visible = show; fabric.scale.z = Math.max(len, .001); lead.position.z = len;
+    const topY = lift + 1.94 - Math.sin(AWN_TILT) * len, legZ = W / 2 + .1 + Math.cos(AWN_TILT) * len;
+    for (const l of legs) { l.visible = show && a > .2; l.scale.y = topY; l.position.y = topY / 2; l.position.z = legZ; }
+    if (curLayout) layouts[curLayout].position.y = (1 - easeOut(vals.layout)) * .4;
+    M.paint.color.copy(paintFrom).lerp(paintTo, ease(vals.paint));
+  }
+
+  function sync(st, instant) {
+    const A = st.addons, T = ms => instant ? 0 : ms;
+    if (st.paint !== curPaint) {
+      const pd = V.get('paint', st.paint); paintFrom.copy(M.paint.color); paintTo.set(pd.hex);
+      Object.assign(M.paint, FIN[pd.fin]); vals.paint = 0; delete tw.paint; to('paint', 1, T(450)); if (instant) vals.paint = 1;
+      decalMat.map = V.lum(pd.hex) > .42 ? decals.dark : decals.light; M.cap.color.set(st.paint === 'ember' ? 0x17211c : 0xe4572e);
+      curPaint = st.paint;
+    }
+    to('lift', A.has('terrain') ? 1 : 0, T(550));
+    to('pop', st.roof === 'pop' ? 1 : 0, T(950));
+    to('high', st.roof === 'high' ? 1 : 0, T(650));
+    to('awning', A.has('awning') ? 1 : 0, T(A.has('awning') ? 1000 : 500));
+    to('cut', st.view === 'ext' ? 0 : 1, T(900));
+    if (st.roof !== curRoof) {
+      const hi = st.roof === 'high', roofY = hi ? 2.44 : 2.02;
+      if (st.roof === 'pop') { lidPivot.add(solarG); solarG.userData.base.set(.8 - 1 - HX, .075, 0); }
+      else { body.add(solarG); solarG.userData.base.set(hi ? -.52 : -.1, roofY, 0); }
+      solarG.scale.x = hi ? .9 : 1;   // the High Line roof is shorter, so the panels are too
+      rackG.userData.base.set(-2.02, roofY, 0); ladG.scale.y = roofY + .06 - .62;
+      if (curRoof !== null && !instant) for (const id of ['solar', 'rack']) if (A.has(id)) replay('a_' + id, 700);
+      curRoof = st.roof;
+    }
+    for (const id in kit) to('a_' + id, A.has(id) ? 1 : 0, T(A.has(id) ? 560 : 160));
+    if (st.layout !== curLayout) {
+      for (const id in layouts) layouts[id].visible = id === st.layout;
+      curLayout = st.layout; if (!instant && st.view !== 'ext') replay('layout', 520); else vals.layout = 1;
+    }
+    dirty = true;
+  }
+
+  /* ---------- camera ---------- */
+  const controls = new OrbitControls(camera, canvas);
+  controls.enableZoom = false; controls.enablePan = false; controls.enableDamping = true; controls.dampingFactor = .08;
+  controls.minPolarAngle = .02; controls.maxPolarAngle = 1.5; controls.rotateSpeed = .7;
+  const cam = { theta:1.25, phi:1.3, r:12, tx:-.05, ty:1.02, tz:0 };
+  let camFrom = null, camTo = null, camT = 1, camDur = 1;
+  const placeCam = () => { const sp = Math.sin(cam.phi); camera.position.set(cam.tx + cam.r * sp * Math.sin(cam.theta), cam.ty + cam.r * Math.cos(cam.phi), cam.tz + cam.r * sp * Math.cos(cam.theta)); controls.target.set(cam.tx, cam.ty, cam.tz); camera.lookAt(controls.target); };
+  const readCam = () => { const s = new THREE.Spherical().setFromVector3(new THREE.Vector3().subVectors(camera.position, controls.target)); cam.theta = s.theta; cam.phi = s.phi; cam.r = s.radius; cam.tx = controls.target.x; cam.ty = controls.target.y; cam.tz = controls.target.z; };
+  let visFrac = 1;   // share of the canvas height not covered by the overlays
+  const fit = (w, h) => { const vt = Math.tan(camera.fov * Math.PI / 360), ht = vt * camera.aspect; return Math.max(w / (2 * ht), h / (2 * vt * visFrac)); };
+  const ANG = { hero:[.62, 1.33], roof:[.74, 1.1], rear:[2.5, 1.27], rearTop:[2.42, 1.12], front:[1.08, 1.36], low:[.8, 1.4], awning:[.4, 1.18], int:[.52, .8], plan:[0, .03] };
+  function goal(kind) {
+    const st = V.state, A = st.addons, ext = st.view === 'ext', aw = ext && A.has('awning'), bk = A.has('bikes'), tall = ext && st.roof !== 'fixed';
+    let th, ph; if (kind === 'keep') { readCam(); th = cam.theta; ph = cam.phi; } else [th, ph] = ANG[kind];
+    const plan = st.view === 'plan', w = ext ? 7.1 + (bk ? .9 : 0) + (aw ? 1.5 : 0) : plan ? 6.3 : 6.6, h = ext ? 4.1 + (tall ? .7 : 0) : plan ? 2.9 : 3.6;
+    return { theta:th, phi:ph, r:fit(w, h), tx:-.05 - (ext && bk ? .4 : 0), ty:ext ? 1.0 + (tall ? .22 : 0) : .75, tz:aw ? .6 : 0 };
+  }
+  function fly(g, ms = 1000) {
+    if (V.reduced) ms = 0;
+    readCam(); camFrom = { ...cam };
+    let d = (g.theta - cam.theta) % (Math.PI * 2); if (d > Math.PI) d -= Math.PI * 2; if (d < -Math.PI) d += Math.PI * 2;
+    camTo = { ...g, theta:cam.theta + d }; camDur = ms;
+    if (!ms) { Object.assign(cam, camTo); placeCam(); controls.update(); camT = 1; } else camT = 0;
+    dirty = true;
+  }
+  controls.addEventListener('start', () => { camT = 1; stageEl.classList.add('touched'); });
+
+  function resize() {
+    const w = canvas.clientWidth, h = canvas.clientHeight; if (!w || !h) return;
+    renderer.setSize(w, h, false);
+    const top = 58, bottom = statsEl.offsetHeight;   // keep the van clear of the label and the stats strip
+    visFrac = Math.max(.5, 1 - (top + bottom) / h);
+    camera.setViewOffset(w, h, 0, (bottom - top) / 2, w, h);
+    if (camT >= 1) { const g = goal('keep'); Object.assign(cam, g); placeCam(); controls.update(); } else if (camTo) { camTo.r = goal('keep').r; }
+    dirty = true;
+  }
+
+  const FOCUS = { solar:'roof', rack:'rearTop', awning:'awning', terrain:'low', lights:'front', winch:'front', bikes:'rear', spare:'rear' };
+  V.on((st, ch) => {
+    sync(st, ch.type === 'load');
+    if (ch.type === 'view') fly(goal(st.view === 'ext' ? 'hero' : st.view));
+    else if (ch.type === 'load') fly(goal(st.view === 'ext' ? 'hero' : st.view), 900);
+    else if (ch.type === 'layout') fly(goal(ch.viewChanged ? st.view : 'keep'), ch.viewChanged ? 1000 : 500);
+    else if (ch.type === 'roof') fly(goal('roof'));
+    else if (ch.type === 'paint') fly(goal(ch.viewChanged ? 'hero' : 'keep'), ch.viewChanged ? 1000 : 500);
+    else if (ch.type === 'addon') fly(goal(ch.on ? FOCUS[ch.id] : 'keep'), ch.on ? 1000 : 600);
+  });
+
+  /* ---------- go ---------- */
+  camera.aspect = (canvas.clientWidth || 4) / (canvas.clientHeight || 3); camera.updateProjectionMatrix();
+  sync(V.state, true);
+  cam.r = goal('hero').r * 1.12; placeCam(); controls.update();
+  new ResizeObserver(resize).observe(stageEl); resize();
+  fly(goal(V.state.view === 'ext' ? 'hero' : V.state.view), 1500);
+
+  let onscreen = true, last = performance.now(), first = true;
+  new IntersectionObserver(es => { onscreen = es[0].isIntersecting; dirty = true; }).observe(stageEl);
+  function frame(t) {
+    requestAnimationFrame(frame);
+    if (!onscreen) { last = t; return; }
+    const active = stepTweens(t); let moving = false;
+    if (camT < 1) {
+      camT = Math.min(1, camT + (t - last) / camDur); const e = ease(camT);
+      for (const k in camTo) cam[k] = camFrom[k] + (camTo[k] - camFrom[k]) * e;
+      placeCam(); moving = true; if (camT >= 1) controls.update();
+    } else if (controls.update()) moving = true;
+    last = t;
+    if (active || moving || dirty) {
+      dirty = false; apply(); renderer.render(scene, camera);
+      if (first) { first = false; stageEl.dataset.mode = '3d'; }
+    }
+  }
+  requestAnimationFrame(frame);
+}
+</script>
+</body>
+</html>

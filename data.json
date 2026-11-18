@@ -1,0 +1,1836 @@
+{
+ "title": "GPT-6.2 Astra & Sol vs Claude Fable 5.2 & Opus 5.5",
+ "date": "2026-11-18",
+ "models": {
+  "astra": {
+   "name": "GPT-6.2 Astra",
+   "maker": "OpenAI",
+   "harness": "Codex CLI 0.169, reasoning high, default Codex config (image tool, MCP, skills on)"
+  },
+  "sol": {
+   "name": "GPT-6.2 Sol",
+   "maker": "OpenAI",
+   "harness": "Codex CLI 0.169, reasoning high, default Codex config (image tool, MCP, skills on)"
+  },
+  "astra-fair": {
+   "name": "GPT-6.2 Astra (fair)",
+   "maker": "OpenAI",
+   "harness": "Codex CLI, reasoning high, image generation / apps / memories / web search off, user config ignored"
+  },
+  "sol-fair": {
+   "name": "GPT-6.2 Sol (fair)",
+   "maker": "OpenAI",
+   "harness": "Codex CLI, reasoning high, image generation / apps / memories / web search off, user config ignored"
+  },
+  "fable": {
+   "name": "Claude Fable 5.2",
+   "maker": "Anthropic",
+   "harness": "claude -p, effort high, tools Write/Edit/Read only, no settings/MCP"
+  },
+  "opus": {
+   "name": "Claude Opus 5.5",
+   "maker": "Anthropic",
+   "harness": "claude -p, effort high, tools Write/Edit/Read only, no settings/MCP"
+  },
+  "gpt61": {
+   "name": "GPT-6.1 Sol",
+   "maker": "OpenAI",
+   "harness": "ep.7 run (Codex CLI) reused from the Fable 5.2 video"
+  }
+ },
+ "sets": {
+  "plain": {
+   "title": "Round 1 - just use it",
+   "tasks": [
+    {
+     "id": "racing",
+     "prompt": "Build a playable futuristic racing game in the browser: a sleek racing craft speeds along an illuminated track that winds through a neon city at night. Include a start screen, keyboard controls (arrow keys or WASD, space to boost), a lap timer and lap counter, a speed readout, and a finish screen with the race time. Make it feel fast and look polished.\nSave everything as a single self-contained file named index.html in the current directory (inline CSS/JS; you may load three.js from https://unpkg.com/three@0.170.0 as an ES module import map if needed). Do it in one go, do not ask questions.",
+     "runs": [
+      {
+       "model": "astra",
+       "file": "results/plain/racing/astra/index.html",
+       "video": "rec/racing-astra.mp4",
+       "seconds": 629,
+       "usd": 2.16,
+       "usage": "in 2,149,744 (cached 2,078,592) out 18,981"
+      },
+      {
+       "model": "sol",
+       "file": "results/plain/racing/sol/index.html",
+       "video": "rec/racing-sol.mp4",
+       "seconds": 573,
+       "usd": 0.964,
+       "usage": "in 3,819,675 (cached 3,690,752) out 33,668"
+      },
+      {
+       "model": "fable",
+       "file": "results/plain/racing/fable/index.html",
+       "video": "rec/racing-fable.mp4",
+       "seconds": 1246,
+       "usd": 7.409,
+       "usage": "out 127,124 turns 16"
+      },
+      {
+       "model": "opus",
+       "file": "results/plain/racing/opus/index.html",
+       "video": "rec/racing-opus.mp4",
+       "seconds": 931,
+       "usd": 2.98,
+       "usage": "out 99,900 turns 18"
+      }
+     ],
+     "sheet": "judge/plain-racing.jpg",
+     "sheet_labels": {
+      "A": "fable",
+      "B": "astra",
+      "C": "sol",
+      "D": "opus"
+     },
+     "votes": {
+      "astra": {
+       "ranking": [
+        "sol",
+        "astra",
+        "opus",
+        "fable"
+       ],
+       "reasons": {
+        "fable": "시작 화면은 선명하지만 주행 중 번지는 흰빛이 기체와 코스 경계를 자주 가린다.",
+        "astra": "정교한 야경 속에서도 기체와 트랙이 또렷하지만 여러 장면에서 배경 구도가 거의 같다.",
+        "sol": "시작 화면과 계기판의 디자인이 일관되고 굽은 구간에서도 기체와 진행 방향이 한눈에 들어온다.",
+        "opus": "네온 아치와 원형 속도계가 속도감을 살리지만 강한 발광으로 기체 윤곽이 흐려진다."
+       }
+      },
+      "fable": {
+       "ranking": [
+        "astra",
+        "sol",
+        "fable",
+        "opus"
+       ],
+       "reasons": {
+        "fable": "시작 화면과 미니맵, HUD는 갖췄지만 블룸이 과해 기체와 트랙이 하얗게 날아가 잘 보이지 않습니다.",
+        "astra": "디테일한 네온 도시와 또렷한 기체, 정돈된 HUD로 가장 완성도가 높고 눈에 띄는 버그가 없지만 시작 화면은 캡처에 보이지 않습니다.",
+        "sol": "시작 화면부터 랩·타이머·속도 HUD까지 깔끔하고 기체와 굽은 트랙이 선명하지만 B보다 그래픽이 단순합니다.",
+        "opus": "HUD 구성은 충실하지만 과도한 블룸으로 화면 중앙이 계속 하얗게 뭉개져 기체와 트랙을 거의 알아볼 수 없습니다."
+       }
+      },
+      "opus": {
+       "ranking": [
+        "sol",
+        "astra",
+        "fable",
+        "opus"
+       ],
+       "reasons": {
+        "sol": "시작 화면, 기체, 네온 도시, HUD가 깔끔하게 보이고 프레임마다 풍경이 바뀌어 실제로 달리는 느낌이 가장 잘 산다.",
+        "astra": "도시 풍경과 기체가 매우 세련됐지만 모든 프레임에서 배경과 트랙이 거의 같아 실제로 주행하는 느낌이 약하다.",
+        "fable": "시작 화면과 HUD는 잘 갖췄지만 블룸이 과해 화면이 하얗게 날아가 기체와 트랙이 잘 보이지 않는다.",
+        "opus": "HUD와 속도계는 화려하지만 블룸 과노출이 가장 심해 기체와 트랙이 빛에 묻히고 시작 화면도 보이지 않는다."
+       }
+      },
+      "sol": {
+       "ranking": [
+        "sol",
+        "astra",
+        "opus",
+        "fable"
+       ],
+       "reasons": {
+        "fable": "시작 화면은 선명하지만 주행 중 강한 빛 번짐이 기체와 도로 경계를 자주 가린다.",
+        "astra": "정교한 기체와 야경이 돋보이지만 반복되는 배경이 질주감을 약하게 만든다.",
+        "sol": "시작 화면부터 주행까지 완성도가 고르고, 굽은 트랙과 기체, 계기판이 선명하다.",
+        "opus": "네온 아치와 원형 속도계가 질주감을 살리지만 강한 광원에 기체 윤곽이 묻힌다."
+       }
+      }
+     }
+    },
+    {
+     "id": "pinball",
+     "prompt": "Build a playable 3D pinball table in the browser. The player launches the ball with a plunger and controls the left and right flippers with the keyboard. Include bumpers that light up and push the ball, ramps or lanes, a score display, three balls per game, and a game-over screen with the final score. The table should look like a real, colourful pinball machine.\nSave everything as a single self-contained file named index.html in the current directory (inline CSS/JS; you may load three.js from https://unpkg.com/three@0.170.0 as an ES module import map if needed). Do it in one go, do not ask questions.",
+     "runs": [
+      {
+       "model": "astra",
+       "file": "results/plain/pinball/astra/index.html",
+       "video": "rec/pinball-astra.mp4",
+       "seconds": 528,
+       "usd": 1.878,
+       "usage": "in 1,554,495 (cached 1,495,168) out 20,144"
+      },
+      {
+       "model": "sol",
+       "file": "results/plain/pinball/sol/index.html",
+       "video": "rec/pinball-sol.mp4",
+       "seconds": 507,
+       "usd": 0.749,
+       "usage": "in 2,700,686 (cached 2,611,328) out 30,926"
+      },
+      {
+       "model": "fable",
+       "file": "results/plain/pinball/fable/index.html",
+       "video": "rec/pinball-fable.mp4",
+       "seconds": 2088,
+       "usd": 13.161,
+       "usage": "out 205,259 turns 70"
+      },
+      {
+       "model": "opus",
+       "file": "results/plain/pinball/opus/index.html",
+       "video": "rec/pinball-opus.mp4",
+       "seconds": 1202,
+       "usd": 3.989,
+       "usage": "out 125,781 turns 33"
+      }
+     ],
+     "sheet": "judge/plain-pinball.jpg",
+     "sheet_labels": {
+      "A": "astra",
+      "B": "sol",
+      "C": "fable",
+      "D": "opus"
+     },
+     "votes": {
+      "astra": {
+       "ranking": [
+        "astra",
+        "sol",
+        "fable",
+        "opus"
+       ],
+       "reasons": {
+        "astra": "복고풍 우주 일러스트와 입체적인 레일이 실물 핀볼 기계처럼 어우러지고 점수와 남은 공도 한눈에 읽힌다.",
+        "sol": "색이 다른 플리퍼의 움직임과 범퍼 위 득점 표시가 선명하지만 테이블 중앙의 레인은 단순하다.",
+        "fable": "발사와 공 소실 안내는 명확하지만 테이블이 좁게 표시되고 밝은 무늬에 공이 묻힌다.",
+        "opus": "점수 상승과 두 번째 공으로의 전환은 보이지만 강한 빛 번짐으로 공과 플리퍼를 구분하기 어렵다."
+       }
+      },
+      "fable": {
+       "ranking": [
+        "fable",
+        "sol",
+        "astra",
+        "opus"
+       ],
+       "reasons": {
+        "fable": "백글라스까지 갖춘 화려한 네온 테이블에 레인·범퍼·볼 세이브·보너스 표시가 보여 실제 핀볼 기계에 가장 가깝지만, 테이블이 화면에 비해 다소 작게 보인다.",
+        "sol": "어두운 배경에 세련된 레이아웃과 선명한 3D 테이블, 점등되는 범퍼와 꾸준한 점수 상승이 보여 완성도가 높으나 플레이필드 구성은 C보다 단순하다.",
+        "astra": "레트로 포스터풍 디자인과 UI가 깔끔하고 램프도 보이지만, 색감이 차분하고 테이블이 작은 패널에 갇혀 있으며 후반 프레임에서 점수가 멈춰 있다.",
+        "opus": "블룸이 과하게 번져 테이블 전체가 하얗게 날아가 범퍼와 공, 플리퍼를 거의 알아볼 수 없다."
+       }
+      },
+      "opus": {
+       "ranking": [
+        "fable",
+        "sol",
+        "astra",
+        "opus"
+       ],
+       "reasons": {
+        "fable": "백박스와 네온 조명이 있는 화려한 3D 테이블에 점수, 볼 수, 발사 안내가 모두 보여 실제 핀볼 기계에 가장 가깝습니다.",
+        "sol": "범퍼가 빛나고 점수가 꾸준히 오르는 등 완성도는 높지만 시점이 평면적이어서 3D 입체감은 C보다 약합니다.",
+        "astra": "레트로 우주 테마가 세련되고 점수도 오르지만 테이블이 작고 어두워 공과 범퍼의 움직임이 잘 보이지 않습니다.",
+        "opus": "블룸 효과가 지나쳐 화면이 하얗게 번지는 바람에 테이블 요소와 공을 거의 알아볼 수 없습니다."
+       }
+      },
+      "sol": {
+       "ranking": [
+        "sol",
+        "astra",
+        "fable",
+        "opus"
+       ],
+       "reasons": {
+        "astra": "캐비닛의 디테일이 정교하고 점수와 조작 안내를 한눈에 읽을 수 있다.",
+        "sol": "범퍼 점등과 플리퍼 움직임이 뚜렷하고 입체적인 테이블의 마감이 정교하다.",
+        "fable": "득점과 공 손실 안내는 읽기 쉽지만 테이블이 작고 상단 안내가 간판과 겹친다.",
+        "opus": "강한 빛 번짐이 공과 플리퍼를 가리고 캐비닛의 상하단이 화면에서 잘린다."
+       }
+      }
+     }
+    },
+    {
+     "id": "colosseum",
+     "prompt": "Build an interactive 3D recreation of the Roman Colosseum in the browser that the user can explore from different angles. Model the arena's tiers of arches, the arena floor and the underground hypogeum, with daylight and shadows. Let the user orbit and zoom freely, and add buttons that fly the camera to a few named viewpoints (aerial view, arena floor, top tier) with short captions about each.\nSave everything as a single self-contained file named index.html in the current directory (inline CSS/JS; you may load three.js from https://unpkg.com/three@0.170.0 as an ES module import map if needed). Do it in one go, do not ask questions.",
+     "runs": [
+      {
+       "model": "astra",
+       "file": "results/plain/colosseum/astra/index.html",
+       "video": "rec/colosseum-astra.mp4",
+       "seconds": 699,
+       "usd": 2.598,
+       "usage": "in 2,556,493 (cached 2,482,432) out 25,307"
+      },
+      {
+       "model": "sol",
+       "file": "results/plain/colosseum/sol/index.html",
+       "video": "rec/colosseum-sol.mp4",
+       "seconds": 501,
+       "usd": 0.811,
+       "usage": "in 2,896,597 (cached 2,781,568) out 30,327"
+      },
+      {
+       "model": "fable",
+       "file": "results/plain/colosseum/fable/index.html",
+       "video": "rec/colosseum-fable.mp4",
+       "seconds": 1348,
+       "usd": 7.96,
+       "usage": "out 130,479 turns 31"
+      },
+      {
+       "model": "opus",
+       "file": "results/plain/colosseum/opus/index.html",
+       "video": "rec/colosseum-opus.mp4",
+       "seconds": 1154,
+       "usd": 3.642,
+       "usage": "out 117,042 turns 18"
+      }
+     ],
+     "sheet": "judge/plain-colosseum.jpg",
+     "sheet_labels": {
+      "A": "fable",
+      "B": "astra",
+      "C": "sol",
+      "D": "opus"
+     },
+     "votes": {
+      "astra": {
+       "ranking": [
+        "sol",
+        "astra",
+        "fable",
+        "opus"
+       ],
+       "reasons": {
+        "fable": "연속 아치와 햇빛 아래의 그림자는 선명하지만, 상단 시점에서는 기둥이 시야를 가리고 인물 모형도 단순하다.",
+        "astra": "밝은 석재 모형과 정돈된 시점 메뉴가 돋보이지만, 밝은 바탕 위의 작은 설명 글씨는 읽기 어렵다.",
+        "sol": "빛과 그림자가 층층의 아치를 선명하게 드러내고, 경기장 바닥을 열었을 때 지하 통로의 구조와 시점별 설명을 함께 살펴볼 수 있다.",
+        "opus": "여러 각도에서 관중석과 지하 통로를 보여 주지만, 어두운 조명과 화면 하단의 설명 상자가 경기장 세부를 가린다."
+       }
+      },
+      "fable": {
+       "ranking": [
+        "fable",
+        "sol",
+        "astra",
+        "opus"
+       ],
+       "reasons": {
+        "fable": "하늘·지형·시간대 조절까지 갖춘 밝은 주간 장면에 아치 층, 아레나 바닥, 히포게움과 다섯 개 시점 버튼이 모두 보여 가장 충실하지만, 최상층 시점에서 기둥이 시야를 크게 가립니다.",
+        "astra": "밝고 깔끔한 편집 디자인에 썸네일 달린 시점 카드가 세련됐으나, 3D 캔버스가 작고 그림자와 일광 표현이 약해 밋밋합니다.",
+        "sol": "어두운 테마의 세련된 UI와 그림자가 뚜렷한 모델, 히포게움 표현이 좋지만, 큰 제목이 근접 장면 위에 겹치고 하늘 같은 주간 분위기가 부족합니다.",
+        "opus": "아치와 히포게움, 시간대 조절은 갖췄으나 전체적으로 화면이 어둡고 칙칙하며 아레나 바닥 시점은 거의 그늘에 묻혀 잘 보이지 않습니다."
+       }
+      },
+      "opus": {
+       "ranking": [
+        "astra",
+        "sol",
+        "opus",
+        "fable"
+       ],
+       "reasons": {
+        "fable": "주변 풍경과 조명은 좋지만, 상단 관람석 시점에서 카메라가 기둥 사이에 끼어 시야가 가리고 경기장 바닥의 캡슐 모양 물체도 어색해 클리핑 문제가 눈에 띕니다.",
+        "astra": "깔끔한 UI와 시점 카드, 일부가 무너진 사실적인 아치 층과 드러난 하이포게움이 잘 어우러졌고, 모든 시점 이동이 버그 없이 매끄러워 가장 완성도가 높습니다.",
+        "sol": "어두운 테마의 세련된 UI와 하이포게움이 드러난 모델이 훌륭하고 시점 전환도 정확하지만, 큰 제목이 3D 화면 위로 겹쳐 시야를 약간 가립니다.",
+        "opus": "지형, 그림자, 시간대 조절 등 기능은 풍부하지만, 일부 시점이 어둡고 단조로우며 캡션 패널이 화면을 많이 가려 완성도가 다소 떨어집니다."
+       }
+      },
+      "sol": {
+       "ranking": [
+        "sol",
+        "astra",
+        "fable",
+        "opus"
+       ],
+       "reasons": {
+        "fable": "아치와 지하 구조가 선명하지만 상층 시점에서는 큰 기둥이 경기장 전망을 가린다.",
+        "astra": "시점 선택이 명확하고 절개 모형 덕분에 외벽 아치와 지하 통로를 한눈에 볼 수 있다.",
+        "sol": "석재 질감과 그림자가 자연스럽고 시점별 설명과 바닥 전환으로 관람석과 지하 구조를 잘 보여 준다.",
+        "opus": "여러 시점에서 구조를 둘러볼 수 있지만 깊은 그림자와 하단 설명창 때문에 세부를 보기 어렵다."
+       }
+      }
+     }
+    },
+    {
+     "id": "camper",
+     "prompt": "Design a website for a company that sells adventure camper vans. Give it a distinctive look that fits the brand, and build it around the real goal of the site: helping a visitor configure and price their camper. Include an interactive vehicle configurator where the visitor picks the body colour, roof type, interior layout and add-ons, sees the camper update visually, and sees the total price change live.\nSave everything as a single self-contained file named index.html in the current directory (inline CSS/JS; you may load three.js from https://unpkg.com/three@0.170.0 as an ES module import map if needed). Do it in one go, do not ask questions.",
+     "runs": [
+      {
+       "model": "astra",
+       "file": "results/plain/camper/astra/index.html",
+       "video": "rec/camper-astra.mp4",
+       "seconds": 653,
+       "usd": 2.579,
+       "usage": "in 2,677,894 (cached 2,598,912) out 22,694"
+      },
+      {
+       "model": "sol",
+       "file": "results/plain/camper/sol/index.html",
+       "video": "rec/camper-sol.mp4",
+       "seconds": 487,
+       "usd": 0.8,
+       "usage": "in 3,549,390 (cached 3,456,000) out 26,778"
+      },
+      {
+       "model": "fable",
+       "file": "results/plain/camper/fable/index.html",
+       "video": "rec/camper-fable.mp4",
+       "seconds": 2593,
+       "usd": 16.139,
+       "usage": "out 185,764 turns 41"
+      },
+      {
+       "model": "opus",
+       "file": "results/plain/camper/opus/index.html",
+       "video": "rec/camper-opus.mp4",
+       "seconds": 1405,
+       "usd": 4.463,
+       "usage": "out 144,689 turns 25"
+      }
+     ],
+     "sheet": "judge/plain-camper.jpg",
+     "sheet_labels": {
+      "A": "fable",
+      "B": "opus",
+      "C": "sol",
+      "D": "astra"
+     },
+     "votes": {
+      "astra": {
+       "ranking": [
+        "opus",
+        "fable",
+        "astra",
+        "sol"
+       ],
+       "reasons": {
+        "fable": "탐험 지도풍 디자인과 입체 차량 미리보기가 돋보이지만, 옵션을 살펴보는 동안 총액은 £64,900으로 유지된다.",
+        "opus": "따뜻한 색감과 산악 일러스트가 브랜드를 살리고, 선택한 사양과 옵션별 금액을 최종 견적서에서 확인할 수 있다.",
+        "sol": "차량 사진과 첫 화면의 완성도는 높지만, 옵션이 세로로 길게 이어지고 차량 모습과 $84,900 견적은 장면마다 같다.",
+        "astra": "산악 배경의 차량 옆에 네 가지 옵션과 총액을 한눈에 배치했지만, 어두운 패널의 세부 가격은 작고 대비가 낮다."
+       }
+      },
+      "fable": {
+       "ranking": [
+        "opus",
+        "astra",
+        "fable",
+        "sol"
+       ],
+       "reasons": {
+        "fable": "크림톤 에디토리얼 디자인과 3D 밴, 하단 고정 가격 바가 잘 짜여 있지만 밴 모델이 각지고 투박하며 프레임 간 외형·가격 변화가 보이지 않습니다.",
+        "opus": "일러스트 히어로와 풍경 속 밴, 빌드 시트·금융·예약 폼까지 이어지는 구성이 가장 개성 있고 완성도가 높으나 떠 있는 가격 바가 색상 스와치를 일부 가립니다.",
+        "sol": "실사풍 밴과 깔끔한 옵션 목록은 무난하지만 흰 배경의 평범한 레이아웃에 여백이 많아 브랜드 개성이 가장 약합니다.",
+        "astra": "어두운 테마에 실사풍 밴과 옵션 패널, 실시간 가격이 한 화면에 들어와 세련되고 실용적이지만 페이지 구성이 단조롭고 프레임 간 변화가 거의 보이지 않습니다."
+       }
+      },
+      "opus": {
+       "ranking": [
+        "opus",
+        "fable",
+        "sol",
+        "astra"
+       ],
+       "reasons": {
+        "opus": "일러스트 스타일의 브랜드 디자인이 뚜렷하고, 단계별 구성기, 빌드 시트, 가격 요약, 예약 폼까지 갖춰 프롬프트를 가장 충실하게 수행했다.",
+        "fable": "독특한 브랜드 디자인과 3D 밴, 촘촘한 옵션 패널은 훌륭하지만, 프레임 내내 차량 모습과 가격(€64,900)이 바뀌지 않아 실시간 반응이 약해 보인다.",
+        "sol": "실사 밴 이미지와 깔끔한 레이아웃은 세련됐지만, 프레임 내내 차량 모습과 가격($84,900)이 바뀌지 않고 브랜드 개성도 다소 평범하다.",
+        "astra": "어두운 테마의 실사 이미지는 인상적이지만, 프레임 내내 차량 모습과 가격($84,000)이 그대로이고 구성기 프레임에서 'ATLAS 4x4' 제목이 위쪽에서 잘려 보인다."
+       }
+      },
+      "sol": {
+       "ranking": [
+        "opus",
+        "fable",
+        "sol",
+        "astra"
+       ],
+       "reasons": {
+        "fable": "입체 차량 미리보기와 고정 가격 표시 덕분에 옵션을 둘러보며 견적을 확인하기 쉽다.",
+        "opus": "브랜드 일러스트가 돋보이고 차량 구성부터 항목별 견적과 예약까지 흐름이 자연스럽다.",
+        "sol": "차량 사진과 옵션 배치는 깔끔하지만 캡처에서는 차량과 가격의 변화가 보이지 않는다.",
+        "astra": "야외 차량 사진은 인상적이지만 좁고 대비가 낮은 옵션 패널은 읽기 어렵다."
+       }
+      }
+     }
+    },
+    {
+     "id": "deck",
+     "prompt": "Create a slide deck pitching animal-themed merch concepts (enamel pins, T-shirts and stitched backpack patches) for four school clubs: the coding club, the robotics club, the broadcasting club and the science club. Present the collection as an illustrated field guide with a consistent layout, give each club its own mascot and a light club-specific joke, show every design on all three formats, and end with a production slide listing proposed dimensions and colour instructions. Titles should state the main takeaway of each slide. Build it as an HTML presentation with 10-14 slides, navigated with the arrow keys, and draw all artwork as inline SVG.\nSave everything as a single self-contained file named index.html in the current directory (inline CSS/JS; you may load three.js from https://unpkg.com/three@0.170.0 as an ES module import map if needed). Do it in one go, do not ask questions.",
+     "runs": [
+      {
+       "model": "astra",
+       "file": "results/plain/deck/astra/index.html",
+       "video": "rec/deck-astra.mp4",
+       "seconds": 459,
+       "usd": 1.418,
+       "usage": "in 1,014,184 (cached 961,792) out 15,359"
+      },
+      {
+       "model": "sol",
+       "file": "results/plain/deck/sol/index.html",
+       "video": "rec/deck-sol.mp4",
+       "seconds": 543,
+       "usd": 0.86,
+       "usage": "in 3,371,659 (cached 3,270,400) out 33,035"
+      },
+      {
+       "model": "fable",
+       "file": "results/plain/deck/fable/index.html",
+       "video": "rec/deck-fable.mp4",
+       "seconds": 1160,
+       "usd": 6.713,
+       "usage": "out 110,272 turns 31"
+      },
+      {
+       "model": "opus",
+       "file": "results/plain/deck/opus/index.html",
+       "video": "rec/deck-opus.mp4",
+       "seconds": 728,
+       "usd": 2.318,
+       "usage": "out 75,541 turns 22"
+      }
+     ],
+     "sheet": "judge/plain-deck.jpg",
+     "sheet_labels": {
+      "A": "fable",
+      "B": "opus",
+      "C": "astra",
+      "D": "sol"
+     },
+     "votes": {
+      "astra": {
+       "ranking": [
+        "opus",
+        "sol",
+        "fable",
+        "astra"
+       ],
+       "reasons": {
+        "fable": "도감의 종별 설명과 제작 치수는 충실하지만, 티셔츠 속 그림과 농담이 작아 읽기 어렵다.",
+        "opus": "오리의 부리와 게의 집게가 작은 핀에서도 선명하고, 12종 비교표와 제작 사양까지 도감의 흐름이 자연스럽다.",
+        "astra": "절제된 삽화와 여백은 세련되지만, 컬렉션 요약이 핀 네 개에 집중돼 네 동아리의 세 가지 상품을 한눈에 비교하기 어렵다.",
+        "sol": "굵은 제목과 동아리별 색상 덕분에 12종을 쉽게 비교할 수 있지만, 일부 제목은 디자인의 특징보다 마스코트 소개에 그친다."
+       }
+      },
+      "fable": {
+       "ranking": [
+        "fable",
+        "opus",
+        "sol",
+        "astra"
+       ],
+       "reasons": {
+        "fable": "도감 플레이트 형식이 가장 일관되고 학명·농담·세 가지 포맷·제작 사양이 깔끔하게 정리되어 완성도가 가장 높습니다.",
+        "opus": "마스코트 일러스트와 세 포맷 표현이 풍부하고 제목도 핵심을 잘 전달하지만, 제작 슬라이드 등 일부 화면의 글이 빽빽해 가독성이 떨어집니다.",
+        "sol": "마스코트가 귀엽고 전체 포맷 매트릭스도 명확하지만, 굵은 대문자 제목 탓에 도감 느낌이 약하고 마지막 사양 슬라이드의 글씨가 작습니다.",
+        "astra": "차분한 도감 분위기는 좋으나 동물 그림이 단순하고 작으며 여백이 많아 다소 허전하고, 전체 컬렉션 슬라이드가 핀 세트 위주로만 보입니다."
+       }
+      },
+      "opus": {
+       "ranking": [
+        "sol",
+        "opus",
+        "fable",
+        "astra"
+       ],
+       "reasons": {
+        "fable": "필드 가이드 형식이 일관되고 귀여운 마스코트가 세 가지 포맷에 모두 적용되어 있으나, 전체 컬렉션 슬라이드에는 티셔츠와 패치만 보이고 글자가 작아 다소 빽빽합니다.",
+        "opus": "모든 클럽에 같은 구성을 적용해 12개 디자인을 한눈에 비교할 수 있고 생산 사양도 충실하지만, 화면이 조금 어둡고 정보가 빽빽해 읽기가 다소 무겁습니다.",
+        "astra": "차분한 일러스트풍 필드 가이드의 완성도는 좋지만, 마스코트 표현이 약하고 컬렉션 슬라이드에 핀만 보여 세 가지 포맷을 모두 보여 주라는 요구를 덜 충족합니다.",
+        "sol": "개성 있는 마스코트와 선명한 색감, 일관된 레이아웃을 갖췄고, 컬렉션 슬라이드에서 네 클럽 디자인을 세 가지 포맷으로 모두 보여 줘 가장 완성도가 높습니다."
+       }
+      },
+      "sol": {
+       "ranking": [
+        "sol",
+        "opus",
+        "astra",
+        "fable"
+       ],
+       "reasons": {
+        "fable": "네 마스코트와 제작 사양을 충실히 담았지만, 반복되는 카드 구성과 작은 설명 글씨가 읽는 흐름을 더디게 한다.",
+        "opus": "동아리별 농담과 세 가지 굿즈를 도감 형식에 자연스럽게 녹였지만, 제작 슬라이드의 정보가 촘촘하다.",
+        "astra": "자연 도감풍 삽화와 여백이 돋보이지만, 컬렉션 소개가 핀 세트에 집중돼 세 가지 굿즈를 한눈에 비교하기 어렵다.",
+        "sol": "선명한 제목과 완성도 높은 굿즈 목업이 돋보이며, 열두 디자인과 제작 사양을 한눈에 읽을 수 있다."
+       }
+      }
+     }
+    }
+   ],
+   "models": [
+    "astra",
+    "sol",
+    "fable",
+    "opus"
+   ],
+   "note": "GPT ran in Codex with the default setup, so it could call the built-in image generator (racing-astra and both camper sites used it).",
+   "tally": {
+    "total": {
+     "opus": 24,
+     "fable": 27,
+     "astra": 28,
+     "sol": 41
+    },
+    "noself": {
+     "opus": 18,
+     "fable": 16,
+     "sol": 28,
+     "astra": 20
+    },
+    "first_votes": {
+     "opus": 5,
+     "sol": 8,
+     "fable": 4,
+     "astra": 3
+    }
+   }
+  },
+  "fair": {
+   "title": "Round 2 - fair (GPT image tool off)",
+   "tasks": [
+    {
+     "id": "racing",
+     "prompt": "Build a playable futuristic racing game in the browser: a sleek racing craft speeds along an illuminated track that winds through a neon city at night. Include a start screen, keyboard controls (arrow keys or WASD, space to boost), a lap timer and lap counter, a speed readout, and a finish screen with the race time. Make it feel fast and look polished.\nSave everything as a single self-contained file named index.html in the current directory (inline CSS/JS; you may load three.js from https://unpkg.com/three@0.170.0 as an ES module import map if needed). Do it in one go, do not ask questions.",
+     "runs": [
+      {
+       "model": "astra-fair",
+       "file": "results/fair/racing/astra-fair/index.html",
+       "video": "rec/racing-astra-fair.mp4",
+       "seconds": 598,
+       "usd": 1.927,
+       "usage": "in 1,898,839 (cached 1,824,384) out 15,029"
+      },
+      {
+       "model": "sol-fair",
+       "file": "results/fair/racing/sol-fair/index.html",
+       "video": "rec/racing-sol-fair.mp4",
+       "seconds": 828,
+       "usd": 0.784,
+       "usage": "in 2,186,364 (cached 2,082,816) out 36,885"
+      },
+      {
+       "model": "fable",
+       "file": "results/fair/racing/fable/index.html",
+       "video": "rec/racing-fable.mp4",
+       "seconds": 1246,
+       "usd": 7.409,
+       "usage": "out 127,124 turns 16"
+      },
+      {
+       "model": "opus",
+       "file": "results/fair/racing/opus/index.html",
+       "video": "rec/racing-opus.mp4",
+       "seconds": 931,
+       "usd": 2.98,
+       "usage": "out 99,900 turns 18"
+      }
+     ],
+     "sheet": "judge/fair-racing.jpg",
+     "sheet_labels": {
+      "A": "sol-fair",
+      "B": "opus",
+      "C": "astra-fair",
+      "D": "fable"
+     },
+     "votes": {
+      "astra": {
+       "ranking": [
+        "sol-fair",
+        "astra-fair",
+        "opus",
+        "fable"
+       ],
+       "reasons": {
+        "sol-fair": "네온 커브에서 기체의 기울기와 가속 궤적이 선명하고, 2랩 진입 시 랩 타이머가 새로 시작한다.",
+        "opus": "순위 변화와 부스트 표시가 속도감을 살리지만, 강한 흰빛이 기체 윤곽을 가린다.",
+        "astra-fair": "복고풍 도시와 날렵한 기체가 잘 어우러지지만, 주행 장면 대부분에서 코스가 곧게 뻗어 보인다.",
+        "fable": "시작 화면과 조작 안내는 명확하지만, 주행 중 빛 번짐이 기체와 도로 경계까지 가린다."
+       }
+      },
+      "fable": {
+       "ranking": [
+        "sol-fair",
+        "astra-fair",
+        "opus",
+        "fable"
+       ],
+       "reasons": {
+        "sol-fair": "기체와 굽이치는 네온 트랙, 도시 야경이 선명하게 보이고 HUD가 깔끔하며 랩 카운터가 2랩으로 넘어가는 것까지 확인되어 가장 완성도가 높다.",
+        "astra-fair": "신스웨이브풍 석양과 기체 디자인이 세련되고 버그가 보이지 않지만, 트랙이 거의 직선으로만 보여 굽이치는 느낌과 속도감이 다소 약하다.",
+        "opus": "속도감과 네온 분위기, 미니맵·속도계 HUD는 화려하지만 블룸이 과해 기체와 트랙이 하얗게 번져 형체를 알아보기 어렵다.",
+        "fable": "시작 화면과 HUD는 갖췄으나 과도한 블룸으로 화면이 거의 하얗게 날아가는 프레임이 있고 기체가 잘 보이지 않으며 속도도 자주 떨어져 주행이 불안정해 보인다."
+       }
+      },
+      "opus": {
+       "ranking": [
+        "sol-fair",
+        "astra-fair",
+        "opus",
+        "fable"
+       ],
+       "reasons": {
+        "sol-fair": "기체와 굽은 트랙, 네온 도시가 선명하고 HUD가 깔끔하며, 랩이 2로 넘어가는 장면까지 보여 요구사항을 가장 안정적으로 충족한다.",
+        "astra-fair": "신스웨이브 스타일과 HUD가 매우 세련되고 버그도 없지만, 트랙이 거의 직선으로만 보여 도시를 굽이치는 느낌과 진행감이 약하다.",
+        "opus": "속도감과 HUD, 미니맵은 좋지만 블룸이 과해 화면이 하얗게 날아가고 기체가 거의 보이지 않는다.",
+        "fable": "시작 화면은 멋지지만 주행 중 과도한 블룸으로 화면이 하얗게 뒤덮이고, 기체가 보이지 않으며 속도가 자주 급락해 충돌이 의심된다."
+       }
+      },
+      "sol": {
+       "ranking": [
+        "sol-fair",
+        "astra-fair",
+        "opus",
+        "fable"
+       ],
+       "reasons": {
+        "sol-fair": "기체와 네온 코스가 선명하고 속도 변화와 2랩 진입이 화면에 명확히 드러난다.",
+        "opus": "순위 변화와 속도계가 레이스의 긴장감을 살리지만 강한 발광이 기체 윤곽을 가린다.",
+        "astra-fair": "일관된 색감과 선명한 기체가 돋보이지만 촬영 구간 전체가 1랩에 머문다.",
+        "fable": "시작 화면은 인상적이지만 주행 중 빛 번짐이 기체와 트랙 경계를 가린다."
+       }
+      }
+     }
+    },
+    {
+     "id": "pinball",
+     "prompt": "Build a playable 3D pinball table in the browser. The player launches the ball with a plunger and controls the left and right flippers with the keyboard. Include bumpers that light up and push the ball, ramps or lanes, a score display, three balls per game, and a game-over screen with the final score. The table should look like a real, colourful pinball machine.\nSave everything as a single self-contained file named index.html in the current directory (inline CSS/JS; you may load three.js from https://unpkg.com/three@0.170.0 as an ES module import map if needed). Do it in one go, do not ask questions.",
+     "runs": [
+      {
+       "model": "astra-fair",
+       "file": "results/fair/pinball/astra-fair/index.html",
+       "video": "rec/pinball-astra-fair.mp4",
+       "seconds": 857,
+       "usd": 3.07,
+       "usage": "in 3,293,659 (cached 3,191,040) out 24,309"
+      },
+      {
+       "model": "sol-fair",
+       "file": "results/fair/pinball/sol-fair/index.html",
+       "video": "rec/pinball-sol-fair.mp4",
+       "seconds": 845,
+       "usd": 0.842,
+       "usage": "in 2,885,588 (cached 2,780,672) out 35,444"
+      },
+      {
+       "model": "fable",
+       "file": "results/fair/pinball/fable/index.html",
+       "video": "rec/pinball-fable.mp4",
+       "seconds": 2088,
+       "usd": 13.161,
+       "usage": "out 205,259 turns 70"
+      },
+      {
+       "model": "opus",
+       "file": "results/fair/pinball/opus/index.html",
+       "video": "rec/pinball-opus.mp4",
+       "seconds": 1202,
+       "usd": 3.989,
+       "usage": "out 125,781 turns 33"
+      }
+     ],
+     "sheet": "judge/fair-pinball.jpg",
+     "sheet_labels": {
+      "A": "astra-fair",
+      "B": "sol-fair",
+      "C": "opus",
+      "D": "fable"
+     },
+     "votes": {
+      "astra": {
+       "ranking": [
+        "sol-fair",
+        "fable",
+        "astra-fair",
+        "opus"
+       ],
+       "reasons": {
+        "astra-fair": "네온 장식과 플리퍼 움직임은 선명하지만 모든 프레임에서 점수가 0이고 발사 안내가 그대로다.",
+        "sol-fair": "입체적인 테이블에서 공의 위치와 플리퍼 각도가 달라지고 점수 상승과 다음 공 전환도 뚜렷하게 보인다.",
+        "opus": "점수가 오르고 두 번째 공으로 넘어가지만 강한 빛 번짐이 공과 레인을 가려 플레이 상황을 읽기 어렵다.",
+        "fable": "화려한 테이블에서 공 구제와 보너스 득점까지 확인되지만 화면에 비해 테이블이 작아 공을 따라가기 어렵다."
+       }
+      },
+      "fable": {
+       "ranking": [
+        "sol-fair",
+        "fable",
+        "astra-fair",
+        "opus"
+       ],
+       "reasons": {
+        "sol-fair": "세련된 우주 테마의 3D 테이블에 점수가 꾸준히 오르고 볼 상태 표시도 바뀌어 실제 플레이가 확인되며 레이아웃 깨짐도 보이지 않습니다.",
+        "fable": "백박스까지 갖춘 알록달록한 실제 핀볼 기계 모습에 점수 상승과 볼 세이브·볼 로스트 보너스 메시지가 보이지만, 테이블이 화면에 비해 작고 B보다 마감이 덜합니다.",
+        "astra-fair": "네온 테마의 시각 완성도는 가장 높은 편이지만 모든 프레임에서 점수가 000000에 머물러 공이 발사되어 플레이되는 모습이 확인되지 않습니다.",
+        "opus": "점수가 오르고 2번째 볼까지 진행되지만 블룸 과다 노출로 테이블이 하얗게 날아가 범퍼와 구성 요소를 거의 알아볼 수 없습니다."
+       }
+      },
+      "opus": {
+       "ranking": [
+        "fable",
+        "sol-fair",
+        "opus",
+        "astra-fair"
+       ],
+       "reasons": {
+        "fable": "백박스와 화려한 색감이 실제 핀볼기처럼 보이고, 점수 상승·볼 세이브·볼 분실 보너스 등 게임 진행이 가장 풍부하게 보입니다.",
+        "sol-fair": "세련된 UI와 3D 테이블에서 점수가 꾸준히 올라 플레이가 잘 되지만, D보다 게임 상태 변화가 적게 보입니다.",
+        "opus": "점수가 오르고 2번째 공으로 넘어가 플레이는 되지만, 블룸이 과해 테이블이 하얗게 날아가 화면을 알아보기 어렵습니다.",
+        "astra-fair": "디자인은 가장 화려하지만 모든 프레임에서 점수가 000000이고 볼 발사도 보이지 않아 실제 게임 진행이 확인되지 않습니다."
+       }
+      },
+      "sol": {
+       "ranking": [
+        "sol-fair",
+        "fable",
+        "astra-fair",
+        "opus"
+       ],
+       "reasons": {
+        "astra-fair": "테이블은 정교하고 플리퍼도 움직이지만 공 발사와 득점은 화면에서 확인되지 않는다.",
+        "sol-fair": "입체적인 테이블과 읽기 쉬운 점수판이 돋보이며 공의 이동, 플리퍼 반응, 득점이 선명하게 보인다.",
+        "opus": "득점과 두 번째 공 진입은 보이지만 과도한 발광으로 공과 테이블 구조를 구분하기 어렵다.",
+        "fable": "득점, 공 구제, 공 손실이 명확히 표시되지만 테이블이 작게 보여 공을 따라가기 어렵다."
+       }
+      }
+     }
+    },
+    {
+     "id": "colosseum",
+     "prompt": "Build an interactive 3D recreation of the Roman Colosseum in the browser that the user can explore from different angles. Model the arena's tiers of arches, the arena floor and the underground hypogeum, with daylight and shadows. Let the user orbit and zoom freely, and add buttons that fly the camera to a few named viewpoints (aerial view, arena floor, top tier) with short captions about each.\nSave everything as a single self-contained file named index.html in the current directory (inline CSS/JS; you may load three.js from https://unpkg.com/three@0.170.0 as an ES module import map if needed). Do it in one go, do not ask questions.",
+     "runs": [
+      {
+       "model": "astra-fair",
+       "file": "results/fair/colosseum/astra-fair/index.html",
+       "video": "rec/colosseum-astra-fair.mp4",
+       "seconds": 800,
+       "usd": 2.55,
+       "usage": "in 1,990,485 (cached 1,860,224) out 19,088"
+      },
+      {
+       "model": "sol-fair",
+       "file": "results/fair/colosseum/sol-fair/index.html",
+       "video": "rec/colosseum-sol-fair.mp4",
+       "seconds": 638,
+       "usd": 0.651,
+       "usage": "in 2,374,912 (cached 2,292,352) out 25,660"
+      },
+      {
+       "model": "fable",
+       "file": "results/fair/colosseum/fable/index.html",
+       "video": "rec/colosseum-fable.mp4",
+       "seconds": 1348,
+       "usd": 7.96,
+       "usage": "out 130,479 turns 31"
+      },
+      {
+       "model": "opus",
+       "file": "results/fair/colosseum/opus/index.html",
+       "video": "rec/colosseum-opus.mp4",
+       "seconds": 1154,
+       "usd": 3.642,
+       "usage": "out 117,042 turns 18"
+      }
+     ],
+     "sheet": "judge/fair-colosseum.jpg",
+     "sheet_labels": {
+      "A": "sol-fair",
+      "B": "fable",
+      "C": "astra-fair",
+      "D": "opus"
+     },
+     "votes": {
+      "astra": {
+       "ranking": [
+        "sol-fair",
+        "astra-fair",
+        "fable",
+        "opus"
+       ],
+       "reasons": {
+        "sol-fair": "층층이 쌓인 석조 아치와 드러난 지하 통로가 정교하고, 시점이 바뀌어도 설명과 모형을 함께 보기 쉽다.",
+        "fable": "햇빛과 그림자가 경기장의 규모를 잘 살리지만, 바닥 시점에서는 원색 캡슐형 인물이 눈에 띄고 상단 시점에서는 난간이 시야를 가린다.",
+        "astra-fair": "밝은 조감도에서 관람석과 지하 통로의 배치가 선명하고 시점 메뉴도 읽기 쉽지만, 이동 중 갈색 벽면이 모형을 거의 전부 가린다.",
+        "opus": "상단에서 경기장 바닥과 지하 통로가 함께 보이지만, 내부가 어둡고 하단 버튼이 시점 설명의 끝부분을 가린다."
+       }
+      },
+      "fable": {
+       "ranking": [
+        "sol-fair",
+        "fable",
+        "astra-fair",
+        "opus"
+       ],
+       "reasons": {
+        "sol-fair": "세련된 에디토리얼 UI에 아치·경기장 바닥·히포게움이 또렷하고, 시점 전환과 캡션이 버그 없이 자연스럽게 작동해 가장 완성도가 높습니다.",
+        "fable": "전체 화면 3D에 주변 환경·그림자·시간대 조절과 다양한 시점이 있어 충실하지만, 흰 객석과 캡슐 인물 등 모델 질감이 다소 조악합니다.",
+        "astra-fair": "깔끔한 UI와 정교한 객석·히포게움 모델이 좋지만, 카메라 이동 중 화면 전체가 갈색으로 뒤덮이는 클리핑 프레임이 보입니다.",
+        "opus": "아치와 히포게움 디테일, 시점 캡션은 갖췄으나 전체적으로 너무 어둡고 탁해 주간 조명 느낌이 약하고 가독성이 떨어집니다."
+       }
+      },
+      "opus": {
+       "ranking": [
+        "fable",
+        "opus",
+        "sol-fair",
+        "astra-fair"
+       ],
+       "reasons": {
+        "fable": "주변 지형, 아치 층, 하이포게움과 시점별 캡션 및 조작 패널까지 잘 갖췄고 눈에 띄는 버그가 거의 없어 가장 완성도가 높다.",
+        "opus": "시간대 조절, 하이포게움 노출과 시점 캡션은 충실하지만 조명이 다소 어둡고 일부 시점에서 벽이 화면을 가로막는다.",
+        "sol-fair": "UI 디자인은 세련되었으나 상단 관람석 시점에서 카메라가 벽에 너무 붙어 아치만 화면을 채우는 문제가 보인다.",
+        "astra-fair": "모델과 레이아웃은 훌륭하지만 한 프레임이 갈색 화면으로 가득 차 카메라가 벽을 뚫는 클리핑 버그가 뚜렷하다."
+       }
+      },
+      "sol": {
+       "ranking": [
+        "sol-fair",
+        "opus",
+        "astra-fair",
+        "fable"
+       ],
+       "reasons": {
+        "sol-fair": "아치와 관중석, 경기장 바닥, 지하 통로가 각 시점에서 선명하게 드러나고 안내 화면도 정돈되어 있다.",
+        "fable": "주요 시점은 갖췄지만 상층 전망을 기둥이 가리고 경기장 안의 단순한 원통이 몰입을 해친다.",
+        "astra-fair": "모형과 조작 패널은 세련됐지만 한 장면에서 갈색 면이 화면 대부분을 가린다.",
+        "opus": "여러 시점에서 아치와 지하 통로를 자세히 볼 수 있지만 짙은 그림자 때문에 일부 구조가 잘 보이지 않는다."
+       }
+      }
+     }
+    },
+    {
+     "id": "camper",
+     "prompt": "Design a website for a company that sells adventure camper vans. Give it a distinctive look that fits the brand, and build it around the real goal of the site: helping a visitor configure and price their camper. Include an interactive vehicle configurator where the visitor picks the body colour, roof type, interior layout and add-ons, sees the camper update visually, and sees the total price change live.\nSave everything as a single self-contained file named index.html in the current directory (inline CSS/JS; you may load three.js from https://unpkg.com/three@0.170.0 as an ES module import map if needed). Do it in one go, do not ask questions.",
+     "runs": [
+      {
+       "model": "astra-fair",
+       "file": "results/fair/camper/astra-fair/index.html",
+       "video": "rec/camper-astra-fair.mp4",
+       "seconds": 695,
+       "usd": 2.125,
+       "usage": "in 1,928,214 (cached 1,856,384) out 20,186"
+      },
+      {
+       "model": "sol-fair",
+       "file": "results/fair/camper/sol-fair/index.html",
+       "video": "rec/camper-sol-fair.mp4",
+       "seconds": 1008,
+       "usd": 0.89,
+       "usage": "in 2,632,662 (cached 2,527,360) out 42,660"
+      },
+      {
+       "model": "fable",
+       "file": "results/fair/camper/fable/index.html",
+       "video": "rec/camper-fable.mp4",
+       "seconds": 2593,
+       "usd": 16.139,
+       "usage": "out 185,764 turns 41"
+      },
+      {
+       "model": "opus",
+       "file": "results/fair/camper/opus/index.html",
+       "video": "rec/camper-opus.mp4",
+       "seconds": 1405,
+       "usd": 4.463,
+       "usage": "out 144,689 turns 25"
+      }
+     ],
+     "sheet": "judge/fair-camper.jpg",
+     "sheet_labels": {
+      "A": "sol-fair",
+      "B": "astra-fair",
+      "C": "fable",
+      "D": "opus"
+     },
+     "votes": {
+      "astra": {
+       "ranking": [
+        "astra-fair",
+        "sol-fair",
+        "fable",
+        "opus"
+       ],
+       "reasons": {
+        "sol-fair": "짙은 녹색 배경에서 차량과 총액이 돋보이지만 실내 배치와 추가 장비를 보려면 탭을 옮겨야 한다.",
+        "astra-fair": "산악 포스터풍 차량 그림 옆에 네 가지 선택 항목을 모두 배치해 구성과 총액을 한눈에 확인할 수 있다.",
+        "fable": "지붕 측면도와 실내 평면도 덕분에 옵션 차이는 명확하지만 차량 렌더링은 다소 투박하다.",
+        "opus": "여행 포스터풍 삽화와 상세 견적서는 매력적이지만 구성 화면에서 하단 가격 막대가 차량 바퀴와 색상 견본을 가린다."
+       }
+      },
+      "fable": {
+       "ranking": [
+        "opus",
+        "astra-fair",
+        "sol-fair",
+        "fable"
+       ],
+       "reasons": {
+        "opus": "히어로부터 구성기, 빌드 시트, 예약 폼까지 완결된 사이트이고 프레임 사이에 차량 색상과 가격이 실제로 바뀌는 모습이 유일하게 보입니다.",
+        "astra-fair": "산 배경 일러스트와 함께 색상·루프·레이아웃·애드온 옵션이 한 화면에 깔끔히 정리돼 있으나 프레임 내내 가격과 차량 변화는 보이지 않습니다.",
+        "sol-fair": "짙은 녹색 브랜드 톤과 밴 일러스트의 완성도는 높지만 탭 구조라 일부 옵션만 보이고 프레임 내내 화면과 가격이 그대로입니다.",
+        "fable": "에디토리얼한 레이아웃과 3D 구성기, 평면도 옵션은 충실하지만 로우폴리 밴이 투박하고 가격 변화도 확인되지 않습니다."
+       }
+      },
+      "opus": {
+       "ranking": [
+        "opus",
+        "astra-fair",
+        "sol-fair",
+        "fable"
+       ],
+       "reasons": {
+        "sol-fair": "포토리얼한 밴과 짙은 녹색 브랜드 톤은 고급스럽지만, 모든 프레임에서 화면과 가격 $84,900이 그대로라 실시간 구성 변화가 확인되지 않는다.",
+        "astra-fair": "일러스트 배경과 색상·루프·레이아웃·애드온을 한 화면에 담은 패널이 완성도 높지만, 프레임 내내 밴과 가격 $84,500이 변하지 않는다.",
+        "fable": "단계별 구성 패널은 넘어가지만, 3D 밴이 투박한 로우폴리이고 가격도 €64,900에서 바뀌지 않아 시각적 완성도가 가장 떨어진다.",
+        "opus": "히어로, 단계형 구성기, 빌드 시트, 예약 폼까지 흐름이 완결적이고 가격이 £58,950에서 £85,150으로 실시간 갱신되는 것이 보이지만, 일부 프레임에서 밴이 하단 고정 바에 살짝 가려진다."
+       }
+      },
+      "sol": {
+       "ranking": [
+        "opus",
+        "fable",
+        "astra-fair",
+        "sol-fair"
+       ],
+       "reasons": {
+        "sol-fair": "캠퍼 렌더링은 정교하지만 하단 견적 바가 다음 단계 안내를 일부 가린다.",
+        "astra-fair": "산악 일러스트가 브랜드를 살리고 네 가지 구성 옵션과 견적을 한눈에 보여준다.",
+        "fable": "3D 캠퍼 미리보기와 고정 견적을 보면서 색상부터 추가 옵션까지 차례로 살펴볼 수 있다.",
+        "opus": "브랜드 분위기가 뚜렷하고 차량 구성부터 항목별 견적과 예약까지 자연스럽게 이어진다."
+       }
+      }
+     }
+    },
+    {
+     "id": "deck",
+     "prompt": "Create a slide deck pitching animal-themed merch concepts (enamel pins, T-shirts and stitched backpack patches) for four school clubs: the coding club, the robotics club, the broadcasting club and the science club. Present the collection as an illustrated field guide with a consistent layout, give each club its own mascot and a light club-specific joke, show every design on all three formats, and end with a production slide listing proposed dimensions and colour instructions. Titles should state the main takeaway of each slide. Build it as an HTML presentation with 10-14 slides, navigated with the arrow keys, and draw all artwork as inline SVG.\nSave everything as a single self-contained file named index.html in the current directory (inline CSS/JS; you may load three.js from https://unpkg.com/three@0.170.0 as an ES module import map if needed). Do it in one go, do not ask questions.",
+     "runs": [
+      {
+       "model": "astra-fair",
+       "file": "results/fair/deck/astra-fair/index.html",
+       "video": "rec/deck-astra-fair.mp4",
+       "seconds": 690,
+       "usd": 1.86,
+       "usage": "in 1,372,039 (cached 1,313,408) out 21,651"
+      },
+      {
+       "model": "sol-fair",
+       "file": "results/fair/deck/sol-fair/index.html",
+       "video": "rec/deck-sol-fair.mp4",
+       "seconds": 660,
+       "usd": 0.628,
+       "usage": "in 1,789,525 (cached 1,701,504) out 28,211"
+      },
+      {
+       "model": "fable",
+       "file": "results/fair/deck/fable/index.html",
+       "video": "rec/deck-fable.mp4",
+       "seconds": 1160,
+       "usd": 6.713,
+       "usage": "out 110,272 turns 31"
+      },
+      {
+       "model": "opus",
+       "file": "results/fair/deck/opus/index.html",
+       "video": "rec/deck-opus.mp4",
+       "seconds": 728,
+       "usd": 2.318,
+       "usage": "out 75,541 turns 22"
+      }
+     ],
+     "sheet": "judge/fair-deck.jpg",
+     "sheet_labels": {
+      "A": "fable",
+      "B": "astra-fair",
+      "C": "sol-fair",
+      "D": "opus"
+     },
+     "votes": {
+      "astra": {
+       "ranking": [
+        "opus",
+        "sol-fair",
+        "fable",
+        "astra-fair"
+       ],
+       "reasons": {
+        "fable": "번호가 붙은 관찰 도해와 동아리별 색인 탭이 도감답지만, 전체 상품을 모은 면에서는 핀과 패치가 작게 보인다.",
+        "astra-fair": "자연도감풍 동물 삽화와 배낭에 단 패치 묘사가 뛰어나지만, 제시된 화면에서는 방송부와 과학부의 상품 세 종을 확인하기 어렵다.",
+        "sol-fair": "굵은 결론형 제목과 동아리별 색상 덕분에 표본 삽화부터 12종 상품 비교표까지 한눈에 읽힌다.",
+        "opus": "‘It works on my pond’ 같은 동아리별 농담을 상품에 직접 살리고, 12종 비교표와 치수·별색 지침까지 설득력 있게 연결했다."
+       }
+      },
+      "fable": {
+       "ranking": [
+        "fable",
+        "opus",
+        "sol-fair",
+        "astra-fair"
+       ],
+       "reasons": {
+        "fable": "도감 플레이트 형식이 일관되고 마스코트·농담·세 가지 포맷·치수와 색상 팔레트가 담긴 제작 슬라이드까지 깔끔하게 갖췄으며 눈에 띄는 버그가 없습니다.",
+        "astra-fair": "사실적인 동물 일러스트는 우아하지만 글씨가 너무 작고 슬라이드 하단 여백이 많으며 농담과 굿즈 표현이 약하고 마지막 두 프레임이 같은 화면입니다.",
+        "sol-fair": "귀여운 마스코트와 큰 제목으로 완성도가 높고 세 가지 포맷도 분명하지만 도감 느낌이 상대적으로 약하고 제작 사양 내용이 다소 단출합니다.",
+        "opus": "학명풍 표기와 12종 전체 그리드, PMS 색상 지시까지 내용이 충실하고 도감 콘셉트가 뚜렷하지만 제목이 길고 본문이 빽빽해 가독성이 조금 떨어집니다."
+       }
+      },
+      "opus": {
+       "ranking": [
+        "sol-fair",
+        "opus",
+        "fable",
+        "astra-fair"
+       ],
+       "reasons": {
+        "sol-fair": "귀여운 마스코트와 일관된 도감 레이아웃, 세 가지 형식 표시와 생산 사양 슬라이드까지 깔끔하고 완성도가 가장 높다.",
+        "opus": "요점을 담은 제목과 3개 형식, 상세한 생산 슬라이드까지 내용은 가장 충실하지만 화면이 다소 빽빽하다.",
+        "fable": "도감 콘셉트와 형식별 디자인이 일관되게 잘 구현됐지만 여백이 많고 아트가 상대적으로 단순하다.",
+        "astra-fair": "일러스트 품질은 좋으나 마지막 두 프레임이 똑같아 진행이 멈춘 듯 보이고 제목과 글씨가 작아 가독성이 떨어진다."
+       }
+      },
+      "sol": {
+       "ranking": [
+        "opus",
+        "sol-fair",
+        "fable",
+        "astra-fair"
+       ],
+       "reasons": {
+        "fable": "색인 탭과 표본 카드가 도감에 잘 어울리지만 티셔츠의 그림과 농담은 작게 보인다.",
+        "astra-fair": "동물 삽화와 상품 목업은 정교하지만 캡처에서 12종 전체를 한눈에 비교하기 어렵다.",
+        "sol-fair": "동아리별 색상과 정돈된 비교표 덕분에 마스코트 네 종과 상품 12종을 쉽게 구분할 수 있다.",
+        "opus": "동아리별 말장난과 세 가지 상품의 차이가 선명하고 마지막 장에 치수와 색상 지침까지 구체적으로 담았다."
+       }
+      }
+     }
+    }
+   ],
+   "models": [
+    "astra-fair",
+    "sol-fair",
+    "fable",
+    "opus"
+   ],
+   "note": "GPT rerun with image generation, apps, memories, web search and user config off. Claude runs are the same as round 1.",
+   "tally": {
+    "total": {
+     "astra-fair": 23,
+     "sol-fair": 45,
+     "fable": 24,
+     "opus": 28
+    },
+    "noself": {
+     "sol-fair": 34,
+     "fable": 17,
+     "opus": 19,
+     "astra-fair": 15
+    },
+    "first_votes": {
+     "astra-fair": 1,
+     "opus": 5,
+     "sol-fair": 11,
+     "fable": 3
+    }
+   }
+  },
+  "ep7": {
+   "title": "Rematch - the 5 prompts from the Fable 5.2 video",
+   "tasks": [
+    {
+     "id": "motion",
+     "prompt": "make a dynamic 15-second motion graphics video that shows what an incredible motion designer you are, like it's your showreel for a résumé. go all out.\n\nSave the result as one self-contained file named index.html in the current directory. Do it in one go, do not ask questions.",
+     "runs": [
+      {
+       "model": "astra",
+       "file": "results/ep7/motion/astra/index.html",
+       "video": "rec/ep7-motion-astra.mp4",
+       "seconds": 325,
+       "usd": 1.127,
+       "usage": "in 718,524 (cached 661,376) out 10,124"
+      },
+      {
+       "model": "sol",
+       "file": "results/ep7/motion/sol/index.html",
+       "video": "rec/ep7-motion-sol.mp4",
+       "seconds": 572,
+       "usd": 0.582,
+       "usage": "in 1,428,851 (cached 1,326,208) out 24,454"
+      },
+      {
+       "model": "fable",
+       "file": "results/ep7/motion/fable/index.html",
+       "video": "rec/ep7-motion-fable.mp4",
+       "seconds": 1324,
+       "usd": 8.158,
+       "usage": "out 126,565 turns 30"
+      },
+      {
+       "model": "opus",
+       "file": "results/ep7/motion/opus/index.html",
+       "video": "rec/ep7-motion-opus.mp4",
+       "seconds": 903,
+       "usd": 2.82,
+       "usage": "out 95,457 turns 10"
+      },
+      {
+       "model": "gpt61",
+       "file": "results/ep7/motion/gpt61/index.html",
+       "video": "rec/ep7-motion-gpt61.mp4",
+       "seconds": 326,
+       "usd": 0.394,
+       "usage": "in 1,156,080 (cached 1,106,944) out 18,473"
+      }
+     ],
+     "sheet": "judge/ep7-motion.jpg",
+     "sheet_labels": {
+      "A": "astra",
+      "B": "opus",
+      "C": "gpt61",
+      "D": "sol",
+      "E": "fable"
+     },
+     "votes": {
+      "astra": {
+       "ranking": [
+        "fable",
+        "astra",
+        "sol",
+        "gpt61",
+        "opus"
+       ],
+       "reasons": {
+        "astra": "금속 매듭의 주황빛 반사와 굵은 제목이 시선을 사로잡지만 프레임 사이의 변화는 작다.",
+        "opus": "붉은 띠와 ‘MAKE’의 대비는 선명하지만 여섯 프레임의 구성이 거의 같아 역동성이 가장 약하다.",
+        "gpt61": "주황색 바탕에 흰 글자와 은빛 고리를 정갈하게 배치했지만 같은 포스터 구도가 이어진다.",
+        "sol": "붉은 매듭이 제목 앞으로 겹쳐 강한 깊이감을 만들지만 글자 끝을 가리고 장면 변화도 작다.",
+        "fable": "기하 패턴, 타이밍 곡선, 입자 타이포그래피가 차례로 등장해 다양한 모션 기법을 보여주고 자기소개로 마무리한다."
+       }
+      },
+      "fable": {
+       "ranking": [
+        "fable",
+        "astra",
+        "sol",
+        "gpt61",
+        "opus"
+       ],
+       "reasons": {
+        "astra": "크롬 질감의 3D 오브제와 타이포가 가장 세련됐지만 여섯 프레임이 모두 같은 화면이라 움직임이 확인되지 않습니다.",
+        "opus": "'MAKE' 한 단어만 있는 화면이 처음부터 끝까지 그대로여서 쇼릴다운 역동성과 볼거리가 가장 부족합니다.",
+        "gpt61": "오렌지 카드와 토러스 구성은 깔끔하지만 프레임 변화가 없고 영상이 페이지 안에 작게 들어가 있어 임팩트가 약합니다.",
+        "sol": "붉은 3D 매듭은 강렬하지만 'MOTION DESIGN' 글자를 가리고 오른쪽이 잘려 보이며 프레임 변화도 없습니다.",
+        "fable": "키네틱 타이포, 패턴 시스템, 이징 커브, 파티클 글자, 엔딩 카드까지 장면이 계속 바뀌는 유일한 작품으로 쇼릴 요구를 가장 잘 충족합니다."
+       }
+      },
+      "opus": {
+       "ranking": [
+        "fable",
+        "astra",
+        "gpt61",
+        "sol",
+        "opus"
+       ],
+       "reasons": {
+        "fable": "다섯 개 중 유일하게 장면이 실제로 바뀌며, 키네틱 타이포, 패턴, 이징 그래프, 입자 텍스트까지 보여 줘 쇼릴이라는 요구에 가장 잘 맞습니다.",
+        "astra": "크롬 질감의 3D 매듭과 타이포가 고급스럽지만 모든 프레임이 같아 움직임이 거의 보이지 않고, 제목이 오브젝트와 살짝 겹칩니다.",
+        "gpt61": "주황 카드와 3D 토러스 레이아웃이 깔끔하고 오류는 없지만 15초 내내 화면이 거의 정지해 있습니다.",
+        "sol": "빨간 3D 매듭이 인상적이지만 'MOTION DESIGN' 글자가 오브젝트에 가려 잘리고 화면도 정지해 있습니다.",
+        "opus": "밝은 배경에 'MAKE' 한 단어만 계속 떠 있어 쇼릴다운 다양함과 역동성이 가장 부족합니다."
+       }
+      },
+      "sol": {
+       "ranking": [
+        "fable",
+        "astra",
+        "gpt61",
+        "sol",
+        "opus"
+       ],
+       "reasons": {
+        "astra": "크롬 오브젝트와 굵은 타이포그래피의 조합이 세련되며 프레임 간 변화는 작다.",
+        "opus": "타이포그래피는 선명하지만 같은 단어와 구도가 이어져 쇼릴의 역동성이 약하다.",
+        "gpt61": "주황색 배경과 은색 링이 깔끔하게 배치됐지만 모든 프레임에서 같은 구도가 이어진다.",
+        "sol": "붉은 3D 오브젝트의 질감이 돋보이지만 제목 일부를 가려 가독성이 떨어진다.",
+        "fable": "타이포그래피, 기하학 패턴, 그래프, 입자 효과가 뚜렷하게 이어져 쇼릴의 역동성과 표현 폭이 가장 잘 드러난다."
+       }
+      }
+     }
+    },
+    {
+     "id": "physics",
+     "prompt": "Create an animation in JS with 10 balls bouncing inside a spinning hexagon.\n\nSave the result as one self-contained file named index.html in the current directory. Do it in one go, do not ask questions.",
+     "runs": [
+      {
+       "model": "astra",
+       "file": "results/ep7/physics/astra/index.html",
+       "video": "rec/ep7-physics-astra.mp4",
+       "seconds": 143,
+       "usd": 0.459,
+       "usage": "in 255,176 (cached 232,320) out 4,588"
+      },
+      {
+       "model": "sol",
+       "file": "results/ep7/physics/sol/index.html",
+       "video": "rec/ep7-physics-sol.mp4",
+       "seconds": 247,
+       "usd": 0.246,
+       "usage": "in 590,841 (cached 547,328) out 10,415"
+      },
+      {
+       "model": "fable",
+       "file": "results/ep7/physics/fable/index.html",
+       "video": "rec/ep7-physics-fable.mp4",
+       "seconds": 179,
+       "usd": 1.251,
+       "usage": "out 19,441 turns 9"
+      },
+      {
+       "model": "opus",
+       "file": "results/ep7/physics/opus/index.html",
+       "video": "rec/ep7-physics-opus.mp4",
+       "seconds": 80,
+       "usd": 0.322,
+       "usage": "out 9,270 turns 3"
+      },
+      {
+       "model": "gpt61",
+       "file": "results/ep7/physics/gpt61/index.html",
+       "video": "rec/ep7-physics-gpt61.mp4",
+       "seconds": 134,
+       "usd": 0.185,
+       "usage": "in 266,493 (cached 222,336) out 7,495"
+      }
+     ],
+     "sheet": "judge/ep7-physics.jpg",
+     "sheet_labels": {
+      "A": "opus",
+      "B": "fable",
+      "C": "sol",
+      "D": "gpt61",
+      "E": "astra"
+     },
+     "votes": {
+      "astra": {
+       "ranking": [
+        "astra",
+        "opus",
+        "fable",
+        "sol",
+        "gpt61"
+       ],
+       "reasons": {
+        "opus": "푸른 육각형이 회전할 때 열 개의 공이 아래쪽 변에 모였다가 서로 다른 높이로 튀는 모습이 선명하다.",
+        "fable": "공의 잔상이 튀는 방향을 잘 보여 주지만 바닥에 공이 몰리면 빛 번짐이 겹쳐 개별 공을 구분하기 어렵다.",
+        "sol": "격자와 공의 색 대비가 깔끔하지만 큰 제목에 비해 육각형이 작아 공이 벽에 닿는 순간이 덜 두드러진다.",
+        "gpt61": "후반 네 장면에서 공들이 아래쪽 변을 따라 거의 같은 배열로 머물러 튀는 움직임이 가장 약하게 보인다.",
+        "astra": "당구대 질감과 공의 그림자가 정교하고, 회전하는 육각형 안에서 열 개의 공이 넓게 흩어져 위치 변화가 또렷하다."
+       }
+      },
+      "fable": {
+       "ranking": [
+        "opus",
+        "fable",
+        "astra",
+        "sol",
+        "gpt61"
+       ],
+       "reasons": {
+        "opus": "빛나는 육각형 안에서 공들이 끝까지 활발하게 튀고 조절 패널도 깔끔해 프롬프트 충족도와 완성도가 가장 높다.",
+        "fable": "크고 선명한 공과 네온 육각형이 보기 좋지만 공들이 바닥 쪽에 몰려 튀는 느낌이 A보다 약하다.",
+        "astra": "당구대 같은 탑뷰 연출이 세련되고 공이 벽 안에서 잘 움직이지만 중력감이 없어 '바운스' 느낌은 다소 약하다.",
+        "sol": "공은 계속 튀지만 랜딩 페이지형 레이아웃 때문에 육각형과 공이 작아 애니메이션 자체의 존재감이 떨어진다.",
+        "gpt61": "공이 매우 작고 금세 바닥에 쌓여 멈춘 듯 보여 튀는 애니메이션으로서의 인상이 가장 약하다."
+       }
+      },
+      "opus": {
+       "ranking": [
+        "opus",
+        "astra",
+        "fable",
+        "gpt61",
+        "sol"
+       ],
+       "reasons": {
+        "opus": "빛나는 육각형과 색이 다양한 공 10개가 중력을 받으며 회전하는 벽 안에서 자연스럽게 튀고, 조절 패널까지 있어 요구사항을 가장 잘 충족한다.",
+        "astra": "당구대 느낌의 육각형 안에서 공 10개가 깔끔하게 튀며 마감이 뛰어나지만, 중력 없이 떠다니는 움직임이라 역동성이 조금 덜하다.",
+        "fable": "색감과 회전은 좋지만 첫 프레임에서 공이 뾰족하게 일그러지는 시각적 결함이 보이고, 공 크기가 들쭉날쭉해 정돈된 느낌이 덜하다.",
+        "gpt61": "회전과 충돌은 제대로 동작하지만 공이 작고 어두워 잘 보이지 않으며, 공들이 한쪽 모서리에 몰려 있어 볼거리가 적다.",
+        "sol": "랜딩 페이지 레이아웃은 깔끔하지만 애니메이션이 화면 일부만 차지하고 공도 작아 핵심인 애니메이션이 약하다."
+       }
+      },
+      "sol": {
+       "ranking": [
+        "astra",
+        "opus",
+        "sol",
+        "fable",
+        "gpt61"
+       ],
+       "reasons": {
+        "opus": "선명한 육각형 테두리와 색이 뚜렷한 공 열 개 덕분에 회전과 튕김을 쉽게 따라갈 수 있다.",
+        "fable": "회전과 튕김은 잘 보이지만 하단에 공이 몰릴 때 강한 후광으로 공의 윤곽이 흐려진다.",
+        "sol": "정돈된 타이포그래피와 격자 배경이 돋보이고 작은 애니메이션 영역에서도 공의 움직임이 선명하다.",
+        "gpt61": "절제된 화면은 깔끔하지만 후반 프레임에서 공이 바닥에 줄지어 모여 튕김이 거의 드러나지 않는다.",
+        "astra": "당구대 질감이 정교하고 공 열 개가 회전하는 육각형 안에서 고르게 움직여 각 공의 위치가 선명하다."
+       }
+      }
+     }
+    },
+    {
+     "id": "svg",
+     "prompt": "Generate an SVG of a pelican riding a bicycle\n\nSave the result as one file named index.svg in the current directory. Do it in one go, do not ask questions.",
+     "runs": [
+      {
+       "model": "astra",
+       "file": "results/ep7/svg/astra/index.svg",
+       "video": "rec/ep7-svg-astra.mp4",
+       "seconds": 159,
+       "usd": 0.461,
+       "usage": "in 118,220 (cached 85,760) out 4,174"
+      },
+      {
+       "model": "sol",
+       "file": "results/ep7/svg/sol/index.svg",
+       "video": "rec/ep7-svg-sol.mp4",
+       "seconds": 109,
+       "usd": 0.114,
+       "usage": "in 138,430 (cached 112,384) out 5,022"
+      },
+      {
+       "model": "fable",
+       "file": "results/ep7/svg/fable/index.svg",
+       "video": "rec/ep7-svg-fable.mp4",
+       "seconds": 197,
+       "usd": 1.11,
+       "usage": "out 17,447 turns 5"
+      },
+      {
+       "model": "opus",
+       "file": "results/ep7/svg/opus/index.svg",
+       "video": "rec/ep7-svg-opus.mp4",
+       "seconds": 66,
+       "usd": 0.249,
+       "usage": "out 6,488 turns 4"
+      },
+      {
+       "model": "gpt61",
+       "file": "results/ep7/svg/gpt61/index.svg",
+       "video": "rec/ep7-svg-gpt61.mp4",
+       "seconds": 65,
+       "usd": 0.123,
+       "usage": "in 116,555 (cached 78,592) out 3,920"
+      }
+     ],
+     "sheet": "judge/ep7-svg.jpg",
+     "sheet_labels": {
+      "A": "sol",
+      "B": "fable",
+      "C": "opus",
+      "D": "gpt61",
+      "E": "astra"
+     },
+     "votes": {
+      "astra": {
+       "ranking": [
+        "sol",
+        "astra",
+        "gpt61",
+        "fable",
+        "opus"
+       ],
+       "reasons": {
+        "sol": "도톰한 부리 주머니가 펠리컨의 특징을 살리고, 핸들을 짚은 날개와 페달을 밟는 발이 자연스럽다.",
+        "fable": "해변과 앞바구니의 물고기는 생동감 있지만, 날개 끝과 핸들이 겹쳐 잡는 자세가 다소 어색하다.",
+        "opus": "긴 부리와 자전거는 잘 읽히지만, 펠리컨의 옅은 윤곽과 굵은 빨간 프레임 사이에 시각적 균형이 부족하다.",
+        "gpt61": "날개 끝이 핸들에 또렷하게 닿고, 절제된 원형 배경 덕분에 자전거를 타는 자세가 한눈에 읽힌다.",
+        "astra": "뒤로 날리는 목도리와 서로 다른 높이의 페달을 밟은 두 발이 달리는 느낌을 설득력 있게 전한다."
+       }
+      },
+      "fable": {
+       "ranking": [
+        "fable",
+        "sol",
+        "astra",
+        "gpt61",
+        "opus"
+       ],
+       "reasons": {
+        "fable": "안장에 앉아 페달을 밟고 핸들을 잡은 자세가 가장 명확하고, 바다·돛단배·물고기 바구니 등 디테일이 풍부하며 눈에 띄는 오류가 없다.",
+        "sol": "해변 석양 배경과 통일된 색감으로 완성도가 높고 자전거 구조도 정확하지만, 안장이 잘 보이지 않아 몸이 자전거 위에 살짝 떠 보인다.",
+        "astra": "모자와 스카프, 질감 있는 태양으로 포스터 같은 세련미가 있으나, 펠리컨이 서 있는 듯한 자세이고 자전거가 상대적으로 작고 프레임이 다소 어색하다.",
+        "gpt61": "깔끔하고 귀여운 미니멀 스타일에 자전거도 정확하지만, 피사체가 작고 부리 주머니 모양이 그릇처럼 어색하며 장면이 단조롭다.",
+        "opus": "펠리컨과 자전거는 알아볼 수 있고 큰 오류는 없으나, 묘사가 단순하고 배경이 밋밋해 다섯 중 완성도가 가장 낮다."
+       }
+      },
+      "opus": {
+       "ranking": [
+        "fable",
+        "astra",
+        "sol",
+        "gpt61",
+        "opus"
+       ],
+       "reasons": {
+        "sol": "해변 배경과 커다란 부리 표현은 좋지만, 펠리컨 몸이 안장 위에 떠 있고 다리 자세가 어색합니다.",
+        "fable": "바구니 속 물고기, 스카프, 바다와 도로 배경까지 디테일이 풍부하고, 날개가 핸들을 잡고 발이 페달에 닿아 프롬프트를 가장 충실히 구현했습니다.",
+        "opus": "배경과 자전거는 깔끔하지만, 회색 날개 모양과 머리 장식이 어색하고 펠리컨이 자전거에 얹혀 있는 느낌이라 완성도가 떨어집니다.",
+        "gpt61": "차분한 색감으로 깔끔하게 그렸지만, 펠리컨이 작고 단순해 존재감과 디테일이 부족합니다.",
+        "astra": "헬멧, 휘날리는 스카프, 노을 배경으로 개성과 완성도가 높지만, 몸집에 비해 자전거가 다소 작아 보입니다."
+       }
+      },
+      "sol": {
+       "ranking": [
+        "astra",
+        "sol",
+        "gpt61",
+        "fable",
+        "opus"
+       ],
+       "reasons": {
+        "sol": "큰 부리와 날개의 곡선, 따뜻한 해안 배경 덕분에 펠리컨이 자전거를 타는 모습이 선명하다.",
+        "fable": "바구니와 해변 소품이 장면에 재미를 더하지만 날개 끝의 검은 손 모양이 어색하다.",
+        "opus": "펠리컨과 자전거는 쉽게 알아볼 수 있지만 날개와 핸들이 겹쳐 운전 자세가 모호하다.",
+        "gpt61": "부드러운 색과 일관된 윤곽선이 깔끔하지만 자전거 프레임의 대각선 연결이 어색하다.",
+        "astra": "펠리컨의 큰 부리와 페달을 밟는 자세가 뚜렷하고, 흩날리는 스카프와 섬세한 질감이 완성도를 높인다."
+       }
+      }
+     }
+    },
+    {
+     "id": "three",
+     "prompt": "Create a single HTML file with an interactive 3D basketball free throw game using Three.js.\n\nSave the result as one self-contained file named index.html in the current directory. Do it in one go, do not ask questions.",
+     "runs": [
+      {
+       "model": "astra",
+       "file": "results/ep7/three/astra/index.html",
+       "video": "rec/ep7-three-astra.mp4",
+       "seconds": 493,
+       "usd": 1.845,
+       "usage": "in 1,445,270 (cached 1,377,024) out 18,700"
+      },
+      {
+       "model": "sol",
+       "file": "results/ep7/three/sol/index.html",
+       "video": "rec/ep7-three-sol.mp4",
+       "seconds": 778,
+       "usd": 0.82,
+       "usage": "in 2,744,401 (cached 2,631,680) out 33,147"
+      },
+      {
+       "model": "fable",
+       "file": "results/ep7/three/fable/index.html",
+       "video": "rec/ep7-three-fable.mp4",
+       "seconds": 1037,
+       "usd": 6.381,
+       "usage": "out 103,224 turns 22"
+      },
+      {
+       "model": "opus",
+       "file": "results/ep7/three/opus/index.html",
+       "video": "rec/ep7-three-opus.mp4",
+       "seconds": 842,
+       "usd": 2.71,
+       "usage": "out 92,517 turns 8"
+      },
+      {
+       "model": "gpt61",
+       "file": "results/ep7/three/gpt61/index.html",
+       "video": "rec/ep7-three-gpt61.mp4",
+       "seconds": 461,
+       "usd": 0.714,
+       "usage": "in 3,051,496 (cached 2,969,856) out 25,365"
+      }
+     ],
+     "sheet": "judge/ep7-three.jpg",
+     "sheet_labels": {
+      "A": "opus",
+      "B": "gpt61",
+      "C": "sol",
+      "D": "astra",
+      "E": "fable"
+     },
+     "votes": {
+      "astra": {
+       "ranking": [
+        "astra",
+        "fable",
+        "opus",
+        "sol",
+        "gpt61"
+       ],
+       "reasons": {
+        "opus": "실패 유형과 득점이 즉시 표시되지만 큰 판정 문구가 백보드와 겹쳐 림 주변이 혼잡하다.",
+        "gpt61": "비스듬히 내려다본 코트는 정교하지만 공과 림이 작고 드래그할 때 페이지 글자까지 파랗게 선택된다.",
+        "sol": "노을빛 코트와 슛 강도 패널은 잘 어울리지만 어두운 공이 바닥색에 묻혀 움직임을 읽기 어렵다.",
+        "astra": "석양의 코트에서 공과 림이 선명하고 슛 횟수·득점·연속 성공 기록이 한눈에 들어온다.",
+        "fable": "시작 화면부터 슛 판정까지 시각적 통일감이 있고 공이 림에 접근하는 모습도 잘 드러난다."
+       }
+      },
+      "fable": {
+       "ranking": [
+        "opus",
+        "astra",
+        "fable",
+        "sol",
+        "gpt61"
+       ],
+       "reasons": {
+        "opus": "관중석·전광판·골대가 있는 경기장에서 AIR BALL, CLANK, BUCKET 등 판정 피드백과 득점 증가가 명확히 보여 가장 완성도 높은 자유투 게임이다.",
+        "gpt61": "아이소메트릭 코트는 깔끔하지만 드래그 입력으로 텍스트가 파랗게 선택되는 버그가 보이고 공이 너무 작으며 점수도 00에 머문다.",
+        "sol": "노을 진 야외 코트와 UI는 세련됐지만 3D 화면이 작고 프레임 내내 공 움직임과 점수 변화가 거의 보이지 않는다.",
+        "astra": "노을 공원 코트와 정돈된 UI가 세련되고 슛 횟수와 점수가 실제로 올라가 정상 작동하지만 공의 비행 장면과 판정 연출은 A보다 덜 드러난다.",
+        "fable": "시작 화면과 관중석 경기장, 공의 비행과 NO GOOD 판정이 보이지만 화면이 어둡고 득점이 0에 머물러 진행이 제한적이다."
+       }
+      },
+      "opus": {
+       "ranking": [
+        "opus",
+        "astra",
+        "fable",
+        "gpt61",
+        "sol"
+       ],
+       "reasons": {
+        "opus": "관중과 전광판이 있는 경기장이 잘 구현되었고, 슛 판정 피드백(AIR BALL, CLANK, BUCKET)과 점수가 바뀌는 모습이 보여 프롬프트를 가장 충실하게 수행했습니다.",
+        "astra": "노을 진 야외 코트가 깔끔하고 시도 횟수와 득점(6회 중 2골)도 정상적으로 올라가지만, 공이 화면 아래쪽에 크게 고정되어 있어 슛 궤적이 잘 보이지 않습니다.",
+        "fable": "타이틀 화면과 경기장 연출은 멋지지만, 공이 너무 작아 잘 보이지 않고 득점 없이 NO GOOD 판정만 나옵니다.",
+        "gpt61": "쿼터뷰 코트 디자인은 세련됐지만, 페이지 텍스트가 파랗게 선택 영역으로 잡히는 버그가 있고 점수도 00에서 바뀌지 않습니다.",
+        "sol": "야경 코트 분위기는 좋지만 모든 프레임에서 장면과 점수가 거의 그대로여서 슛이 실제로 이뤄졌는지 확인할 수 없습니다."
+       }
+      },
+      "sol": {
+       "ranking": [
+        "astra",
+        "opus",
+        "sol",
+        "fable",
+        "gpt61"
+       ],
+       "reasons": {
+        "opus": "득점과 실패 피드백이 뚜렷하고 경기장 연출이 생생하지만 일부 장면에서 상단 전광판이 잘립니다.",
+        "gpt61": "입체 코트는 깔끔하지만 조작 중 제목과 점수 등 화면 곳곳의 텍스트가 파랗게 선택됩니다.",
+        "sol": "노을 코트와 조작 패널은 정교하지만 슛 동작과 결과가 장면에서 뚜렷하게 드러나지 않습니다.",
+        "astra": "입체 코트와 화면 구성이 안정적이며 슛 진행, 득점, 연속 성공이 명확하게 표시됩니다.",
+        "fable": "공의 궤적과 실패 피드백은 뚜렷하지만 어두운 경기장에서 골대와 진행 표시의 가독성이 떨어집니다."
+       }
+      }
+     }
+    },
+    {
+     "id": "game",
+     "prompt": "Create a complete, playable Phaser.js 3 game as a single HTML file. Player is a blue circle that moves with WASD/arrow keys. Red circles spawn from screen edges and chase the player with simple AI (seek behavior). Score increases by 1 every second. Collision with any red circle = game over. Press R to restart after game over. Enemies wrap around screen edges. Player wraps around screen edges too. Enemies speed up gradually as score increases. Player has a subtle glow/pulse effect. Dark theme. 680x480. Centered canvas with instructions below.\n\nSave the result as one self-contained file named index.html in the current directory. Do it in one go, do not ask questions.",
+     "runs": [
+      {
+       "model": "astra",
+       "file": "results/ep7/game/astra/index.html",
+       "video": "rec/ep7-game-astra.mp4",
+       "seconds": 540,
+       "usd": 2.173,
+       "usage": "in 2,476,019 (cached 2,404,352) out 15,943"
+      },
+      {
+       "model": "sol",
+       "file": "results/ep7/game/sol/index.html",
+       "video": "rec/ep7-game-sol.mp4",
+       "seconds": 410,
+       "usd": 0.484,
+       "usage": "in 1,649,829 (cached 1,571,968) out 17,071"
+      },
+      {
+       "model": "fable",
+       "file": "results/ep7/game/fable/index.html",
+       "video": "rec/ep7-game-fable.mp4",
+       "seconds": 320,
+       "usd": 1.941,
+       "usage": "out 32,162 turns 9"
+      },
+      {
+       "model": "opus",
+       "file": "results/ep7/game/opus/index.html",
+       "video": "rec/ep7-game-opus.mp4",
+       "seconds": 73,
+       "usd": 0.311,
+       "usage": "out 8,606 turns 4"
+      },
+      {
+       "model": "gpt61",
+       "file": "results/ep7/game/gpt61/index.html",
+       "video": "rec/ep7-game-gpt61.mp4",
+       "seconds": 295,
+       "usd": 0.456,
+       "usage": "in 1,766,205 (cached 1,696,896) out 14,792"
+      }
+     ],
+     "sheet": "judge/ep7-game.jpg",
+     "sheet_labels": {
+      "A": "astra",
+      "B": "opus",
+      "C": "gpt61",
+      "D": "sol",
+      "E": "fable"
+     },
+     "votes": {
+      "astra": {
+       "ranking": [
+        "astra",
+        "opus",
+        "sol",
+        "gpt61",
+        "fable"
+       ],
+       "reasons": {
+        "astra": "궤도선과 행성 배경 속에서도 파란 플레이어와 붉은 적이 또렷하고, 종료와 재시작 상태도 한눈에 구별된다.",
+        "opus": "점수가 2에서 7로 오르는 동안 적들이 플레이어 주변에 모이고, 재시작 뒤에도 최고 점수가 유지되는 흐름이 잘 보인다.",
+        "gpt61": "생존 시간과 은은하게 빛나는 플레이어는 잘 보이지만, 하단의 조작 안내는 글씨가 작고 흐리다.",
+        "sol": "가는 격자 위에서 플레이어의 푸른 빛이 선명하고, 큰 점수 표시와 종료 화면의 재시작 버튼도 읽기 쉽다.",
+        "fable": "점수와 적 속도를 함께 보여 주지만, 플레이어의 후광이 다소 강하고 하단 설명은 배경과 대비가 약하다."
+       }
+      },
+      "fable": {
+       "ranking": [
+        "opus",
+        "fable",
+        "gpt61",
+        "astra",
+        "sol"
+       ],
+       "reasons": {
+        "opus": "격자 배경에 점수·최고점·적 속도 HUD와 상세한 조작 안내가 모두 보이고, 게임오버와 R 재시작까지 가장 충실하게 동작합니다.",
+        "fable": "플레이어의 글로우가 다섯 개 중 가장 뚜렷하고 게임오버·점수·재시작 안내가 깔끔하지만, 화면이 다소 어둡고 단조롭습니다.",
+        "gpt61": "미니멀한 HUD와 게임오버 화면이 세련되고 재시작도 동작하지만, 글로우가 약하고 안내 문구가 너무 작습니다.",
+        "astra": "행성이 있는 우주 배경은 화려하지만 장식이 장애물처럼 보일 수 있고, 안내 텍스트가 매우 작아 읽기 어렵습니다.",
+        "sol": "격자와 헤더 디자인은 무난하고 재시작도 되지만, 게임오버 화면에 점수 표시가 없고 안내가 가장 빈약합니다."
+       }
+      },
+      "opus": {
+       "ranking": [
+        "opus",
+        "gpt61",
+        "fable",
+        "sol",
+        "astra"
+       ],
+       "reasons": {
+        "opus": "가장 오래 살아남아 7점을 기록했고, 적의 추적과 게임오버, 재시작이 모두 잘 보이며 하단 안내문도 충실합니다.",
+        "gpt61": "화면이 깔끔하고 정돈되어 있으며 게임오버와 재시작 흐름도 명확하지만, 3초 만에 게임이 끝납니다.",
+        "fable": "플레이어의 글로우 효과가 가장 눈에 띄고 적 속도 표시가 있어 좋지만, 2점에서 금방 게임오버되고 화면이 조금 단조롭습니다.",
+        "sol": "그리드와 HUD가 세련됐지만 2점에서 바로 게임오버되고, 플레이어의 글로우 효과가 약합니다.",
+        "astra": "토성 장식은 보기 좋지만 프롬프트와 상관없는 요소이고, 캔버스가 작은 데다 안내문이 잘 읽히지 않으며 금방 게임오버됩니다."
+       }
+      },
+      "sol": {
+       "ranking": [
+        "astra",
+        "sol",
+        "gpt61",
+        "fable",
+        "opus"
+       ],
+       "reasons": {
+        "astra": "우주 배경이 정교하면서도 파란 플레이어와 빨간 적이 선명하고, 종료 점수와 재시작 버튼도 읽기 쉽다.",
+        "opus": "점수와 적 속도는 확인하기 쉽지만, 적이 상단 정보 영역과 겹치고 하단 조작 안내가 빽빽하다.",
+        "gpt61": "생존 시간과 적 수가 깔끔하게 표시되고 종료 화면도 선명하지만, 재시작 안내가 작다.",
+        "sol": "은은한 격자와 푸른 발광 덕분에 플레이어가 잘 보이고, 점수와 재시작 버튼도 찾기 쉽다.",
+        "fable": "플레이어의 발광과 종료 화면은 선명하지만, 상단 상태 정보와 하단 조작 안내가 작고 어둡다."
+       }
+      }
+     }
+    }
+   ],
+   "models": [
+    "astra",
+    "sol",
+    "fable",
+    "opus",
+    "gpt61"
+   ],
+   "note": "GPT-6.2 runs use the fair flags. Fable 5.2, Opus 5.5 and GPT-6.1 Sol outputs are the ones from the earlier video.",
+   "tally": {
+    "total": {
+     "astra": 60,
+     "opus": 38,
+     "sol": 32,
+     "gpt61": 22,
+     "fable": 48
+    },
+    "noself": {
+     "opus": 26,
+     "sol": 21,
+     "gpt61": 22,
+     "fable": 32,
+     "astra": 42
+    },
+    "first_votes": {
+     "astra": 7,
+     "opus": 6,
+     "fable": 6,
+     "sol": 1
+    }
+   }
+  }
+ },
+ "fable_limit_failed": {
+  "note": "Fable 5.2 hit the plan usage limit mid-run on camper and deck; those runs were thrown away and rerun after the reset.",
+  "usd": 3.48
+ },
+ "ultrafast": {
+  "model": "gpt-6.2-sol",
+  "prompt": "Write a detailed 900-word essay about the history of the bicycle. Plain text only, no tools.",
+  "rows": [
+   {
+    "tier": "default",
+    "seconds": 68.7,
+    "tokens": 2261,
+    "tps": 33
+   },
+   {
+    "tier": "Fast (priority)",
+    "seconds": 35.1,
+    "tokens": 2285,
+    "tps": 65
+   },
+   {
+    "tier": "Ultrafast",
+    "seconds": 20.0,
+    "tokens": 2202,
+    "tps": 110
+   },
+   {
+    "tier": "bogus123 (control, rejected)",
+    "seconds": 71.2,
+    "tokens": 2468,
+    "tps": 35
+   }
+  ],
+  "note": "codex-cli 0.169, reasoning low, one run each. Only gpt-6.2-sol lists the ultrafast tier. Usage multiplier not published."
+ },
+ "official": {
+  "url": "https://openai.com/index/introducing-gpt-6-2-astra-sol/",
+  "claims": [
+   "Agents' Last Exam: Astra +5.5 over Fable 5.2 at about 5% of the cost",
+   "AA-3D Elo: Astra 1,318, Fable 5.2 1,271, Sol 1,259",
+   "Harvey LAB-AA: more than double Fable pass rate at about 1/6 of the cost",
+   "FrontierCode: Sol within 0.5 of Astra at about 1/5 of the cost"
+  ],
+  "prices_per_1M": {
+   "gpt-6.2-astra": {
+    "input": 8,
+    "cached": 0.4,
+    "output": 40
+   },
+   "gpt-6.2-sol": {
+    "input": 2,
+    "cached": 0.1,
+    "output": 10
+   }
+  }
+ },
+ "method": [
+  "Each model got the same prompt once (one shot, no follow-up). Prompts adapt the official example briefs; the ep.7 prompts are reused unchanged.",
+  "GPT can run shell commands and test in a browser inside Codex; Claude was limited to Write/Edit/Read. This favours GPT and is the same setup as the earlier video.",
+  "Every result was recorded in the same browser (Ego Lite, 1280x800) with the same scripted keyboard/mouse input for all models.",
+  "Judges saw one image sheet per task with 6 frames per result, labels shuffled, model names hidden. The four contestants (Astra, Sol, Fable, Opus) judged; GPT-6.1 Sol did not.",
+  "Score = Borda points (1st gets N-1 ... last 0). \"noself\" drops each judge's points for its own model.",
+  "Cost: GPT from token usage x official API price; Claude from the CLI total_cost_usd. Time is wall clock."
+ ]
+}

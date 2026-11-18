@@ -1,0 +1,878 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#252723">
+<title>The Colosseum · Monument Atlas</title>
+<style>
+:root{color-scheme:light;--ink:#262722;--paper:#e7e1d4;--panel:#292b27;--cream:#f3efe5;--muted:#b3b4a8;--orange:#edaa78;--line:#494a41;--serif:Georgia,'Times New Roman',serif;--sans:'Helvetica Neue',Arial,sans-serif;--mono:'SFMono-Regular',Consolas,'Liberation Mono',monospace}
+*{box-sizing:border-box}body{margin:0;color:var(--ink);font:14px var(--sans);background:var(--paper)}button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation}button:focus-visible,canvas:focus-visible{outline:3px solid #ce8052;outline-offset:-3px}svg{display:block;fill:none;stroke:currentColor;stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round}.sprites{position:absolute;width:0;height:0;overflow:hidden}.ico{width:18px;height:18px;flex:none}header{height:66px;padding:0 30px;background:#232521;color:#f4f0e6;display:flex;align-items:center;border-bottom:1px solid #4a4a40;gap:19px}.brand{display:flex;gap:11px;align-items:center;font:30px/1 var(--serif);letter-spacing:-1.4px}.brand-mark{width:34px;height:34px;color:#e7aa78}header .divider{width:1px;height:20px;background:#57584d}.atlas{font-size:12px;color:#d3d2c6;letter-spacing:.35px}.header-tools{margin-left:auto;display:flex;align-items:center;gap:16px}.plain-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;background:none;border:0;padding:8px;color:#e1e0d5;font-size:12px}.plain-btn:hover{color:var(--orange)}.header-tools .divider{height:17px}.page{display:grid;grid-template-columns:minmax(0,1fr) clamp(286px,23vw,350px);min-height:calc(100svh - 66px)}.stage{min-width:0;position:relative;isolation:isolate;min-height:580px;height:calc(100svh - 66px);overflow:hidden;background:var(--paper)}#scene{display:block;position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab}#scene:active{cursor:grabbing}.title-block{position:absolute;top:clamp(28px,4.8vh,58px);left:clamp(24px,3.4vw,59px);pointer-events:none}.eyebrow{display:flex;align-items:center;gap:8px;font:600 10px/1.3 var(--mono);letter-spacing:1.65px;text-transform:uppercase}.location{color:#835236}.location .ico{width:13px;height:13px}.title-block h1{font:normal clamp(45px,5.2vw,82px)/1.03 var(--serif);margin:11px 0 10px;letter-spacing:-.059em;color:#302e26}.subhead{display:flex;align-items:center;gap:10px;color:#645f51;font:italic 16px/1.4 var(--serif)}.subhead span{width:3px;height:3px;border-radius:50%;background:#9a907e}.subhead small{font:11px var(--mono);letter-spacing:.6px}.scene-tools{position:absolute;right:25px;bottom:26px;display:flex;align-items:center;border:1px solid #b1a995;border-radius:5px;background:rgba(249,246,235,.88);box-shadow:0 2px 5px #52482a0b}.scene-tools button{height:36px;width:37px;display:grid;place-items:center;background:none;border:0}.scene-tools button:hover{background:#d7cbb6}.scene-tools i{width:1px;height:16px;background:#c8bfad}.scene-tools .ico{width:15px;height:15px}.orientation{position:absolute;bottom:22px;left:clamp(20px,3.4vw,59px);display:flex;gap:13px;align-items:center;color:#585545;pointer-events:none}.compass{width:37px;height:51px}.coords{font:9px/1.65 var(--mono);letter-spacing:.7px}.hint{position:absolute;bottom:33px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px;white-space:nowrap;font-size:11px;color:#5a564b;pointer-events:none}.hint .ico{width:15px;height:15px}.hint .dot{margin:0 1px;color:#969181}.touch-hint{display:none}.panel{background:var(--panel);color:var(--cream);padding:clamp(31px,4.8vh,56px) clamp(20px,2.1vw,34px) 28px;display:flex;flex-direction:column;min-width:0}.section-kicker{color:#bdbbac;font:10px/1.3 var(--mono);letter-spacing:1.6px;text-transform:uppercase;display:flex;align-items:center;gap:9px}.section-kicker:before{content:'';width:20px;height:1px;background:#d69a73}.panel h2{font:normal 34px/1.05 var(--serif);letter-spacing:-1.4px;margin:13px 0 22px}.views{display:grid;gap:8px}.view{display:flex;align-items:center;gap:14px;width:100%;min-height:72px;padding:9px 12px 9px 9px;background:#30322d;border:1px solid #474940;border-radius:5px;color:var(--cream);text-align:left;transition:background .18s,border-color .18s}.view:hover{background:#3a3b34;border-color:#777668}.view[aria-pressed=true]{border-color:#cd9168;background:#423b30}.view strong{display:block;font:500 14px/1.4 var(--sans)}.view small{display:block;font:10.5px/1.5 var(--sans);color:#b9b9ab;margin-top:2px}.view[aria-pressed=true] small{color:#dabfa5}.thumb{width:62px;height:48px;border-radius:3px;background:#272a25;display:grid;place-items:center;flex:none;color:#afaf96;overflow:hidden}.thumb svg{width:95%;height:94%;stroke-width:.85}.view[aria-pressed=true] .thumb{color:#e7b482;background:#35332b}.view .arrow{width:13px;height:13px;margin-left:auto;color:#a8aa9c}.view[aria-pressed=true] .arrow{color:#e7ad7f}.layers{border-top:1px solid var(--line);margin-top:26px;padding-top:23px}.panel h3{font:normal 21px var(--serif);letter-spacing:-.5px;margin:0 0 12px}.switchrow{display:flex;align-items:center;text-align:left;background:none;border:0;padding:9px 0;gap:11px;width:100%;color:#e6e5d9;font-size:13px}.switchrow>.ico{color:#c0bdae;width:16px;height:16px}.switch{margin-left:auto;width:30px;height:17px;border:1px solid #686a5f;border-radius:20px;background:#46483e;padding:2px;transition:.2s}.switch:after{content:'';display:block;width:11px;height:11px;border-radius:50%;background:#c3c5b7;transition:.2s}.switchrow[aria-checked=true] .switch{background:#e5a475;border-color:#e5a475}.switchrow[aria-checked=true] .switch:after{background:#322f27;transform:translateX(13px)}.note-wrap{margin-top:auto;padding-top:32px}.view-note{border-top:1px solid var(--line);padding-top:21px}.note-label{display:flex;align-items:center;gap:9px;color:#deaa81;font:10px var(--mono);letter-spacing:1.45px;text-transform:uppercase}.note-label .ico{width:14px;height:14px}.view-note p{font:16px/1.46 var(--serif);letter-spacing:.01px;margin:10px 0 0;color:#dfdfd1}.mobile-copy{display:none}dialog{border:1px solid #c4b9a6;border-radius:8px;background:#f2ede2;color:#302f28;padding:28px;max-width:min(420px,92vw);box-shadow:0 14px 60px #15151055}dialog::backdrop{background:#24251e80}dialog h2{font:32px var(--serif);margin:4px 0 16px;letter-spacing:-1.3px}dialog p{font:15px/1.5 var(--serif)}dialog .close{float:right;border:0;background:transparent;padding:5px}dialog dl{margin:20px 0 0;font-size:12px}dialog dl>div{display:flex;justify-content:space-between;border-top:1px solid #d5cbb9;padding:9px 0}dialog dt{color:#655f52}dialog dd{margin:0}.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}#error{position:absolute;inset:44% 8% auto;text-align:center;background:#f2ede2;padding:16px;border-radius:4px}
+@media(min-width:1500px){.view{min-height:82px}.thumb{width:74px;height:58px}}
+@media(max-width:1050px){.hint{bottom:82px}.stage{min-height:550px}.coords{font-size:8px}.panel{padding-left:19px;padding-right:19px}}
+@media(max-height:710px) and (min-width:761px){.stage{min-height:490px}.panel{padding-top:24px;padding-bottom:17px}.panel h2{margin:8px 0 13px}.view{min-height:59px;padding:6px}.thumb{height:43px}.layers{margin-top:16px;padding-top:14px}.note-wrap{padding-top:14px}.view-note{padding-top:12px}.view-note p{font-size:14px}}
+@media(max-width:760px){header{height:54px;padding:0 17px;gap:12px}.brand{font-size:25px;gap:7px}.brand-mark{width:28px;height:28px}.atlas{font-size:11px}.header-tools{gap:6px}.header-tools .divider{display:none}.plain-btn{padding:7px}.page{display:flex;flex-direction:column;min-height:calc(100svh - 54px)}.stage{height:clamp(370px,62svh,620px);min-height:0}.title-block{left:22px;top:23px}.title-block h1{font-size:clamp(40px,8.3vw,53px);margin:7px 0}.subhead{font-size:14px}.orientation{bottom:13px;left:18px;gap:6px}.compass{height:37px;width:28px}.coords{font-size:7px}.scene-tools{right:16px;bottom:15px}.hint{bottom:21px;font-size:9px}.desktop-copy{display:none}.mobile-copy{display:inline}.hint .dot,.hint .wheel-icon,.hint .zoom-copy{display:none}.panel{padding:24px 21px 28px}.section-kicker{display:none}.panel h2{font-size:28px;margin:0 0 15px}.views{grid-template-columns:repeat(3,1fr);gap:7px}.view{display:block;padding:7px;text-align:center;min-height:90px}.thumb{margin:0 auto 6px;width:100%;height:40px}.thumb svg{width:64px}.view strong{font-size:12px}.view small,.view .arrow{display:none}.layers{margin-top:21px;padding-top:16px}.note-wrap{padding-top:14px}.view-note{padding-top:15px}.switchrow{padding:8px 0}}
+@media(max-width:420px){.header-tools .text{display:none}.hint{display:none}}
+@media(prefers-reduced-motion:reduce){*{transition-duration:0s!important}}
+</style>
+</head>
+<body>
+<svg class="sprites" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs>
+<symbol id="book" viewBox="0 0 24 24"><path d="M3 4.5c3-1.1 6-.7 9 1.2 3-1.9 6-2.3 9-1.2V19c-3-1.1-6-.7-9 1-3-1.7-6-2.1-9-1zM12 6v14"/></symbol>
+<symbol id="expand" viewBox="0 0 24 24"><path d="M4 9V4h5m6 0h5v5M4 15v5h5m6 0h5v-5"/></symbol>
+<symbol id="pin" viewBox="0 0 24 24"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0z"/><circle cx="12" cy="10" r="2.4"/></symbol>
+<symbol id="arrow" viewBox="0 0 24 24"><path d="M5 12h13m-5-5 5 5-5 5"/></symbol>
+<symbol id="stack" viewBox="0 0 24 24"><path d="m3 8 9-5 9 5-9 5zM3 12l9 5 9-5M3 16l9 5 9-5"/></symbol>
+<symbol id="tunnel" viewBox="0 0 24 24"><path d="M2 20h20M4 20v-9a8 8 0 0 1 16 0v9M8 20v-9a4 4 0 0 1 8 0v9M4 13h4m8 0h4M12 3v4"/></symbol>
+<symbol id="orbit" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="10" ry="4.7" transform="rotate(-28 12 12)"/><circle cx="12" cy="12" r="2"/></symbol>
+<symbol id="mouse" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="6"/><path d="M12 5v4"/></symbol>
+<symbol id="minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol><symbol id="plus" viewBox="0 0 24 24"><path d="M5 12h14m-7-7v14"/></symbol>
+<symbol id="reset" viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 .7 7M4 4v6h6"/></symbol>
+<symbol id="close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+</defs></svg>
+<header><div class="brand"><svg class="brand-mark" viewBox="0 0 36 36" aria-hidden="true" style="stroke-width:1.75"><path d="M3 30V17a15 15 0 0 1 30 0v13h-4V17a11 11 0 0 0-22 0v13zm8 0V17a7 7 0 0 1 14 0v13h-4V17a3 3 0 0 0-6 0v13z"/></svg>Archiva</div><i class="divider"></i><span class="atlas">Monument Atlas</span><div class="header-tools"><button class="plain-btn" id="notes" aria-label="Open field notes"><svg class="ico"><use href="#book"/></svg><span class="text">Field notes</span></button><i class="divider"></i><button class="plain-btn" id="fullscreen" aria-label="Enter fullscreen" title="Enter fullscreen"><svg class="ico"><use href="#expand"/></svg></button></div></header>
+<main class="page"><section class="stage" aria-label="Interactive monument"><canvas id="scene" tabindex="0" aria-label="Interactive Colosseum model. Drag or use arrow keys to orbit. Scroll, pinch, or use plus and minus to zoom."></canvas><div class="title-block"><div class="eyebrow location"><svg class="ico"><use href="#pin"/></svg>Rome, Italy</div><h1>The Colosseum</h1><div class="subhead">Flavian Amphitheatre <span></span> <small>AD 80</small></div></div>
+<div class="orientation"><svg class="compass" viewBox="0 0 38 54" aria-hidden="true"><text x="19" y="9" text-anchor="middle" style="stroke:none;fill:currentColor;font:9px monospace">N</text><g id="needle"><circle cx="19" cy="32" r="15" stroke-width=".65" opacity=".55"/><path d="m19 17 4.5 16L19 31z" fill="#595b4d" stroke-width=".7"/><path d="m19 17-4.5 16L19 31zm0 30 4.5-14L19 35zm0 0-4.5-14L19 35z" stroke-width=".7"/></g></svg><span class="coords">41°53′25″N<br>12°29′32″E</span></div>
+<div class="hint"><svg class="ico"><use href="#orbit"/></svg><span class="desktop-copy">Drag to orbit</span><span class="mobile-copy">Drag to orbit · Pinch to zoom</span><span class="dot">·</span><svg class="ico wheel-icon"><use href="#mouse"/></svg><span class="zoom-copy">Scroll to zoom</span></div>
+<div class="scene-tools"><button id="out" aria-label="Zoom out" title="Zoom out (−)"><svg class="ico"><use href="#minus"/></svg></button><i></i><button id="in" aria-label="Zoom in" title="Zoom in (+)"><svg class="ico"><use href="#plus"/></svg></button><i></i><button id="reset-view" aria-label="Reset view" title="Reset view"><svg class="ico"><use href="#reset"/></svg></button></div><div id="error" hidden role="status"></div></section>
+<aside class="panel"><section><div class="section-kicker">Guided exploration</div><h2>Viewpoints</h2><div class="views">
+<button class="view" data-view="0" aria-pressed="true"><span class="thumb" aria-hidden="true"></span><span><strong>Aerial view</strong><small>Exterior overview</small></span><svg class="ico arrow"><use href="#arrow"/></svg></button>
+<button class="view" data-view="1" aria-pressed="false"><span class="thumb" aria-hidden="true"></span><span><strong>Arena floor</strong><small>Inside the amphitheatre</small></span><svg class="ico arrow"><use href="#arrow"/></svg></button>
+<button class="view" data-view="2" aria-pressed="false"><span class="thumb" aria-hidden="true"></span><span><strong>Top tier</strong><small>Upper seating gallery</small></span><svg class="ico arrow"><use href="#arrow"/></svg></button>
+</div></section>
+<section class="layers"><h3>Model layers</h3><button class="switchrow" data-layer="floor" role="switch" aria-checked="true"><svg class="ico"><use href="#stack"/></svg>Arena floor<span class="switch"></span></button><button class="switchrow" data-layer="hypogeum" role="switch" aria-checked="true"><svg class="ico"><use href="#tunnel"/></svg>Hypogeum<span class="switch"></span></button></section>
+<div class="note-wrap"><div class="view-note" aria-live="polite"><div class="note-label"><svg class="ico"><use href="#book"/></svg>View note</div><p id="caption">From above, the elliptical bowl opens onto the arena and the passages beneath its floor.</p></div></div></aside></main>
+<dialog id="field"><button class="close" aria-label="Close field notes"><svg class="ico"><use href="#close"/></svg></button><div class="eyebrow location">Field notes</div><h2>The Flavian Amphitheatre</h2><p>Inaugurated in AD 80, the Colosseum arranged its spectators in rising rings around an elliptical arena. Arched galleries carried crowds between the entrances and the seating tiers.</p><p>The hypogeum was added under Domitian. This interpretive model leaves part of the arena open so you can trace the underground corridors.</p><dl><div><dt>Location</dt><dd>Rome, Italy</dd></div><div><dt>Exterior dimensions</dt><dd>Approx. 189 × 156 m</dd></div><div><dt>Explore with a keyboard</dt><dd>Arrow keys · + / −</dd></div></dl></dialog>
+<script>
+// Geometry is uploaded once. Orbiting the model reuses both the mesh and its daylight shadow map.
+function createRenderer(canvas) {
+  const gl = canvas.getContext('webgl', {alpha:false, antialias:true, depth:true, preserveDrawingBuffer:true});
+  if (!gl) throw new Error('WebGL unavailable');
+  const unit = a => {
+    const d = Math.hypot(a[0],a[1],a[2]) || 1;
+    return a.map(x => x/d);
+  };
+  const cross = (a,b) => [a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+  const dot = (a,b) => a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+  function look(eye,target) {
+    const z = unit(eye.map((v,i)=>v-target[i]));
+    const x = unit(cross(Math.abs(z[1]) > .99999 ? [0,0,1] : [0,1,0],z));
+    const y = cross(z,x);
+    return [x[0],y[0],z[0],0, x[1],y[1],z[1],0, x[2],y[2],z[2],0, -dot(x,eye),-dot(y,eye),-dot(z,eye),1];
+  }
+  function mul(a,b) {
+    const m = new Float32Array(16);
+    for(let c=0;c<4;c++) for(let r=0;r<4;r++)
+      for(let k=0;k<4;k++) m[4*c+r] += a[4*k+r]*b[4*c+k];
+    return m;
+  }
+  const shadowResolution = Math.min(2048, gl.getParameter(gl.MAX_TEXTURE_SIZE),gl.getParameter(gl.MAX_RENDERBUFFER_SIZE));
+  const lightDirection = unit([-8.5,13.5,8.5]);
+  const lightMatrix = mul([1/13,0,0,0, 0,1/13,0,0, 0,0,-2/44,0, 0,0,-1,1],look(lightDirection.map(x => x*22),[0,0,0]));
+  function program(vsrc,fsrc) {
+    const shaders = [[gl.VERTEX_SHADER,vsrc],[gl.FRAGMENT_SHADER,fsrc]].map(([type,src])=>{
+      const s = gl.createShader(type);
+      gl.shaderSource(s,src); gl.compileShader(s);
+      if (!gl.getShaderParameter(s,gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+      return s;
+    });
+    const p = gl.createProgram();
+    for (const s of shaders) gl.attachShader(p,s);
+    gl.bindAttribLocation(p,0,'position');
+    gl.bindAttribLocation(p,1,'normal');
+    gl.bindAttribLocation(p,2,'material');
+    gl.linkProgram(p);
+    if (!gl.getProgramParameter(p,gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p));
+    for (const s of shaders) gl.deleteShader(s);
+    return p;
+  }
+  const depthProgram = program(`
+    attribute vec3 position;
+    uniform mat4 lightMatrix;
+    void main(){gl_Position=lightMatrix*vec4(position,1.0);}
+  `,`
+    precision highp float;
+    void main(){
+      vec3 enc = fract(gl_FragCoord.z*vec3(1.0,255.0,65025.0));
+      enc.xy -= enc.yz/255.0;
+      gl_FragColor=vec4(enc,1.0);
+    }
+  `);
+  const sceneProgram = program(`
+    attribute vec3 position,normal,material;
+    uniform mat4 cameraMatrix, lightMatrix;
+    varying vec3 p,n,color,lightPos;
+    void main(){
+      p=position; n=normal; color=material;
+      lightPos=(lightMatrix*vec4(position,1.)).xyz*.5+.5;
+      gl_Position=cameraMatrix*vec4(position,1.);
+    }
+  `,`
+    precision highp float;
+    varying vec3 p,n,color,lightPos;
+    uniform vec3 sun,eye;
+    uniform float texel,ground,shadows;
+    uniform sampler2D shadowMap;
+    float hash(vec3 q){
+      q=fract(q*vec3(.1031,.1030,.0973));
+      q+=dot(q,q.yxz+33.33);
+      return fract((q.x+q.y)*q.z);
+    }
+    float noise3(vec3 q){
+      vec3 i=floor(q), f=fract(q);
+      f=f*f*(3.-2.*f);
+      return mix(mix(mix(hash(i),hash(i+vec3(1,0,0)),f.x),
+                     mix(hash(i+vec3(0,1,0)),hash(i+vec3(1,1,0)),f.x),f.y),
+                 mix(mix(hash(i+vec3(0,0,1)),hash(i+vec3(1,0,1)),f.x),
+                     mix(hash(i+vec3(0,1,1)),hash(i+vec3(1,1,1)),f.x),f.y),f.z);
+    }
+    float compareDepth(vec2 offset,float depth){
+      float stored=dot(texture2D(shadowMap,lightPos.xy+offset*texel).rgb,vec3(1.,1./255.,1./65025.));
+      return step(depth,stored);
+    }
+    float sunlight(float incidence){
+      if(shadows<.5 || min(lightPos.x,lightPos.y)<.002 || max(lightPos.x,lightPos.y)>.998) return 1.;
+      float depth=lightPos.z-(.00033+.00085*(1.-incidence));
+      float radius=mix(1.3,2.15,ground);
+      float sum=0.;
+      for(int i=-1;i<=1;i++) for(int j=-1;j<=1;j++) {
+        vec2 offset=mat2(.9205,.3907,-.3907,.9205)*vec2(float(i),float(j))*radius;
+        sum+=compareDepth(offset,depth);
+      }
+      return sum/9.;
+    }
+    void main(){
+      vec3 norm=normalize(n);
+      if(dot(norm,eye-p)<0.) norm=-norm;
+      float inc=max(dot(norm,sun),0.);
+      float visibility=sunlight(inc);
+      vec3 result;
+      if(ground>.5){
+        // An unbroken warm studio floor, with a broad contact shade under the arcade.
+        float r=length(p.xz/vec2(9.5,7.9));
+        float contact=(1.-smoothstep(.87,1.17,r))*shadows;
+        float shade=1.-.18*(1.-visibility)-.065*contact;
+        result=vec3(.906,.882,.837)*shade;
+        result+=(noise3(vec3(p.x*.34,7.,p.z*.34))-.5)*.009;
+        float farGround=smoothstep(18.,85.,length(p.xz));
+        result=mix(result,vec3(.927,.908,.87),farGround);
+      } else {
+        vec3 ambient=mix(vec3(.59,.55,.50),vec3(.82,.83,.83),norm.y*.5+.5);
+        vec3 lit=ambient+vec3(.33,.295,.24)*inc*visibility;
+        lit*=1.-.095*(1.-visibility);
+        float stone=noise3(p*vec3(4.5,9.,4.5))-.5;
+        float pores=noise3(p*vec3(27.,56.,27.))-.5;
+        float deposits=noise3(p*vec3(1.3,4.,1.3))-.5;
+        float occlusion=mix(.93,1.,smoothstep(.02,1.05,p.y));
+        result=color*lit*occlusion*(1.+.074*stone+.059*pores+.073*deposits);
+        // Travertine block joints are most visible on the vertical faces.
+        float course=p.y*8.4+.018*stone;
+        float along=abs(norm.x)>abs(norm.z)?p.z:p.x;
+        float joint=abs(fract(along*2.85+floor(course)*.482+.012*deposits)-.5);
+        float seam=(1.-smoothstep(.0,.052,min(abs(fract(course)-.5),joint)));
+        result*=1.-.115*seam*(1.-abs(norm.y));
+        result+=vec3(.015,.008,-.001)*deposits;
+      }
+      gl_FragColor=vec4(result,1.);
+    }
+  `);
+  const uniforms = (p,names) => Object.fromEntries(names.split(' ').map(k => [k,gl.getUniformLocation(p,k)]));
+  const su = uniforms(sceneProgram,'cameraMatrix lightMatrix sun eye texel ground shadows shadowMap');
+  const du = uniforms(depthProgram,'lightMatrix');
+  const batches = Object.create(null);
+  let current='body', uploaded=false, lastShadowMask='';
+  const segmentSize=9*3*3072;
+  function batch(name) {
+    return batches[name] || (batches[name]={chunks:[],at:0,count:0,buffer:null});
+  }
+  function tri(a,b,c,col) {
+    const dest=batch(current);
+    const ux=b[0]-a[0],uy=b[1]-a[1],uz=b[2]-a[2];
+    const vx=c[0]-a[0],vy=c[1]-a[1],vz=c[2]-a[2];
+    const nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx;
+    const mag=Math.hypot(nx,ny,nz);
+    if(mag<1e-9) return;
+    if(!dest.chunks.length || dest.at+27>segmentSize) {
+      dest.chunks.push(new Float32Array(segmentSize));
+      dest.at=0;
+    }
+    const data=dest.chunks[dest.chunks.length-1];
+    let k=dest.at;
+    for(const v of [a,b,c]){
+      data[k++]=v[0]; data[k++]=v[1]; data[k++]=v[2];
+      data[k++]=nx/mag; data[k++]=ny/mag; data[k++]=nz/mag;
+      data[k++]=col[0]; data[k++]=col[1]; data[k++]=col[2];
+    }
+    dest.at=k; dest.count+=3;
+  }
+  function quad(a,b,c,d,col){tri(a,b,c,col);tri(a,c,d,col);}
+  function box(cx,cy,cz,sx,sy,sz,col){
+    const x=cx-sx/2,X=cx+sx/2,y=cy-sy/2,Y=cy+sy/2,z=cz-sz/2,Z=cz+sz/2;
+    const verts=[[x,y,z],[X,y,z],[X,Y,z],[x,Y,z],[x,y,Z],[X,y,Z],[X,Y,Z],[x,Y,Z]];
+    for(const [a,b,c,d] of [[3,2,1,0],[4,5,6,7],[0,4,7,3],[5,1,2,6],[7,6,2,3],[0,1,5,4]])
+      quad(verts[a],verts[b],verts[c],verts[d],col);
+  }
+  const g={tri,quad,box,layer(name){current=name;}};
+  current='__ground';
+  quad([-350,-.015,-350],[-350,-.015,350],[350,-.015,350],[350,-.015,-350],[1,1,1]);
+  current='body';
+  const shadowMap=gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D,shadowMap);
+  gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,shadowResolution,shadowResolution,0,gl.RGBA,gl.UNSIGNED_BYTE,null);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+  const target=gl.createFramebuffer(), depthBuffer=gl.createRenderbuffer();
+  gl.bindRenderbuffer(gl.RENDERBUFFER,depthBuffer);
+  gl.renderbufferStorage(gl.RENDERBUFFER,gl.DEPTH_COMPONENT16,shadowResolution,shadowResolution);
+  gl.bindFramebuffer(gl.FRAMEBUFFER,target);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,shadowMap,0);
+  gl.framebufferRenderbuffer(gl.FRAMEBUFFER,gl.DEPTH_ATTACHMENT,gl.RENDERBUFFER,depthBuffer);
+  const shadowReady=gl.checkFramebufferStatus(gl.FRAMEBUFFER)===gl.FRAMEBUFFER_COMPLETE;
+  gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+  function finish(){
+    if(uploaded) return;
+    for(const dest of Object.values(batches)){
+      dest.buffer=gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER,dest.buffer);
+      gl.bufferData(gl.ARRAY_BUFFER,dest.count*36,gl.STATIC_DRAW);
+      let offset=0;
+      for(let i=0;i<dest.chunks.length;i++){
+        const part=i===dest.chunks.length-1 ? dest.chunks[i].subarray(0,dest.at) : dest.chunks[i];
+        gl.bufferSubData(gl.ARRAY_BUFFER,offset,part);
+        offset+=part.byteLength;
+      }
+      dest.chunks.length=0;
+    }
+    uploaded=true;
+  }
+  function draw(dest,depth){
+    gl.bindBuffer(gl.ARRAY_BUFFER,dest.buffer);
+    gl.vertexAttribPointer(0,3,gl.FLOAT,false,36,0);
+    if(!depth){
+      gl.vertexAttribPointer(1,3,gl.FLOAT,false,36,12);
+      gl.vertexAttribPointer(2,3,gl.FLOAT,false,36,24);
+    }
+    gl.drawArrays(gl.TRIANGLES,0,dest.count);
+  }
+  function render(camera,layers={},opts={}){
+    if(!uploaded) finish();
+    const visible=Object.entries(batches).filter(([name]) => name!=='__ground' && layers[name]!==false);
+    const mask=visible.map(([name])=>name).join('/');
+    const cast=shadowReady && opts.shadows!==false;
+    gl.enable(gl.DEPTH_TEST);
+    gl.disable(gl.CULL_FACE);
+    gl.enableVertexAttribArray(0);
+    if(cast && lastShadowMask!==mask){
+      gl.bindFramebuffer(gl.FRAMEBUFFER,target);
+      gl.viewport(0,0,shadowResolution,shadowResolution);
+      gl.clearColor(1,1,1,1); gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+      gl.useProgram(depthProgram);
+      gl.uniformMatrix4fv(du.lightMatrix,false,lightMatrix);
+      gl.disableVertexAttribArray(1);gl.disableVertexAttribArray(2);
+      for(const [,dest] of visible) draw(dest,true);
+      gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+      lastShadowMask=mask;
+    }
+    const w=gl.drawingBufferWidth,h=gl.drawingBufferHeight,f=1/Math.tan(camera.fov*Math.PI/360);
+    const near=.035,far=450;
+    const projection=[f/(w/h),0,0,0, 0,f,0,0, 0,camera.shiftY||0,(far+near)/(near-far),-1, 0,0,2*far*near/(near-far),0];
+    gl.viewport(0,0,w,h);
+    gl.clearColor(.927,.908,.87,1);
+    gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+    gl.useProgram(sceneProgram);
+    gl.enableVertexAttribArray(1);gl.enableVertexAttribArray(2);
+    gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,shadowMap);
+    gl.uniform1i(su.shadowMap,0);
+    gl.uniformMatrix4fv(su.cameraMatrix,false,mul(projection,look(camera.eye,camera.target)));
+    gl.uniformMatrix4fv(su.lightMatrix,false,lightMatrix);
+    gl.uniform3fv(su.eye,camera.eye);gl.uniform3fv(su.sun,lightDirection);
+    gl.uniform1f(su.texel,1/shadowResolution);gl.uniform1f(su.shadows,cast?1:0);
+    gl.uniform1f(su.ground,1);
+    draw(batches.__ground,false);
+    gl.uniform1f(su.ground,0);
+    for(const [,dest] of visible) draw(dest,false);
+  }
+  return {g,finish,render};
+}
+
+// A depth-buffered CPU renderer keeps the same model explorable on devices without WebGL.
+function createSoftwareRenderer(canvas) {
+  const context=canvas.getContext('2d',{alpha:false});
+  const surface=canvas.ownerDocument ? canvas.ownerDocument.createElement('canvas') : new OffscreenCanvas(1,1);
+  const ctx=surface.getContext('2d',{alpha:false});
+  const xyz=[],coordinates=new Map(),indices=[],attributes=[],groups=[];
+  const layerIDs=new Map();
+  let current=0,points,faces,props,layerIds,uploaded=false;
+  let sx,sy,iz,tx,ty,tz,lightX,lightY,lightZ,lastMask=-1;
+  let image, pixels, zbuffer,w=0,h=0;
+  const size=896,shadow=new Float32Array(size*size);
+  const normalize=v=>{const d=Math.hypot(...v)||1;return v.map(x=>x/d);};
+  const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+  const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+  const sun=normalize([-8.5,13.5,8.5]),right=normalize(cross([0,1,0],sun)),up=cross(sun,right);
+  function layer(name){
+    if(!layerIDs.has(name)) layerIDs.set(name,layerIDs.size);
+    current=layerIDs.get(name);
+  }
+  layer('body');
+  function vertex(v){
+    const key=Math.round(v[0]*1e5)+','+Math.round(v[1]*1e5)+','+Math.round(v[2]*1e5);
+    let i=coordinates.get(key);
+    if(i===undefined){i=xyz.length/3;coordinates.set(key,i);xyz.push(v[0],v[1],v[2]);}
+    return i;
+  }
+  function tri(a,b,c,col){
+    const ab=[b[0]-a[0],b[1]-a[1],b[2]-a[2]],ac=[c[0]-a[0],c[1]-a[1],c[2]-a[2]];
+    const n=cross(ab,ac),d=Math.hypot(...n);
+    if(d<1e-9)return;
+    for(let i=0;i<3;i++)n[i]/=d;
+    indices.push(vertex(a),vertex(b),vertex(c));
+    const ao=.93+.07*Math.min(1,Math.max(0,(a[1]+b[1]+c[1])/3));
+    attributes.push(n[0],n[1],n[2],dot(n,a),col[0]*255*ao,col[1]*255*ao,col[2]*255*ao);
+    groups.push(current);
+  }
+  function quad(a,b,c,d,col){tri(a,b,c,col);tri(a,c,d,col);}
+  function box(cx,cy,cz,dx,dy,dz,col){
+    const x=cx-dx/2,X=cx+dx/2,y=cy-dy/2,Y=cy+dy/2,z=cz-dz/2,Z=cz+dz/2;
+    const v=[[x,y,z],[X,y,z],[X,Y,z],[x,Y,z],[x,y,Z],[X,y,Z],[X,Y,Z],[x,Y,Z]];
+    for(const [a,b,c,d] of [[3,2,1,0],[4,5,6,7],[0,4,7,3],[5,1,2,6],[7,6,2,3],[0,1,5,4]])
+      quad(v[a],v[b],v[c],v[d],col);
+  }
+  function finish(){
+    if(uploaded)return;
+    points=Float32Array.from(xyz);faces=Uint32Array.from(indices);props=Float32Array.from(attributes);layerIds=Uint8Array.from(groups);
+    xyz.length=indices.length=attributes.length=groups.length=0;coordinates.clear();
+    // Eight scratch vertices hold triangles clipped at the eye's near plane.
+    const count=points.length/3+8;
+    [sx,sy,iz,tx,ty,tz,lightX,lightY,lightZ]=Array.from({length:9},()=>new Float32Array(count));
+    for(let j=0;j<count-8;j++){
+      const i=j*3,x=points[i],y=points[i+1],z=points[i+2];
+      lightX[j]=size*(.5+(right[0]*x+right[1]*y+right[2]*z)/26);
+      lightY[j]=size*(.5+(up[0]*x+up[1]*y+up[2]*z)/26);
+      lightZ[j]=sun[0]*x+sun[1]*y+sun[2]*z;
+    }
+    uploaded=true;
+  }
+  function makeShadow(mask){
+    shadow.fill(-10000);
+    for(let p=0,f=0;p<faces.length;p+=3,f++){
+      if(!(mask & (1<<layerIds[f])))continue;
+      const a=faces[p],b=faces[p+1],c=faces[p+2];
+      const x=lightX[a],y=lightY[a],dx1=lightX[b]-x,dy1=lightY[b]-y,dx2=lightX[c]-x,dy2=lightY[c]-y;
+      const det=dx1*dy2-dx2*dy1;
+      if(Math.abs(det)<.0001)continue;
+      const minX=Math.max(0,Math.ceil(Math.min(x,lightX[b],lightX[c])-.5)),maxX=Math.min(size-1,Math.floor(Math.max(x,lightX[b],lightX[c])-.5));
+      const minY=Math.max(0,Math.ceil(Math.min(y,lightY[b],lightY[c])-.5)),maxY=Math.min(size-1,Math.floor(Math.max(y,lightY[b],lightY[c])-.5));
+      const inv=1/det,ux=dy2*inv,uy=-dx2*inv,vx=-dy1*inv,vy=dx1*inv;
+      const dz1=lightZ[b]-lightZ[a],dz2=lightZ[c]-lightZ[a];
+      for(let row=minY;row<=maxY;row++){
+        let off=row*size+minX,u=(minX+.5-x)*ux+(row+.5-y)*uy,v=(minX+.5-x)*vx+(row+.5-y)*vy;
+        for(let k=minX;k<=maxX;k++,off++,u+=ux,v+=vx)if(u>=0 && v>=0 && u+v<=1){
+          const z=lightZ[a]+u*dz1+v*dz2;
+          if(z>shadow[off])shadow[off]=z;
+        }
+      }
+    }
+    lastMask=mask;
+  }
+  function visibility(x,y,depth){
+    const i=x|0,j=y|0;
+    if(i<1||j<1||i>=size-2||j>=size-2)return 1;
+    const k=j*size+i;
+    const a=x-i,b=y-j;
+    return ((shadow[k]<=depth?1-a:0)+(shadow[k+1]<=depth?a:0))*(1-b)+
+           ((shadow[k+size]<=depth?1-a:0)+(shadow[k+size+1]<=depth?a:0))*b;
+  }
+  const pack=(r,g,b)=>0xff000000|(Math.min(255,b)|0)<<16|(Math.min(255,g)|0)<<8|(Math.min(255,r)|0);
+  function render(camera,layers={},opts={}){
+    if(!uploaded)finish();
+    const ratio=Math.min(1,Math.sqrt(480000/(canvas.width*canvas.height)),960/canvas.width);
+    const width=Math.max(1,Math.round(canvas.width*ratio)),height=Math.max(1,Math.round(canvas.height*ratio));
+    if(w!==width||h!==height){
+      w=surface.width=width;h=surface.height=height;
+      image=ctx.createImageData(w,h);pixels=new Uint32Array(image.data.buffer);zbuffer=new Float32Array(w*h);
+    }
+    let mask=0;
+    for(const [name,id] of layerIDs)if(layers[name]!==false)mask|=1<<id;
+    const cast=opts.shadows!==false;
+    if(cast && mask!==lastMask)makeShadow(mask);
+    const eye=camera.eye,forward=normalize(camera.target.map((v,i)=>v-eye[i]));
+    const r=normalize(cross(forward,Math.abs(forward[1])>.99999?[0,0,1]:[0,1,0])),u=cross(r,forward);
+    const focal=h/(2*Math.tan(camera.fov*Math.PI/360)),ox=w*.5,oy=h*(.5+(camera.shiftY||0)*.5),near=.035;
+    const vertexCount=points.length/3;
+    for(let j=0;j<vertexCount;j++){
+      const i=3*j,x=points[i]-eye[0],y=points[i+1]-eye[1],z=points[i+2]-eye[2];
+      tx[j]=x*r[0]+y*r[1]+z*r[2];ty[j]=x*u[0]+y*u[1]+z*u[2];tz[j]=x*forward[0]+y*forward[1]+z*forward[2];
+      iz[j]=1/tz[j];sx[j]=ox+focal*tx[j]*iz[j];sy[j]=oy-focal*ty[j]*iz[j];
+    }
+    zbuffer.fill(0);pixels.fill(pack(236,232,222));
+    // Intersect horizontal scanlines with the ground plane and sample its cached shadow.
+    const groundHeight=-.015;
+    for(let j=0;j<h;j++){
+      const v=(oy-j-.5)/focal,rayY=forward[1]+v*u[1];
+      if(rayY>=-.00001)continue;
+      const t=(groundHeight-eye[1])/rayY;
+      if(t<=0)continue;
+      const firstX=(.5-ox)/focal;
+      let gx=eye[0]+t*(forward[0]+v*u[0]+firstX*r[0]),gz=eye[2]+t*(forward[2]+v*u[2]+firstX*r[2]);
+      const dx=t*r[0]/focal,dz=t*r[2]/focal;
+      for(let i=0,k=j*w;i<w;i++,k++,gx+=dx,gz+=dz){
+        const e=gx*gx+gz*gz;
+        const horizon=Math.min(1,Math.max(0,(e-324)/6500));
+        let factor=1;
+        if(cast && e<190){
+          const lx=size*(.5+(gx*right[0]+gz*right[2])/26),ly=size*(.5+(gx*up[0]+groundHeight*up[1]+gz*up[2])/26);
+          const lz=gx*sun[0]+groundHeight*sun[1]+gz*sun[2]+.04;
+          const contact=Math.min(1,Math.max(0,(1.34-gx*gx/90.25-gz*gz/62.41)*2));
+          factor-=.058*contact+.18*(1-visibility(lx,ly,lz));
+        }
+        pixels[k]=pack((231+5*horizon)*factor,(225+7*horizon)*factor,(214+8*horizon)*factor);
+      }
+    }
+    function raster(a,b,c,col,baseR,baseG,baseB,sunR,sunG,sunB,bias){
+      const x=sx[a],y=sy[a],dx1=sx[b]-x,dy1=sy[b]-y,dx2=sx[c]-x,dy2=sy[c]-y;
+      const det=dx1*dy2-dx2*dy1;
+      if(Math.abs(det)<.015)return;
+      const xl=Math.max(0,Math.ceil(Math.min(x,sx[b],sx[c])-.5)),xr=Math.min(w-1,Math.floor(Math.max(x,sx[b],sx[c])-.5));
+      const yl=Math.max(0,Math.ceil(Math.min(y,sy[b],sy[c])-.5)),yr=Math.min(h-1,Math.floor(Math.max(y,sy[b],sy[c])-.5));
+      if(xl>xr||yl>yr)return;
+      const inv=1/det,ux=dy2*inv,uy=-dx2*inv,vx=-dy1*inv,vy=dx1*inv;
+      const qa=iz[a],qb=iz[b],qc=iz[c],d1=qb-qa,d2=qc-qa;
+      const lx0=lightX[a]*qa,ly0=lightY[a]*qa,lz0=lightZ[a]*qa;
+      const lx1=lightX[b]*qb-lx0,ly1=lightY[b]*qb-ly0,lz1=lightZ[b]*qb-lz0;
+      const lx2=lightX[c]*qc-lx0,ly2=lightY[c]*qc-ly0,lz2=lightZ[c]*qc-lz0;
+      for(let row=yl;row<=yr;row++){
+        let k=row*w+xl,p=(xl+.5-x)*ux+(row+.5-y)*uy,q=(xl+.5-x)*vx+(row+.5-y)*vy;
+        for(let xx=xl;xx<=xr;xx++,k++,p+=ux,q+=vx){
+          if(p<-.00005||q<-.00005||p+q>1.00005)continue;
+          const depth=qa+p*d1+q*d2;
+          if(depth<=zbuffer[k])continue;
+          zbuffer[k]=depth;
+          if(!cast){pixels[k]=col;continue;}
+          const invDepth=1/depth,lx=(lx0+p*lx1+q*lx2)*invDepth,ly=(ly0+p*ly1+q*ly2)*invDepth;
+          const vis=visibility(lx,ly,(lz0+p*lz1+q*lz2)*invDepth+bias);
+          // Stable world-space grain avoids shimmering as the camera orbits.
+          const grain=1+(((Math.imul(lx*8|0,15731)^Math.imul(ly*8|0,789221))&7)-3.5)*.0028;
+          const occlusion=(.905+.095*vis)*grain;
+          pixels[k]=pack((baseR+sunR*vis)*occlusion,(baseG+sunG*vis)*occlusion,(baseB+sunB*vis)*occlusion);
+        }
+      }
+    }
+    const clipped=new Int32Array(5);
+    for(let p=0,f=0;p<faces.length;p+=3,f++){
+      if(!(mask&(1<<layerIds[f])))continue;
+      const a=faces[p],b=faces[p+1],c=faces[p+2];
+      if(tz[a]<=near && tz[b]<=near && tz[c]<=near)continue;
+      const k=f*7;
+      const sign=props[k]*eye[0]+props[k+1]*eye[1]+props[k+2]*eye[2]>=props[k+3]?1:-1;
+      const ny=props[k+1]*sign,hemi=.5+.5*ny;
+      const incidence=Math.max(0,(props[k]*sun[0]+props[k+1]*sun[1]+props[k+2]*sun[2])*sign);
+      const R=props[k+4],G=props[k+5],B=props[k+6];
+      const br=R*(.59+.23*hemi),bg=G*(.55+.28*hemi),bb=B*(.50+.33*hemi);
+      const sr=R*.33*incidence,sg=G*.295*incidence,sb=B*.24*incidence;
+      const col=pack(br+sr,bg+sg,bb+sb),bias=.026+.044*(1-incidence);
+      if(tz[a]>=near && tz[b]>=near && tz[c]>=near){
+        raster(a,b,c,col,br,bg,bb,sr,sg,sb,bias);
+      }else{
+        let n=0,next=vertexCount,from=c;
+        for(let edge=0;edge<3;edge++){
+          const to=faces[p+edge];
+          if((tz[from]>=near)!==(tz[to]>=near)){
+            const t=(near-tz[from])/(tz[to]-tz[from]),j=next++;
+            iz[j]=1/near;
+            sx[j]=ox+focal*(tx[from]+(tx[to]-tx[from])*t)/near;
+            sy[j]=oy-focal*(ty[from]+(ty[to]-ty[from])*t)/near;
+            lightX[j]=lightX[from]+(lightX[to]-lightX[from])*t;
+            lightY[j]=lightY[from]+(lightY[to]-lightY[from])*t;
+            lightZ[j]=lightZ[from]+(lightZ[to]-lightZ[from])*t;
+            clipped[n++]=j;
+          }
+          if(tz[to]>=near)clipped[n++]=to;
+          from=to;
+        }
+        for(let j=1;j<n-1;j++)raster(clipped[0],clipped[j],clipped[j+1],col,br,bg,bb,sr,sg,sb,bias);
+      }
+    }
+    ctx.putImageData(image,0,0);context.drawImage(surface,0,0,canvas.width,canvas.height);
+  }
+  return {g:{tri,quad,box,layer},finish,render};
+}
+
+function buildMonument(g) {
+  const TAU = 2 * Math.PI, bays = 80, da = TAU / bays;
+  const pale = [.83,.731,.574], travertine = [.77,.651,.494], brick = [.655,.472,.331];
+  const shadowStone = [.568,.449,.331], marble = [.846,.771,.647], rock = [.697,.575,.438];
+  let seed = 3929;
+  function random() {
+    seed = (Math.imul(seed,1664525) + 1013904223) >>> 0;
+    return seed / 4294967296;
+  }
+  function tone(c, factor = 1, jitter = .04) {
+    const k = factor + (random() - .5) * jitter;
+    return c.map(v => Math.min(.99, v * k));
+  }
+  const ep = (rx,rz,a,y) => [rx*Math.cos(a), y,rz*Math.sin(a)];
+  // A trapezoidal course follows the ellipse exactly across the bay joints.
+  function course(rx,rz,depth,a,b,lo,hi,col) {
+    const o = (a,y) => ep(rx,rz,a,y), i = (a,y) => ep(rx-depth,rz-depth,a,y);
+    g.quad(o(a,lo),o(a,hi),o(b,hi),o(b,lo),col);
+    g.quad(i(b,lo),i(b,hi),i(a,hi),i(a,lo),tone(col,.89,.015));
+    g.quad(o(a,hi),i(a,hi),i(b,hi),o(b,hi),tone(col,1.03,.015));
+    g.quad(o(a,lo),i(a,lo),i(a,hi),o(a,hi),col);
+    g.quad(o(b,hi),i(b,hi),i(b,lo),o(b,lo),col);
+  }
+  // Local coordinates along a facade chord, up, and out from the arena.
+  function frame(rx,rz,a,b) {
+    const p=ep(rx,rz,a,0), q=ep(rx,rz,b,0), dx=q[0]-p[0], dz=q[2]-p[2];
+    const w=Math.hypot(dx,dz), tx=dx/w,tz=dz/w;
+    return {w,P:(u,y,v)=>[(p[0]+q[0])*.5+tx*u+tz*v,y,(p[2]+q[2])*.5+tz*u-tx*v]};
+  }
+  function prism(P,l,r,lo,hi,back,front,c) {
+    g.quad(P(l,lo,front),P(l,hi,front),P(r,hi,front),P(r,lo,front),c);
+    g.quad(P(r,lo,back),P(r,hi,back),P(l,hi,back),P(l,lo,back),tone(c,.91,.01));
+    g.quad(P(l,hi,front),P(l,hi,back),P(r,hi,back),P(r,hi,front),c);
+    g.quad(P(l,lo,back),P(l,hi,back),P(l,hi,front),P(l,lo,front),c);
+    g.quad(P(r,lo,front),P(r,hi,front),P(r,hi,back),P(r,lo,back),c);
+  }
+  function orderColumn(P,u,lo,hi,r) {
+    prism(P,u-r*1.36,u+r*1.36,lo,lo+.069,-.01,r*1.18,tone(pale));
+    prism(P,u-r*1.1,u+r*1.1,lo+.069,lo+.105,-.01,r*1.06,tone(pale));
+    const base=lo+.105, top=hi-.13, shaft=tone(pale,1,.075), sides=6;
+    for (let j=0;j<sides;j++) {
+      const a=j*Math.PI/sides,b=(j+1)*Math.PI/sides;
+      g.quad(P(u+r*Math.cos(a),base,r*Math.sin(a)),P(u+r*.83*Math.cos(a),top,r*.83*Math.sin(a)),
+        P(u+r*.83*Math.cos(b),top,r*.83*Math.sin(b)),P(u+r*Math.cos(b),base,r*Math.sin(b)),shaft);
+    }
+    prism(P,u-r*1.04,u+r*1.04,top,top+.052,-.01,r*1.05,tone(pale));
+    prism(P,u-r*1.34,u+r*1.34,top+.052,hi,-.016,r*1.28,tone(pale));
+  }
+  function arcade(F,y,h,stone,ornate) {
+    const {P,w}=F, l=-w/2, r=w/2, radius=w*(ornate?.32:.37);
+    const band=ornate?.066:.055, outer=radius+band;
+    const spring=y+h*.56, crown=y+h-.106, depth=ornate?.26:.22;
+    // Course joints in the paired masonry piers.
+    const courses=ornate?4:2;
+    for (let j=0;j<courses;j++) {
+      const bottom=y+(spring-y)*j/courses, top=y+(spring-y)*(j+1)/courses;
+      prism(P,l,-radius,bottom+.0012,top,-depth,0,tone(stone,1,.10));
+      prism(P,radius,r,bottom+.0012,top,-depth,0,tone(stone,1,.10));
+    }
+    prism(P,l,-outer,spring,crown,-depth,0,tone(stone));
+    prism(P,outer,r,spring,crown,-depth,0,tone(stone));
+    const count=9;
+    for (let j=0;j<count;j++) {
+      const a=Math.PI*j/count,b=Math.PI*(j+1)/count;
+      const arc=(t,rr,d)=>P(rr*Math.cos(t),spring+rr*Math.sin(t),d);
+      const voussoir=tone(ornate?pale:stone,1,.11), seam=.004;
+      const v=.018, k=j===4 ? .022 : 0;
+      g.quad(arc(b,radius,0),arc(b,outer,0),arc(a,outer,0),arc(a,radius,0),stone);
+      g.quad(arc(b-seam,radius,v),arc(b-seam,outer+k,v),arc(a+seam,outer+k,v),arc(a+seam,radius,v),voussoir);
+      g.quad(arc(a,radius,-depth),arc(a,radius,v),arc(b,radius,v),arc(b,radius,-depth),tone(stone,.86));
+      g.quad(arc(a,outer,0),arc(b,outer,0),P(outer*Math.cos(b),crown,0),P(outer*Math.cos(a),crown,0),tone(stone,1,.035));
+      g.quad(arc(b,radius,-depth),arc(a,radius,-depth),P(outer*Math.cos(a),crown,-depth),P(outer*Math.cos(b),crown,-depth),tone(stone,.86));
+    }
+    if(ornate) {
+      orderColumn(P,l,y+.012,crown+.012,w*.071);
+      prism(P,l,-radius+.018,spring-.037,spring+.015,-.018,.032,tone(pale));
+      prism(P,radius-.018,r,spring-.037,spring+.015,-.018,.032,tone(pale));
+    }
+  }
+  // The surviving outer wall rises into a tall northern arc and steps down at its broken ends.
+  const facade = [];
+  for(let i=0;i<bays;i++) {
+    const a=(i+.5)*da, backness=-(.47*Math.cos(a)+.883*Math.sin(a));
+    const levels=backness>-.04?3:2;
+    const attic=backness>.39;
+    let remnant=0;
+    if (!attic && backness>-.04) remnant=Math.max(0,(backness+.02)*1.8 +(random()-.5)*.11);
+    if (levels===2 && backness>-.36) remnant=Math.max(0,(backness+.36)*2.95 +(random()-.5)*.12);
+    facade.push({levels,attic,remnant,backness});
+  }
+  g.layer('body');
+  const height=1.30, base=.15;
+  for(let i=0;i<bays;i++){
+    const a=i*da,b=a+da,t=(a+b)/2, f=facade[i];
+    const rx=9.4, rz=7.8, F=frame(rx,rz,a,b);
+    course(rx+.13,rz+.13,.82,a,b,.012,.09,tone(rock));
+    course(rx+.064,rz+.064,.7,a,b,.09,base,tone(travertine));
+    for(let j=0;j<f.levels;j++) {
+      const y=base+j*height;
+      arcade(F,y,height,tone(travertine,1,.09),true);
+      const band=y+height-.106;
+      course(rx+.023,rz+.023,.58,a,b,band,band+.047,tone(travertine,.94));
+      course(rx+.082,rz+.082,.68,a,b,band+.047,band+.083,tone(pale,1,.055));
+      course(rx+.107,rz+.107,.72,a,b,band+.083,y+height,tone(pale,1,.05));
+    }
+    const roof=base+height*f.levels;
+    if(f.attic) {
+      // Panels alternate between open windows and solid pilastered attic bays.
+      const {w,P}=F, bot=roof, top=4.74, c=tone(pale,.92,.10);
+      if(i%2===0) {
+        prism(P,-w/2,w/2,bot,bot+.19,-.26,0,c);
+        prism(P,-w/2,-w*.17,bot+.19,top-.12,-.26,0,c);
+        prism(P,w*.17,w/2,bot+.19,top-.12,-.26,0,c);
+        prism(P,-w/2,w/2,top-.12,top,-.26,0,c);
+      } else prism(P,-w/2,w/2,bot,top,-.26,0,c);
+      prism(P,-w*.5-.041,-w*.5+.041,bot,top,-.01,.053,tone(pale));
+      course(rx+.09,rz+.09,.46,a,b,top,4.82,tone(pale));
+      for(const u of [-.32,.03,.37])
+        prism(P,w*u-.037,w*u+.037,4.51,4.56,0,.081,tone(pale));
+    } else {
+      const h=f.remnant>.19 ? f.remnant : ((i%7===2 || i%11===4)?.072+random()*.088:0);
+      if(h>0) {
+        const {w,P}=F;
+        for(let j=0;j<4;j++){
+          const y=roof+Math.max(.03,h*(.65+random()*.35)), c=tone(rock,1,.16);
+          prism(P,-w/2+j*w/4,-w/2+(j+1)*w/4,roof,y,-.23,-.008,c);
+        }
+      }
+    }
+    // A darker gallery sits behind the open first order. Its offset arcade gives the openings depth.
+    arcade(frame(8.82,7.22,a,b),base,1.24,tone(rock,.80,.085),false);
+    if(f.levels===3) arcade(frame(8.82,7.22,a,b),base+height,1.24,tone(rock,.84),false);
+    const outerY=f.levels===3 ? 3.25:2.36;
+    // Masonry below the cavea encloses the deep, shaded ambulatory behind the facade.
+    if(i%8!==1) {
+      course(8.10,6.50,.16,a,b,.035,outerY-.32,tone(shadowStone,.85,.09));
+    }
+    if(i%2===0){
+      const pier=frame(8.68,7.08,a,b);
+      prism(pier.P,-.076,.076,.03,outerY-.12,-.66,.06,tone(rock,.94,.09));
+    }
+    course(8.77,7.17,.43,a,b,outerY-.11,outerY,tone(brick,.99,.11));
+    // Each radial wedge of seating is stepped. Narrower seats form stair aisles at the section joints.
+    const innerRx=4.39, innerRz=2.91, rows=17;
+    for(let j=0;j<rows;j++){
+      const t=(j+1)/rows, rx=innerRx+4.04*t, rz=innerRz+3.97*t;
+      const rowHeight=(outerY-1.08)/rows;
+      const seatY=1.08+rowHeight*(j+1), previous=seatY-rowHeight;
+      const ais=(i%4===0)?.010:0, c=tone(j%7===0?travertine:marble,1,.105);
+      // Barrel-vaulted passage mouths interrupt the middle cavea at regular intervals.
+      if(!(i%8===1 && j>=7 && j<=9)) {
+        const O=(ang,y)=>ep(rx,rz,ang,y),I=(ang,y)=>ep(rx-4.04/rows,rz-3.97/rows,ang,y);
+        g.quad(O(a+ais,seatY),I(a+ais,seatY),I(b,seatY),O(b,seatY),c);
+        g.quad(I(b,previous),I(b,seatY),I(a+ais,seatY),I(a+ais,previous),tone(c,.88,.045));
+        // Enclose the ends of stepped seating where the surviving bowl changes height.
+        if(j>0 && facade[(i+bays-1)%bays].levels!==f.levels)
+          g.quad(I(a,.22),I(a,seatY),O(a,seatY),O(a,.22),tone(rock,.93));
+        if(j>0 && facade[(i+1)%bays].levels!==f.levels)
+          g.quad(O(b,.22),O(b,seatY),I(b,seatY),I(b,.22),tone(rock,.93));
+        if(ais) {
+          const ym=previous+rowHeight*.50;
+          g.quad(O(a,ym),I(a,ym),I(a+ais,ym),O(a+ais,ym),tone(rock,1.11));
+          g.quad(I(a+ais,previous),I(a+ais,ym),I(a,ym),I(a,previous),tone(rock));
+        }
+      }
+    }
+    // Marble balustrade and entrance portals around the arena.
+    if (i%20!==0) {
+      course(4.39,2.91,.085,a,b,.06,1.035,tone(shadowStone,1,.12));
+      course(4.415,2.935,.13,a,b,1.035,1.126,tone(marble));
+    } else {
+      const P=frame(4.39,2.91,a,b).P;
+      prism(P,-.19,.19,.86,1.095,-.12,0,tone(travertine));
+    }
+  }
+
+  // The exposed hypogeum sits beneath the independently switchable deck.
+  g.layer('hypogeum');
+  const n=96;
+  for(let i=0;i<n;i++) {
+    const a=i*TAU/n,b=(i+1)*TAU/n;
+    g.tri([0,.066,0],ep(4.34,2.85,b,.066),ep(4.34,2.85,a,.066),tone(shadowStone,.74,.035));
+  }
+  for(const z of [-2.19,-1.62,-1.03,-.43,.43,1.03,1.62,2.19]) {
+    const end=4.17*Math.sqrt(1-(z/2.78)**2), cells=Math.ceil(end*2/.58);
+    for(let i=0;i<cells;i++){
+      const x=-end+(i+.5)*2*end/cells, h=.48+random()*.18;
+      if(i%7===3) {
+        g.box(x,.13,z,2*end/cells-.026,.14,.11,tone(brick,.82));
+      } else {
+        g.box(x,.07+h*.5,z,2*end/cells-.008,h,.115,tone(brick,1,.16));
+        g.box(x,.081+h,z,2*end/cells-.018,.025,.12,tone(travertine,.95,.16));
+      }
+      if(i%2===0 && Math.abs(z)>.44 && Math.abs(z)<2.1) {
+        const crossZ=z+(z>0?-.29:.29), hh=.32+random()*.19;
+        g.box(x,.07+hh/2,crossZ,.105,hh,.58,tone(brick,1,.18));
+      }
+    }
+  }
+  for(let i=0;i<12;i++){
+    const x=-3.4+i*.60;
+    for(const z of [-.44,.44])
+      g.box(x,.44,z,.156,.72,.17,tone(travertine,.93,.11));
+  }
+  // Reconstructed segment at the western end; separate boards show at the straight cut edge.
+  g.layer('floor');
+  const ax=4.34,az=2.85,endX=-1.47,strips=23;
+  const widthAt=x=>az*Math.sqrt(Math.max(0,1-x*x/(ax*ax)));
+  for(let i=0;i<strips;i++) {
+    const x0=-ax+(endX+ax)*i/strips, x1=-ax+(endX+ax)*(i+1)/strips;
+    const w0=widthAt(x0),w1=widthAt(x1),y=.917;
+    g.quad([x0,y,-w0],[x0,y,w0],[x1,y,w1],[x1,y,-w1],tone([.844,.707,.495],1,.029));
+    if(i%4===0) g.box(x1,.805,0,.078,.158,2*w1,tone([.48,.335,.212]));
+  }
+  const cut=widthAt(endX);
+  g.box(endX,.883,0,.038,.065,2*cut,tone([.57,.412,.25]));
+  g.layer('body');
+}
+
+// The paving around the monument uses narrow travertine courses with offset joints.
+function buildPaving(g) {
+  g.layer('site');
+  const count = 120, ring = (r,a,y) => [(9.4+r)*Math.cos(a),y,(7.8+r)*Math.sin(a)];
+  for(let row=0;row<3;row++) {
+    const outer=.67-.19*row, inner=outer-.196, y=.014+row*.012;
+    for(let i=0;i<count;i++) {
+      const a=(i+(row%2)*.5)*2*Math.PI/count, b=a+2*Math.PI/count;
+      const tint=.94+.07*(.5+.5*Math.sin(i*38.72+row*19.2));
+      const col=[.772*tint,.718*tint,.619*tint];
+      g.quad(ring(outer,a,y),ring(inner,a,y),ring(inner,b,y),ring(outer,b,y),col);
+      g.quad(ring(outer,a,y-.022),ring(outer,a,y),ring(outer,b,y),ring(outer,b,y-.022),col.map(c=>c*.83));
+    }
+  }
+  g.layer('body');
+}
+function drawViewIcons() {
+  const path=d=>'<path d="'+d+'"/>';
+  // Three line studies: an elliptical elevation, the arena portals, and a section through the cavea.
+  let exterior=path('M5 25C6 18 18 13 30 13L32 9C43 6 61 9 67 16L67 29C60 40 18 44 5 31ZM5 25C20 35 53 33 67 21M5 28C21 38 53 36 67 25M9 23C22 15 47 14 60 20C53 27 25 30 9 23ZM32 12C45 9 59 12 65 16');
+  for(let i=0;i<13;i++) {
+    const x=7+i*4.7, y=28+5.3*Math.sin((x-5)/64*Math.PI)-(x-5)*.083;
+    exterior+=path('M'+x+' '+y+'v-2.2q1.1-2.4 2.2-.15v2.5m-2.2 3.7v-1.8q1.1-1.85 2.2-.2v1.7');
+  }
+  let floor=path('M2 31 21 21 48 21 69 29M2 35 20 26 46 25 69 33M6 37 37 27l28 9M8 30V19L28 12 51 13 65 20v10M7 21 28 15 51 16 65 22M11 17 29 10 50 11 61 16');
+  for (let i=0;i<9;i++) {
+    const x=11+i*5.8,y=25.2-4.1*Math.sin(i/8*Math.PI);
+    floor+=path('M'+x+' '+y+'v-3q1.4-3.2 2.8-.45v2.8');
+  }
+  let tier=path('M4 32 22 35 67 15M4 29 21 32 66 12M12 20l21-9 20 2 12-5M12 20v-3L34 7l20 2M5 33v-5l4 .7v-4l5 1v-3l5 .7v-3l5 .7v-3l5 .6v-3l5 .8M22 35v-3.2l5-2v-3l5-2v-3l5-2v-3l5-2v-3l5-2M5 37l17 3 45-21');
+  for(let i=0;i<6;i++){const x=10+i*4.7,y=28.4-i*2.25;tier+=path('M'+x+' '+y+'l12 2.4 40-17');}
+  [exterior,floor,tier].forEach((markup,i)=>{
+    document.querySelectorAll('.thumb')[i].innerHTML='<svg viewBox="0 0 72 46" aria-hidden="true">'+markup+'</svg>';
+  });
+}
+const canvas=document.querySelector('#scene'), stage=document.querySelector('.stage');
+const viewButtons=[...document.querySelectorAll('.view')], caption=document.querySelector('#caption');
+const layers={floor:true,hypogeum:true};
+const views=[
+  {eye:[10.3,16.2,25.3],target:[0,1.67,0],fov:35,shift:.13,caption:'From above, the elliptical bowl opens onto the arena and the passages beneath its floor.'},
+  {eye:[-2.85,1.48,.55],target:[1.3,1.92,-2.64],fov:63,shift:.08,caption:'A timber deck covered the hypogeum. Its open edge reveals where lifts once brought scenery and animals to arena level.'},
+  {eye:[-4.0,3.92,-5.58],target:[.64,1.1,.72],fov:64,shift:.085,caption:'From the upper seats, concentric rows curve around the arena. Radial aisles divide the terraces into wedge-shaped sections.'}
+];
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const mix=(a,b,t)=>a+(b-a)*t;
+const shortAngle=(a,b)=>Math.atan2(Math.sin(b-a),Math.cos(b-a));
+let renderer, scheduled=0,flight=null,active=0;
+function preset(index) {
+  const v=views[index], d=v.eye.map((p,i)=>p-v.target[i]), r=Math.hypot(...d);
+  const aspect=stage.clientWidth/stage.clientHeight;
+  // Keep the entire ellipse in frame on narrow displays.
+  const fov=index===0 ? 2*Math.atan(Math.max(Math.tan(33*Math.PI/360),.392/aspect))*180/Math.PI : v.fov;
+  return {target:[...v.target],dist:r,angle:Math.atan2(d[0],d[2]),elev:Math.asin(d[1]/r),fov,shift:v.shift};
+}
+let state=preset(0);
+function camera() {
+  const {target:t,dist:r,angle:a,elev:e,fov,shift}=state, h=r*Math.cos(e);
+  return {target:t,eye:[t[0]+h*Math.sin(a),Math.max(.10,t[1]+r*Math.sin(e)),t[2]+h*Math.cos(a)],fov,shiftY:shift};
+}
+function redraw(){if(!scheduled)scheduled=requestAnimationFrame(frame);}
+function frame(now) {
+  scheduled=0;
+  if(flight){
+    const t=clamp((now-flight.time)/flight.duration,0,1), u=t*t*(3-2*t), {from,to}=flight;
+    state={target:from.target.map((v,i)=>mix(v,to.target[i],u)),dist:mix(from.dist,to.dist,u),angle:from.angle+shortAngle(from.angle,to.angle)*u,elev:mix(from.elev,to.elev,u),fov:mix(from.fov,to.fov,u),shift:mix(from.shift,to.shift,u)};
+    if(t<1)redraw(); else {state=to;flight=null;}
+  }
+  renderer.render(camera(),layers);
+  document.querySelector('#needle').setAttribute('transform','rotate('+(-state.angle*180/Math.PI)+' 19 32)');
+}
+function select(index,animate=true) {
+  active=index;
+  viewButtons.forEach((b,i)=>b.setAttribute('aria-pressed',String(i===index)));
+  caption.textContent=views[index].caption;
+  const target=preset(index);
+  if(animate&&!matchMedia('(prefers-reduced-motion:reduce)').matches)
+    flight={from:state,to:target,time:performance.now(),duration:1100};
+  else {flight=null;state=target;}
+  redraw();
+}
+function free(){
+  flight=null;
+  // A manually adjusted view retains the last field note for reference.
+  if(active!==-1){active=-1;viewButtons.forEach(b=>b.setAttribute('aria-pressed','false'));caption.textContent='Explore the alternating arcades, then switch off the arena floor to uncover the full network of passages below.';}
+}
+function orbit(dx,dy){
+  free();state.angle-=dx*.006;
+  const lowest=Math.max(-1.48,Math.asin(clamp((.13-state.target[1])/state.dist,-1,1)));
+  state.elev=clamp(state.elev+dy*.005,lowest,1.54);redraw();
+}
+function zoom(factor){
+  free();state.dist=clamp(state.dist*factor,.36,58);redraw();
+}
+const pointers=new Map();
+function gesture(){
+  const p=[...pointers.values()];
+  if(p.length===0)return null;
+  if(p.length===1)return {x:p[0].x,y:p[0].y,n:1};
+  return {x:(p[0].x+p[1].x)/2,y:(p[0].y+p[1].y)/2,d:Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y),n:2};
+}
+canvas.addEventListener('pointerdown',e=>{
+  if(e.pointerType==='mouse'&&e.button!==0)return;
+  canvas.focus({preventScroll:true});canvas.setPointerCapture(e.pointerId);pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+});
+canvas.addEventListener('pointermove',e=>{
+  if(!pointers.has(e.pointerId))return;
+  const old=gesture();pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});const cur=gesture();
+  if(cur.n===2&&cur.d>1&&old.d>1)zoom(old.d/cur.d);
+  orbit(cur.x-old.x,cur.y-old.y);
+});
+for(const event of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(event,e=>pointers.delete(e.pointerId));
+canvas.addEventListener('wheel',e=>{e.preventDefault();zoom(Math.exp(clamp(e.deltaY*(e.deltaMode===1?.025:e.deltaMode===2?.4:.0011),-.4,.4)));},{passive:false});
+canvas.addEventListener('keydown',e=>{
+  const keys={ArrowLeft:()=>orbit(-12,0),ArrowRight:()=>orbit(12,0),ArrowUp:()=>orbit(0,12),ArrowDown:()=>orbit(0,-12),'+':()=>zoom(.86),'=':()=>zoom(.86),'-':()=>zoom(1.16),Home:()=>select(0)};
+  if(keys[e.key]){e.preventDefault();keys[e.key]();}
+});
+viewButtons.forEach((b,i)=>b.addEventListener('click',()=>select(i)));
+document.querySelector('#in').onclick=()=>zoom(.82);
+document.querySelector('#out').onclick=()=>zoom(1/.82);
+document.querySelector('#reset-view').onclick=()=>select(0);
+for(const b of document.querySelectorAll('[data-layer]'))b.onclick=()=>{
+  const id=b.dataset.layer;layers[id]=!layers[id];b.setAttribute('aria-checked',String(layers[id]));redraw();
+};
+const notes=document.querySelector('#field');
+document.querySelector('#notes').onclick=()=>notes.showModal();
+notes.querySelector('.close').onclick=()=>notes.close();
+notes.addEventListener('click',e=>{if(e.target===notes){const b=notes.getBoundingClientRect();if(e.clientX<b.left||e.clientX>b.right||e.clientY<b.top||e.clientY>b.bottom)notes.close();}});
+const fsButton=document.querySelector('#fullscreen');
+if(document.fullscreenEnabled){
+  fsButton.onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{fsButton.hidden=true;}};
+  document.addEventListener('fullscreenchange',()=>{const label=document.fullscreenElement?'Exit fullscreen':'Enter fullscreen';fsButton.setAttribute('aria-label',label);fsButton.title=label;});
+}else fsButton.style.display='none';
+function resize(){
+  const dpr=Math.min(1.65,devicePixelRatio||1);
+  canvas.width=Math.round(stage.clientWidth*dpr);canvas.height=Math.round(stage.clientHeight*dpr);
+  const buffer=document.querySelector('#software-scene');
+  if(buffer){buffer.width=stage.clientWidth;buffer.height=stage.clientHeight;}
+  if(active!==-1){flight=null;state=preset(active);}
+  redraw();
+}
+function setup(){
+  try {renderer=createRenderer(canvas);}
+  catch(e){
+    // A separate surface also works when a driver created a GL context but failed shader compilation.
+    const buffer=document.createElement('canvas');buffer.id='software-scene';buffer.setAttribute('aria-hidden','true');
+    buffer.style.cssText='position:absolute;width:100%;height:100%;inset:0;pointer-events:none';
+    canvas.after(buffer);renderer=createSoftwareRenderer(buffer);
+  }
+  buildPaving(renderer.g);buildMonument(renderer.g);renderer.finish();
+  resize();new ResizeObserver(resize).observe(stage);
+}
+drawViewIcons();
+try{setup();}catch(e){const box=document.querySelector('#error');box.hidden=false;box.textContent='The model could not be drawn in this browser.';console.error(e);}
+
+</script>
+</body>
+</html>

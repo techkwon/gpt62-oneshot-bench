@@ -1,0 +1,1312 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070b19">
+<title>Neon Apex — Night Circuit</title>
+<style>
+:root {
+  color-scheme: dark;
+  --ink: #f3f7ff;
+  --muted: #a7b2ce;
+  --cyan: #77f8f0;
+  --pink: #ff69ba;
+  --mono: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --edge: clamp(22px, 5vw, 80px);
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; overflow: hidden; background: #070b19; color: var(--ink); font-family: Arial, Helvetica, sans-serif; }
+button { color: inherit; font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 5px; }
+#game { position: relative; width: 100%; height: 100vh; height: 100dvh; isolation: isolate; overflow: hidden; }
+#scene, .shade { position: absolute; inset: 0; width: 100%; height: 100%; }
+.shade { pointer-events: none; background: linear-gradient(180deg, #050817b5, transparent 23%, transparent 70%, #060817ce); }
+[data-mode="menu"] .shade, [data-mode="finished"] .shade {
+  background: linear-gradient(90deg, #060914f5 0%, #080b19e9 17%, #080b19aa 34%, #070a1720 59%, transparent 78%),
+    linear-gradient(180deg, #060917af, transparent 23%, transparent 70%, #060817df);
+}
+[data-mode="paused"] .shade { background: #060a19a8; }
+.topbar, .footer { position: absolute; z-index: 2; left: var(--edge); right: var(--edge); display: flex; align-items: center; justify-content: space-between; }
+.topbar { top: max(23px, env(safe-area-inset-top)); height: 48px; border-bottom: 1px solid #b8d2ff31; padding-bottom: 15px; }
+.brand { display: flex; gap: 10px; align-items: center; font-weight: 900; font-size: 14px; font-style: italic; letter-spacing: .13em; white-space: nowrap; }
+.mark { display: inline-flex; align-items: center; gap: 3px; transform: skewX(-23deg); height: 20px; }
+.mark i { width: 4px; height: 13px; background: var(--cyan); }
+.mark i:nth-child(1) { height: 7px; opacity: .45; }
+.mark i:nth-child(2) { height: 10px; opacity: .75; }
+.topright { display: flex; align-items: center; gap: clamp(12px, 2vw, 27px); }
+.circuit, .label, .eyebrow, .footer, .binding, .best, .minor, .units { font: 600 11px/1.3 var(--mono); letter-spacing: .17em; text-transform: uppercase; }
+.circuit { color: #c2cbe0; white-space: nowrap; }
+.circuit::before { content: ""; display: inline-block; width: 5px; height: 5px; margin: 0 9px 2px 0; background: var(--pink); box-shadow: 0 0 9px var(--pink); }
+.icon-button { height: 31px; min-width: 33px; border: 1px solid #c3dcff58; background: #0a112a6b; display: grid; place-items: center; }
+.icon-button:hover { border-color: var(--cyan); }
+.equalizer { height: 11px; display: flex; align-items: center; gap: 2px; }
+.equalizer i { width: 2px; background: var(--cyan); height: 5px; }
+.equalizer i:nth-child(2) { height: 11px; }
+.equalizer i:nth-child(3) { height: 8px; }
+[aria-pressed="false"] .equalizer i { height: 2px; background: #a7b2ce; }
+.panel { position: absolute; z-index: 1; left: var(--edge); top: 50%; transform: translateY(-47%); max-width: calc(100% - 2 * var(--edge)); }
+.panel:not([hidden]) { animation: arrive .52s ease-out both; }
+@keyframes arrive {
+  from { opacity: 0; translate: 0 12px; }
+  to { opacity: 1; translate: 0 0; }
+}
+.eyebrow { display: flex; align-items: center; gap: 12px; color: var(--cyan); margin: 0 0 17px; }
+.eyebrow::before { content: ""; width: 30px; height: 1px; background: currentColor; box-shadow: 0 0 7px var(--cyan); }
+h1, h2, p { margin: 0; }
+h1, .result-title, .pause-title { font-weight: 950; font-style: italic; font-stretch: condensed; letter-spacing: -.093em; line-height: .83; }
+h1 { font-size: clamp(78px, min(10vw, 16vh), 160px); margin-left: -.055em; }
+h1 span, .result-title span { display: block; }
+h1 .accent, .result-title .accent { color: var(--cyan); text-shadow: 0 0 38px #41ffd92d; }
+.intro { color: #c8d2e7; font-size: clamp(14px, 1.45vw, 17px); line-height: 1.5; margin-top: 24px; }
+.main-button {
+  display: inline-flex; align-items: center; justify-content: space-between; gap: 28px; min-height: 51px; min-width: 201px;
+  padding: 0 22px; border: 0; clip-path: polygon(0 0, 100% 0, 100% 74%, 93% 100%, 0 100%);
+  background: var(--cyan); color: #091826; font-size: 12px; font-weight: 900; letter-spacing: .13em; text-transform: uppercase;
+  transition: background .18s, translate .18s;
+}
+.main-button:hover, .main-button:focus-visible { background: white; translate: 3px 0; }
+.button-arrow { font-size: 22px; line-height: 1; font-weight: 400; }
+.panel .main-button { margin-top: 25px; }
+.controls { display: flex; gap: 11px 16px; flex-wrap: wrap; margin-top: 19px; align-items: center; }
+.binding { font-size: 9px; letter-spacing: .10em; color: var(--muted); display: inline-flex; gap: 6px; align-items: center; white-space: nowrap; }
+kbd { font: 700 9px/1 var(--mono); min-height: 19px; display: inline-flex; align-items: center; padding: 3px 5px; color: var(--ink); border: 1px solid #a0b8dc56; }
+.footer { bottom: max(22px, env(safe-area-inset-bottom)); min-height: 34px; padding-top: 13px; border-top: 1px solid #b8d2ff31; color: #c1cbe2; font-size: 10px; }
+.footer strong { color: var(--cyan); font-weight: 700; }
+.footer span + span { text-align: right; }
+#hud { position: absolute; inset: 0; pointer-events: none; }
+.hud-top { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; position: absolute; top: 88px; left: var(--edge); right: var(--edge); }
+.hud-top > :nth-child(2) { text-align: center; }
+.hud-top > :last-child { text-align: right; }
+.label { color: #bdc9e3; display: block; margin-bottom: 5px; font-size: 10px; }
+.hud-value { font: 700 clamp(19px, 3.2vw, 31px)/1 var(--mono); letter-spacing: -.07em; text-shadow: 0 2px 10px #060817; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hud-value small { font-size: .57em; margin-left: 3px; color: var(--muted); letter-spacing: 0; }
+#lapTime { color: var(--cyan); }
+#hud .best { display: block; margin-top: 7px; color: #c5cce3; font-size: 9px; letter-spacing: .09em; white-space: nowrap; }
+#map { position: absolute; width: 135px; height: 91px; left: var(--edge); bottom: max(34px, env(safe-area-inset-bottom)); }
+.speed-group { position: absolute; right: var(--edge); bottom: max(35px, env(safe-area-inset-bottom)); width: clamp(138px, 15vw, 206px); }
+.speed-line { display: flex; align-items: baseline; justify-content: flex-end; gap: 8px; }
+#speed { font: 900 italic clamp(45px, 7vw, 82px)/.95 Arial, Helvetica, sans-serif; letter-spacing: -.079em; font-variant-numeric: tabular-nums; text-shadow: 0 0 30px #84fff14d; }
+.units { color: #c1cee6; white-space: nowrap; font-size: 9px; }
+.boost { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.boost .label { margin: 0; color: var(--cyan); }
+.meter { position: relative; height: 6px; flex: 1; background: #48577c9d; transform: skewX(-23deg); }
+#boostFill { height: 100%; background: var(--cyan); display: block; transform-origin: left; box-shadow: 0 0 11px #80faff93; }
+[data-boost="true"] #speed { color: var(--cyan); }
+[data-boost="true"] #boostFill { background: white; }
+.race-message { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); color: var(--ink); text-align: center; white-space: nowrap; }
+#callout { display: block; font: 900 italic clamp(42px, 10vw, 110px)/.95 Arial, Helvetica, sans-serif; letter-spacing: -.08em; text-shadow: 0 0 30px #62edffa0, 0 3px 14px #06091e; }
+#calloutDetail { margin-top: 10px; display: block; color: var(--cyan); }
+#countdown[hidden] { display: none; }
+.result-title { font-size: clamp(59px, min(8vw, 12vh), 114px); margin: 0 0 24px -.055em; }
+.results { display: flex; gap: clamp(20px, 4vw, 57px); margin-top: 4px; }
+.results .hud-value { font-size: clamp(24px, 4.1vw, 42px); }
+.result-extra { color: var(--cyan); margin-top: 11px; font-size: 10px; }
+.secondary { background: none; border: 0; padding: 10px 2px; color: #d0daee; margin-left: 15px; }
+.secondary:hover { color: var(--cyan); }
+#pause { text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: max-content; }
+.pause-title { font-size: clamp(54px, 10vw, 112px); }
+#pause .eyebrow { justify-content: center; }
+#touch { display: none; position: absolute; left: 16px; right: 16px; bottom: max(12px, env(safe-area-inset-bottom)); gap: 10px; justify-content: space-between; user-select: none; }
+#touch > div { display: flex; gap: 6px; }
+#touch button { min-width: 46px; min-height: 46px; background: #111e38b8; border: 1px solid #9dc9ea82; touch-action: none; font-size: 18px; }
+#touch button[data-key="Space"] { color: var(--cyan); }
+#touch button:active { background: #487991bb; }
+@media (pointer: coarse) {
+  [data-mode="racing"] #touch, [data-mode="countdown"] #touch { display: flex; }
+  .speed-group, #map { bottom: max(76px, calc(env(safe-area-inset-bottom) + 65px)); }
+}
+@media (max-width: 550px) {
+  .topbar { top: max(15px, env(safe-area-inset-top)); }
+  .circuit { font-size: 9px; letter-spacing: .09em; }
+  .hud-top { top: 77px; gap: 5px; }
+  #map { width: 92px; height: 65px; }
+  .panel { transform: translateY(-55%); }
+  h1 { font-size: clamp(68px, 18vw, 93px); }
+  .intro { margin-top: 17px; }
+  .panel .main-button { margin-top: 20px; }
+  .controls { max-width: 265px; }
+  [data-mode="menu"] .shade, [data-mode="finished"] .shade {
+    background: linear-gradient(90deg, #060914ed, #080b196d 67%, #080b1926), linear-gradient(180deg, #060917aa, transparent 23%, transparent 77%, #060817ec);
+  }
+}
+@media (max-height: 550px) and (min-width: 551px) {
+  .topbar { top: 10px; height: 38px; padding-bottom: 7px; }
+  .panel { transform: translateY(-45%); }
+  h1 { font-size: clamp(60px, 17vh, 91px); }
+  .eyebrow { margin-bottom: 9px; }
+  .intro { margin-top: 12px; }
+  .panel .main-button { margin-top: 12px; min-height: 39px; }
+  .controls { margin-top: 10px; }
+  .footer { bottom: 9px; padding-top: 6px; min-height: 21px; }
+  .hud-top { top: 61px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+</style>
+</head>
+<body>
+<main id="game" data-mode="menu" data-boost="false">
+  <canvas id="scene" aria-label="Neon Apex racing circuit"></canvas>
+  <div class="shade" aria-hidden="true"></div>
+  <header class="topbar">
+    <div class="brand"><span aria-hidden="true" class="mark"><i></i><i></i><i></i></span> NEON APEX</div>
+    <div class="topright">
+      <span class="circuit">Night Circuit</span>
+      <button id="sound" class="icon-button" type="button" aria-label="Sound" aria-pressed="false" title="Toggle sound">
+        <span class="equalizer" aria-hidden="true"><i></i><i></i><i></i></span>
+      </button>
+    </div>
+  </header>
+
+  <section id="menu" class="panel" aria-labelledby="title">
+    <p class="eyebrow">Midnight time trial</p>
+    <h1 id="title"><span>NEON</span><span class="accent">APEX</span></h1>
+    <p class="intro">Three laps through the city after dark.</p>
+    <button id="start-btn" class="main-button" type="button">Start race <span aria-hidden="true" class="button-arrow">↗</span></button>
+    <div class="controls" aria-label="Keyboard controls">
+      <span class="binding"><kbd>W A S D</kbd> / <kbd aria-label="Arrow keys">↑ ← ↓ →</kbd> Drive</span>
+      <span class="binding"><kbd>Space</kbd> Boost</span>
+    </div>
+  </section>
+  <footer id="menuFooter" class="footer">
+    <span><strong id="trackLength"></strong> PER LAP</span>
+    <span><kbd>F</kbd> FULLSCREEN</span>
+  </footer>
+
+  <section id="hud" aria-label="Race telemetry" hidden>
+    <div class="hud-top">
+      <div><span class="label">Lap</span><span id="lap" class="hud-value">01</span><span class="hud-value"><small>/ 03</small></span></div>
+      <div><span class="label">Lap time</span><span id="lapTime" class="hud-value">0:00.000</span></div>
+      <div><span class="label">Race time</span><span id="raceTime" class="hud-value">0:00.000</span><span id="bestLap" class="best" hidden></span></div>
+    </div>
+    <canvas id="map" aria-label="Circuit map and player position" width="270" height="182"></canvas>
+    <div class="speed-group">
+      <div class="speed-line"><strong id="speed">000</strong><span class="units">km/h</span></div>
+      <div class="boost"><span class="label">Boost</span><div class="meter" role="meter" aria-label="Boost charge" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><span id="boostFill"></span></div></div>
+    </div>
+    <div id="countdown" class="race-message" hidden><span id="callout"></span><span id="calloutDetail" class="minor"></span></div>
+  </section>
+
+  <section id="finished" class="panel" aria-labelledby="finishTitle" hidden>
+    <p class="eyebrow">Night Circuit</p>
+    <h2 id="finishTitle" class="result-title"><span>RACE</span><span class="accent">COMPLETE</span></h2>
+    <div class="results">
+      <div><span class="label">Race time</span><strong id="finalTime" class="hud-value">0:00.000</strong></div>
+      <div><span class="label">Best lap</span><strong id="finalLap" class="hud-value">0:00.000</strong></div>
+    </div>
+    <p id="record" class="minor result-extra"></p>
+    <button id="replay" class="main-button" type="button">Race again <span aria-hidden="true" class="button-arrow">↗</span></button>
+    <button id="finishHome" class="secondary minor" type="button">Main menu</button>
+  </section>
+
+  <section id="pause" class="panel" aria-labelledby="pauseTitle" hidden>
+    <p class="eyebrow">Night Circuit</p>
+    <h2 id="pauseTitle" class="pause-title">PAUSED</h2>
+    <button id="resume" class="main-button" type="button">Resume <span aria-hidden="true" class="button-arrow">↗</span></button>
+    <button id="pauseHome" class="secondary minor" type="button">Main menu</button>
+  </section>
+
+  <div id="touch" aria-label="Touch controls">
+    <div><button type="button" data-key="ArrowLeft" aria-label="Steer left">◀</button><button type="button" data-key="ArrowRight" aria-label="Steer right">▶</button></div>
+    <div><button type="button" data-key="ArrowDown" aria-label="Brake">▼</button><button type="button" data-key="ArrowUp" aria-label="Accelerate">▲</button><button type="button" data-key="Space" aria-label="Boost">⚡</button></div>
+  </div>
+</main>
+
+<script>
+"use strict";
+
+const byId = (id) => document.getElementById(id);
+const game = byId("game");
+const canvas = byId("scene");
+const context = canvas.getContext("2d", { alpha: false });
+const map = byId("map");
+const mapContext = map.getContext("2d");
+const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const tau = Math.PI * 2;
+const clamp = (value, low, high) => Math.max(low, Math.min(high, value));
+const mix = (a, b, t) => a + (b - a) * t;
+const wrap = (value, period) => (value % period + period) % period;
+const smooth = (rate, dt) => 1 - Math.exp(-rate * dt);
+const angleDelta = (a, b) => Math.atan2(Math.sin(b - a), Math.cos(b - a));
+const roadHalf = 7.4;
+const railLimit = roadHalf - 2.85;
+const totalLaps = 3;
+const launch = -29;
+const cruiseSpeed = 89;
+const boostSpeed = 123;
+const gates = [];
+
+function randomGenerator(seed) {
+  return () => {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+    return seed / 4294967296;
+  };
+}
+const random = randomGenerator(8810);
+
+// Resample the closed spline by arc length so speed, timing and scenery share one distance scale.
+const knots = [
+  [0, 0, 0], [0, 1, 107], [28, 7, 224], [128, 13, 307],
+  [267, 9, 322], [404, 1, 247], [451, -4, 115], [398, 2, -10],
+  [277, 9, -105], [149, 13, -132], [47, 8, -108], [9, 2, -56]
+];
+function spline(p0, p1, p2, p3, t) {
+  return .5 * ((2 * p1) + (p2 - p0) * t +
+    (2 * p0 - 5 * p1 + 4 * p2 - p3) * t * t + (3 * p1 - p0 - 3 * p2 + p3) * t * t * t);
+}
+const track = [];
+let trackLength = 0;
+for (let i = 0; i < knots.length; i++) {
+  const getKnot = (shift) => knots[wrap(i + shift, knots.length)];
+  for (let step = 0; step < 60; step++) {
+    const point = {};
+    ["x", "y", "z"].forEach((axis, k) => {
+      point[axis] = spline(getKnot(-1)[k], getKnot(0)[k], getKnot(1)[k], getKnot(2)[k], step / 60);
+    });
+    const previous = track.at(-1);
+    if (previous) trackLength += Math.hypot(point.x - previous.x, point.y - previous.y, point.z - previous.z);
+    point.s = trackLength;
+    track.push(point);
+  }
+}
+trackLength += Math.hypot(track.at(-1).x - track[0].x, track.at(-1).y - track[0].y, track.at(-1).z - track[0].z);
+track.forEach((p, i) => {
+  const before = track[wrap(i - 1, track.length)];
+  const after = track[(i + 1) % track.length];
+  p.yaw = Math.atan2(after.x - before.x, after.z - before.z);
+});
+function trackAt(distance) {
+  const target = wrap(distance, trackLength);
+  let low = 0;
+  let high = track.length;
+  while (high - low > 1) {
+    const middle = (low + high) >> 1;
+    if (track[middle].s <= target) low = middle;
+    else high = middle;
+  }
+  const a = track[low];
+  const b = track[high % track.length];
+  const t = (target - a.s) / ((high === track.length ? trackLength : b.s) - a.s);
+  const yaw = a.yaw + angleDelta(a.yaw, b.yaw) * t;
+  return { x: mix(a.x, b.x, t), y: mix(a.y, b.y, t), z: mix(a.z, b.z, t), yaw, rx: Math.cos(yaw), rz: -Math.sin(yaw) };
+}
+function offset(point, lateral, height = 0) {
+  return { x: point.x + point.rx * lateral, y: point.y + height, z: point.z + point.rz * lateral };
+}
+byId("trackLength").textContent = (trackLength / 1000).toFixed(2) + " KM";
+
+const city = [];
+const cityPalettes = [
+  ["#142037", "#202d4b", "#233751", "#66e1f5", "#91a7de"],
+  ["#20152d", "#312042", "#322349", "#ff72c6", "#7274cf"],
+  ["#17223b", "#202c4c", "#29395b", "#789aff", "#49d7e6"],
+  ["#211829", "#2e2441", "#3b3050", "#e9a9b7", "#d77bef"],
+  ["#101f31", "#172e4b", "#253751", "#5af7e4", "#8096db"]
+];
+function windowGrid(columns, rows) {
+  return Array.from({ length: rows }, () => Array.from({ length: columns }, () => {
+    const value = random();
+    return value < .48 ? 0 : value < .72 ? 1 : value < .94 ? 2 : 3;
+  }));
+}
+function addBuilding(x, z, w, d, height, palette, outlined, sign = "") {
+  const base = -39;
+  const top = base + height;
+  const x0 = x - w / 2, x1 = x + w / 2, z0 = z - d / 2, z1 = z + d / 2;
+  const rows = Math.ceil(height / 5.7);
+  const wide = windowGrid(Math.ceil(w / 4.2), rows);
+  const deep = windowGrid(Math.ceil(d / 4.2), rows);
+  const faces = [
+    { a: [x0, z0], b: [x1, z0], axis: "z", limit: z0, side: -1, windows: wide },
+    { a: [x1, z1], b: [x0, z1], axis: "z", limit: z1, side: 1, windows: wide },
+    { a: [x0, z1], b: [x0, z0], axis: "x", limit: x0, side: -1, windows: deep },
+    { a: [x1, z0], b: [x1, z1], axis: "x", limit: x1, side: 1, windows: deep }
+  ];
+  city.push({ x, z, base, top, w, d, x0, x1, z0, z1, faces, palette, outlined, sign, spire: top > 53 && random() > .62 });
+}
+for (let iz = -7; iz <= 12; iz++) {
+  for (let ix = -8; ix <= 15; ix++) {
+    if (random() < .15) continue;
+    const x = ix * 34 + (random() - .5) * 13;
+    const z = iz * 36 + (random() - .5) * 13;
+    const w = 13 + random() * 13, d = 14 + random() * 14;
+    const clearance = roadHalf + Math.hypot(w, d) / 2 + 9;
+    if (track.some((point, i) => i % 4 === 0 && Math.hypot(point.x - x, point.z - z) < clearance)) continue;
+    const height = 22 + Math.pow(random(), 1.8) * 108;
+    const palette = cityPalettes[Math.floor(random() * cityPalettes.length)];
+    addBuilding(x, z, w, d, height, palette, random() < .18);
+  }
+}
+addBuilding(58, 100, 20, 22, 97, cityPalettes[1], true, "NOVA");
+addBuilding(-52, 137, 19, 22, 87, cityPalettes[4], true, "ION");
+gates.push({ distance: 0, main: true }, { distance: trackLength * .32, main: false }, { distance: trackLength * .68, main: false });
+
+const stars = Array.from({ length: 150 }, () => ({
+  x: random(), y: random() ** 1.4 * .83, radius: random() * 1.1 + .2, alpha: random() * .55 + .12
+}));
+const skyline = Array.from({ length: 144 }, () => ({
+  width: 5 + random() * 20, height: 9 + Math.pow(random(), 2.6) * 109, tint: random(), roof: random()
+}));
+const streaks = Array.from({ length: 55 }, () => ({ angle: random() * tau, phase: random(), length: random(), tint: random() }));
+const input = new Set();
+const touchInput = new Map();
+const drivingKeys = new Set(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "KeyW", "KeyA", "KeyS", "KeyD", "Space"]);
+const held = (...codes) => codes.some((code) => input.has(code) || Array.from(touchInput.values()).includes(code));
+const state = {
+  mode: "menu", previousMode: null, distance: launch, offset: 0, sideSpeed: 0, speed: 0, roll: 0, cameraOffset: 0,
+  clock: 0, time: 0, lapStart: 0, lap: 1, laps: [], countdown: 3, energy: 1, boost: false,
+  lockout: false, message: "", messageTime: 0, contact: 0, sound: false, cinematic: 1, boostView: 0
+};
+let personalBest = null;
+try {
+  const saved = Number(localStorage.getItem("neon-apex-record"));
+  if (saved > 0 && Number.isFinite(saved)) personalBest = saved;
+} catch {}
+const ui = Object.fromEntries(["menu", "menuFooter", "hud", "finished", "pause", "lap", "lapTime", "raceTime", "bestLap",
+  "speed", "boostFill", "countdown", "callout", "calloutDetail", "finalTime", "finalLap", "record"].map((id) => [id, byId(id)]));
+const meter = ui.boostFill.parentElement;
+function setMode(mode) {
+  state.mode = mode;
+  game.dataset.mode = mode;
+  ui.menu.hidden = mode !== "menu";
+  ui.menuFooter.hidden = mode !== "menu";
+  ui.finished.hidden = mode !== "finished";
+  ui.pause.hidden = mode !== "paused";
+  ui.hud.hidden = !["countdown", "racing", "paused"].includes(mode);
+}
+function clearControls() {
+  input.clear();
+  touchInput.clear();
+}
+function resetRace(mode) {
+  clearControls();
+  Object.assign(state, {
+    distance: launch, offset: 0, sideSpeed: 0, speed: 0, roll: 0, cameraOffset: 0, time: 0, lapStart: 0,
+    lap: 1, laps: [], countdown: 3, energy: 1, boost: false, lockout: false, message: "", messageTime: 0, contact: 0, boostView: 0
+  });
+  setMode(mode);
+}
+function startRace() {
+  resetRace("countdown");
+  byId("start-btn").blur();
+  byId("replay").blur();
+  tone(330);
+}
+function toMenu() {
+  resetRace("menu");
+  byId("start-btn").focus({ preventScroll: true });
+}
+function togglePause() {
+  if (state.mode === "paused") {
+    byId("resume").blur();
+    setMode(state.previousMode);
+  } else if (state.mode === "racing" || state.mode === "countdown") {
+    state.previousMode = state.mode;
+    clearControls();
+    setMode("paused");
+    byId("resume").focus({ preventScroll: true });
+  }
+}
+function timeText(seconds) {
+  const ms = Math.max(0, Math.round(seconds * 1000));
+  return Math.floor(ms / 60000) + ":" + String(Math.floor(ms / 1000) % 60).padStart(2, "0") + "." + String(ms % 1000).padStart(3, "0");
+}
+function finishRace() {
+  const newRecord = personalBest === null || state.time < personalBest;
+  if (newRecord) {
+    personalBest = state.time;
+    try { localStorage.setItem("neon-apex-record", String(personalBest)); } catch {}
+  }
+  ui.finalTime.textContent = timeText(state.time);
+  ui.finalLap.textContent = timeText(Math.min(...state.laps));
+  ui.record.textContent = newRecord ? "New personal best" : "Personal best  " + timeText(personalBest);
+  state.boost = false;
+  clearControls();
+  setMode("finished");
+  tone(523, .16);
+  tone(784, .23, .11);
+  byId("replay").focus({ preventScroll: true });
+}
+
+let audio;
+let engine;
+let overtone;
+let engineGain;
+let engineFilter;
+function toggleSound() {
+  const Audio = window.AudioContext || window.webkitAudioContext;
+  if (!Audio) return;
+  if (!audio) {
+    audio = new Audio();
+    engine = audio.createOscillator();
+    overtone = audio.createOscillator();
+    engine.type = "sawtooth";
+    overtone.type = "triangle";
+    engineFilter = audio.createBiquadFilter();
+    engineFilter.type = "lowpass";
+    engineGain = audio.createGain();
+    engineGain.gain.value = 0;
+    engine.connect(engineFilter);
+    overtone.connect(engineFilter);
+    engineFilter.connect(engineGain).connect(audio.destination);
+    engine.start();
+    overtone.start();
+  }
+  state.sound = !state.sound;
+  byId("sound").setAttribute("aria-pressed", String(state.sound));
+  if (state.sound) {
+    audio.resume().catch(() => {});
+    tone(444);
+  }
+}
+function tone(frequency, duration = .12, delay = 0) {
+  if (!audio || !state.sound) return;
+  const at = audio.currentTime + delay;
+  const oscillator = audio.createOscillator();
+  const gain = audio.createGain();
+  oscillator.type = "sine";
+  oscillator.frequency.value = frequency;
+  gain.gain.setValueAtTime(.0001, at);
+  gain.gain.exponentialRampToValueAtTime(.14, at + .017);
+  gain.gain.exponentialRampToValueAtTime(.0001, at + duration);
+  oscillator.connect(gain).connect(audio.destination);
+  oscillator.start(at);
+  oscillator.stop(at + duration + .02);
+}
+
+function update(dt) {
+  if (state.mode === "paused") return;
+  const cinematic = Number(state.mode === "menu" || state.mode === "finished");
+  state.cinematic = reducedMotion ? cinematic : mix(state.cinematic, cinematic, smooth(5.8, dt));
+  state.boostView = mix(state.boostView, Number(state.boost), smooth(8, dt));
+  state.clock += dt;
+  state.messageTime = Math.max(0, state.messageTime - dt);
+  if (state.mode === "countdown") {
+    const before = Math.ceil(state.countdown);
+    state.countdown = Math.max(0, state.countdown - dt);
+    if (before !== Math.ceil(state.countdown) && state.countdown > 0) tone(330);
+    if (state.countdown === 0) {
+      state.message = "GO";
+      state.messageTime = .78;
+      setMode("racing");
+      tone(650, .22);
+    }
+    return;
+  }
+  if (state.mode === "finished") {
+    state.speed = Math.max(0, state.speed - dt * 31);
+    state.distance += state.speed * dt;
+    state.offset *= Math.exp(-1.8 * dt);
+    state.cameraOffset = mix(state.cameraOffset, state.offset * .65, smooth(4, dt));
+    state.roll *= Math.exp(-3 * dt);
+    return;
+  }
+  if (state.mode !== "racing") return;
+
+  const accelerating = held("ArrowUp", "KeyW");
+  const braking = held("ArrowDown", "KeyS");
+  const steer = Number(held("ArrowRight", "KeyD")) - Number(held("ArrowLeft", "KeyA"));
+  if (!held("Space") || state.energy > .28) state.lockout = false;
+  state.boost = held("Space") && !braking && !state.lockout && state.energy > 0 && state.speed > 7;
+  state.energy = clamp(state.energy + (state.boost ? -.35 : .155) * dt, 0, 1);
+  if (state.energy === 0) state.lockout = true;
+  const targetSpeed = state.boost ? boostSpeed : cruiseSpeed;
+  const edge = Math.abs(state.offset) > railLimit - .8;
+  let accel = -8;
+  if (braking) accel = -66;
+  else if (accelerating || state.boost) accel = (state.boost ? 90 : 49) * clamp((targetSpeed - state.speed) / 28, .09, 1);
+  if (!state.boost && state.speed > cruiseSpeed) accel = Math.min(accel, -27);
+  if (edge && state.speed > 32) accel -= 28;
+  const previousSpeed = state.speed;
+  state.speed = clamp(state.speed + accel * dt, 0, Math.max(previousSpeed, targetSpeed));
+
+  const yaw = trackAt(state.distance).yaw;
+  const lookAhead = 11;
+  const curve = angleDelta(yaw, trackAt(state.distance + lookAhead).yaw) / lookAhead;
+  const momentum = clamp(state.speed / cruiseSpeed, 0, 1.35);
+  const drift = clamp(-curve * 930 * momentum * momentum, -7, 7);
+  const desiredSideSpeed = steer * mix(3, 14, Math.min(1, momentum)) + drift;
+  state.sideSpeed = mix(state.sideSpeed, state.speed > .2 ? desiredSideSpeed : 0, smooth(5.4, dt));
+  state.offset += state.sideSpeed * dt;
+  state.contact = Math.max(0, state.contact - dt * 3.4);
+  if (Math.abs(state.offset) > railLimit) {
+    state.offset = Math.sign(state.offset) * railLimit;
+    if (Math.abs(state.sideSpeed) > 2) {
+      state.contact = 1;
+      state.sideSpeed *= .13;
+      state.speed *= 1 - 1.15 * dt;
+    }
+  }
+  state.roll = mix(state.roll, clamp(state.sideSpeed / 28, -.38, .38), smooth(7, dt));
+  state.cameraOffset = mix(state.cameraOffset, state.offset * .65, smooth(4, dt));
+
+  const previousDistance = state.distance;
+  state.distance += (previousSpeed + state.speed) * .5 * dt;
+  const finishDistance = state.lap * trackLength;
+  if (state.distance >= finishDistance) {
+    const fraction = (finishDistance - previousDistance) / (state.distance - previousDistance);
+    const splitTime = state.time + dt * fraction;
+    state.laps.push(splitTime - state.lapStart);
+    if (state.lap === totalLaps) {
+      state.distance = finishDistance;
+      state.time = splitTime;
+      finishRace();
+      return;
+    }
+    state.lap++;
+    state.lapStart = splitTime;
+    state.message = state.lap === totalLaps ? "FINAL LAP" : "LAP " + state.lap;
+    state.messageTime = 1.1;
+    tone(540, .18);
+  }
+  state.time += dt;
+}
+
+byId("start-btn").addEventListener("click", startRace);
+byId("replay").addEventListener("click", startRace);
+byId("resume").addEventListener("click", togglePause);
+byId("finishHome").addEventListener("click", toMenu);
+byId("pauseHome").addEventListener("click", toMenu);
+byId("sound").addEventListener("click", toggleSound);
+window.addEventListener("keydown", (event) => {
+  if (event.ctrlKey || event.metaKey || event.altKey) return;
+  if (drivingKeys.has(event.code)) {
+    const liveRace = state.mode === "racing" || state.mode === "countdown";
+    if (event.code === "Space" && event.target instanceof HTMLButtonElement && !liveRace) return;
+    event.preventDefault();
+    input.add(event.code);
+  }
+  if (event.repeat) return;
+  if (event.code === "Enter" && !(event.target instanceof HTMLButtonElement)) {
+    if (state.mode === "menu" || state.mode === "finished") startRace();
+    else if (state.mode === "paused") togglePause();
+  }
+  if (event.code === "Escape" || event.code === "KeyP") {
+    event.preventDefault();
+    togglePause();
+  }
+  if (event.code === "KeyF") {
+    const operation = document.fullscreenElement ? document.exitFullscreen?.() : game.requestFullscreen?.();
+    operation?.catch(() => {});
+  }
+});
+window.addEventListener("keyup", (event) => input.delete(event.code));
+window.addEventListener("blur", () => {
+  clearControls();
+  if (state.mode === "racing" || state.mode === "countdown") togglePause();
+});
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) return;
+  clearControls();
+  if (state.mode === "racing" || state.mode === "countdown") togglePause();
+});
+for (const button of byId("touch").querySelectorAll("button")) {
+  button.addEventListener("pointerdown", (event) => {
+    event.preventDefault();
+    button.setPointerCapture(event.pointerId);
+    touchInput.set(event.pointerId, button.dataset.key);
+  });
+  for (const type of ["pointerup", "pointercancel", "lostpointercapture"]) {
+    button.addEventListener(type, (event) => touchInput.delete(event.pointerId));
+  }
+}
+
+let width;
+let height;
+let pixelRatio;
+let focal;
+let center;
+let horizon;
+let camera;
+let skyGradient;
+let cityGlow;
+let vignette;
+let renderedMapKey = "";
+
+function resize() {
+  width = game.clientWidth;
+  height = game.clientHeight;
+  pixelRatio = Math.min(window.devicePixelRatio || 1, 1.75);
+  canvas.width = Math.round(width * pixelRatio);
+  canvas.height = Math.round(height * pixelRatio);
+  skyGradient = context.createLinearGradient(0, 0, 0, height * .76);
+  skyGradient.addColorStop(0, "#060916");
+  skyGradient.addColorStop(.32, "#10152f");
+  skyGradient.addColorStop(.52, "#292346");
+  skyGradient.addColorStop(.69, "#49264f");
+  skyGradient.addColorStop(.82, "#181e39");
+  skyGradient.addColorStop(1, "#080e21");
+  cityGlow = context.createRadialGradient(width * .64, height * .43, 0, width * .64, height * .43, Math.max(width * .62, height * .55));
+  cityGlow.addColorStop(0, "#ca59984a");
+  cityGlow.addColorStop(.37, "#5142932e");
+  cityGlow.addColorStop(.7, "#15234915");
+  cityGlow.addColorStop(1, "#05071800");
+  vignette = context.createRadialGradient(width * .55, height * .47, height * .17, width * .52, height * .45, Math.max(width * .72, height * .64));
+  vignette.addColorStop(0, "#04071900");
+  vignette.addColorStop(.65, "#04071924");
+  vignette.addColorStop(1, "#03051192");
+}
+window.addEventListener("resize", resize);
+
+function path(points) {
+  context.beginPath();
+  context.moveTo(points[0].x, points[0].y);
+  for (let i = 1; i < points.length; i++) context.lineTo(points[i].x, points[i].y);
+}
+function fill(points, color) {
+  if (points.length < 3) return;
+  path(points);
+  context.closePath();
+  context.fillStyle = color;
+  context.fill();
+}
+function line(points, color, size) {
+  if (points.length < 2) return;
+  path(points);
+  context.strokeStyle = color;
+  context.lineWidth = size;
+  context.stroke();
+}
+function toView(point) {
+  const dx = point.x - camera.x, dz = point.z - camera.z;
+  return { x: dx * camera.cos - dz * camera.sin, y: point.y - camera.y, z: dx * camera.sin + dz * camera.cos };
+}
+function project(point) {
+  const scale = focal / point.z;
+  return { x: center + point.x * scale, y: horizon - point.y * scale, scale };
+}
+function worldPoint(point) {
+  const view = toView(point);
+  return view.z > .85 ? project(view) : null;
+}
+function clipNear(points, near = .85) {
+  const clipped = [];
+  for (let i = 0; i < points.length; i++) {
+    const a = points[i], b = points[(i + 1) % points.length];
+    if (a.z >= near) clipped.push(a);
+    if ((a.z >= near) !== (b.z >= near)) {
+      const t = (near - a.z) / (b.z - a.z);
+      clipped.push({ x: mix(a.x, b.x, t), y: mix(a.y, b.y, t), z: near });
+    }
+  }
+  return clipped;
+}
+function worldPolygon(points) {
+  const views = points.map(toView);
+  return (views.every((p) => p.z >= .85) ? views : clipNear(views)).map(project);
+}
+function worldFill(points, color) {
+  fill(worldPolygon(points), color);
+}
+function glow(x, y, radius, color) {
+  if (!Number.isFinite(radius) || radius < .5) return;
+  const stops = context.createRadialGradient(x, y, 0, x, y, radius);
+  stops.addColorStop(0, color);
+  stops.addColorStop(1, "transparent");
+  context.fillStyle = stops;
+  context.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+}
+function sky() {
+  context.fillStyle = skyGradient;
+  context.fillRect(0, 0, width, height);
+  context.fillStyle = cityGlow;
+  context.fillRect(0, 0, width, height);
+  const yawShift = camera.yaw / tau;
+  for (const star of stars) {
+    const x = wrap(star.x - yawShift * 2, 1) * width;
+    const y = star.y * height * .48;
+    context.globalAlpha = star.alpha;
+    context.fillStyle = "#b4d9ff";
+    context.fillRect(x, y, star.radius, star.radius);
+  }
+  context.globalAlpha = 1;
+
+  const moonX = wrap((width / height > 1.03 ? .742 : .792) - yawShift * .67, 1.4) * width;
+  const moonY = height * .228;
+  const radius = Math.min(width, height) * .041;
+  glow(moonX, moonY, radius * 4.4, "#ec75c948");
+  glow(moonX, moonY, radius * 2.1, "#ffadd04a");
+  const moonFill = context.createLinearGradient(moonX, moonY - radius, moonX, moonY + radius);
+  moonFill.addColorStop(0, "#fae5ed");
+  moonFill.addColorStop(.53, "#f4a5d2");
+  moonFill.addColorStop(1, "#ac539e");
+  context.beginPath();
+  context.arc(moonX, moonY, radius, 0, tau);
+  context.fillStyle = moonFill;
+  context.fill();
+  context.save();
+  context.clip();
+  context.fillStyle = "#46264d94";
+  for (let i = 0; i < 7; i++) {
+    const y = moonY + radius * (.09 + i * .14);
+    context.fillRect(moonX - radius, y, radius * 2, radius * (.023 + i * .011));
+  }
+  context.restore();
+
+  // Distant silhouettes form a continuous ring behind the fully projected buildings.
+  const dawn = height * .547;
+  const widthScale = Math.max(.66, width / 1250);
+  for (let layer = 0; layer < 2; layer++) {
+    const spacing = 13 * widthScale;
+    const band = skyline.length * spacing;
+    const shift = yawShift * band * (layer + 1) + (layer ? 132 : 0) + camera.x * (.055 + layer * .035);
+    for (let i = 0; i < skyline.length; i++) {
+      const item = skyline[i];
+      const x = wrap(i * spacing - shift + 30, band) - 30;
+      if (x > width + 28) continue;
+      const w = item.width * widthScale;
+      const h = item.height * height / 860 * (1 + layer * .14);
+      const floor = dawn + layer * height * .049;
+      const top = floor - h;
+      context.fillStyle = layer ? (item.tint > .5 ? "#141e38" : "#181b35") : (item.tint > .5 ? "#232540" : "#302743");
+      context.fillRect(x, top, w + 1, h + 40);
+      if (item.roof > .64) {
+        context.fillRect(x + w * .28, top - h * .14, w * .44, h * .2);
+        if (item.roof > .88) {
+          context.fillStyle = "#b0588b";
+          context.fillRect(x + w * .5, top - h * .21, 1, 1.5);
+        }
+      }
+      if (i % 6 === 0 && item.height > 35) {
+        context.fillStyle = layer ? "#62648b69" : "#ac699e4c";
+        for (let yy = top + 7; yy < floor; yy += 7) context.fillRect(x + w * .25, yy, w * .44, 1);
+      }
+    }
+  }
+  const ground = context.createLinearGradient(0, dawn, 0, height);
+  ground.addColorStop(0, "#101b31");
+  ground.addColorStop(.2, "#0c1327");
+  ground.addColorStop(1, "#050916");
+  context.fillStyle = ground;
+  context.fillRect(0, height * .608, width, height * .392);
+}
+
+function drawBuildings() {
+  const seen = [];
+  for (const building of city) {
+    const view = toView({ x: building.x, y: building.top, z: building.z });
+    if (view.z < 10 || view.z > 640 || Math.abs(view.x + (center - width / 2) * view.z / focal) > view.z * width / (2 * focal) + 28) continue;
+    seen.push({ building, depth: view.z });
+  }
+  seen.sort((a, b) => b.depth - a.depth);
+  for (const { building: b, depth } of seen) {
+    const [sideDark, sideLight, roof, neon, windowColor] = b.palette;
+    const fog = clamp((depth - 115) / 530, 0, .83);
+    context.globalAlpha = 1 - fog * .67;
+    for (const face of b.faces) {
+      if ((camera[face.axis] - face.limit) * face.side <= 0) continue;
+      const corner = ([x, z], y) => ({ x, y, z });
+      const a = toView(corner(face.a, b.top));
+      const c = toView(corner(face.b, b.top));
+      if (a.z < 2 || c.z < 2) continue;
+      const bottomA = { ...a, y: b.base - camera.y };
+      const bottomC = { ...c, y: b.base - camera.y };
+      const facePoints = [project(a), project(c), project(bottomC), project(bottomA)];
+      fill(facePoints, face.axis === "x" ? sideDark : sideLight);
+      if (b.outlined && depth < 410) {
+        line([facePoints[3], facePoints[0], facePoints[1]], neon + "90", clamp(focal / depth * .27, .8, 3));
+        line([facePoints[3], facePoints[0], facePoints[1]], neon + "25", clamp(focal / depth * .8, 1, 9));
+      } else {
+        line([facePoints[0], facePoints[1]], "#8999cb29", .8);
+      }
+      const grid = face.windows;
+      const rows = grid.length, columns = grid[0].length;
+      const stride = depth > 300 ? 2 : 1;
+      for (let i = 1; i < rows; i += stride) {
+        const y = mix(a.y, bottomA.y, i / rows);
+        if (depth < 235 && i % 4 === 0) {
+          line([project({ ...a, y }), project({ ...c, y })], "#9ca8e01b", 1);
+        }
+        for (let j = 0; j < columns; j += stride) {
+          const lit = grid[i][j];
+          if (!lit) continue;
+          const left = (j + .31) / columns;
+          const right = Math.min((j + (depth > 300 ? 1.07 : .77)) / columns, .98);
+          const viewLeft = { x: mix(a.x, c.x, left), y, z: mix(a.z, c.z, left) };
+          const viewRight = { x: mix(a.x, c.x, right), y, z: mix(a.z, c.z, right) };
+          const start = project(viewLeft), end = project(viewRight);
+          const size = (b.top - b.base) / rows * start.scale * (lit === 3 ? .24 : .17);
+          context.fillStyle = lit === 3 ? neon + "d9" : lit === 2 ? windowColor + "92" : windowColor + "45";
+          if (Math.abs(start.x - end.x) < .4 || start.y < -4 || start.y > height + 5) continue;
+          const ascending = start.x < end.x;
+          if (Math.abs(start.y - end.y) < 1.2) {
+            context.fillRect(Math.min(start.x, end.x), start.y, Math.abs(end.x - start.x), Math.max(.65, size));
+          } else {
+            fill([start, end, { x: end.x, y: end.y + size }, { x: start.x, y: start.y + size }], context.fillStyle);
+          }
+          if (lit === 3 && depth < 150 && i % 3 === 0) {
+            context.fillStyle = neon + "28";
+            context.fillRect((ascending ? start.x : end.x) - 1, (start.y + end.y) * .5 - 1, Math.abs(end.x - start.x) + 2, size + 3);
+          }
+        }
+      }
+      if (b.sign && depth < 300 && face.axis === "z") {
+        const p = project({ x: (a.x + c.x) * .5, z: (a.z + c.z) * .5, y: a.y - 9 });
+        if (p.x > -50 && p.x < width + 50) {
+          const size = clamp(p.scale * 4.2, 9, 46);
+          context.font = "900 italic " + size + "px Arial";
+          context.textAlign = "center";
+          context.shadowColor = neon;
+          context.shadowBlur = 13;
+          context.fillStyle = neon;
+          context.fillText(b.sign, p.x, p.y);
+          context.shadowBlur = 0;
+        }
+      }
+    }
+    if (camera.y > b.top) {
+      worldFill([{ x: b.x0, y: b.top, z: b.z0 }, { x: b.x1, y: b.top, z: b.z0 },
+        { x: b.x1, y: b.top, z: b.z1 }, { x: b.x0, y: b.top, z: b.z1 }], roof);
+    }
+    if (b.spire) {
+      const bottom = worldPoint({ x: b.x, y: b.top, z: b.z });
+      const tip = worldPoint({ x: b.x, y: b.top + 5 + b.w * .42, z: b.z });
+      if (tip && bottom) {
+        line([bottom, tip], "#8589b5a0", clamp(bottom.scale * .22, .75, 2.2));
+        if (Math.sin(state.clock * 2.5 + b.z) > -.25 || reducedMotion) {
+          glow(tip.x, tip.y, clamp(tip.scale * .75, 2, 12), "#ff75be91");
+          context.fillStyle = "#ffafda";
+          context.fillRect(tip.x - .7, tip.y - .7, 1.4, 1.4);
+        }
+      }
+    }
+  }
+  context.globalAlpha = 1;
+}
+
+const trackSegments = Math.ceil(trackLength / 4.5);
+const segmentLength = trackLength / trackSegments;
+const road = Array.from({ length: trackSegments }, (_, i) => trackAt(i * segmentLength));
+function ribbon(a, b, left, right, color, lift = 0) {
+  worldFill([offset(a, left, lift), offset(a, right, lift), offset(b, right, lift), offset(b, left, lift)], color);
+}
+function sideWall(a, b, side, bottom, top, color) {
+  const edge = (roadHalf + .04) * side;
+  worldFill([offset(a, edge, bottom), offset(b, edge, bottom), offset(b, edge, top), offset(a, edge, top)], color);
+}
+function roadReflection(a, b, side, tint) {
+  const edge = (roadHalf - .12) * side;
+  ribbon(a, b, edge, (roadHalf - 1.6) * side, tint + "0b", .022);
+  ribbon(a, b, edge, (roadHalf - 1.02) * side, tint + "19", .023);
+  ribbon(a, b, edge, (roadHalf - .58) * side, tint + "2b", .024);
+}
+function gateFill(point, x0, x1, y0, y1, color, dist = 0) {
+  const at = (x, y) => {
+    const p = offset(point, x, y);
+    p.x -= point.rz * dist;
+    p.z += point.rx * dist;
+    return p;
+  };
+  worldFill([at(x0, y0), at(x1, y0), at(x1, y1), at(x0, y1)], color);
+}
+function drawGate(distance, main) {
+  const point = trackAt(distance);
+  const projected = worldPoint(offset(point, 0, 5.55));
+  if (!projected || projected.x < -width || projected.x > width * 2) return;
+  const half = roadHalf + .36;
+  for (const direction of [-1, 1]) {
+    const side = direction < 0 ? "#86fff4" : "#ff85d0";
+    gateFill(point, direction * (half - .02), direction * (half + .78), -.35, 6.3, "#253552", .4);
+    gateFill(point, direction * (half - .22), direction * (half + .53), -.25, 6.22, "#111b34");
+    gateFill(point, direction * half, direction * (half + .095), .22, 5.96, side);
+    for (let i = 0; i < 3; i++) {
+      gateFill(point, direction * (half + .16), direction * (half + .45), .45 + i * .39, .62 + i * .39, "#7083a9");
+    }
+  }
+  gateFill(point, -half - .5, half + .5, 5.2, 6.3, "#323b59", .6);
+  gateFill(point, -half - .55, half + .55, 5.06, 6.13, "#121b34");
+  gateFill(point, -half - .52, half + .52, 5.98, 6.08, "#8cfbf3");
+  gateFill(point, -half - .49, half + .49, 5.09, 5.145, main ? "#e963bf" : "#54d2dc");
+  for (const direction of [-1, 1]) {
+    for (let i = 0; i < 4; i++) {
+      const start = (half - .16 - i * .55) * direction;
+      gateFill(point, start, start - direction * .23, 5.35, 5.76, direction < 0 ? "#7be9e2" : "#e47dbd");
+    }
+  }
+  if (projected.scale > 4) {
+    const left = worldPoint(offset(point, -3.1, 5.54));
+    const right = worldPoint(offset(point, 3.1, 5.54));
+    if (left && right) {
+      const size = Math.min(projected.scale * .56, 34);
+      context.save();
+      context.translate(projected.x, projected.y);
+      context.rotate(Math.atan2(right.y - left.y, right.x - left.x));
+      context.font = "900 italic " + size + "px Arial";
+      context.textBaseline = "middle";
+      context.textAlign = "center";
+      context.fillStyle = "#eefbff";
+      context.fillText(main ? "N I G H T   C I R C U I T" : "N E O N   A P E X", 0, 0);
+      context.restore();
+    }
+  }
+}
+function drawTrack() {
+  const first = Math.floor((state.distance - 34) / segmentLength);
+  const last = first + 105;
+  const visibleGates = gates.flatMap((gate) => {
+    const delta = wrap(gate.distance - state.distance + 33, trackLength) - 33;
+    return delta < 440 ? [{ ...gate, distance: state.distance + delta }] : [];
+  });
+  for (let i = last; i >= first; i--) {
+    const index = wrap(i, trackSegments);
+    const a = road[index], b = road[(index + 1) % road.length];
+    const aView = toView(a), bView = toView(b);
+    if (aView.z < -8 && bView.z < -8) continue;
+    if (Math.abs((aView.x + bView.x) / 2 + (center - width / 2) * aView.z / focal) > aView.z * width / (2 * focal) + 29) continue;
+    const distant = Math.max(aView.z, bView.z);
+    context.globalAlpha = 1 - clamp((distant - 210) / 510, 0, .42);
+    for (const side of [-1, 1]) {
+      sideWall(a, b, side, -1.7, .06, side < 0 ? "#192941" : "#201a37");
+      sideWall(a, b, side, -.49, -.33, side < 0 ? "#256178" : "#663458");
+    }
+    ribbon(a, b, -roadHalf, roadHalf, index % 4 === 0 ? "#202943" : "#1e2740");
+    ribbon(a, b, -roadHalf + .74, roadHalf - .74, "#1b233a", .004);
+    ribbon(a, b, -roadHalf * .58, roadHalf * .58, index % 4 === 0 ? "#212941" : "#20283e", .006);
+    for (const side of [-1, 1]) {
+      const edge = side * roadHalf;
+      const inner = side * (roadHalf - .63);
+      const cyan = side < 0;
+      const bright = cyan ? "#8ffef5" : "#ff9acf";
+      const soft = cyan ? "#64ecec" : "#fb72b9";
+      const curb1 = cyan ? "#29768c" : "#733759";
+      const curb2 = cyan ? "#1a516b" : "#512951";
+      ribbon(a, b, Math.min(edge, inner), Math.max(edge, inner), index % 3 === 0 ? curb1 : curb2, .018);
+      if (distant < 175) roadReflection(a, b, side, soft);
+      const edgeInner = side * (roadHalf - .38);
+      ribbon(a, b, Math.min(edgeInner, edge), Math.max(edgeInner, edge), soft + "66", .028);
+      const wire = side * (roadHalf - .12);
+      ribbon(a, b, Math.min(wire, edge), Math.max(wire, edge), bright, .031);
+      if (index % 3 === 0) {
+        ribbon(a, b, side * (roadHalf - .64), side * (roadHalf - .88), soft + "9d", .035);
+      }
+      if (index % 4 !== 3) {
+        sideWall(a, b, side, .15, .43, cyan ? "#274c64" : "#4b3559");
+        sideWall(a, b, side, .42, .51, soft + (index % 4 === 0 ? "ef" : "70"));
+      }
+      if (index % 9 === 0 && distant < 240) {
+        const postA = offset(a, side * (roadHalf + .18), -.25);
+        const postB = offset(a, side * (roadHalf + .18), .86);
+        const p = worldPoint(postA), q = worldPoint(postB);
+        if (p && q) {
+          line([p, q], "#444d6e", clamp(q.scale * .105, 1, 13));
+          glow(q.x, q.y, clamp(q.scale * .27, 1, 16), soft + "88");
+          line([q, { x: q.x, y: q.y + Math.max(1, q.scale * .095) }], bright, Math.max(1, q.scale * .075));
+        }
+      }
+    }
+    if (index % 4 < 2) {
+      ribbon(a, b, -2.46, -2.39, "#9eabc566", .035);
+      ribbon(a, b, 2.39, 2.46, "#9eabc566", .035);
+    }
+    if (index % 17 === 8 && distant < 180) {
+      const point = trackAt(i * segmentLength + segmentLength * .57);
+      worldFill([offset(a, -.72, .04), offset(point, 0, .04), offset(a, .72, .04),
+        offset(a, .45, .04), offset(trackAt(i * segmentLength + 1.58), 0, .04), offset(a, -.45, .04)], "#80c8df79");
+    }
+
+    const gate = visibleGates.find((item) => item.distance >= i * segmentLength - .001 && item.distance < (i + 1) * segmentLength - .001);
+    if (gate) {
+      if (gate.main) {
+        for (let row = 0; row < 2; row++) {
+          const near = trackAt(gate.distance + row * .73);
+          const far = trackAt(gate.distance + (row + 1) * .73);
+          for (let col = 0; col < 18; col++) {
+            const x0 = -roadHalf + col * roadHalf / 9;
+            ribbon(near, far, x0, x0 + roadHalf / 9, (row + col) % 2 ? "#d0f3f5" : "#0c2035", .08);
+          }
+        }
+      }
+      drawGate(gate.distance, gate.main);
+    }
+  }
+  context.globalAlpha = 1;
+}
+
+const hull = [
+  { color: "#1a2540", vertices: [[0, .08, 3.25], [-1.03, .02, .56], [-1.16, .03, -1.82], [-.74, -.12, -2.24], [.74, -.12, -2.24], [1.16, .03, -1.82], [1.03, .02, .56]] },
+  { color: "#9eb2cc", vertices: [[0, .27, 3.25], [-1.03, .28, .56], [-1.12, .30, -1.72], [0, .59, -1.97], [1.12, .30, -1.72], [1.03, .28, .56]] },
+  { color: "#d5e5eb", vertices: [[0, .28, 3.25], [-.93, .306, .64], [-.66, .48, -.86], [0, .61, -1.96], [.66, .48, -.86], [.93, .306, .64]] },
+  { color: "#f2f8fa", vertices: [[0, .29, 3.25], [-.28, .414, 1.33], [0, .58, .73], [.28, .414, 1.33]] },
+  { color: "#253c58", vertices: [[0, .56, 1.62], [-.52, .565, .57], [-.48, .66, -.31], [0, .73, -.87], [.48, .66, -.31], [.52, .565, .57]] },
+  { color: "#3c7898", vertices: [[0, .58, 1.48], [-.35, .601, .47], [-.32, .693, -.29], [0, .735, -.69], [.32, .693, -.29], [.35, .601, .47]] },
+  { color: "#85d8e7", vertices: [[0, .598, 1.46], [-.35, .618, .47], [-.32, .71, -.29], [0, .75, -.66], [-.13, .729, -.25], [-.13, .643, .43]] },
+  { color: "#1a2940", vertices: [[-1.13, .30, -1.73], [0, .61, -1.97], [1.13, .30, -1.73], [.74, -.12, -2.26], [-.74, -.12, -2.26]] },
+  { color: "#80eff0", vertices: [[-.51, .21, -2.13], [.51, .21, -2.13], [.43, .12, -2.2], [-.43, .12, -2.2]] }
+];
+const wings = [-1, 1].map((direction) => {
+  const pieces = [];
+  const face = (color, points, boostColor) => pieces.push({
+    color, boostColor, vertices: points.map(([x, y, z]) => [x * direction, y, z])
+  });
+  face("#283b55", [[.77, .12, 1.11], [1.34, .11, .63], [2.29, .11, -.22], [2.9, -.04, -1.76], [2.14, -.16, -2.45], [1.02, -.12, -2.23]]);
+  face(direction < 0 ? "#b2c6d7" : "#91a7c0", [[.77, .43, 1.12], [1.37, .37, .73], [2.31, .24, -.18], [2.94, .20, -1.75], [2.12, .18, -2.38], [1.10, .41, -1.8]]);
+  face("#dce7ef", [[.85, .445, 1.03], [1.37, .385, .73], [2.31, .263, -.18], [2.68, .235, -1.43], [2.25, .27, -1.32], [1.39, .433, .18]]);
+  face("#18273f", [[1.13, .43, .17], [1.68, .365, -.55], [2.10, .27, -1.65], [1.80, .28, -2.11], [1.23, .421, -1.48]]);
+  face("#4b9cba", [[1.41, .42, -.27], [1.63, .39, -.55], [1.96, .315, -1.56], [1.90, .317, -1.64]]);
+  face("#86fff2", [[2.30, .278, -.19], [2.98, .229, -1.76], [2.78, .216, -1.92], [2.24, .279, -.36]]);
+  face("#324b68", [[2.17, .21, -2.39], [2.92, .21, -1.77], [2.9, -.045, -1.77], [2.14, -.17, -2.48]]);
+  face("#486984", [[1.13, .463, -1.58], [1.78, .44, -1.53], [2.19, .28, -2.56], [1.05, .31, -2.59]]);
+  face("#25344c", [[1.04, .31, -2.59], [2.18, .28, -2.56], [2.05, -.19, -2.58], [1.11, -.19, -2.62]]);
+  face("#0b1228", [[1.16, .23, -2.64], [2.06, .21, -2.62], [1.97, -.11, -2.63], [1.21, -.116, -2.66]]);
+  face("#ee75ca", [[1.20, .182, -2.67], [2.01, .167, -2.65], [1.97, -.04, -2.66], [1.23, -.04, -2.68]], "#58e8ff");
+  face("#fff0fa", [[1.24, .12, -2.69], [1.97, .108, -2.67], [1.93, .007, -2.68], [1.27, .007, -2.70]], "#f5ffff");
+  face("#d4fbff", [[2.18, .257, -1.58], [2.51, .23, -1.65], [2.46, .229, -1.76], [2.13, .263, -1.7]]);
+  face("#96cddc", [[2.11, .263, -1.76], [2.44, .23, -1.81], [2.39, .23, -1.92], [2.07, .266, -1.89]]);
+  face("#91a7bb", [[1.03, .38, -1.73], [1.22, .447, -1.62], [1.17, .8, -2.22], [1.03, .31, -2.49]]);
+  const [underside, shell, ...trim] = pieces;
+  return { underside, shell, trim };
+});
+
+function drawCraft(point, movie) {
+  const driver = offset(point, state.offset);
+  const bob = .84 + Math.sin(state.clock * 5.3) * (reducedMotion ? .015 : .095);
+  const yaw = point.yaw + state.roll * .27;
+  const rightX = Math.cos(yaw), rightZ = -Math.sin(yaw);
+  const strength = state.boost ? 1 : clamp(state.speed / cruiseSpeed, .17, .72);
+  const roll = -state.roll;
+  const toWorld = ([x, y, z], lift = bob) => ({
+    x: driver.x + x * rightX - z * rightZ,
+    y: driver.y + lift + y + x * roll,
+    z: driver.z + x * rightZ + z * rightX
+  });
+  const shadow = worldPoint({ ...driver, y: driver.y + .04 });
+  if (shadow) {
+    context.save();
+    context.translate(shadow.x, shadow.y);
+    context.scale(1, .35);
+    glow(0, 0, shadow.scale * 3.1, "#050a17ed");
+    glow(0, 0, shadow.scale * 2.8, "#627cf055");
+    context.restore();
+  }
+
+  for (const side of [-1, 1]) {
+    const source = toView(toWorld([1.61 * side, .02, -2.68]));
+    const flameLength = state.boost ? 7.85 : movie ? 3.3 : mix(1.6, 5.8, strength);
+    const flicker = reducedMotion ? 1 : 1 + Math.sin(state.clock * 39 + side) * .06;
+    const end = toView(toWorld([1.66 * side, -.02, -2.72 - flameLength * flicker]));
+    if (source.z < 3) continue;
+    if (end.z < 4.45) {
+      const t = (source.z - 4.45) / (source.z - end.z);
+      end.x = mix(source.x, end.x, t);
+      end.y = mix(source.y, end.y, t);
+      end.z = 4.45;
+    }
+    const nozzle = project(source);
+    const tip = project(end);
+    const base = clamp(nozzle.scale * (state.boost ? .29 : .16), 2, 49);
+    const gradient = context.createLinearGradient(nozzle.x, nozzle.y, tip.x, tip.y);
+    gradient.addColorStop(0, state.boost ? "#deffff" : "#ffd0ff");
+    gradient.addColorStop(.34, state.boost ? "#70fbffe5" : "#de7af2e6");
+    gradient.addColorStop(1, state.boost ? "#4f8bff00" : "#714bd000");
+    const dx = tip.x - nozzle.x, dy = tip.y - nozzle.y;
+    const length = Math.hypot(dx, dy) || 1;
+    const normal = { x: -dy / length * base, y: dx / length * base };
+    fill([{ x: nozzle.x + normal.x, y: nozzle.y + normal.y }, tip, { x: nozzle.x - normal.x, y: nozzle.y - normal.y }], gradient);
+    if (state.boost) {
+      for (const strand of [-.43, 0, .43]) {
+        line([{ x: nozzle.x + normal.x * strand, y: nozzle.y + normal.y * strand },
+          { x: mix(nozzle.x, tip.x, .83) + normal.x * strand * .25, y: mix(nozzle.y, tip.y, .83) + normal.y * strand * .25 }],
+          gradient, strand ? .75 : 1.55);
+      }
+    }
+    glow(nozzle.x, nozzle.y, base * 5, state.boost ? "#64caff85" : "#f159d778");
+  }
+
+  // Larger faces are painted first, then the elevated canopy, wing trim and exhaust ports.
+  const drawFace = (face) => worldFill(face.vertices.map((point) => toWorld(point)), state.boost && face.boostColor ? face.boostColor : face.color);
+  drawFace(hull[0]);
+  for (const wing of wings) drawFace(wing.underside);
+  for (const wing of wings) drawFace(wing.shell);
+  for (const face of hull.slice(1)) drawFace(face);
+  for (const wing of wings) wing.trim.forEach(drawFace);
+
+  for (const side of [-1, 1]) {
+    const nozzle = worldPoint(toWorld([1.60 * side, .055, -2.71]));
+    if (nozzle) {
+      glow(nozzle.x, nozzle.y, nozzle.scale * .61, state.boost ? "#64dbffc4" : "#ed68f85e");
+      const accent = worldPoint(toWorld([2.79 * side, .24, -1.76]));
+      if (accent) glow(accent.x, accent.y, accent.scale * .28, "#42fff48c");
+    }
+  }
+
+  if (state.contact > 0 && !reducedMotion) {
+    const direction = Math.sign(state.offset);
+    const position = worldPoint(toWorld([direction * 2.85, .02, -.8]));
+    if (position) {
+      for (let i = 0; i < 12; i++) {
+        const travel = wrap(state.clock * (6 + i / 3) + i * .67, 1);
+        const x = position.x + direction * travel * (9 + i * 4);
+        const y = position.y + travel * (17 + i * 3);
+        context.globalAlpha = (1 - travel) * state.contact;
+        line([{ x, y }, { x: x + direction * (3 + travel * 12), y: y + 4 }], i % 3 === 0 ? "#ff80b2" : "#ffc385", 1.5);
+      }
+      context.globalAlpha = 1;
+    }
+  }
+}
+
+function drawStreaks() {
+  const intensity = state.boost ? 1 : clamp((state.speed - 64) / 48, 0, .52);
+  if (!intensity || reducedMotion) return;
+  const spread = Math.max(width, height) * .71;
+  for (const streak of streaks) {
+    const depth = wrap(streak.phase + state.clock * (.64 + streak.length * .76), 1);
+    const start = .175 + depth * depth * .9;
+    const length = streak.length * (.017 + depth * .088) * intensity;
+    const x = Math.cos(streak.angle) * spread;
+    const y = Math.sin(streak.angle) * spread * .71;
+    if (Math.abs(y) < spread * .15 || depth < .32) continue;
+    context.globalAlpha = (1 - depth * .62) * intensity * depth;
+    line([{ x: center + x * start, y: horizon + y * start }, { x: center + x * (start + length), y: horizon + y * (start + length) }],
+      streak.tint < .3 ? "#ff9cd4" : "#9ee6ff", .65 + depth * 1.5);
+  }
+  context.globalAlpha = 1;
+}
+
+function drawScene() {
+  const movie = state.mode === "menu" || state.mode === "finished";
+  const blend = state.cinematic;
+  const driver = trackAt(state.distance);
+  const distanceBehind = mix(12.5, 10.5, blend);
+  const chase = trackAt(state.distance - distanceBehind);
+  const side = state.cameraOffset - .46 * blend;
+  const position = offset(chase, side, mix(4.6, 4.25, blend));
+  const anticipation = trackAt(state.distance + 26);
+  const yaw = driver.yaw + angleDelta(driver.yaw, anticipation.yaw) * .25 + .023 * blend;
+  camera = { ...position, yaw, cos: Math.cos(yaw), sin: Math.sin(yaw) };
+  const wide = width / height > 1.03;
+  focal = height * ((wide ? .86 : mix(.6, .53, blend)) - (reducedMotion ? 0 : state.boostView * .047));
+  center = width * mix(.5, wide ? .693 : .61, blend);
+  horizon = height * mix(.42, wide ? .434 : .534, blend);
+  context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+  sky();
+  drawBuildings();
+  drawTrack();
+  drawStreaks();
+  drawCraft(driver, movie);
+  context.fillStyle = vignette;
+  context.fillRect(0, 0, width, height);
+}
+
+const mapPoints = track.filter((_, i) => i % 7 === 0);
+const mapBounds = {
+  x: Math.min(...mapPoints.map((point) => point.x)),
+  z: Math.max(...mapPoints.map((point) => point.z))
+};
+const mapScale = Math.min(233 / (Math.max(...mapPoints.map((point) => point.x)) - mapBounds.x),
+  150 / (mapBounds.z - Math.min(...mapPoints.map((point) => point.z))));
+function mapX(point) { return 31 + (point.x - mapBounds.x) * mapScale; }
+function mapY(point) { return 13 + (mapBounds.z - point.z) * mapScale; }
+function drawMap() {
+  const key = String(Math.round(state.distance / 2));
+  if (key === renderedMapKey) return;
+  renderedMapKey = key;
+  const ctx = mapContext;
+  ctx.clearRect(0, 0, map.width, map.height);
+  ctx.beginPath();
+  ctx.moveTo(mapX(mapPoints[0]), mapY(mapPoints[0]));
+  for (const p of mapPoints.slice(1)) ctx.lineTo(mapX(p), mapY(p));
+  ctx.closePath();
+  ctx.lineJoin = "round";
+  ctx.lineWidth = 12;
+  ctx.strokeStyle = "#040917d9";
+  ctx.stroke();
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = "#99bdd29c";
+  ctx.stroke();
+  const start = mapPoints[0];
+  ctx.fillStyle = "#ed79ba";
+  ctx.fillRect(mapX(start) - 9, mapY(start) - 2, 18, 4);
+  const p = trackAt(state.distance);
+  ctx.beginPath();
+  ctx.arc(mapX(p), mapY(p), 6, 0, tau);
+  ctx.fillStyle = "#a2fff1";
+  ctx.shadowColor = "#53fff1";
+  ctx.shadowBlur = 12;
+  ctx.fill();
+  ctx.shadowBlur = 0;
+}
+function updateHUD() {
+  const setText = (node, value) => {
+    if (node.textContent !== value) node.textContent = value;
+  };
+  const boosting = String(state.boost && state.mode === "racing");
+  if (game.dataset.boost !== boosting) game.dataset.boost = boosting;
+  if (!ui.hud.hidden) {
+    setText(ui.lap, String(state.lap).padStart(2, "0"));
+    setText(ui.lapTime, timeText(state.time - state.lapStart));
+    setText(ui.raceTime, timeText(state.time));
+    setText(ui.speed, String(Math.round(state.speed * 3.6)).padStart(3, "0"));
+    ui.bestLap.hidden = state.laps.length === 0;
+    if (state.laps.length) setText(ui.bestLap, "BEST  " + timeText(Math.min(...state.laps)));
+    ui.boostFill.style.transform = "scaleX(" + state.energy.toFixed(3) + ")";
+    const charge = String(Math.round(state.energy * 100));
+    if (meter.getAttribute("aria-valuenow") !== charge) meter.setAttribute("aria-valuenow", charge);
+    const counting = state.mode === "countdown";
+    ui.countdown.hidden = state.mode === "paused" || (!counting && state.messageTime === 0);
+    if (!ui.countdown.hidden) {
+      setText(ui.callout, counting ? String(Math.ceil(state.countdown)) : state.message);
+      setText(ui.calloutDetail, counting ? "Race starts in" : "");
+    }
+    drawMap();
+  }
+  if (audio) {
+    const at = audio.currentTime;
+    const moving = state.sound && state.mode === "racing";
+    engine.frequency.setTargetAtTime(41 + state.speed * .77, at, .055);
+    overtone.frequency.setTargetAtTime(59 + state.speed * 1.61, at, .08);
+    engineFilter.frequency.setTargetAtTime(state.boost ? 466 : 95 + state.speed * 1.55, at, .07);
+    engineGain.gain.setTargetAtTime(moving ? (state.boost ? .10 : .038 + state.speed * .00024) : 0, at, .09);
+  }
+}
+function render() {
+  drawScene();
+  updateHUD();
+}
+function step(seconds) {
+  while (seconds > 1e-8) {
+    const slice = Math.min(seconds, 1 / 120);
+    update(slice);
+    seconds -= slice;
+  }
+}
+window.render_game_to_text = () => JSON.stringify({
+  mode: state.mode,
+  coordinates: "Distance follows the circuit in meters. Lateral offset is positive to the right of center.",
+  distance: +state.distance.toFixed(2),
+  offset: +state.offset.toFixed(2),
+  speedKmh: Math.round(state.speed * 3.6),
+  lap: state.lap,
+  totalLaps,
+  trackLength: +trackLength.toFixed(2),
+  lapTime: timeText(state.mode === "finished" ? state.laps.at(-1) : state.time - state.lapStart),
+  raceTime: timeText(state.time),
+  laps: state.laps.map(timeText),
+  energy: +state.energy.toFixed(3),
+  boosting: state.boost && state.mode === "racing",
+  countdown: +state.countdown.toFixed(2)
+});
+let manual = false;
+window.advanceTime = (ms) => {
+  manual = true;
+  step(Math.max(0, ms) / 1000);
+  render();
+};
+let lastFrame = performance.now();
+function frame(now) {
+  if (!manual && !document.hidden) {
+    step(clamp((now - lastFrame) / 1000, 0, .1));
+    render();
+  }
+  lastFrame = now;
+  requestAnimationFrame(frame);
+}
+resize();
+render();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

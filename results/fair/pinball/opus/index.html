@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Neon Nebula – 3D Pinball</title>
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;background:#05010d;color:#fff;
+    font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;user-select:none;-webkit-user-select:none;touch-action:none}
+  canvas{display:block}
+  #hud{position:fixed;top:12px;left:12px;pointer-events:none;z-index:5}
+  .dmd{background:#140700;border:3px solid #3a2410;border-radius:8px;padding:8px 16px 8px;min-width:230px;
+    box-shadow:0 0 18px rgba(255,120,20,.35),inset 0 0 20px #000;
+    background-image:radial-gradient(circle,rgba(255,140,30,.10) 1px,transparent 1.6px);background-size:4px 4px;
+    font-family:"Courier New",monospace;font-weight:bold;color:#ff8c1a;text-shadow:0 0 6px #ff7a00,0 0 14px rgba(255,100,0,.6)}
+  #score{font-size:34px;letter-spacing:2px;text-align:right}
+  #info{font-size:14px;letter-spacing:2px;display:flex;justify-content:space-between;gap:14px;opacity:.95}
+  #msg{position:fixed;top:24%;left:50%;transform:translate(-50%,-50%) scale(1);pointer-events:none;z-index:6;
+    font-size:46px;font-weight:900;letter-spacing:3px;white-space:nowrap;opacity:0;transition:opacity .25s,transform .25s;
+    background:linear-gradient(90deg,#ff3df2,#ffe14d,#3df5ff);-webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 10px rgba(255,80,220,.8)) drop-shadow(0 2px 0 #000)}
+  #msg.show{opacity:1;transform:translate(-50%,-50%) scale(1.08)}
+  #power{position:fixed;right:16px;bottom:16px;width:22px;height:160px;border:2px solid #ffb84d;border-radius:12px;
+    background:rgba(20,5,30,.7);overflow:hidden;z-index:5;opacity:0;transition:opacity .2s;pointer-events:none}
+  #power.show{opacity:1}
+  #powerbar{position:absolute;bottom:0;left:0;right:0;height:0;background:linear-gradient(0deg,#3df5ff,#ffe14d,#ff3d6e)}
+  #power span{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:11px;color:#ffb84d}
+  .overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:10;
+    background:radial-gradient(ellipse at center,rgba(30,5,60,.72),rgba(3,0,10,.92));transition:opacity .4s}
+  .overlay.hidden{opacity:0;pointer-events:none}
+  .panel{text-align:center;padding:30px 44px;border-radius:18px;border:2px solid rgba(255,61,242,.6);
+    background:rgba(10,2,25,.75);box-shadow:0 0 40px rgba(255,61,242,.35),0 0 80px rgba(61,245,255,.15);max-width:92vw}
+  .title{font-size:64px;font-weight:900;letter-spacing:4px;line-height:1;margin:0 0 6px;
+    background:linear-gradient(180deg,#fff 0%,#ff6af5 45%,#7a3dff 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 14px rgba(255,61,242,.7))}
+  .sub{font-size:18px;letter-spacing:10px;color:#3df5ff;text-shadow:0 0 10px #3df5ff;margin-bottom:22px}
+  table.keys{margin:0 auto 20px;border-collapse:collapse;font-size:15px}
+  table.keys td{padding:4px 10px;text-align:left;color:#ddd}
+  table.keys td:first-child{color:#ffe14d;text-align:right;font-weight:bold}
+  kbd{display:inline-block;border:1px solid #888;border-bottom-width:3px;border-radius:5px;padding:0 6px;margin:0 2px;
+    font-family:inherit;font-size:13px;background:#1c1030;color:#fff}
+  .blink{animation:blink 1.1s infinite;font-size:20px;font-weight:bold;color:#fff;letter-spacing:2px;text-shadow:0 0 12px #ff3df2}
+  @keyframes blink{50%{opacity:.25}}
+  .big{font-size:56px;font-weight:900;color:#ffe14d;text-shadow:0 0 18px #ff9d00;margin:6px 0 4px;font-family:"Courier New",monospace}
+  .lbl{letter-spacing:6px;color:#3df5ff;font-size:15px}
+  .hs{margin:10px 0 22px;color:#ccc;font-size:16px}
+  .new{color:#ff3df2;font-weight:bold;font-size:20px;margin-top:8px;animation:blink .6s infinite}
+  #touch{display:none}
+  @media (pointer:coarse){
+    #touch{display:block}
+    .tz{position:fixed;bottom:0;top:35%;width:50%;z-index:4}
+    #tl{left:0} #tr{right:0}
+    #tp{position:fixed;right:14px;bottom:190px;width:74px;height:74px;border-radius:50%;z-index:7;
+      background:radial-gradient(circle,#ff3d6e,#7a0020);border:3px solid #ffb84d;color:#fff;font-weight:bold;font-size:12px;
+      display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px #ff3d6e}
+    .title{font-size:42px} table.keys{font-size:13px}
+  }
+  #paused{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:40px;font-weight:900;letter-spacing:8px;
+    z-index:8;display:none;text-shadow:0 0 20px #3df5ff}
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://unpkg.com/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://unpkg.com/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="hud"><div class="dmd"><div id="score">0</div><div id="info"><span id="iball">BALL 1/3</span><span id="imult">1X</span><span id="ihigh">HI 0</span></div></div></div>
+<div id="msg"></div>
+<div id="power"><span>POWER</span><div id="powerbar"></div></div>
+<div id="paused">PAUSED</div>
+<div id="touch"><div class="tz" id="tl"></div><div class="tz" id="tr"></div><div id="tp">LAUNCH</div></div>
+
+<div class="overlay" id="startScreen"><div class="panel">
+  <div class="title">NEON NEBULA</div>
+  <div class="sub">3D PINBALL</div>
+  <table class="keys">
+    <tr><td>Left flipper</td><td><kbd>←</kbd> <kbd>Z</kbd> <kbd>Left Shift</kbd></td></tr>
+    <tr><td>Right flipper</td><td><kbd>→</kbd> <kbd>M</kbd> <kbd>/</kbd> <kbd>Right Shift</kbd></td></tr>
+    <tr><td>Plunger</td><td>hold <kbd>Space</kbd> or <kbd>↓</kbd> &ndash; release to launch</td></tr>
+    <tr><td>Other</td><td><kbd>C</kbd> camera &nbsp; <kbd>P</kbd> pause &nbsp; <kbd>N</kbd> sound</td></tr>
+  </table>
+  <div style="color:#aaa;font-size:13px;margin-bottom:18px;max-width:460px;margin-left:auto;margin-right:auto;line-height:1.5">
+    Light the 3 top lanes for a bonus multiplier &bull; hit all 3 orange targets to light the JACKPOT &bull; then shoot the ramp!
+  </div>
+  <div class="blink">PRESS ENTER / SPACE OR CLICK TO PLAY</div>
+</div></div>
+
+<div class="overlay hidden" id="overScreen"><div class="panel">
+  <div class="title">GAME OVER</div>
+  <div class="lbl" style="margin-top:14px">FINAL SCORE</div>
+  <div class="big" id="finalScore">0</div>
+  <div id="newHigh" class="new" style="display:none">★ NEW HIGH SCORE ★</div>
+  <div class="hs" id="highLine">HIGH SCORE 0</div>
+  <div class="blink">PRESS ENTER / SPACE OR CLICK TO PLAY AGAIN</div>
+</div></div>
+
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+/* =====================================================================
+   CONSTANTS  (units ≈ inches; physics plane: x right, y up the table)
+   ===================================================================== */
+const TILT = 0.12;              // visual table slope (radians)
+const R = 0.53;                 // ball radius
+const G = 72;                   // gravity along the table
+const MAXV = 170;
+const WL = -9, WR = 9, LR = 10.8;        // left wall, lane separator, right wall
+const ACX = 0.9, ACY = 32, ARR = 9.9;    // top arc
+const PL_REST = 2.6, PL_MIN = 1.35;      // plunger tip positions
+const DT = 1 / 720;
+const L = (x, y, h = 0) => new THREE.Vector3(x, h, 21 - y);
+const fmt = n => Math.round(n).toLocaleString('en-US');
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+
+/* =====================================================================
+   RENDERER / SCENE
+   ===================================================================== */
+const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+document.body.prepend(renderer.domElement);
+
+const scene = new THREE.Scene();
+{
+  const c = document.createElement('canvas'); c.width = 4; c.height = 256;
+  const g = c.getContext('2d'); const gr = g.createLinearGradient(0, 0, 0, 256);
+  gr.addColorStop(0, '#12052a'); gr.addColorStop(0.6, '#07020f'); gr.addColorStop(1, '#020006');
+  g.fillStyle = gr; g.fillRect(0, 0, 4, 256);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; scene.background = t;
+}
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environmentIntensity = 0.55;
+
+const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 400);
+const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(innerWidth, innerHeight, { type: THREE.HalfFloatType, samples: 4 }));
+composer.setPixelRatio(renderer.getPixelRatio());
+composer.setSize(innerWidth, innerHeight);
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.75, 0.45, 0.82);
+composer.addPass(bloom);
+composer.addPass(new OutputPass());
+
+const table = new THREE.Group();
+table.rotation.x = TILT;
+scene.add(table);
+
+// lights
+scene.add(new THREE.HemisphereLight(0x9aa6ff, 0x2a0830, 0.9));
+const sun = new THREE.DirectionalLight(0xfff4e8, 2.4);
+sun.position.set(-6, 48, 22); sun.target.position.set(1, 0, -2);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -26, right: 26, top: 28, bottom: -28, near: 5, far: 120 });
+sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.03; sun.shadow.camera.updateProjectionMatrix();
+scene.add(sun, sun.target);
+const pl1 = new THREE.PointLight(0xff2bd6, 160, 45, 1.6); pl1.position.set(-9, 9, -6); scene.add(pl1);
+const pl2 = new THREE.PointLight(0x00d8ff, 160, 45, 1.6); pl2.position.set(12, 9, 8); scene.add(pl2);
+
+/* =====================================================================
+   MATERIALS
+   ===================================================================== */
+const M = {
+  chrome: new THREE.MeshStandardMaterial({ color: 0xe8e8f0, metalness: 1, roughness: 0.16 }),
+  darkChrome: new THREE.MeshStandardMaterial({ color: 0x777788, metalness: 1, roughness: 0.3 }),
+  outer: new THREE.MeshStandardMaterial({ color: 0x2b1252, metalness: 0.3, roughness: 0.45 }),
+  rubber: new THREE.MeshStandardMaterial({ color: 0xf6f6f6, roughness: 0.75 }),
+  blackRubber: new THREE.MeshStandardMaterial({ color: 0x151515, roughness: 0.8 }),
+  neonPink: new THREE.MeshStandardMaterial({ color: 0xff2bd6, emissive: 0xff2bd6, emissiveIntensity: 2.2 }),
+  neonCyan: new THREE.MeshStandardMaterial({ color: 0x00e5ff, emissive: 0x00e5ff, emissiveIntensity: 2.2 }),
+  cabinet: new THREE.MeshStandardMaterial({ color: 0x3a0f66, metalness: 0.5, roughness: 0.35 }),
+  wood: new THREE.MeshStandardMaterial({ color: 0x24140c, roughness: 0.8 }),
+};
+
+/* =====================================================================
+   PHYSICS WORLD DEFINITION
+   ===================================================================== */
+const segs = [], circles = [], sensors = [];
+function seg(ax, ay, bx, by, o = {}) {
+  const s = { ax, ay, bx, by, thick: o.thick ?? 0.12, e: o.e ?? 0.45, kind: o.kind || 'wall', kick: o.kick || 0,
+    id: o.id, render: o.render ?? true, h: o.h ?? 1.0, mat: o.mat || 'guide', oneWay: !!o.oneWay };
+  const dx = bx - ax, dy = by - ay; s.len2 = dx * dx + dy * dy; s.len = Math.sqrt(s.len2);
+  s.nx = -dy / s.len; s.ny = dx / s.len;
+  segs.push(s); return s;
+}
+function poly(pts, o) { for (let i = 0; i < pts.length - 1; i++) seg(pts[i][0], pts[i][1], pts[i + 1][0], pts[i + 1][1], o); }
+function circ(x, y, r, o = {}) {
+  const c = { x, y, r, e: o.e ?? 0.55, kind: o.kind || 'post', kick: o.kick || 0, id: o.id, render: o.render ?? true, h: o.h ?? 0.7, cool: 0 };
+  circles.push(c); return c;
+}
+function sensor(x, y, r, fn, cond) { sensors.push({ x, y, r, fn, cond, inside: false }); }
+
+// outer walls + top arc
+seg(WL, 0, WL, ACY, { mat: 'outer', h: 1.7 });
+seg(LR, 0, LR, ACY, { mat: 'outer', h: 1.7 });
+const arcPts = [];
+for (let i = 0; i <= 36; i++) { const a = i / 36 * Math.PI; arcPts.push([ACX + Math.cos(a) * ARR, ACY + Math.sin(a) * ARR]); }
+poly(arcPts, { mat: 'outer', h: 1.7 });
+// shooter lane separator + one-way gate
+seg(WR, 0, WR, 28.5, { h: 1.0 });
+const gateSeg = seg(WR, 28.5, LR, 30.1, { oneWay: true, thick: 0.06, mat: 'gate', h: 0.9, e: 0.3 });
+// plunger tip (moves)
+const plSeg = seg(WR, PL_REST, LR, PL_REST, { render: false, thick: 0.1, e: 0.05 });
+
+// lower playfield, mirrored
+const slingCorners = [];
+for (const side of [0, 1]) {
+  const sx = side === 0 ? 1 : -1, X = x => x * sx;
+  poly([[X(-7.5), 14.5], [X(-7.5), 9.2], [X(-4.05), 6.75]], { h: 1.0 });
+  circ(X(-7.5), 14.5, 0.32);
+  const A = [X(-5.9), 12.8], B = [X(-5.9), 10.2], C = [X(-3.4), 8.2];
+  slingCorners.push([A, B, C]);
+  seg(A[0], A[1], B[0], B[1], { mat: 'rubber', thick: 0.22, h: 0.6, e: 0.55 });
+  seg(B[0], B[1], C[0], C[1], { mat: 'rubber', thick: 0.22, h: 0.6, e: 0.55 });
+  seg(A[0], A[1], C[0], C[1], { mat: 'rubber', thick: 0.22, h: 0.6, e: 0.6, kind: 'sling', kick: 30, id: side });
+  circ(A[0], A[1], 0.3); circ(B[0], B[1], 0.3); circ(C[0], C[1], 0.3);
+  // upper deflector on outer wall
+  seg(X(-9), 17.4, X(-8.3), 16.2, { mat: 'rubber', thick: 0.15, h: 0.6, e: 0.5 });
+  // lane sensors
+  sensor(X(-6.7), 11.6, 0.6, () => inlaneHit(side));
+  sensor(X(-8.25), 11.6, 0.6, () => outlaneHit(side));
+}
+
+// top lanes
+for (const x of [-4.5, -1.5, 1.5, 4.5]) {
+  seg(x, 35.3, x, 37.8, { thick: 0.15, h: 0.8 });
+  circ(x, 35.3, 0.22, { h: 0.8 }); circ(x, 37.8, 0.22, { h: 0.8 });
+}
+[-3, 0, 3].forEach((x, i) => sensor(x, 36.4, 0.75, () => laneHit(i)));
+
+// pop bumpers
+const bumperDefs = [[-2.4, 30.4, 0xff2bd6], [2.4, 30.4, 0x00e5ff], [0, 26.8, 0xffd000]];
+const bumperCircles = bumperDefs.map((b, i) => circ(b[0], b[1], 1.0, { kind: 'bumper', kick: 42, e: 0.3, id: i, render: false }));
+
+// ramp entrance (box open at the bottom)
+seg(-6.75, 20.6, -6.75, 23.6, { h: 0.8 });
+seg(-6.75, 23.6, -4.45, 23.6, { render: false });
+seg(-4.45, 23.6, -4.45, 20.6, { h: 0.8 });
+circ(-6.75, 20.6, 0.2, { h: 0.8 }); circ(-4.45, 20.6, 0.2, { h: 0.8 });
+sensor(-5.6, 21.9, 0.95, () => { if (ball.vy > 34) enterRamp(); }, () => ball.vy > 0);
+
+// right orbit lane + standup targets
+seg(6.8, 19.5, 6.8, 28.2, { h: 1.0 });
+circ(6.8, 28.2, 0.22, { h: 1.0 }); circ(6.8, 19.5, 0.22, { h: 1.0 });
+const targetYs = [20.2, 22.0, 23.8];
+targetYs.forEach((y, i) => seg(6.6, y, 6.6, y + 1.3, { kind: 'target', id: i, thick: 0.1, render: false, e: 0.4 }));
+sensor(7.9, 24.5, 0.9, () => orbitHit(), () => ball.vy > 0);
+
+// flippers
+const flippers = [
+  { px: -3.7, py: 6.2, len: 3.3, r1: 0.42, r2: 0.24, side: 1, ang: -0.52, av: 0, min: -0.52, max: 0.49, pressed: false },
+  { px: 3.7, py: 6.2, len: 3.3, r1: 0.42, r2: 0.24, side: -1, ang: -0.52, av: 0, min: -0.52, max: 0.49, pressed: false },
+];
+
+// ramp path in physics coords (x, y, height)
+const rampCurve = new THREE.CatmullRomCurve3([
+  [-5.6, 20.6, 0], [-5.6, 24.5, 0.9], [-5.7, 29.5, 2.1], [-6.0, 33.4, 2.9], [-7.0, 35.4, 3.2],
+  [-7.9, 34.2, 3.1], [-8.0, 29, 2.6], [-8.0, 22, 1.9], [-7.7, 18.6, 1.1], [-7.0, 16.5, 0.35], [-6.7, 15.4, 0.0]
+].map(p => new THREE.Vector3(...p)), false, 'centripetal');
+const rampLen = rampCurve.getLength();
+
+/* =====================================================================
+   BALL & GAME STATE
+   ===================================================================== */
+const ball = { x: 9.9, y: PL_REST + 0.1 + R + 0.01, vx: 0, vy: 0, h: 0, mode: 'play', u: 0, rv: 0 };
+let state = 'attract', score = 0, ballNum = 1, mult = 1, bonus = 0;
+let highScore = +(localStorage.getItem('neonNebulaHigh') || 0);
+let lanesLit = [false, false, false], targetsLit = [false, false, false], jackpotLit = false;
+let ballSaveUntil = 0, saveAvail = true, leftLane = false, gameTime = 0, stuckT = 0, paused = false, inputLockUntil = 0;
+let plPull = 0, plCharging = false, plY = PL_REST;
+let msgText = '', msgUntil = 0, rampGlow = 0, camMode = 0, muted = false;
+const timers = [];
+const schedule = (d, fn) => timers.push({ t: gameTime + d, fn });
+const fx = { bumper: [0, 0, 0], sling: [0, 0], target: [0, 0, 0], inlane: [0, 0], outlane: [0, 0] };
+
+/* =====================================================================
+   SOUND (WebAudio synth)
+   ===================================================================== */
+let actx = null, master = null; const lastSfx = {};
+function ensureAudio() {
+  if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); master = actx.createGain(); master.gain.value = 0.45; master.connect(actx.destination); } catch (e) { } }
+  if (actx && actx.state === 'suspended') actx.resume();
+}
+function tone(f0, f1, dur, type = 'square', vol = 0.15, delay = 0) {
+  if (!actx || muted) return;
+  const t = actx.currentTime + delay, o = actx.createOscillator(), g = actx.createGain();
+  o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t + dur);
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g).connect(master); o.start(t); o.stop(t + dur + 0.05);
+}
+function noise(dur, vol, freq, delay = 0) {
+  if (!actx || muted) return;
+  const t = actx.currentTime + delay, n = Math.floor(actx.sampleRate * dur), buf = actx.createBuffer(1, n, actx.sampleRate), d = buf.getChannelData(0);
+  for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
+  const s = actx.createBufferSource(); s.buffer = buf; const f = actx.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = freq; f.Q.value = 0.8;
+  const g = actx.createGain(); g.gain.value = vol; s.connect(f).connect(g).connect(master); s.start(t);
+}
+const SFX = {
+  flip: () => { noise(0.07, 0.5, 900); tone(140, 50, 0.07, 'square', 0.06); },
+  bumper: () => { tone(900, 260, 0.16, 'triangle', 0.22); tone(1800, 600, 0.08, 'square', 0.04); },
+  sling: () => { tone(320, 120, 0.1, 'square', 0.12); noise(0.05, 0.3, 2500); },
+  target: () => { tone(1100, 900, 0.12, 'sine', 0.2); tone(1650, 1500, 0.1, 'sine', 0.08, 0.04); },
+  thud: () => tone(200, 120, 0.06, 'triangle', 0.12),
+  post: () => tone(500, 380, 0.04, 'triangle', 0.06),
+  lane: () => { tone(1500, 1500, 0.06, 'sine', 0.14); tone(2000, 2000, 0.08, 'sine', 0.1, 0.06); },
+  launch: () => { noise(0.25, 0.6, 600); tone(160, 600, 0.3, 'sawtooth', 0.06); },
+  ramp: () => tone(300, 1400, 0.7, 'sawtooth', 0.07),
+  orbit: () => { [660, 880, 1100].forEach((f, i) => tone(f, f, 0.08, 'square', 0.07, i * 0.07)); },
+  jackpot: () => { [523, 659, 784, 1046, 1318, 1568].forEach((f, i) => tone(f, f * 1.01, 0.16, 'square', 0.09, i * 0.09)); },
+  lit: () => { [784, 988, 1175].forEach((f, i) => tone(f, f, 0.1, 'triangle', 0.12, i * 0.08)); },
+  drain: () => tone(420, 60, 1.0, 'sawtooth', 0.1),
+  save: () => { [880, 660, 880, 1100].forEach((f, i) => tone(f, f, 0.1, 'square', 0.07, i * 0.1)); },
+  start: () => { [262, 330, 392, 523, 659, 784].forEach((f, i) => tone(f, f, 0.12, 'square', 0.07, i * 0.07)); },
+  over: () => { [523, 440, 349, 262, 196].forEach((f, i) => tone(f, f * 0.98, 0.25, 'triangle', 0.14, i * 0.2)); },
+};
+function sfx(name) { const now = performance.now(); if (now - (lastSfx[name] || 0) < 35) return; lastSfx[name] = now; SFX[name] && SFX[name](); }
+
+/* =====================================================================
+   COLLISIONS
+   ===================================================================== */
+function respond(obj, nx, ny, e, impactIn) {
+  const vn = ball.vx * nx + ball.vy * ny;
+  let impact = 0;
+  if (vn < 0) { impact = -vn; ball.vx -= (1 + e) * vn * nx; ball.vy -= (1 + e) * vn * ny; }
+  if (obj.kick && (obj.kind === 'bumper' || impact > 4)) {
+    const v2 = ball.vx * nx + ball.vy * ny;
+    if (v2 < obj.kick) { ball.vx += (obj.kick - v2) * nx; ball.vy += (obj.kick - v2) * ny; }
+  }
+  onHit(obj, impact);
+}
+function collideSeg(s) {
+  const abx = s.bx - s.ax, aby = s.by - s.ay;
+  const t = clamp(((ball.x - s.ax) * abx + (ball.y - s.ay) * aby) / s.len2, 0, 1);
+  const qx = s.ax + abx * t, qy = s.ay + aby * t;
+  const dx = ball.x - qx, dy = ball.y - qy, d2 = dx * dx + dy * dy, rr = R + s.thick;
+  if (d2 >= rr * rr) return;
+  if (s.oneWay) {
+    if ((ball.x - s.ax) * s.nx + (ball.y - s.ay) * s.ny < 0) return;
+    if (ball.vx * s.nx + ball.vy * s.ny > 0) return;
+  }
+  const d = Math.sqrt(d2) || 1e-6, nx = dx / d, ny = dy / d;
+  ball.x = qx + nx * rr; ball.y = qy + ny * rr;
+  respond(s, nx, ny, s.e);
+}
+function collideCirc(c) {
+  const dx = ball.x - c.x, dy = ball.y - c.y, d2 = dx * dx + dy * dy, rr = R + c.r;
+  if (d2 >= rr * rr) return;
+  const d = Math.sqrt(d2) || 1e-6, nx = dx / d, ny = dy / d;
+  ball.x = c.x + nx * rr; ball.y = c.y + ny * rr;
+  respond(c, nx, ny, c.e);
+}
+function collideFlipper(f) {
+  const c = Math.cos(f.ang), s = Math.sin(f.ang);
+  const tx = f.px + f.side * c * f.len, ty = f.py + s * f.len;
+  const abx = tx - f.px, aby = ty - f.py;
+  const t = clamp(((ball.x - f.px) * abx + (ball.y - f.py) * aby) / (f.len * f.len), 0, 1);
+  const qx = f.px + abx * t, qy = f.py + aby * t, rf = f.r1 + (f.r2 - f.r1) * t;
+  const dx = ball.x - qx, dy = ball.y - qy, d2 = dx * dx + dy * dy, rr = R + rf;
+  if (d2 >= rr * rr) return;
+  const d = Math.sqrt(d2) || 1e-6, nx = dx / d, ny = dy / d;
+  ball.x = qx + nx * rr; ball.y = qy + ny * rr;
+  const w = f.av * f.side;                       // world angular velocity (ccw +)
+  const cx = qx + nx * rf - f.px, cy = qy + ny * rf - f.py;
+  const svx = -w * cy, svy = w * cx;             // surface velocity at contact
+  let rvx = ball.vx - svx, rvy = ball.vy - svy;
+  const vn = rvx * nx + rvy * ny;
+  if (vn < 0) {
+    const e = 0.32;
+    rvx -= (1 + e) * vn * nx; rvy -= (1 + e) * vn * ny;
+    ball.vx = rvx + svx; ball.vy = rvy + svy;
+    if (-vn > 25) sfx('thud');
+  }
+}
+function onHit(obj, impact) {
+  if (state !== 'play') { if (obj.kind === 'bumper') fx.bumper[obj.id] = 1; return; }
+  switch (obj.kind) {
+    case 'bumper':
+      if (gameTime - obj.cool > 0.06) { obj.cool = gameTime; fx.bumper[obj.id] = 1; addScore(1000); bonus += 100; sfx('bumper'); }
+      break;
+    case 'sling':
+      if (impact > 4) { fx.sling[obj.id] = 1; addScore(250); sfx('sling'); }
+      break;
+    case 'target':
+      if (impact > 2) targetHit(obj.id);
+      break;
+    case 'post':
+      if (impact > 12) { addScore(10); sfx('post'); }
+      break;
+    default:
+      if (impact > 30) sfx('thud');
+  }
+}
+
+/* =====================================================================
+   SCORING EVENTS
+   ===================================================================== */
+function addScore(n) { if (state === 'play') score += n * mult; }
+function showMsg(t, d = 1.6) { msgText = t; msgUntil = gameTime + d; const el = document.getElementById('msg'); el.textContent = t; el.classList.add('show'); }
+function targetHit(i) {
+  fx.target[i] = 1;
+  if (!targetsLit[i]) {
+    targetsLit[i] = true; addScore(750); bonus += 200; sfx('target');
+    if (targetsLit.every(Boolean)) {
+      addScore(5000); jackpotLit = true; showMsg('JACKPOT IS LIT!'); sfx('lit');
+      schedule(1.2, () => { targetsLit = [false, false, false]; });
+    }
+  } else { addScore(100); sfx('thud'); }
+}
+function laneHit(i) {
+  if (!lanesLit[i]) {
+    lanesLit[i] = true; addScore(500); sfx('lane');
+    if (lanesLit.every(Boolean)) {
+      addScore(10000);
+      if (mult < 5) { mult++; showMsg(`${mult}X MULTIPLIER`); } else showMsg('LANES +10,000');
+      sfx('lit');
+      schedule(0.9, () => { lanesLit = [false, false, false]; });
+    }
+  } else addScore(100);
+}
+function inlaneHit(side) { fx.inlane[side] = 1; addScore(200); sfx('lane'); }
+function outlaneHit(side) { fx.outlane[side] = 1; addScore(500); sfx('post'); }
+function orbitHit() { addScore(3000); bonus += 1000; showMsg('ORBIT +' + fmt(3000 * mult)); sfx('orbit'); }
+function enterRamp() {
+  ball.mode = 'ramp'; ball.u = 1.3 / rampLen;
+  ball.rv = Math.min(Math.hypot(ball.vx, ball.vy), 75);
+  rampGlow = 1; sfx('ramp');
+}
+function rampDone() {
+  bonus += 2000;
+  if (state !== 'play') return;
+  if (jackpotLit) { jackpotLit = false; addScore(25000); showMsg('★ JACKPOT ★', 2.2); sfx('jackpot'); flashAll = 1.5; }
+  else { addScore(5000); showMsg('RAMP +' + fmt(5000 * mult)); sfx('lit'); }
+}
+let flashAll = 0;
+
+/* =====================================================================
+   GAME FLOW
+   ===================================================================== */
+function serveBall(newBall) {
+  Object.assign(ball, { x: 9.9, y: PL_REST + 0.1 + R + 0.01, vx: 0, vy: 0, h: 0, mode: 'play' });
+  leftLane = false; ballSaveUntil = 0; stuckT = 0;
+  if (newBall) { mult = 1; bonus = 0; saveAvail = true; showMsg(`BALL ${ballNum}`, 1.4); }
+}
+function startGame() {
+  if (performance.now() < inputLockUntil) return;
+  ensureAudio();
+  state = 'play'; score = 0; ballNum = 1; mult = 1; bonus = 0;
+  lanesLit = [false, false, false]; targetsLit = [false, false, false]; jackpotLit = false;
+  timers.length = 0;
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('overScreen').classList.add('hidden');
+  serveBall(true); sfx('start');
+}
+function drain() {
+  ball.mode = 'drained'; ball.vx = ball.vy = 0;
+  if (state !== 'play') { schedule(1.0, () => serveBall(false)); return; }
+  if (gameTime < ballSaveUntil) {
+    saveAvail = false; ballSaveUntil = 0;
+    showMsg('BALL SAVED!', 1.6); sfx('save');
+    schedule(1.2, () => serveBall(false));
+    return;
+  }
+  sfx('drain');
+  const b = bonus * mult; score += b;
+  showMsg(`BONUS ${fmt(b)}`, 1.8);
+  schedule(2.0, () => {
+    ballNum++;
+    if (ballNum > 3) gameOver(); else serveBall(true);
+  });
+}
+function gameOver() {
+  state = 'over';
+  const isHigh = score > highScore;
+  if (isHigh) { highScore = score; localStorage.setItem('neonNebulaHigh', String(highScore)); }
+  document.getElementById('finalScore').textContent = fmt(score);
+  document.getElementById('highLine').textContent = 'HIGH SCORE ' + fmt(highScore);
+  document.getElementById('newHigh').style.display = isHigh ? 'block' : 'none';
+  document.getElementById('overScreen').classList.remove('hidden');
+  inputLockUntil = performance.now() + 1200;
+  sfx('over');
+  serveBall(false);
+}
+
+/* =====================================================================
+   PHYSICS STEP
+   ===================================================================== */
+function updateFlipper(f, dt) {
+  const target = f.pressed ? f.max : f.min, sp = f.pressed ? 28 : 17;
+  if (f.ang < target) { f.ang = Math.min(target, f.ang + sp * dt); f.av = f.ang < target ? sp : 0; }
+  else if (f.ang > target) { f.ang = Math.max(target, f.ang - sp * dt); f.av = f.ang > target ? -sp : 0; }
+  else f.av = 0;
+}
+function rampStep(dt) {
+  const T = rampCurve.getTangentAt(Math.min(ball.u, 1));
+  ball.rv = Math.max(14, ball.rv - G * T.z * dt);
+  ball.u += ball.rv * dt / rampLen;
+  if (ball.u >= 1) {
+    // drop the ball straight down the left return lane onto the flipper
+    const p = rampCurve.getPointAt(1), sp = clamp(ball.rv * 0.4, 10, 28);
+    Object.assign(ball, { x: p.x, y: p.y, h: 0, vx: 0, vy: -sp, mode: 'play' });
+    rampDone();
+    return;
+  }
+  const p = rampCurve.getPointAt(ball.u);
+  ball.x = p.x; ball.y = p.y; ball.h = p.z;
+}
+function physicsStep(dt) {
+  for (const f of flippers) updateFlipper(f, dt);
+  if (ball.mode === 'ramp') { rampStep(dt); return; }
+  if (ball.mode !== 'play') return;
+  ball.vy -= G * dt;
+  const damp = 1 - 0.1 * dt; ball.vx *= damp; ball.vy *= damp;
+  ball.x += ball.vx * dt; ball.y += ball.vy * dt;
+  for (let i = 0; i < segs.length; i++) collideSeg(segs[i]);
+  for (let i = 0; i < circles.length; i++) collideCirc(circles[i]);
+  collideFlipper(flippers[0]); collideFlipper(flippers[1]);
+  const sp = Math.hypot(ball.vx, ball.vy);
+  if (sp > MAXV) { ball.vx *= MAXV / sp; ball.vy *= MAXV / sp; }
+  for (const s of sensors) {
+    const dx = ball.x - s.x, dy = ball.y - s.y, inside = dx * dx + dy * dy < s.r * s.r;
+    if (inside && !s.inside && (!s.cond || s.cond())) s.fn();
+    s.inside = inside;
+  }
+  if (!leftLane && ball.x < WR - 0.6) { leftLane = true; if (state === 'play' && saveAvail) ballSaveUntil = gameTime + 8; }
+  // height illusion while rolling up the ramp mouth
+  ball.h = (ball.x > -6.75 && ball.x < -4.45 && ball.y > 20.6 && ball.y < 23.6) ? (ball.y - 20.6) * 0.23 : 0;
+  if (ball.y < 2.0 && ball.x < WR) drain();
+  if (!isFinite(ball.x) || !isFinite(ball.y) || ball.x < WL - 2 || ball.x > LR + 2 || ball.y > 45) serveBall(false);
+}
+
+/* =====================================================================
+   TEXTURES (playfield art, apron, backbox)
+   ===================================================================== */
+function makePlayfieldCanvas() {
+  const PPU = 48, W = LR - WL, H = 42;
+  const cw = Math.round(W * PPU), ch = H * PPU;
+  const cv = document.createElement('canvas'); cv.width = cw; cv.height = ch;
+  const g = cv.getContext('2d');
+  const P = (x, y) => [(x - WL) * PPU, (H - y) * PPU];
+  g.fillStyle = '#0a0418'; g.fillRect(0, 0, cw, ch);
+  // clip to playfield shape
+  g.save(); g.beginPath();
+  g.moveTo(...P(WL, 0)); g.lineTo(...P(WL, ACY));
+  const [acx, acy] = P(ACX, ACY); g.arc(acx, acy, ARR * PPU, Math.PI, 0, false);
+  g.lineTo(...P(LR, 0)); g.closePath(); g.clip();
+  let gr = g.createLinearGradient(0, ch, 0, 0);
+  gr.addColorStop(0, '#16053d'); gr.addColorStop(0.45, '#2b0a5c'); gr.addColorStop(1, '#0a1d52');
+  g.fillStyle = gr; g.fillRect(0, 0, cw, ch);
+  const blob = (x, y, r, c) => { const [px, py] = P(x, y); const rg = g.createRadialGradient(px, py, 0, px, py, r * PPU); rg.addColorStop(0, c); rg.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = rg; g.fillRect(0, 0, cw, ch); };
+  blob(-4, 29, 9, 'rgba(255,40,190,0.55)'); blob(5.5, 19, 8, 'rgba(0,210,255,0.45)');
+  blob(-2, 9, 7, 'rgba(255,120,0,0.35)'); blob(3, 35, 7, 'rgba(120,70,255,0.55)'); blob(-6, 16, 5, 'rgba(255,0,120,0.3)');
+  // sunburst
+  { const [cx, cy] = P(0, 18.4); g.save(); g.translate(cx, cy);
+    for (let i = 0; i < 36; i++) { g.rotate(Math.PI * 2 / 36); if (i % 2) continue; g.beginPath(); g.moveTo(0, 0); g.lineTo(-30, -16 * PPU); g.lineTo(30, -16 * PPU); g.closePath(); g.fillStyle = 'rgba(255,255,255,0.045)'; g.fill(); }
+    g.restore(); }
+  // stars
+  for (let i = 0; i < 650; i++) {
+    const x = Math.random() * cw, y = Math.random() * ch, r = Math.random() < 0.08 ? 2.2 : Math.random() * 1.3 + 0.3;
+    g.fillStyle = `rgba(255,255,255,${0.3 + Math.random() * 0.7})`; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill();
+    if (r > 2) { g.strokeStyle = 'rgba(255,255,255,.35)'; g.lineWidth = 1; g.beginPath(); g.moveTo(x - 7, y); g.lineTo(x + 7, y); g.moveTo(x, y - 7); g.lineTo(x, y + 7); g.stroke(); }
+  }
+  // glowing rings around bumpers (planet orbit)
+  { const [cx, cy] = P(0, 29.2);
+    g.save(); g.shadowColor = '#3df5ff'; g.shadowBlur = 25;
+    for (const [r, c, w] of [[4.9, 'rgba(61,245,255,.8)', 5], [5.6, 'rgba(255,61,242,.6)', 3], [6.3, 'rgba(255,225,77,.35)', 2]]) {
+      g.strokeStyle = c; g.lineWidth = w; g.beginPath(); g.ellipse(cx, cy, r * PPU, r * PPU * 0.9, 0, 0, 7); g.stroke();
+    }
+    g.restore();
+    const rg = g.createRadialGradient(cx, cy, 0, cx, cy, 4.8 * PPU); rg.addColorStop(0, 'rgba(255,255,255,.12)'); rg.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = rg; g.beginPath(); g.arc(cx, cy, 4.8 * PPU, 0, 7); g.fill(); }
+  // shooter lane chevrons
+  g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(...P(WR, 32), (LR - WR) * PPU, 32 * PPU);
+  for (let y = 4; y < 28; y += 2.2) {
+    const [x0, y0] = P(WR + 0.2, y), [x1, y1] = P((WR + LR) / 2, y + 0.9), [x2] = P(LR - 0.2, y);
+    g.strokeStyle = y < 14 ? 'rgba(255,61,110,.8)' : 'rgba(255,225,77,.8)'; g.lineWidth = 6;
+    g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.lineTo(x2, y0); g.stroke();
+  }
+  // orbit lane stripe
+  g.fillStyle = 'rgba(0,229,255,.16)'; g.fillRect(...P(6.8, 28.5), 2.2 * PPU, 9 * PPU);
+  // ramp lane band
+  { const [x, y] = P(-6.75, 23.6); const lg = g.createLinearGradient(0, y, 0, y + 6 * PPU); lg.addColorStop(0, 'rgba(255,208,0,.45)'); lg.addColorStop(1, 'rgba(255,208,0,0)'); g.fillStyle = lg; g.fillRect(x, y, 2.3 * PPU, 6 * PPU); }
+  // lower lanes (in/outlanes) painted
+  for (const sx of [1, -1]) {
+    g.fillStyle = 'rgba(0,0,0,.35)';
+    g.beginPath(); g.moveTo(...P(sx * -9, 0)); g.lineTo(...P(sx * -9, 15.5)); g.lineTo(...P(sx * -7.5, 15.5)); g.lineTo(...P(sx * -7.5, 0)); g.fill();
+    // slingshot shadows
+    g.fillStyle = sx > 0 ? 'rgba(255,61,242,.35)' : 'rgba(61,245,255,.35)';
+    g.beginPath(); g.moveTo(...P(sx * -6.3, 13.6)); g.lineTo(...P(sx * -6.3, 9.8)); g.lineTo(...P(sx * -2.8, 7.5)); g.closePath(); g.fill();
+  }
+  // drain shadow
+  { const [x, y] = P(0, 4); const rg = g.createRadialGradient(x, y, 0, x, y, 4 * PPU); rg.addColorStop(0, 'rgba(0,0,0,.75)'); rg.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = rg; g.fillRect(0, 0, cw, ch); }
+  // logo
+  const text = (s, x, y, size, color, rot = 0, font = '900', stroke) => {
+    const [px, py] = P(x, y); g.save(); g.translate(px, py); g.rotate(rot);
+    g.font = `${font} ${size * PPU}px "Trebuchet MS", Arial, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle';
+    if (stroke) { g.lineWidth = stroke; g.strokeStyle = '#000'; g.strokeText(s, 0, 0); }
+    g.fillStyle = color; g.fillText(s, 0, 0); g.restore();
+  };
+  { const [px, py] = P(0, 18.4);
+    g.save(); g.shadowColor = '#ff2bd6'; g.shadowBlur = 30;
+    const lg = g.createLinearGradient(px - 150, 0, px + 150, 0); lg.addColorStop(0, '#ff3df2'); lg.addColorStop(0.5, '#ffe14d'); lg.addColorStop(1, '#3df5ff');
+    g.font = `900 ${1.55 * PPU}px "Trebuchet MS", Arial, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.lineWidth = 10; g.strokeStyle = '#12002a'; g.strokeText('NEON', px, py - 0.85 * PPU); g.fillStyle = lg; g.fillText('NEON', px, py - 0.85 * PPU);
+    g.font = `900 ${1.25 * PPU}px "Trebuchet MS", Arial, sans-serif`;
+    g.strokeText('NEBULA', px, py + 0.7 * PPU); g.fillText('NEBULA', px, py + 0.7 * PPU);
+    g.restore(); }
+  // insert sockets + labels
+  const socket = (x, y, r) => { const [px, py] = P(x, y); g.fillStyle = 'rgba(0,0,0,.6)'; g.beginPath(); g.arc(px, py, (r + 0.12) * PPU, 0, 7); g.fill(); g.strokeStyle = 'rgba(255,255,255,.5)'; g.lineWidth = 2; g.stroke(); };
+  [-3, 0, 3].forEach(x => socket(x, 37.2, 0.38));
+  ['2X', '3X', '4X', '5X'].forEach((t, i) => { socket(-2.25 + i * 1.5, 13.4, 0.42); text(t, -2.25 + i * 1.5, 12.55, 0.42, '#fff', 0, '900', 4); });
+  socket(0, 9.7, 0.5); text('SHOOT AGAIN', 0, 8.9, 0.36, '#ffb3c0', 0, '900', 4);
+  socket(-5.6, 17.4, 0.45); text('JACKPOT', -5.6, 16.6, 0.38, '#ff8af0', 0, '900', 4);
+  text('RAMP', -5.6, 20.05, 0.38, '#ffe14d', 0, '900', 4);
+  text('ORBIT', 6.25, 16.2, 0.4, '#8af6ff', -0.45, '900', 4);
+  text('TARGETS', 5.05, 22.6, 0.36, '#ffb35c', Math.PI / 2, '900', 4);
+  ['N', 'E', 'O'].forEach((t, i) => text(t, -3 + i * 3, 35.9, 0.5, '#fff', 0, '900', 4));
+  for (const sx of [1, -1]) {
+    socket(sx * -6.7, 11.6, 0.32); socket(sx * -8.25, 11.6, 0.32);
+    text('OUT', sx * -8.25, 7.0, 0.42, '#ff6b8a', -Math.PI / 2, '900', 4);
+    text('RETURN', sx * -6.65, 15.0, 0.3, '#8affb4', 0, '900', 3);
+  }
+  for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; socket(Math.cos(a) * 3.6, 18.4 + Math.sin(a) * 3.6, 0.22); }
+  // decorative lines
+  g.strokeStyle = 'rgba(61,245,255,.35)'; g.lineWidth = 3; g.setLineDash([12, 10]);
+  g.beginPath(); g.moveTo(...P(-5.6, 19.6)); g.quadraticCurveTo(...P(-2.5, 13), ...P(2.3, 7.6)); g.stroke();
+  g.beginPath(); g.moveTo(...P(7.6, 18.3)); g.quadraticCurveTo(...P(3.0, 12), ...P(-2.3, 7.6)); g.stroke();
+  g.setLineDash([]);
+  g.restore();
+  return cv;
+}
+function makeApronCanvas() {
+  const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 140;
+  const g = cv.getContext('2d');
+  const gr = g.createLinearGradient(0, 0, 1024, 0); gr.addColorStop(0, '#3d0a6b'); gr.addColorStop(0.5, '#1a0538'); gr.addColorStop(1, '#3d0a6b');
+  g.fillStyle = gr; g.fillRect(0, 0, 1024, 140);
+  g.strokeStyle = '#ffe14d'; g.lineWidth = 4; g.strokeRect(6, 6, 1012, 128);
+  g.font = '900 54px "Trebuchet MS", Arial'; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.shadowColor = '#ff2bd6'; g.shadowBlur = 18; g.fillStyle = '#ff7af5'; g.fillText('NEON  NEBULA', 512, 56);
+  g.shadowBlur = 0; g.font = 'bold 20px "Trebuchet MS", Arial'; g.fillStyle = '#9ef6ff';
+  g.fillText('3 BALLS PER GAME  •  LANES = MULTIPLIER  •  TARGETS LIGHT JACKPOT', 512, 108);
+  return cv;
+}
+const bbArt = document.createElement('canvas'); bbArt.width = 1024; bbArt.height = 620;
+(function drawBackboxArt() {
+  const g = bbArt.getContext('2d'), w = 1024, h = 620;
+  let gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#1b0640'); gr.addColorStop(1, '#05010f'); g.fillStyle = gr; g.fillRect(0, 0, w, h);
+  const blob = (x, y, r, c) => { const rg = g.createRadialGradient(x, y, 0, x, y, r); rg.addColorStop(0, c); rg.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = rg; g.fillRect(0, 0, w, h); };
+  blob(250, 160, 300, 'rgba(255,40,200,.55)'); blob(780, 220, 280, 'rgba(0,200,255,.45)'); blob(520, 380, 220, 'rgba(255,150,0,.3)');
+  for (let i = 0; i < 300; i++) { g.fillStyle = `rgba(255,255,255,${Math.random()})`; g.fillRect(Math.random() * w, Math.random() * h, 2, 2); }
+  // planet
+  const px = 840, py = 150; const pg = g.createRadialGradient(px - 30, py - 30, 10, px, py, 90);
+  pg.addColorStop(0, '#ffd27a'); pg.addColorStop(0.6, '#ff5ea8'); pg.addColorStop(1, '#4a0b6e');
+  g.fillStyle = pg; g.beginPath(); g.arc(px, py, 85, 0, 7); g.fill();
+  g.strokeStyle = 'rgba(160,240,255,.8)'; g.lineWidth = 8; g.beginPath(); g.ellipse(px, py, 150, 32, -0.3, 0, 7); g.stroke();
+  // small planet
+  const qg = g.createRadialGradient(130, 120, 4, 140, 130, 48); qg.addColorStop(0, '#9ff'); qg.addColorStop(1, '#1a3a9a');
+  g.fillStyle = qg; g.beginPath(); g.arc(140, 130, 46, 0, 7); g.fill();
+  // title
+  g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.font = '900 150px "Trebuchet MS", Arial'; g.shadowColor = '#ff2bd6'; g.shadowBlur = 40;
+  const tg = g.createLinearGradient(0, 120, 0, 300); tg.addColorStop(0, '#fff'); tg.addColorStop(0.5, '#ff6af5'); tg.addColorStop(1, '#7a3dff');
+  g.lineWidth = 12; g.strokeStyle = '#12002a'; g.strokeText('NEON', w / 2, 175); g.fillStyle = tg; g.fillText('NEON', w / 2, 175);
+  g.font = '900 120px "Trebuchet MS", Arial'; g.shadowColor = '#3df5ff';
+  const tg2 = g.createLinearGradient(0, 260, 0, 380); tg2.addColorStop(0, '#fff'); tg2.addColorStop(0.5, '#3df5ff'); tg2.addColorStop(1, '#2a5cff');
+  g.strokeText('NEBULA', w / 2, 315); g.fillStyle = tg2; g.fillText('NEBULA', w / 2, 315);
+  g.shadowBlur = 0;
+  g.strokeStyle = '#ffe14d'; g.lineWidth = 10; g.strokeRect(5, 5, w - 10, h - 10);
+})();
+const bbCanvas = document.createElement('canvas'); bbCanvas.width = 1024; bbCanvas.height = 620;
+const bbTex = new THREE.CanvasTexture(bbCanvas); bbTex.colorSpace = THREE.SRGBColorSpace;
+let lastDmdKey = '';
+function drawBackbox(t) {
+  const message = gameTime < msgUntil ? msgText : '';
+  const key = state + '|' + score + '|' + ballNum + '|' + mult + '|' + message + '|' + (state !== 'play' ? Math.floor(t * 1.5) % 2 : '');
+  if (key === lastDmdKey) return; lastDmdKey = key;
+  const g = bbCanvas.getContext('2d');
+  g.drawImage(bbArt, 0, 0);
+  const x0 = 70, y0 = 405, w = 884, h = 175;
+  g.fillStyle = '#100500'; g.fillRect(x0 - 8, y0 - 8, w + 16, h + 16);
+  g.strokeStyle = '#555'; g.lineWidth = 4; g.strokeRect(x0 - 8, y0 - 8, w + 16, h + 16);
+  g.save(); g.beginPath(); g.rect(x0, y0, w, h); g.clip();
+  g.fillStyle = '#ff8c1a'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.shadowColor = '#ff6a00'; g.shadowBlur = 10;
+  if (state === 'play') {
+    if (message) { g.font = 'bold 70px "Courier New", monospace'; g.fillText(message, x0 + w / 2, y0 + h / 2 + 4); }
+    else {
+      g.font = 'bold 92px "Courier New", monospace'; g.fillText(fmt(score), x0 + w / 2, y0 + 72);
+      g.font = 'bold 34px "Courier New", monospace'; g.textAlign = 'left'; g.fillText(`BALL ${ballNum}`, x0 + 24, y0 + 145);
+      g.textAlign = 'right'; g.fillText(`${mult}X`, x0 + w - 24, y0 + 145);
+    }
+  } else if (state === 'over') {
+    g.font = 'bold 60px "Courier New", monospace'; g.fillText('GAME OVER', x0 + w / 2, y0 + 55);
+    g.font = 'bold 52px "Courier New", monospace'; g.fillText(fmt(score), x0 + w / 2, y0 + 125);
+  } else {
+    g.font = 'bold 56px "Courier New", monospace';
+    g.fillText(Math.floor(t * 1.5) % 2 ? 'PRESS START' : 'HIGH ' + fmt(highScore), x0 + w / 2, y0 + h / 2);
+  }
+  g.restore();
+  g.fillStyle = 'rgba(0,0,0,.55)';
+  for (let y = y0; y < y0 + h; y += 5) g.fillRect(x0, y + 3, w, 2);
+  for (let x = x0; x < x0 + w; x += 5) g.fillRect(x + 3, y0, 2, h);
+  bbTex.needsUpdate = true;
+}
+
+/* =====================================================================
+   BUILD 3D TABLE
+   ===================================================================== */
+function shadowed(m) { m.castShadow = true; m.receiveShadow = true; return m; }
+// playfield
+{
+  const tex = new THREE.CanvasTexture(makePlayfieldCanvas());
+  tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  const W = LR - WL, geo = new THREE.PlaneGeometry(W, 42); geo.rotateX(-Math.PI / 2);
+  const pf = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ map: tex, roughness: 0.32, metalness: 0.05, envMapIntensity: 0.6 }));
+  pf.position.set((WL + LR) / 2, 0, 0); pf.receiveShadow = true; table.add(pf);
+  // wooden base / cabinet
+  const base = new THREE.Mesh(new THREE.BoxGeometry(W + 3.2, 0.8, 46), M.wood); base.position.set((WL + LR) / 2, -0.42, 0.6); table.add(base);
+  const cab = new THREE.Mesh(new THREE.BoxGeometry(W + 3.4, 9, 46.5), M.cabinet); cab.position.set((WL + LR) / 2, -5.3, 0.6); table.add(shadowed(cab));
+  // cabinet neon side strips
+  for (const x of [WL - 1.72, LR + 1.72]) {
+    const s = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.25, 46.5), x < 0 ? M.neonPink : M.neonCyan); s.position.set(x, -2.2, 0.6); table.add(s);
+    const rail = new THREE.Mesh(new THREE.BoxGeometry(1.1, 2.4, 46.5), M.chrome); rail.position.set(x < 0 ? WL - 1.1 : LR + 1.1, 0.4, 0.6); table.add(shadowed(rail));
+  }
+  // lockdown bar + front
+  const lock = new THREE.Mesh(new THREE.BoxGeometry(W + 3.4, 1.0, 1.6), M.chrome); lock.position.set((WL + LR) / 2, 0.9, 22.5); table.add(shadowed(lock));
+  // apron
+  const at = new THREE.CanvasTexture(makeApronCanvas()); at.colorSpace = THREE.SRGBColorSpace;
+  const apronMat = new THREE.MeshStandardMaterial({ map: at, roughness: 0.4, metalness: 0.2 });
+  const side = new THREE.MeshStandardMaterial({ color: 0x3d0a6b, roughness: 0.4 });
+  const apron = new THREE.Mesh(new THREE.BoxGeometry(WR - WL, 0.5, 2.3), [side, side, apronMat, side, side, side]);
+  apron.position.copy(L((WL + WR) / 2, 1.15, 0.25)); table.add(shadowed(apron));
+}
+// walls
+for (const s of segs) {
+  if (!s.render) continue;
+  const dx = s.bx - s.ax, dy = s.by - s.ay, len = s.len;
+  const mx = (s.ax + s.bx) / 2, my = (s.ay + s.by) / 2;
+  let nx = s.nx, ny = s.ny; if (nx * (mx - ACX) + ny * (my - 21) < 0) { nx = -nx; ny = -ny; }
+  let thick, mat, off = 0, extra;
+  if (s.mat === 'outer') { thick = 0.7; mat = M.outer; off = 0.35 - s.thick; extra = 0.75; }
+  else if (s.mat === 'rubber') { thick = s.thick * 2; mat = M.rubber; extra = 0; }
+  else if (s.mat === 'gate') { thick = 0.1; mat = M.chrome; extra = 0; }
+  else { thick = Math.max(0.22, s.thick * 2); mat = M.chrome; extra = thick; }
+  const m = new THREE.Mesh(new THREE.BoxGeometry(len + extra, s.h, thick), mat);
+  m.position.copy(L(mx + nx * off, my + ny * off, s.h / 2 + (s.mat === 'gate' ? 0.4 : 0)));
+  m.rotation.y = Math.atan2(dy, dx);
+  table.add(shadowed(m));
+  if (s.mat === 'outer') {
+    const strip = new THREE.Mesh(new THREE.BoxGeometry(len + extra, 0.1, 0.18), my > 30 || mx > 5 ? M.neonCyan : M.neonPink);
+    strip.position.copy(L(mx - nx * (s.thick - 0.05), my - ny * (s.thick - 0.05), s.h + 0.05)); strip.rotation.y = m.rotation.y; table.add(strip);
+  }
+}
+// posts
+for (const c of circles) {
+  if (!c.render) continue;
+  const r = new THREE.Mesh(new THREE.CylinderGeometry(c.r, c.r, Math.min(0.55, c.h), 20), M.rubber);
+  r.position.copy(L(c.x, c.y, Math.min(0.55, c.h) / 2)); table.add(shadowed(r));
+  const p = new THREE.Mesh(new THREE.CylinderGeometry(c.r * 0.55, c.r * 0.55, c.h + 0.35, 14), M.chrome);
+  p.position.copy(L(c.x, c.y, (c.h + 0.35) / 2)); table.add(shadowed(p));
+  const cap = new THREE.Mesh(new THREE.SphereGeometry(c.r * 0.6, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2), M.chrome);
+  cap.position.copy(L(c.x, c.y, c.h + 0.35)); table.add(cap);
+}
+// bumpers
+const starTex = (() => {
+  const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d');
+  g.fillStyle = '#fff'; g.beginPath();
+  for (let i = 0; i < 10; i++) { const a = i / 10 * Math.PI * 2 - Math.PI / 2, r = i % 2 ? 24 : 58; g.lineTo(64 + Math.cos(a) * r, 64 + Math.sin(a) * r); }
+  g.fill(); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+})();
+const bumpers = bumperDefs.map(([x, y, col]) => {
+  const grp = new THREE.Group(); grp.position.copy(L(x, y)); table.add(grp);
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(1.12, 1.18, 0.22, 32), M.darkChrome); base.position.y = 0.11; grp.add(shadowed(base));
+  const skirt = new THREE.Mesh(new THREE.CylinderGeometry(0.98, 1.05, 0.3, 32), new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5 })); skirt.position.y = 0.35; grp.add(shadowed(skirt));
+  const bodyMat = new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 0.5, transparent: true, opacity: 0.85, roughness: 0.2 });
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.6, 0.7, 24), bodyMat); body.position.y = 0.85; grp.add(body);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.85, 0.07, 10, 32), M.chrome); ring.rotation.x = Math.PI / 2; ring.position.y = 0.62; grp.add(ring);
+  const capMat = new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 0.4, roughness: 0.25, metalness: 0.1, transparent: true, opacity: 0.95 });
+  const cap = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.0, 0.3, 32), capMat); cap.position.y = 1.35; grp.add(shadowed(cap));
+  const starMat = new THREE.MeshStandardMaterial({ map: starTex, transparent: true, emissive: 0xffffff, emissiveMap: starTex, emissiveIntensity: 0.6, depthWrite: false });
+  const star = new THREE.Mesh(new THREE.CircleGeometry(0.7, 24), starMat); star.rotation.x = -Math.PI / 2; star.position.y = 1.51; grp.add(star);
+  const light = new THREE.PointLight(col, 4, 9, 2); light.position.y = 2.0; grp.add(light);
+  return { grp, bodyMat, capMat, starMat, light, cap };
+});
+// slingshot plastics
+const slingMats = slingCorners.map((pts, i) => {
+  const col = i === 0 ? 0xff2bd6 : 0x00e5ff;
+  const cx = (pts[0][0] + pts[1][0] + pts[2][0]) / 3, cy = (pts[0][1] + pts[1][1] + pts[2][1]) / 3;
+  const sh = new THREE.Shape(); pts.forEach((p, k) => { const x = cx + (p[0] - cx) * 1.12, y = cy + (p[1] - cy) * 1.12; k ? sh.lineTo(x, y) : sh.moveTo(x, y); });
+  const geo = new THREE.ExtrudeGeometry(sh, { depth: 0.12, bevelEnabled: true, bevelThickness: 0.04, bevelSize: 0.06, bevelSegments: 2 });
+  geo.rotateX(-Math.PI / 2);
+  const mat = new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 0.35, transparent: true, opacity: 0.8, roughness: 0.2 });
+  const m = new THREE.Mesh(geo, mat); m.position.set(0, 0.95, 21); table.add(shadowed(m));
+  // kicker edge glow strip
+  const [A, , C] = pts; const dx = C[0] - A[0], dy = C[1] - A[1], len = Math.hypot(dx, dy);
+  const nx = -dy / len * (i === 0 ? 1 : -1), ny = dx / len * (i === 0 ? 1 : -1);
+  const kmat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: col, emissiveIntensity: 0.2 });
+  const k = new THREE.Mesh(new THREE.BoxGeometry(len * 0.8, 0.25, 0.08), kmat);
+  k.position.copy(L((A[0] + C[0]) / 2 + nx * 0.26, (A[1] + C[1]) / 2 + ny * 0.26, 0.35)); k.rotation.y = Math.atan2(dy, dx); table.add(k);
+  return { mat, kmat, k, nx, ny, base: k.position.clone() };
+});
+// targets
+const targetMeshes = targetYs.map(y => {
+  const mat = new THREE.MeshStandardMaterial({ color: 0xff8a00, emissive: 0xff6a00, emissiveIntensity: 0.15, roughness: 0.35 });
+  const m = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.95, 1.25), mat); m.position.copy(L(6.58, y + 0.65, 0.5)); table.add(shadowed(m));
+  const st = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.6, 0.3), M.darkChrome); st.position.copy(L(6.72, y + 0.65, 0.3)); table.add(st);
+  return { m, mat };
+});
+// flippers
+function flipperGeo(len, r1, r2, depth) {
+  const s = new THREE.Shape();
+  s.moveTo(0, r1); s.lineTo(len, r2); s.absarc(len, 0, r2, Math.PI / 2, -Math.PI / 2, true); s.lineTo(0, -r1); s.absarc(0, 0, r1, -Math.PI / 2, Math.PI / 2, true);
+  const g = new THREE.ExtrudeGeometry(s, { depth, bevelEnabled: true, bevelThickness: 0.05, bevelSize: 0.04, bevelSegments: 3, curveSegments: 16 });
+  g.rotateX(-Math.PI / 2); return g;
+}
+const flipperBodyMat = new THREE.MeshStandardMaterial({ color: 0xfafafa, roughness: 0.3, metalness: 0.05 });
+const flipperRubMat = new THREE.MeshStandardMaterial({ color: 0xff1f6b, roughness: 0.6, emissive: 0x550018, emissiveIntensity: 0.4 });
+const flipperMeshes = flippers.map(f => {
+  const grp = new THREE.Group(); grp.position.copy(L(f.px, f.py)); table.add(grp);
+  const rub = new THREE.Mesh(flipperGeo(f.len, f.r1 - 0.02, f.r2 - 0.02, 0.28), flipperRubMat); rub.position.y = 0.1; grp.add(shadowed(rub));
+  const body = new THREE.Mesh(flipperGeo(f.len, f.r1 - 0.1, f.r2 - 0.08, 0.55), flipperBodyMat); body.position.y = 0.06; grp.add(shadowed(body));
+  const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.17, 0.12, 16), M.chrome); pin.position.y = 0.7; grp.add(pin);
+  return grp;
+});
+// plunger
+const plunger = new THREE.Group(); table.add(plunger);
+{
+  const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 5.4, 12), M.chrome); rod.rotation.x = Math.PI / 2; rod.position.z = 2.8; plunger.add(rod);
+  const tip = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.62, 0.3, 20), M.blackRubber); tip.rotation.x = Math.PI / 2; tip.position.z = 0.16; plunger.add(tip);
+  for (let i = 0; i < 9; i++) { const coil = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.05, 6, 16), M.darkChrome); coil.position.z = 0.6 + i * 0.22; coil.userData.i = i; plunger.add(coil); }
+  const knob = new THREE.Mesh(new THREE.SphereGeometry(0.7, 20, 14), new THREE.MeshStandardMaterial({ color: 0xff1f4b, roughness: 0.25, emissive: 0x440010 })); knob.position.z = 5.6; plunger.add(knob);
+}
+// ramp
+let rampMat;
+{
+  const N = 180, HW = 0.82, WH = 0.8, up = new THREE.Vector3(0, 1, 0);
+  const floorPos = [], wallPos = [], leftTop = [], rightTop = [];
+  for (let i = 0; i <= N; i++) {
+    const u = i / N, p = rampCurve.getPointAt(u), t = rampCurve.getTangentAt(u);
+    const P = L(p.x, p.y, p.z + 0.03), T = new THREE.Vector3(t.x, t.z, -t.y).normalize();
+    const S = new THREE.Vector3().crossVectors(T, up).normalize();
+    const a = P.clone().addScaledVector(S, -HW), b = P.clone().addScaledVector(S, HW);
+    floorPos.push(a, b);
+    const at = a.clone().add(new THREE.Vector3(0, WH, 0)), bt = b.clone().add(new THREE.Vector3(0, WH, 0));
+    wallPos.push([a, at, b, bt]); leftTop.push(at); rightTop.push(bt);
+  }
+  const fp = [], fi = [];
+  floorPos.forEach(v => fp.push(v.x, v.y, v.z));
+  for (let i = 0; i < N; i++) { const k = i * 2; fi.push(k, k + 1, k + 2, k + 1, k + 3, k + 2); }
+  const fg = new THREE.BufferGeometry(); fg.setAttribute('position', new THREE.Float32BufferAttribute(fp, 3)); fg.setIndex(fi); fg.computeVertexNormals();
+  rampMat = new THREE.MeshStandardMaterial({ color: 0x66ccff, emissive: 0x1188ff, emissiveIntensity: 0.25, transparent: true, opacity: 0.55, side: THREE.DoubleSide, roughness: 0.1, metalness: 0.1, depthWrite: false });
+  table.add(new THREE.Mesh(fg, rampMat));
+  const wp = [], wi = [];
+  wallPos.forEach(([a, at, b, bt]) => { wp.push(a.x, a.y, a.z, at.x, at.y, at.z, b.x, b.y, b.z, bt.x, bt.y, bt.z); });
+  for (let i = 0; i < N; i++) { const k = i * 4, n = k + 4; wi.push(k, k + 1, n, k + 1, n + 1, n, k + 2, k + 3, n + 2, k + 3, n + 3, n + 2); }
+  const wg = new THREE.BufferGeometry(); wg.setAttribute('position', new THREE.Float32BufferAttribute(wp, 3)); wg.setIndex(wi); wg.computeVertexNormals();
+  const wallMat = new THREE.MeshStandardMaterial({ color: 0xff66e0, emissive: 0xff2bd6, emissiveIntensity: 0.35, transparent: true, opacity: 0.4, side: THREE.DoubleSide, roughness: 0.1, depthWrite: false });
+  table.add(new THREE.Mesh(wg, wallMat));
+  rampMat.userData.wall = wallMat;
+  for (const pts of [leftTop, rightTop]) {
+    const tube = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 200, 0.07, 8), M.chrome); table.add(shadowed(tube));
+  }
+  // supports
+  for (const u of [0.3, 0.45, 0.58, 0.72, 0.86]) {
+    const p = rampCurve.getPointAt(u); if (p.z < 0.6) continue;
+    const post = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, p.z, 8), M.darkChrome);
+    post.position.copy(L(p.x, p.y, p.z / 2)); table.add(shadowed(post));
+  }
+}
+// backbox
+{
+  const bb = new THREE.Group(); bb.position.copy(L(ACX, 44.6, 0)); bb.rotation.x = -TILT; table.add(bb);
+  const side = new THREE.MeshStandardMaterial({ color: 0x2a0a4a, metalness: 0.5, roughness: 0.35 });
+  const front = new THREE.MeshStandardMaterial({ map: bbTex, emissive: 0xffffff, emissiveMap: bbTex, emissiveIntensity: 0.75, roughness: 0.3 });
+  const box = new THREE.Mesh(new THREE.BoxGeometry(22, 13.3, 2.4), [side, side, side, side, front, side]);
+  box.position.y = 8.2; bb.add(box);
+  const neck = new THREE.Mesh(new THREE.BoxGeometry(20, 2.0, 2.0), M.cabinet); neck.position.y = 0.8; bb.add(neck);
+  const trim = new THREE.Mesh(new THREE.BoxGeometry(22.4, 0.25, 2.6), M.neonPink); trim.position.y = 14.9; bb.add(trim);
+  const trim2 = new THREE.Mesh(new THREE.BoxGeometry(22.4, 0.25, 2.6), M.neonCyan); trim2.position.y = 1.55; bb.add(trim2);
+}
+// inserts (lamps on the playfield)
+function makeInsert(x, y, color, shape = 'circle', size = 0.4, rot = 0) {
+  let geo;
+  if (shape === 'arrow') { const s = new THREE.Shape(); s.moveTo(0, size * 1.25); s.lineTo(size, -size * 0.7); s.lineTo(0, -size * 0.25); s.lineTo(-size, -size * 0.7); s.closePath(); geo = new THREE.ShapeGeometry(s); }
+  else if (shape === 'rect') geo = new THREE.PlaneGeometry(size * 0.55, size * 1.5);
+  else geo = new THREE.CircleGeometry(size, 28);
+  geo.rotateX(-Math.PI / 2);
+  const c = new THREE.Color(color);
+  const mat = new THREE.MeshStandardMaterial({ color: c.clone().multiplyScalar(0.3), emissive: c, emissiveIntensity: 0.1, roughness: 0.25 });
+  const m = new THREE.Mesh(geo, mat); m.position.copy(L(x, y, 0.012)); m.rotation.y = rot; m.receiveShadow = true; table.add(m);
+  return { mat, on: false, blink: false, lvl: 0 };
+}
+const INS = {
+  lanes: [-3, 0, 3].map(x => makeInsert(x, 37.2, 0xffe14d, 'circle', 0.38)),
+  mult: [0, 1, 2, 3].map(i => makeInsert(-2.25 + i * 1.5, 13.4, 0x37ff8b, 'circle', 0.42)),
+  shoot: makeInsert(0, 9.7, 0xff3355, 'circle', 0.5),
+  ramp: makeInsert(-5.6, 18.9, 0xffd000, 'arrow', 0.6),
+  jackpot: makeInsert(-5.6, 17.4, 0xff2bd6, 'circle', 0.45),
+  orbit: makeInsert(6.0, 17.4, 0x00e5ff, 'arrow', 0.6, -0.45),
+  targets: targetYs.map(y => makeInsert(5.9, y + 0.65, 0xff8a00, 'rect', 0.55)),
+  inl: [makeInsert(-6.7, 11.6, 0x37ff8b, 'circle', 0.32), makeInsert(6.7, 11.6, 0x37ff8b, 'circle', 0.32)],
+  outl: [makeInsert(-8.25, 11.6, 0xff3355, 'circle', 0.32), makeInsert(8.25, 11.6, 0xff3355, 'circle', 0.32)],
+  chase: Array.from({ length: 12 }, (_, i) => { const a = i / 12 * Math.PI * 2; return makeInsert(Math.cos(a) * 3.6, 18.4 + Math.sin(a) * 3.6, new THREE.Color().setHSL(i / 12, 1, 0.55), 'circle', 0.22); }),
+};
+const allInserts = [...INS.lanes, ...INS.mult, INS.shoot, INS.ramp, INS.jackpot, INS.orbit, ...INS.targets, ...INS.inl, ...INS.outl, ...INS.chase];
+// ball
+const ballMesh = new THREE.Mesh(new THREE.SphereGeometry(R, 40, 24), new THREE.MeshStandardMaterial({ color: 0xf2f2f2, metalness: 1, roughness: 0.06, envMapIntensity: 1.6 }));
+ballMesh.castShadow = true; table.add(ballMesh);
+
+/* =====================================================================
+   CAMERA
+   ===================================================================== */
+const camPresets = [
+  { pos: new THREE.Vector3(ACX, 41, 37), look: new THREE.Vector3(ACX, 0, 1.4), fov: 47 },
+  { pos: new THREE.Vector3(ACX, 64, 13), look: new THREE.Vector3(ACX, 0, -0.5), fov: 44 },
+  { pos: new THREE.Vector3(ACX, 22, 40), look: new THREE.Vector3(ACX, 0, -4), fov: 50 },
+];
+function setupCamera() {
+  const a = innerWidth / innerHeight, p = camPresets[camMode];
+  const minHalfH = camMode === 1 ? 0.26 : 0.3;
+  const needV = 2 * Math.atan(minHalfH / a) * 180 / Math.PI;
+  camera.fov = Math.min(80, Math.max(p.fov, needV));
+  camera.aspect = a; camera.position.copy(p.pos); camera.lookAt(p.look); camera.updateProjectionMatrix();
+}
+setupCamera();
+addEventListener('resize', () => {
+  renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); setupCamera();
+});
+
+/* =====================================================================
+   INPUT
+   ===================================================================== */
+const LEFT = ['ArrowLeft', 'KeyZ', 'ShiftLeft'], RIGHT = ['ArrowRight', 'KeyM', 'ShiftRight', 'Slash'], PLUNGE = ['Space', 'ArrowDown', 'Enter'];
+const held = new Set();
+function setFlipper(i, down) {
+  const f = flippers[i];
+  if (down && !f.pressed) {
+    sfx('flip');
+    if (state === 'play') { // lane change
+      lanesLit = i === 0 ? [lanesLit[1], lanesLit[2], lanesLit[0]] : [lanesLit[2], lanesLit[0], lanesLit[1]];
+    }
+  }
+  f.pressed = down;
+}
+function plungerDown() { if (state === 'play' && !paused) { plCharging = true; } }
+function plungerUp() {
+  if (!plCharging) return;
+  plCharging = false;
+  const p = plPull; plPull = 0;
+  if (ball.mode === 'play' && ball.x > WR && ball.y < PL_REST + R + 1.0) {
+    ball.y = PL_REST + 0.1 + R + 0.01;
+    ball.vy = 36 + p * 132 + Math.random() * 1.5;
+    sfx('launch');
+  }
+}
+addEventListener('keydown', e => {
+  if ([...LEFT, ...RIGHT, ...PLUNGE].includes(e.code)) e.preventDefault();
+  ensureAudio();
+  if (e.repeat) return;
+  if (e.code === 'KeyC') { camMode = (camMode + 1) % camPresets.length; setupCamera(); return; }
+  if (e.code === 'KeyN') { muted = !muted; showMsg(muted ? 'SOUND OFF' : 'SOUND ON', 1); return; }
+  if (e.code === 'KeyP' && state === 'play') { paused = !paused; document.getElementById('paused').style.display = paused ? 'block' : 'none'; return; }
+  if (state !== 'play') { if (e.code === 'Enter' || e.code === 'Space') startGame(); return; }
+  held.add(e.code);
+  if (LEFT.includes(e.code)) setFlipper(0, true);
+  if (RIGHT.includes(e.code)) setFlipper(1, true);
+  if (PLUNGE.includes(e.code)) plungerDown();
+});
+addEventListener('keyup', e => {
+  held.delete(e.code);
+  if (LEFT.includes(e.code) && !LEFT.some(k => held.has(k))) setFlipper(0, false);
+  if (RIGHT.includes(e.code) && !RIGHT.some(k => held.has(k))) setFlipper(1, false);
+  if (PLUNGE.includes(e.code) && !PLUNGE.some(k => held.has(k))) plungerUp();
+});
+addEventListener('blur', () => { held.clear(); setFlipper(0, false); setFlipper(1, false); plCharging = false; plPull = 0; });
+for (const id of ['startScreen', 'overScreen']) document.getElementById(id).addEventListener('pointerdown', e => { e.preventDefault(); startGame(); });
+const touchBind = (id, down, up) => { const el = document.getElementById(id);
+  el.addEventListener('pointerdown', e => { e.preventDefault(); ensureAudio(); down(); });
+  for (const ev of ['pointerup', 'pointercancel', 'pointerleave']) el.addEventListener(ev, e => { e.preventDefault(); up(); }); };
+touchBind('tl', () => state === 'play' && setFlipper(0, true), () => setFlipper(0, false));
+touchBind('tr', () => state === 'play' && setFlipper(1, true), () => setFlipper(1, false));
+touchBind('tp', plungerDown, plungerUp);
+
+/* =====================================================================
+   MAIN LOOP
+   ===================================================================== */
+const hud = { score: document.getElementById('score'), ball: document.getElementById('iball'), mult: document.getElementById('imult'), high: document.getElementById('ihigh'), msg: document.getElementById('msg'), power: document.getElementById('power'), bar: document.getElementById('powerbar') };
+let hudKey = '';
+function updateHUD() {
+  const k = `${score}|${ballNum}|${mult}|${highScore}|${state}`;
+  if (k !== hudKey) {
+    hudKey = k;
+    hud.score.textContent = fmt(score);
+    hud.ball.textContent = state === 'play' ? `BALL ${Math.min(ballNum, 3)}/3` : state === 'over' ? 'GAME OVER' : 'INSERT COIN';
+    hud.mult.textContent = `${mult}X`; hud.high.textContent = `HI ${fmt(Math.max(highScore, score))}`;
+  }
+  if (gameTime >= msgUntil) hud.msg.classList.remove('show');
+  const showPow = state === 'play' && ball.mode === 'play' && ball.x > WR && ball.y < PL_REST + R + 1.0;
+  hud.power.classList.toggle('show', showPow);
+  hud.bar.style.height = (plPull * 100) + '%';
+}
+function setIns(ins, on, blink = false) { ins.on = on; ins.blink = blink; }
+function updateVisuals(dt, t) {
+  // ball
+  ballMesh.visible = ball.mode !== 'drained';
+  ballMesh.position.copy(L(ball.x, ball.y, ball.h + R));
+  // flippers
+  flippers.forEach((f, i) => { flipperMeshes[i].rotation.y = f.side === 1 ? f.ang : Math.PI - f.ang; });
+  // plunger
+  plunger.position.copy(L((WR + LR) / 2, plY - 0.1, 0.62));
+  const comp = (plY - PL_MIN) / (PL_REST - PL_MIN);
+  plunger.children.forEach(c => { if (c.userData.i !== undefined) c.position.z = 0.45 + c.userData.i * (0.12 + 0.12 * comp); });
+  // bumpers
+  bumpers.forEach((b, i) => {
+    fx.bumper[i] = Math.max(0, fx.bumper[i] - dt * 4);
+    const f = fx.bumper[i] + flashAll * 0.5;
+    b.capMat.emissiveIntensity = 0.4 + f * 3.5; b.bodyMat.emissiveIntensity = 0.6 + f * 4;
+    b.starMat.emissiveIntensity = 0.6 + f * 3; b.light.intensity = 4 + f * 70;
+    b.cap.position.y = 1.35 - f * 0.18;
+  });
+  // slings
+  slingMats.forEach((s, i) => {
+    fx.sling[i] = Math.max(0, fx.sling[i] - dt * 6);
+    s.mat.emissiveIntensity = 0.35 + fx.sling[i] * 3; s.kmat.emissiveIntensity = 0.2 + fx.sling[i] * 5;
+    s.k.position.copy(s.base).add(new THREE.Vector3(s.nx * fx.sling[i] * 0.25, 0, -s.ny * fx.sling[i] * 0.25));
+  });
+  // targets
+  targetMeshes.forEach((tm, i) => { fx.target[i] = Math.max(0, fx.target[i] - dt * 5); tm.mat.emissiveIntensity = (targetsLit[i] ? 1.6 : 0.12) + fx.target[i] * 3; });
+  // ramp glow
+  rampGlow = Math.max(ball.mode === 'ramp' ? 1 : 0, rampGlow - dt * 1.5);
+  const jp = jackpotLit ? (Math.sin(t * 8) * 0.5 + 0.5) : 0;
+  rampMat.emissiveIntensity = 0.25 + rampGlow * 1.5 + jp * 0.8; rampMat.userData.wall.emissiveIntensity = 0.35 + rampGlow * 1.8 + jp;
+  flashAll = Math.max(0, flashAll - dt);
+  // inserts
+  ['inl', 'outl'].forEach(k => [0, 1].forEach(s => { const key = k === 'inl' ? 'inlane' : 'outlane'; fx[key][s] = Math.max(0, fx[key][s] - dt * 1.5); }));
+  if (state === 'play') {
+    INS.lanes.forEach((ins, i) => setIns(ins, lanesLit[i], lanesLit.every(Boolean)));
+    INS.mult.forEach((ins, i) => setIns(ins, mult >= i + 2, mult === i + 2 && false));
+    setIns(INS.shoot, gameTime < ballSaveUntil || (!leftLane && saveAvail), gameTime > ballSaveUntil - 2.5 && leftLane);
+    setIns(INS.ramp, true, true);
+    setIns(INS.jackpot, jackpotLit, true);
+    setIns(INS.orbit, true, true);
+    INS.targets.forEach((ins, i) => setIns(ins, targetsLit[i] || fx.target[i] > 0.1, targetsLit.every(Boolean)));
+    [0, 1].forEach(s => { setIns(INS.inl[s], fx.inlane[s] > 0); setIns(INS.outl[s], fx.outlane[s] > 0); });
+    const ci = Math.floor(t * 12) % 12;
+    INS.chase.forEach((ins, i) => setIns(ins, i === ci || i === (ci + 11) % 12 || i === (ci + 6) % 12 || i === (ci + 5) % 12 || flashAll > 0));
+  } else {
+    const ph = Math.floor(t * 5);
+    allInserts.forEach((ins, i) => setIns(ins, (i + ph) % 4 === 0 || (state === 'over' && (i + ph) % 4 === 2)));
+  }
+  for (const ins of allInserts) {
+    let target = ins.on ? (ins.blink ? (Math.sin(t * 14) > 0 ? 1 : 0.15) : 1) : 0.05;
+    if (flashAll > 0) target = Math.sin(t * 30) > 0 ? 1 : 0.2;
+    ins.lvl += (target - ins.lvl) * Math.min(1, dt * 25);
+    ins.mat.emissiveIntensity = ins.lvl * 3.2;
+  }
+  pl1.intensity = 160 + flashAll * 300; pl2.intensity = 160 + flashAll * 300;
+  drawBackbox(t);
+  updateHUD();
+}
+
+let last = performance.now(), acc = 0;
+function frame(now) {
+  requestAnimationFrame(frame);
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  if (!paused) {
+    gameTime += dt;
+    for (let i = timers.length - 1; i >= 0; i--) if (gameTime >= timers[i].t) { const tm = timers.splice(i, 1)[0]; tm.fn(); }
+    if (plCharging) plPull = Math.min(1, plPull + dt * 1.1);
+    const plTarget = plCharging ? PL_REST - plPull * (PL_REST - PL_MIN) : PL_REST;
+    plY = plCharging ? plTarget : plY + (PL_REST - plY) * Math.min(1, dt * 30);
+    plSeg.ay = plSeg.by = plCharging ? plY : PL_REST;
+    acc += dt; let n = 0;
+    while (acc >= DT && n < 50) { physicsStep(DT); acc -= DT; n++; }
+    if (n >= 50) acc = 0;
+    // stuck-ball safety nudge
+    const sp = Math.hypot(ball.vx, ball.vy);
+    if (ball.mode === 'play' && ball.x < WR - 0.3 && sp < 1.5 && !flippers[0].pressed && !flippers[1].pressed) stuckT += dt; else stuckT = 0;
+    if (stuckT > 3) { stuckT = 0; ball.vy += 28; ball.vx += (Math.random() - 0.5) * 20; if (state === 'play') showMsg('NUDGE!', 0.8); }
+  }
+  updateVisuals(dt, now / 1000);
+  composer.render();
+}
+requestAnimationFrame(frame);
+
+// tiny debug hook (handy for automated testing)
+window.__pinball = { ball, flippers, get state() { return state; }, get score() { return score; }, startGame, setFlipper, plungerDown, plungerUp };
+</script>
+</body>
+</html>

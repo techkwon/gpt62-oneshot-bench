@@ -1,0 +1,1647 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Longway Vanworks — Configure &amp; price your adventure camper</title>
+<meta name="description" content="Handbuilt adventure camper vans from Kendal, Cumbria. Configure colour, roof, drivetrain, layout and kit — and see your price live.">
+<meta name="theme-color" content="#1c201b">
+<style>
+:root{
+  --paper:#efe7d6; --paper2:#e6dbc4; --card:#f8f2e6; --ink:#1c201b; --ink2:#30362d; --muted:#6b695b;
+  --line:rgba(28,32,27,.13); --line2:rgba(28,32,27,.26);
+  --signal:#e0592a; --signal2:#c4461b; --moss:#55603e; --sand:#d6c49e; --night:#141a2b;
+  --fd:"DIN Condensed","Bahnschrift Condensed","Bahnschrift","Avenir Next Condensed","Roboto Condensed","Arial Narrow",sans-serif;
+  --fs:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --fb:"Avenir Next","Avenir","Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --fm:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+  --wrap:1240px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--fb);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;padding-bottom:0}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;opacity:.28;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.35  0 0 0 0 0.3  0 0 0 0 0.2  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+img,svg{display:block}
+a{color:inherit}
+button{font:inherit;color:inherit}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 28px}
+.mono{font-family:var(--fm);font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.disp{font-family:var(--fd);font-weight:700;font-stretch:condensed;text-transform:uppercase;letter-spacing:.01em}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:2.5px solid var(--signal);outline-offset:3px;border-radius:6px}
+
+/* ---------- header ---------- */
+.top{position:sticky;top:0;z-index:50;background:rgba(239,231,214,.86);backdrop-filter:blur(10px) saturate(1.2);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:28px;height:64px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo b{font-family:var(--fd);font-weight:700;font-stretch:condensed;font-size:26px;letter-spacing:.06em;line-height:1;padding-top:3px}
+.logo small{display:block;font-family:var(--fm);font-size:9px;letter-spacing:.32em;color:var(--muted);margin-top:1px}
+.nav{display:flex;gap:22px;margin-left:auto}
+.nav a{text-decoration:none;font-size:14px;color:var(--ink2);position:relative}
+.nav a:hover{color:var(--signal2)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:0;cursor:pointer;text-decoration:none;border-radius:999px;padding:13px 22px 11px;font-family:var(--fd);font-weight:700;font-stretch:condensed;font-size:19px;letter-spacing:.06em;text-transform:uppercase;line-height:1;transition:transform .2s,background .2s,box-shadow .2s,color .2s}
+.btn-primary{background:var(--signal);color:#fff8ec;box-shadow:0 8px 22px -12px rgba(196,70,27,.9)}
+.btn-primary:hover{background:var(--signal2);transform:translateY(-1px)}
+.btn-ink{background:var(--ink);color:var(--paper)}
+.btn-ink:hover{background:#000}
+.btn-ghost{background:transparent;box-shadow:inset 0 0 0 1.6px var(--ink)}
+.btn-ghost:hover{background:var(--ink);color:var(--paper)}
+.btn-sm{font-size:16px;padding:10px 16px 8px}
+.top .btn{font-size:16px;padding:10px 16px 8px}
+
+/* ---------- hero ---------- */
+.hero{position:relative;overflow:hidden;padding:56px 0 0;border-bottom:1px solid var(--line)}
+.topo{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.topo path{fill:none;stroke:var(--ink);stroke-opacity:.11;stroke-width:1}
+.topo path.ix{stroke-opacity:.2;stroke-width:1.4}
+.hero-grid{position:relative;display:grid;grid-template-columns:1.25fr .75fr;gap:40px;align-items:end}
+.eyebrow{display:flex;align-items:center;gap:10px;margin:0 0 18px;color:var(--ink2)}
+.eyebrow .dot{width:9px;height:9px;border-radius:50%;background:var(--signal);box-shadow:0 0 0 4px rgba(224,89,42,.2);animation:pulse 2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 8px rgba(224,89,42,0)}}
+.hero h1{margin:0;font-family:var(--fd);font-weight:700;font-stretch:condensed;text-transform:uppercase;font-size:clamp(72px,11.2vw,168px);line-height:.82;letter-spacing:-.005em}
+.hero h1 em{font-family:var(--fs);font-style:italic;font-weight:400;text-transform:none;color:var(--signal);letter-spacing:-.03em;font-size:.86em}
+.hero-side{padding-bottom:14px}
+.lede{font-size:18px;color:var(--ink2);margin:0 0 22px;max-width:440px}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:22px}
+.from{display:flex;align-items:baseline;gap:10px;font-family:var(--fm);font-size:13px;color:var(--muted)}
+.from strong{font-family:var(--fd);font-size:34px;color:var(--ink);font-weight:700;letter-spacing:.02em}
+.hero-scene{position:relative;height:clamp(250px,34vw,440px);margin-top:26px}
+.hero-scene .scenery{position:absolute;inset:0;width:100%;height:100%}
+.hero-scene .van-wrap{position:absolute;left:50%;bottom:3%;width:min(660px,66%);transform:translateX(-50%)}
+.stamp-badge{position:absolute;right:6%;top:-40px;width:128px;height:128px;z-index:3}
+.stamp-badge .ring{animation:spin 26s linear infinite;transform-origin:50% 50%;transform-box:fill-box}
+.layer{will-change:transform}
+.hero-scene .l-far{animation:pan 90s linear infinite}
+.hero-scene .l-mid{animation:pan 46s linear infinite}
+.hero-scene .l-near{animation:pan 20s linear infinite}
+.hero-scene .l-road{animation:pan 3.2s linear infinite}
+@keyframes pan{to{transform:translateX(-1200px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin .rim{animation:spin .75s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
+.spin .bob{animation:bob .42s ease-in-out infinite alternate}
+@keyframes bob{to{transform:translateY(-1.6px)}}
+
+.strip{background:var(--ink);color:var(--paper);overflow:hidden;white-space:nowrap;border-block:1px solid #000}
+.marquee{display:inline-flex;padding:14px 0;animation:marq 40s linear infinite}
+.marquee span{margin-right:46px;font-family:var(--fm);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase}
+.marquee span::before{content:"◆";color:var(--signal);margin-right:14px}
+@keyframes marq{to{transform:translateX(-50%)}}
+
+/* ---------- sections ---------- */
+section{position:relative}
+.sec-head{display:grid;grid-template-columns:auto 1fr;gap:6px 22px;align-items:end;margin-bottom:26px}
+.sec-num{grid-row:span 2;font-family:var(--fd);font-weight:700;font-size:96px;line-height:.75;color:transparent;-webkit-text-stroke:1.5px var(--ink);padding-top:10px}
+.sec-head h2{margin:0;font-family:var(--fd);font-weight:700;font-stretch:condensed;text-transform:uppercase;font-size:clamp(40px,5.4vw,72px);line-height:.88}
+.sec-head p{margin:0;color:var(--muted);max-width:620px}
+
+/* ---------- configurator ---------- */
+.config{padding:72px 0 120px}
+.presets{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 24px}
+.presets .mono{color:var(--muted);margin-right:6px}
+.chip{border:1.5px solid var(--line2);background:var(--card);border-radius:999px;padding:8px 14px;cursor:pointer;font-size:14px;display:inline-flex;gap:8px;align-items:center;transition:.2s}
+.chip:hover{border-color:var(--ink);background:#fffaf0}
+.chip i{font-style:normal;font-family:var(--fm);font-size:11.5px;color:var(--muted)}
+.cfg-grid{max-width:1440px;margin:0 auto;padding:0 28px;display:grid;grid-template-columns:minmax(0,1.6fr) minmax(360px,1fr);gap:28px;align-items:start}
+.stage-col{position:sticky;top:80px}
+.stage{position:relative;aspect-ratio:16/10;min-height:340px;border-radius:20px;overflow:hidden;background:#d8d3c2;box-shadow:0 0 0 1px var(--line2),0 30px 60px -40px rgba(28,32,27,.6)}
+.stage .scenery{position:absolute;inset:0;width:100%;height:100%}
+.stage .van-wrap{position:absolute;left:3%;right:3%;bottom:4%}
+.stage-side,.stage-plan{position:absolute;inset:0;transition:opacity .45s ease,transform .6s cubic-bezier(.2,.8,.2,1)}
+.stage-plan{opacity:0;pointer-events:none;transform:scale(.97);
+  background-color:#ece4d2;
+  background-image:linear-gradient(rgba(28,32,27,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(28,32,27,.07) 1px,transparent 1px),linear-gradient(rgba(28,32,27,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(28,32,27,.035) 1px,transparent 1px);
+  background-size:80px 80px,80px 80px,16px 16px,16px 16px}
+.stage-plan svg{position:absolute;inset:8% 3% 4%;width:94%;height:88%}
+.stage[data-view="plan"] .stage-side{opacity:0;pointer-events:none;transform:scale(1.03)}
+.stage[data-view="plan"] .stage-plan{opacity:1;pointer-events:auto;transform:none}
+.stage-ui{position:absolute;left:14px;right:14px;top:14px;display:flex;gap:10px;align-items:flex-start;justify-content:space-between;z-index:4}
+.seg{display:inline-flex;background:rgba(248,242,230,.86);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:999px;padding:4px;box-shadow:0 0 0 1px var(--line2)}
+.seg button{border:0;background:transparent;border-radius:999px;padding:7px 14px 6px;font-size:13px;cursor:pointer;font-weight:600;color:var(--ink2);transition:.2s}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.camp-t{display:inline-flex;align-items:center;gap:9px;border:0;cursor:pointer;background:rgba(248,242,230,.86);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:999px;padding:7px 14px 7px 8px;font-size:13px;font-weight:600;box-shadow:0 0 0 1px var(--line2);transition:.3s}
+.camp-t .sw{width:34px;height:20px;border-radius:99px;background:#cfc6b2;position:relative;transition:.3s}
+.camp-t .sw::after{content:"";position:absolute;left:3px;top:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:.3s;box-shadow:0 1px 2px rgba(0,0,0,.3)}
+.camp-t[aria-pressed="true"]{background:#1d2440;color:#f6e9c9}
+.camp-t[aria-pressed="true"] .sw{background:#f0a31c}
+.camp-t[aria-pressed="true"] .sw::after{left:17px}
+.stage-tag{position:absolute;left:18px;bottom:14px;z-index:3;font-family:var(--fm);font-size:11px;letter-spacing:.1em;color:var(--ink2);background:rgba(248,242,230,.8);padding:5px 9px;border-radius:6px;text-transform:uppercase;transition:.3s}
+.stage.camp .stage-tag{background:rgba(20,26,43,.7);color:#e9dcc0}
+.stage[data-view="plan"] .stage-tag{display:none}
+.hint{position:absolute;right:16px;bottom:14px;z-index:3;font-size:12px;color:var(--ink2);background:rgba(248,242,230,.8);padding:5px 10px;border-radius:6px;opacity:0;transition:opacity .4s}
+.hint.show{opacity:1}
+
+.specs{display:grid;grid-template-columns:repeat(6,1fr);gap:0;margin-top:14px;background:var(--card);border-radius:14px;box-shadow:0 0 0 1px var(--line2);overflow:hidden}
+.spec{padding:12px 14px 11px;border-right:1px solid var(--line)}
+.spec:last-child{border-right:0}
+.spec .k{display:block;font-family:var(--fm);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.spec .v{display:block;font-family:var(--fd);font-weight:700;font-size:26px;line-height:1.05;margin-top:3px;letter-spacing:.01em;transition:color .3s}
+.spec .s{display:block;font-size:11.5px;color:var(--muted);line-height:1.3;margin-top:2px}
+.spec .v.flash{color:var(--signal)}
+.meter{height:5px;border-radius:9px;background:rgba(28,32,27,.1);margin-top:6px;overflow:hidden}
+.meter i{display:block;height:100%;border-radius:9px;background:var(--moss);transition:width .6s cubic-bezier(.2,.8,.2,1),background .3s}
+.ok{color:var(--moss)} .warn{color:#b8611d}
+
+/* panel */
+.panel{background:var(--card);border-radius:20px;box-shadow:0 0 0 1px var(--line2);overflow:hidden}
+.stepper{display:grid;grid-template-columns:repeat(6,1fr);border-bottom:1px solid var(--line2);background:var(--paper2)}
+.stepper button{border:0;background:transparent;cursor:pointer;text-align:left;padding:11px 10px 10px;border-right:1px solid var(--line);position:relative;min-width:0}
+.stepper button:last-child{border-right:0}
+.stepper .n{display:block;font-family:var(--fm);font-size:10.5px;color:var(--muted);letter-spacing:.08em}
+.stepper .l{display:block;font-family:var(--fd);font-weight:700;font-size:17px;text-transform:uppercase;letter-spacing:.03em;line-height:1.1;margin-top:2px}
+.stepper .val{display:block;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.stepper button::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:3px;background:var(--signal);transform:scaleX(0);transition:transform .3s;transform-origin:left}
+.stepper button[aria-current="step"]{background:var(--card)}
+.stepper button[aria-current="step"]::after{transform:none}
+.stepper button.done .n::after{content:" ✓";color:var(--moss)}
+.step{display:none;padding:22px 22px 8px;animation:stepIn .45s cubic-bezier(.2,.8,.2,1)}
+.step.active{display:block}
+@keyframes stepIn{from{opacity:0;transform:translateY(8px)}}
+.step-k{font-family:var(--fm);font-size:11px;letter-spacing:.12em;color:var(--signal2);text-transform:uppercase}
+.step h3{margin:4px 0 4px;font-family:var(--fd);font-weight:700;font-size:38px;line-height:1;text-transform:uppercase}
+.step .help{margin:0 0 18px;color:var(--muted);font-size:14.5px}
+.panel-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:16px 22px 20px;border-top:1px dashed var(--line2);margin-top:12px}
+.linkbtn{border:0;background:none;cursor:pointer;font-weight:600;font-size:14px;color:var(--ink2);padding:8px 4px}
+.linkbtn:hover{color:var(--signal2)}
+.linkbtn[disabled]{opacity:.3;cursor:default}
+
+.colour-now{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.colour-now b{font-family:var(--fd);font-size:28px;text-transform:uppercase;letter-spacing:.02em}
+.swatches{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.swatch{border:1.5px solid var(--line2);border-radius:14px;background:#fffaf0;padding:12px 10px 10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:.2s;text-align:center}
+.swatch .ball{width:54px;height:54px;border-radius:50%;background:var(--c);box-shadow:inset -6px -9px 14px rgba(0,0,0,.28),inset 6px 8px 12px rgba(255,255,255,.35),0 0 0 1px rgba(0,0,0,.12);transition:transform .3s}
+.swatch .nm{font-size:13px;font-weight:600;line-height:1.2}
+.swatch .pr{font-family:var(--fm);font-size:11px;color:var(--muted)}
+.swatch:hover .ball{transform:scale(1.06)}
+.swatch[aria-checked="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.swatch[aria-checked="true"] .ball{transform:scale(1.08);box-shadow:inset -6px -9px 14px rgba(0,0,0,.28),inset 6px 8px 12px rgba(255,255,255,.35),0 0 0 3px #fffaf0,0 0 0 5px var(--signal)}
+
+.opts{display:grid;gap:10px}
+.opt{position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:4px 14px;align-items:start;text-align:left;border:1.5px solid var(--line2);border-radius:14px;background:#fffaf0;padding:14px 14px 13px;cursor:pointer;transition:border-color .2s,box-shadow .2s,transform .2s}
+.opt:hover{border-color:var(--ink)}
+.opt[aria-checked="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink),0 10px 24px -18px rgba(0,0,0,.6)}
+.opt .ic{grid-row:span 2;width:68px;height:44px;border-radius:9px;background:var(--paper2);display:grid;place-items:center}
+.opt .ic svg .f{fill:#1c201b}
+.opt .ic svg .a{fill:var(--signal);stroke:none}
+.opt[aria-checked="true"] .ic{background:var(--ink)}
+.opt[aria-checked="true"] .ic svg *{stroke:var(--paper)}
+.opt[aria-checked="true"] .ic svg .f{fill:var(--paper);stroke:none}
+.opt[aria-checked="true"] .ic svg .a{fill:var(--signal);stroke:none}
+.opt .t{font-family:var(--fd);font-weight:700;font-size:21px;text-transform:uppercase;line-height:1.05;letter-spacing:.02em}
+.opt .t small{font-family:var(--fb);font-size:12px;text-transform:none;letter-spacing:0;color:var(--muted);font-weight:500;margin-left:6px}
+.opt .p{font-family:var(--fm);font-size:12.5px;white-space:nowrap;font-weight:600}
+.opt .d{grid-column:2 / 4;font-size:13.5px;color:var(--ink2);line-height:1.45}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.tags span{font-family:var(--fm);font-size:10.5px;letter-spacing:.04em;background:var(--paper2);border-radius:5px;padding:2px 6px;color:var(--ink2)}
+.opt[aria-disabled="true"]{opacity:.5;cursor:not-allowed}
+.opt[aria-disabled="true"]:hover{border-color:var(--line2)}
+.why{display:block;font-size:12px;color:var(--signal2);margin-top:5px;font-weight:600}
+.layouts{grid-template-columns:1fr 1fr}
+.layouts .opt{grid-template-columns:1fr auto}
+.layouts .opt .ic{grid-row:auto;grid-column:1 / 3;width:100%;height:62px;margin-bottom:6px}
+.layouts .opt .d{grid-column:1 / 3;font-size:12.5px}
+.sub-h{display:flex;justify-content:space-between;align-items:baseline;margin:22px 0 10px;padding-top:16px;border-top:1px solid var(--line)}
+.sub-h b{font-family:var(--fd);font-size:22px;text-transform:uppercase}
+.woods{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.wood{border:1.5px solid var(--line2);border-radius:12px;background:#fffaf0;padding:8px;cursor:pointer;text-align:left;transition:.2s}
+.wood .chipw{height:40px;border-radius:7px;background:var(--c);background-image:repeating-linear-gradient(100deg,rgba(255,255,255,.08) 0 3px,rgba(0,0,0,.06) 3px 5px,transparent 5px 11px);box-shadow:inset 0 0 0 1px rgba(0,0,0,.1)}
+.wood .nm{display:block;font-size:13px;font-weight:600;margin-top:6px;line-height:1.2}
+.wood .pr{font-family:var(--fm);font-size:11px;color:var(--muted)}
+.wood[aria-checked="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
+
+.agroup{margin-bottom:16px}
+.agroup h4{margin:0 0 8px;font-family:var(--fm);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:500;display:flex;align-items:center;gap:10px}
+.agroup h4::after{content:"";flex:1;height:1px;background:var(--line)}
+.addon{width:100%;display:grid;grid-template-columns:22px 1fr auto;gap:2px 12px;align-items:start;text-align:left;border:1.5px solid var(--line2);background:#fffaf0;border-radius:12px;padding:11px 12px;cursor:pointer;margin-bottom:7px;transition:.2s}
+.addon:hover{border-color:var(--ink)}
+.addon .box{width:22px;height:22px;border-radius:6px;box-shadow:inset 0 0 0 1.6px var(--ink2);display:grid;place-items:center;transition:.2s;margin-top:1px}
+.addon .box svg{opacity:0;transform:scale(.4);transition:.25s cubic-bezier(.3,1.6,.5,1)}
+.addon[aria-pressed="true"]{border-color:var(--ink);background:#fff}
+.addon[aria-pressed="true"] .box{background:var(--signal);box-shadow:none}
+.addon[aria-pressed="true"] .box svg{opacity:1;transform:none}
+.addon .nm{font-weight:650;font-size:14.5px;line-height:1.3}
+.addon .ds{grid-column:2 / 4;font-size:12.5px;color:var(--muted);line-height:1.4}
+.addon .pr{font-family:var(--fm);font-size:12.5px;font-weight:600;white-space:nowrap}
+.addon[aria-disabled="true"]{opacity:.55;cursor:not-allowed}
+.addon .why{grid-column:2 / 4;margin-top:2px}
+
+.rv{margin:0;padding:0;list-style:none}
+.rv li{display:grid;grid-template-columns:1fr auto;gap:10px;padding:9px 0;border-bottom:1px dashed var(--line2);font-size:14px}
+.rv li span:first-child small{display:block;font-family:var(--fm);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.rv li span:last-child{font-family:var(--fm);font-size:13px;align-self:end}
+.rv-total{display:flex;justify-content:space-between;align-items:baseline;padding:16px 0 4px}
+.rv-total b{font-family:var(--fd);font-size:40px;line-height:1}
+.rv-actions{display:grid;gap:8px;margin-top:12px}
+
+/* price bar */
+.pricebar{position:fixed;left:50%;bottom:16px;z-index:60;transform:translate(-50%,140%);transition:transform .5s cubic-bezier(.2,.8,.2,1);width:min(1100px,calc(100% - 24px));display:grid;grid-template-columns:1fr auto auto auto;gap:26px;align-items:center;background:var(--ink);color:var(--paper);border-radius:18px;padding:12px 14px 12px 22px;box-shadow:0 24px 50px -20px rgba(0,0,0,.6)}
+.pricebar.show{transform:translate(-50%,0)}
+.pb-k{display:block;font-family:var(--fm);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#a9a58f}
+.pb-name{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:420px}
+.pb-month b{font-family:var(--fd);font-size:24px;font-weight:700;letter-spacing:.02em}
+.pb-total{position:relative;text-align:right}
+.pb-num{font-family:var(--fd);font-weight:700;font-size:38px;line-height:1;letter-spacing:.02em;display:block;font-variant-numeric:tabular-nums}
+.pb-delta{position:absolute;right:0;top:-30px;font-family:var(--fm);font-size:13px;font-weight:700;background:var(--signal);color:#fff;border-radius:6px;padding:3px 8px;opacity:0;pointer-events:none}
+.pb-delta.neg{background:var(--moss)}
+.pb-delta.go{animation:delta 1.6s cubic-bezier(.2,.8,.2,1)}
+@keyframes delta{0%{opacity:0;transform:translateY(10px)}15%{opacity:1;transform:none}75%{opacity:1}100%{opacity:0;transform:translateY(-10px)}}
+
+.toast{position:fixed;left:50%;top:80px;transform:translate(-50%,-20px);opacity:0;z-index:90;background:#fffaf0;color:var(--ink);border-radius:12px;padding:12px 16px 12px 14px;max-width:min(520px,calc(100% - 24px));box-shadow:0 0 0 1px var(--line2),0 20px 40px -18px rgba(0,0,0,.5);display:flex;gap:12px;align-items:flex-start;font-size:14px;transition:.35s cubic-bezier(.2,.8,.2,1);pointer-events:none}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast::before{content:"!";flex:none;width:22px;height:22px;border-radius:50%;background:var(--signal);color:#fff;font-weight:800;display:grid;place-items:center;font-size:13px}
+
+/* ---------- summary ---------- */
+.summary{padding:80px 0;background:var(--paper2);border-block:1px solid var(--line)}
+.sum-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:start}
+.sheet{position:relative;background:#fbf7ee;border-radius:6px;padding:30px 32px 28px;box-shadow:0 0 0 1px var(--line2),0 40px 60px -45px rgba(0,0,0,.6);
+  background-image:linear-gradient(transparent 31px,rgba(28,32,27,.05) 32px);background-size:100% 32px}
+.sheet::before,.sheet::after{content:"";position:absolute;left:0;right:0;height:10px;background:radial-gradient(circle at 8px 0,var(--paper2) 6px,transparent 6.5px) 0 0/16px 10px repeat-x}
+.sheet::before{top:-1px}
+.sheet::after{bottom:-1px;transform:scaleY(-1)}
+.sheet-top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;border-bottom:2px solid var(--ink);padding-bottom:14px}
+.sheet-top h3{margin:4px 0 0;font-family:var(--fd);font-size:40px;line-height:1;letter-spacing:.03em}
+.sheet-top .meta{text-align:right;font-family:var(--fm);font-size:11.5px;color:var(--muted);line-height:1.7}
+.sheet-van{margin:10px auto 0;max-width:560px}
+.sheet-rows{margin:6px 0 0;font-size:14.5px}
+.sheet-rows .r{display:grid;grid-template-columns:150px 1fr auto;gap:12px;padding:8px 0;border-bottom:1px dotted var(--line2)}
+.sheet-rows dt{font-family:var(--fm);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding-top:2px}
+.sheet-rows dd{margin:0}
+.sheet-rows .amt{font-family:var(--fm);font-size:13px;text-align:right}
+.sheet-total{display:flex;justify-content:space-between;align-items:baseline;border-top:2px solid var(--ink);margin-top:10px;padding-top:12px}
+.sheet-total span{font-family:var(--fd);font-size:24px;text-transform:uppercase}
+.sheet-total strong{font-family:var(--fd);font-size:52px;line-height:1;letter-spacing:.01em}
+.fine{font-size:12px;color:var(--muted);margin:8px 0 0}
+.sheet-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.stamp{width:96px;height:96px;flex:none;transform:rotate(-12deg);opacity:.85}
+
+.card{background:var(--card);border-radius:18px;padding:24px;box-shadow:0 0 0 1px var(--line2)}
+.card h3{margin:0 0 4px;font-family:var(--fd);font-size:32px;text-transform:uppercase;line-height:1}
+.card .help{color:var(--muted);font-size:14px;margin:0 0 16px}
+.fin-row{margin-bottom:16px}
+.fin-row label{display:flex;justify-content:space-between;font-size:13.5px;font-weight:600;margin-bottom:8px}
+.fin-row label span{font-family:var(--fm);font-weight:600}
+input[type=range]{width:100%;accent-color:var(--signal)}
+.terms{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.terms button{border:1.5px solid var(--line2);background:#fffaf0;border-radius:10px;padding:9px 0 8px;cursor:pointer;font-family:var(--fm);font-size:13px;font-weight:600}
+.terms button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.fin-out{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.fin-out div{background:#fffaf0;border-radius:12px;padding:12px 14px;box-shadow:0 0 0 1px var(--line)}
+.fin-out .k{font-family:var(--fm);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.fin-out .v{font-family:var(--fd);font-size:30px;line-height:1.1;font-weight:700}
+.fin-out .big{grid-column:span 2;background:var(--ink);color:var(--paper)}
+.fin-out .big .k{color:#a9a58f}
+.fin-out .big .v{font-size:46px;color:#ffd9a8}
+.reserve{margin-top:18px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:13px;font-weight:600;margin-bottom:5px}
+.field input,.field select{width:100%;font:inherit;font-size:15px;padding:11px 12px;border-radius:10px;border:1.5px solid var(--line2);background:#fffaf0;color:var(--ink)}
+.field input:focus,.field select:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(224,89,42,.25)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.check{display:flex;gap:9px;align-items:flex-start;font-size:13.5px;color:var(--ink2);margin:6px 0 14px}
+.check input{accent-color:var(--signal);margin-top:3px}
+.reserve .btn{width:100%}
+.ok-box{display:none;text-align:center;padding:10px 0}
+.reserve.done form{display:none}
+.reserve.done .ok-box{display:block;animation:stepIn .5s}
+.ok-box b{font-family:var(--fd);font-size:30px;text-transform:uppercase;display:block;margin:10px 0 4px}
+.err{color:var(--signal2);font-size:12.5px;display:none;margin-top:4px}
+.field.bad .err{display:block}
+.field.bad input{border-color:var(--signal2)}
+
+/* ---------- why / notes / faq ---------- */
+.why-sec{padding:90px 0 70px}
+.feats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:2px solid var(--ink)}
+.feat{padding:22px 22px 10px 0;border-right:1px solid var(--line);margin-right:22px}
+.feat:last-child{border-right:0;margin-right:0}
+.feat .n{font-family:var(--fd);font-size:58px;line-height:1;font-weight:700;color:var(--signal)}
+.feat .n small{font-size:.45em;color:var(--ink)}
+.feat h4{margin:8px 0 6px;font-family:var(--fd);font-size:23px;text-transform:uppercase;letter-spacing:.02em}
+.feat p{margin:0;font-size:14.5px;color:var(--ink2)}
+.notes{padding:20px 0 90px}
+.note-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.note{background:var(--card);border-radius:4px;padding:22px 22px 18px;box-shadow:0 0 0 1px var(--line2),0 20px 40px -34px rgba(0,0,0,.6);position:relative}
+.note:nth-child(1){transform:rotate(-.8deg)} .note:nth-child(2){transform:rotate(.6deg) translateY(10px)} .note:nth-child(3){transform:rotate(-.4deg)}
+.note::before{content:"";position:absolute;top:-10px;left:50%;width:84px;height:22px;transform:translateX(-50%) rotate(-2deg);background:rgba(214,196,158,.75);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.note .co{font-family:var(--fm);font-size:11px;color:var(--signal2);letter-spacing:.08em}
+.note q{display:block;font-family:var(--fs);font-style:italic;font-size:20px;line-height:1.35;margin:10px 0 14px;quotes:"“" "”"}
+.note .by{font-size:13px;color:var(--muted)}
+.note .by b{color:var(--ink)}
+.faq{padding:0 0 100px}
+.faq-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:40px}
+details{border-top:1px solid var(--line2);padding:16px 0}
+details:last-child{border-bottom:1px solid var(--line2)}
+summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:20px;font-family:var(--fd);font-size:24px;text-transform:uppercase;letter-spacing:.02em;line-height:1.1}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-family:var(--fm);font-size:20px;color:var(--signal);transition:transform .3s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{margin:10px 0 0;color:var(--ink2);max-width:640px}
+footer{background:var(--ink);color:#d9d2bf;padding:60px 0 120px;position:relative;overflow:hidden}
+footer .topo path{stroke:#efe7d6;stroke-opacity:.06}
+.foot-grid{position:relative;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:30px}
+.foot-big{font-family:var(--fd);font-size:clamp(56px,9vw,128px);line-height:.85;text-transform:uppercase;color:var(--paper);margin:0 0 40px;position:relative}
+.foot-big em{font-family:var(--fs);font-weight:400;color:var(--signal);text-transform:none}
+footer h5{font-family:var(--fm);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8f8b77;margin:0 0 12px;font-weight:500}
+footer ul{list-style:none;margin:0;padding:0;font-size:14px;line-height:2}
+footer a{text-decoration:none}
+footer a:hover{color:var(--signal)}
+.legal{position:relative;margin-top:40px;padding-top:18px;border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-family:var(--fm);font-size:11px;letter-spacing:.06em;color:#8f8b77}
+
+/* ---------- svg parts ---------- */
+.van{width:100%;height:auto;overflow:visible}
+.van .paint{fill:var(--paint);transition:fill .7s ease}
+.van .paint-s{stroke:var(--paint);transition:stroke .7s ease}
+.van .fin,.plan .fin{fill:var(--finish);transition:fill .6s ease}
+.van .rimc{fill:var(--rim);transition:fill .5s}
+.van .decal{stroke:var(--decal);transition:stroke .7s}
+.van .decal-t{fill:var(--decal);transition:fill .7s}
+.plan .paint{fill:var(--paint);transition:fill .7s ease}
+.svg-d{font-family:var(--fd);font-weight:700}
+.svg-m{font-family:var(--fm)}
+[data-show]{transition:opacity .45s ease,transform .6s cubic-bezier(.2,.9,.25,1.25)}
+[data-show].off{opacity:0;pointer-events:none}
+[data-show].drop.off{transform:translateY(-16px)}
+[data-pos]{transition:transform .8s cubic-bezier(.3,.75,.2,1)}
+.scenery .night,.scenery .stars{opacity:0;transition:opacity .9s ease}
+.camp .scenery .night{opacity:.66}
+.camp .scenery .stars{opacity:1}
+.scenery .sun{transition:transform 1.2s cubic-bezier(.3,.7,.2,1),opacity 1s}
+.camp .scenery .sun{transform:translateY(160px);opacity:0}
+
+@media (max-width:1100px){
+  .specs{grid-template-columns:repeat(3,1fr)}
+  .spec:nth-child(3){border-right:0}
+  .spec:nth-child(-n+3){border-bottom:1px solid var(--line)}
+  .feats{grid-template-columns:1fr 1fr}
+  .feat:nth-child(2){border-right:0;margin-right:0}
+}
+@media (max-width:980px){
+  .nav{display:none}
+  .top .btn{margin-left:auto}
+  .hero-grid{grid-template-columns:1fr;gap:18px}
+  .stamp-badge{width:96px;height:96px;top:-30px}
+  .cfg-grid{grid-template-columns:1fr;gap:16px;padding:0 14px}
+  .stage-col{top:64px;z-index:20;background:var(--paper);padding-top:8px;margin-top:-8px}
+  .stage{aspect-ratio:16/9.5;min-height:0;border-radius:14px}
+  .stage .van-wrap{left:7%;right:7%}
+  .specs{display:flex;overflow-x:auto;margin-top:8px;border-radius:10px;scrollbar-width:none}
+  .specs::-webkit-scrollbar{display:none}
+  .spec{flex:none;min-width:118px;padding:7px 12px;border-bottom:0!important;border-right:1px solid var(--line)!important}
+  .spec .v{font-size:20px}
+  .spec .s,.spec .meter{display:none}
+  .sum-grid,.faq-grid{grid-template-columns:1fr}
+  .note-grid{grid-template-columns:1fr}
+  .foot-grid{grid-template-columns:1fr 1fr}
+  .pricebar{grid-template-columns:1fr auto;gap:12px;padding:10px 10px 10px 16px;bottom:10px}
+  .pb-build,.pb-month,.hide-s{display:none}
+  .hero-scene .van-wrap{width:88%}
+  .pricebar .pb-total{text-align:left}
+  .pb-num{font-size:30px}
+  .pb-delta{left:0;right:auto}
+}
+@media (max-width:560px){
+  .wrap{padding:0 16px}
+  .stepper .val{display:none}
+  .stepper .l{font-size:14px}
+  .stepper button{padding:9px 6px}
+  .swatches{grid-template-columns:repeat(3,1fr)}
+  .swatch .ball{width:42px;height:42px}
+  .layouts{grid-template-columns:1fr}
+  .sheet{padding:24px 18px}
+  .sheet-rows .r{grid-template-columns:1fr auto}
+  .sheet-rows dt{grid-column:1 / 3}
+  .sec-num{font-size:64px}
+  .feats{grid-template-columns:1fr}
+  .feat{border-right:0;margin-right:0;border-bottom:1px solid var(--line)}
+  .stage-ui .seg button{padding:6px 10px 5px;font-size:12px}
+  .camp-t{font-size:0;gap:0;padding:7px}
+  .stage-tag{display:none}
+  .two{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+@media print{
+  .top,.hero,.strip,.config,.why-sec,.notes,.faq,footer,.pricebar,.side,.sheet-actions,.toast,body::before{display:none!important}
+  .summary{padding:0;background:#fff}
+  .sum-grid{display:block}
+  .sec-head{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Longway Vanworks home">
+      <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="#1c201b"/><path d="M6.5 27 L15.5 14.5 L20.5 20.5 L24.5 15.5 L33.5 27 Z" fill="#efe7d6"/><path d="M13.5 17.3 L15.5 14.5 L17.6 17 L16 16.4 Z" fill="#1c201b" opacity=".35"/><path d="M14 33 Q19 27.5 27 28.5" fill="none" stroke="#e0592a" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="3 2.6"/></svg>
+      <span><b>LONGWAY</b><small>VANWORKS</small></span>
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <a href="#configure">Configure</a>
+      <a href="#summary">Pricing &amp; finance</a>
+      <a href="#why">Why Longway</a>
+      <a href="#notes">Field notes</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="btn btn-ink" href="#configure">Build yours</a>
+  </div>
+</header>
+
+<main>
+<section class="hero" id="top">
+  <svg class="topo" id="heroTopo" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
+  <div class="wrap hero-grid">
+    <div>
+      <p class="eyebrow mono"><span class="dot"></span>2027 build slots open · 54.33° N, 2.75° W</p>
+      <h1>Take the<br><em>long way.</em></h1>
+    </div>
+    <div class="hero-side">
+      <p class="lede">Adventure campers handbuilt from bare metal in Kendal, Cumbria. Choose every panel, berth and bolt-on, and see exactly what it costs before you speak to anyone.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#configure">Configure &amp; price <span aria-hidden="true">→</span></a>
+        <a class="btn btn-ghost" href="#presets">Start from a preset</a>
+      </div>
+      <div class="from"><span>FROM</span><strong id="heroFrom">£58,950</strong><span>· 14-WEEK BUILD</span></div>
+    </div>
+  </div>
+  <div class="hero-scene spin" id="heroScene" aria-hidden="true">
+    <svg class="stamp-badge" viewBox="0 0 120 120">
+      <defs><path id="circ" d="M60 60 m-44 0 a44 44 0 1 1 88 0 a44 44 0 1 1 -88 0"/></defs>
+      <circle cx="60" cy="60" r="57" fill="#e0592a"/>
+      <g class="ring"><text font-family="ui-monospace,Menlo,monospace" font-size="9.6" letter-spacing="2.4" fill="#fff8ec"><textPath href="#circ">HANDBUILT IN KENDAL · CUMBRIA · EST. 2016 ·</textPath></text></g>
+      <path d="M40 72 L53 52 L60 61 L66 54 L80 72 Z" fill="#fff8ec"/>
+    </svg>
+  </div>
+</section>
+
+<div class="strip" aria-hidden="true"><div class="marquee" id="marquee"></div></div>
+
+<section class="config" id="configure" aria-labelledby="cfgTitle">
+  <div class="wrap">
+    <header class="sec-head">
+      <span class="sec-num">01</span>
+      <h2 id="cfgTitle">Build your Longway</h2>
+      <p>Six decisions, one honest price. Every choice redraws the van and recalculates price, payload, power and handover date as you go.</p>
+    </header>
+    <div class="presets" id="presets"><span class="mono">Start from →</span></div>
+  </div>
+
+  <div class="cfg-grid">
+    <div class="stage-col">
+      <div class="stage" id="stage" data-view="ext">
+        <div class="stage-side" id="stageSide"></div>
+        <div class="stage-plan" id="stagePlan"></div>
+        <div class="stage-ui">
+          <div class="seg" role="group" aria-label="View">
+            <button type="button" data-view="ext" aria-pressed="true">Exterior</button>
+            <button type="button" data-view="int" aria-pressed="false">Cutaway</button>
+            <button type="button" data-view="plan" aria-pressed="false">Floor plan</button>
+          </div>
+          <button type="button" class="camp-t" id="campBtn" aria-pressed="false" aria-label="Camp mode"><span class="sw"></span>Camp mode</button>
+        </div>
+        <div class="stage-tag" id="stageTag"></div>
+        <div class="hint" id="hint"></div>
+      </div>
+      <div class="specs" id="specs">
+        <div class="spec"><span class="k">Sleeps</span><span class="v" id="spSleeps">2</span><span class="s" id="spSleepsS">adults</span></div>
+        <div class="spec"><span class="k">Belted seats</span><span class="v" id="spSeats">2</span><span class="s">incl. driver</span></div>
+        <div class="spec"><span class="k">Standing room</span><span class="v" id="spHead">1.62 m</span><span class="s" id="spHeadS">interior</span></div>
+        <div class="spec"><span class="k">Overall height</span><span class="v" id="spHeight">2.38 m</span><span class="s" id="spHeightS"></span></div>
+        <div class="spec"><span class="k">Payload left</span><span class="v" id="spPayload">—</span><div class="meter"><i id="spPayloadM"></i></div></div>
+        <div class="spec"><span class="k">Off-grid</span><span class="v" id="spGrid">—</span><span class="s" id="spGridS"></span></div>
+      </div>
+    </div>
+
+    <div class="panel-col">
+      <div class="panel" id="panel">
+        <nav class="stepper" id="stepper" aria-label="Configurator steps"></nav>
+        <div id="steps"></div>
+        <div class="panel-foot">
+          <button type="button" class="linkbtn" id="prevBtn">← Back</button>
+          <button type="button" class="btn btn-ink btn-sm" id="nextBtn">Next</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="summary" id="summary" aria-labelledby="sumTitle">
+  <div class="wrap">
+    <header class="sec-head">
+      <span class="sec-num">02</span>
+      <h2 id="sumTitle">Your build sheet</h2>
+      <p>This is the price we build to. Lock it in with a fully refundable £1,000 deposit — no payment until your build slot is confirmed.</p>
+    </header>
+    <div class="sum-grid">
+      <article class="sheet" aria-label="Build sheet">
+        <div class="sheet-top">
+          <div><span class="mono">Build sheet · V-Series 5.9 m</span><h3 id="sheetCode">LW-00000</h3></div>
+          <div class="meta" id="sheetMeta"></div>
+        </div>
+        <div class="sheet-van" id="sheetVan"></div>
+        <dl class="sheet-rows" id="sheetRows"></dl>
+        <div class="sheet-total"><span>Total price</span><strong id="sheetTotal">£0</strong></div>
+        <p class="fine">Includes VAT, build, PDI, 12-month habitation service and handover at our Kendal workshop. Excludes first registration fee and delivery.</p>
+        <div class="sheet-actions">
+          <button class="btn btn-ink btn-sm" type="button" id="copyBtn">Copy share link</button>
+          <button class="btn btn-ghost btn-sm" type="button" id="printBtn">Print / save PDF</button>
+          <a class="btn btn-ghost btn-sm" href="#configure">Edit build</a>
+        </div>
+      </article>
+
+      <div class="side">
+        <div class="card">
+          <h3>Finance it</h3>
+          <p class="help">Representative hire-purchase example at 7.9% APR. Adjust to see your monthly.</p>
+          <div class="fin-row">
+            <label for="dep">Deposit <span id="depOut">20% · £0</span></label>
+            <input type="range" id="dep" min="10" max="60" step="5" value="20">
+          </div>
+          <div class="fin-row">
+            <label>Term</label>
+            <div class="terms" id="terms" role="group" aria-label="Finance term">
+              <button type="button" data-m="36" aria-pressed="false">36 mo</button>
+              <button type="button" data-m="60" aria-pressed="false">60 mo</button>
+              <button type="button" data-m="84" aria-pressed="true">84 mo</button>
+              <button type="button" data-m="120" aria-pressed="false">120 mo</button>
+            </div>
+          </div>
+          <div class="fin-out">
+            <div class="big"><span class="k">Monthly payment</span><div class="v" id="finMonthly">£0</div></div>
+            <div><span class="k">Amount financed</span><div class="v" id="finAmt">£0</div></div>
+            <div><span class="k">Total payable</span><div class="v" id="finTotal">£0</div></div>
+          </div>
+        </div>
+
+        <div class="card reserve" id="reserve">
+          <form id="resForm" novalidate>
+            <h3>Reserve a build slot</h3>
+            <p class="help">Next open slot: <b id="slotDate">—</b>. £1,000 refundable deposit, taken only once we confirm.</p>
+            <div class="field"><label for="fName">Full name</label><input id="fName" autocomplete="name" required><span class="err">Tell us who to build for.</span></div>
+            <div class="field"><label for="fEmail">Email</label><input id="fEmail" type="email" autocomplete="email" required><span class="err">We need a valid email to send your build sheet.</span></div>
+            <div class="two">
+              <div class="field"><label for="fPost">Postcode</label><input id="fPost" autocomplete="postal-code"></div>
+              <div class="field"><label for="fHand">Handover</label><select id="fHand"><option>Kendal workshop</option><option>Bristol showroom</option><option>Delivered (quoted)</option></select></div>
+            </div>
+            <label class="check"><input type="checkbox" id="fTrade"> I have a vehicle to part-exchange</label>
+            <button class="btn btn-primary" type="submit">Reserve this build <span aria-hidden="true">→</span></button>
+          </form>
+          <div class="ok-box" aria-live="polite">
+            <svg width="64" height="64" viewBox="0 0 64 64" style="margin:0 auto"><circle cx="32" cy="32" r="30" fill="#55603e"/><path d="M19 33 L28 42 L46 23" fill="none" stroke="#fff8ec" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <b>Slot requested</b>
+            <p class="help" id="okText"></p>
+            <button class="linkbtn" type="button" id="resetRes">Make another request</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="why-sec" id="why">
+  <div class="wrap">
+    <header class="sec-head"><span class="sec-num">03</span><h2>Built, not bolted on</h2><p>Every Longway starts as a bare panel van and leaves as a four-season home. Here’s what you get before you tick a single box.</p></header>
+    <div class="feats">
+      <div class="feat"><div class="n">−20<small>°C</small></div><h4>Four-season shell</h4><p>Closed-cell insulation, thermal-break floor and double-glazed bonded windows as standard.</p></div>
+      <div class="feat"><div class="n">5<small>yr</small></div><h4>Build warranty</h4><p>Five years on our conversion, three on the chassis. Water ingress covered for life.</p></div>
+      <div class="feat"><div class="n">140<small>+</small></div><h4>Service partners</h4><p>Habitation and chassis service across the UK and Europe, with roadside cover year one.</p></div>
+      <div class="feat"><div class="n">0<small>surprises</small></div><h4>Price you can see</h4><p>The number in the configurator is the number on your invoice. No “dealer prep”, ever.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="notes" id="notes">
+  <div class="wrap">
+    <header class="sec-head"><span class="sec-num">04</span><h2>Field notes</h2><p>Postcards from owners, wherever the long way took them.</p></header>
+    <div class="note-grid">
+      <figure class="note" style="margin:0"><span class="co">68.42° N · LOFOTEN</span><q>Three weeks of sideways rain and we never once felt damp. The heater and the pop-top bed earned their keep.</q><figcaption class="by"><b>Ines &amp; Marc</b> · Fjord Blue, Pop-Top, Social</figcaption></figure>
+      <figure class="note" style="margin:0"><span class="co">31.04° N · ATLAS MOUNTAINS</span><q>Low range, lockers and the AT tyres got us up a track the hire 4×4s turned back on.</q><figcaption class="by"><b>Sam O.</b> · Ochre Dune, High-Top, Expedition 4×4</figcaption></figure>
+      <figure class="note" style="margin:0"><span class="co">57.27° N · ISLE OF SKYE</span><q>Two kids in the bunks, the dog under the bench, and the configurator price was exactly what we paid.</q><figcaption class="by"><b>The Achebes</b> · Lichen Green, Basecamp</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section class="faq" id="faq">
+  <div class="wrap faq-grid">
+    <header class="sec-head" style="display:block"><h2>Questions,<br>answered</h2><p style="margin-top:12px">Still wondering? Ring the workshop on 01539 000 210 — you’ll speak to a builder, not a salesperson.</p></header>
+    <div>
+      <details open><summary>Is the configurator price final?</summary><p>Yes. It includes VAT, the conversion, pre-delivery inspection and your first habitation service. The only extras are first registration and delivery if you don’t collect.</p></details>
+      <details><summary>Can I change my build after reserving?</summary><p>Up to six weeks before your build slot, you can change anything. Your price simply updates to whatever the configurator shows.</p></details>
+      <details><summary>What does the deposit do?</summary><p>It holds your build slot and locks today’s pricing for 90 days. It’s fully refundable until we order your chassis.</p></details>
+      <details><summary>Why can’t I put a roof rack on a pop-top?</summary><p>The pop-top lid has to lift freely, so we mount solar flush to the lid instead. Choose the high-top if you need rack space and a fixed tall roof.</p></details>
+      <details><summary>Do you take part-exchange?</summary><p>We do — tick the box when you reserve and we’ll send a valuation within two working days.</p></details>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <svg class="topo" id="footTopo" viewBox="0 0 1600 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
+  <div class="wrap">
+    <p class="foot-big">The road’s<br>the <em>point.</em></p>
+    <div class="foot-grid">
+      <div><h5>Workshop</h5><ul><li>Unit 4, Mintsfeet Road</li><li>Kendal, Cumbria</li><li>Mon–Sat · 8:00–17:30</li></ul></div>
+      <div><h5>Build</h5><ul><li><a href="#configure">Configurator</a></li><li><a href="#presets">Presets</a></li><li><a href="#summary">Finance</a></li></ul></div>
+      <div><h5>Own</h5><ul><li><a href="#why">Warranty</a></li><li><a href="#why">Service partners</a></li><li><a href="#notes">Owners’ club</a></li></ul></div>
+      <div><h5>Talk</h5><ul><li><a href="#faq">FAQ</a></li><li><a href="#summary">Book a test drive</a></li><li><a href="#faq">01539 000 210</a></li></ul></div>
+    </div>
+    <div class="legal"><span>© 2026 Longway Vanworks Ltd</span><span>Prices shown are for illustration in this demo site · Finance subject to status</span></div>
+  </div>
+</footer>
+
+<div class="pricebar" id="pricebar">
+  <div class="pb-build"><span class="pb-k">Your build</span><span class="pb-name" id="pbName"></span></div>
+  <div class="pb-month"><span class="pb-k">From / month</span><b id="pbMonthly">£0</b></div>
+  <div class="pb-total"><span class="pb-k">Total price</span><span class="pb-num" id="pbTotal">£0</span><span class="pb-delta" id="pbDelta"></span></div>
+  <a class="btn btn-primary" href="#summary">Review<span class="hide-s">&nbsp;&amp; reserve</span></a>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<div class="sr" aria-live="polite" id="live"></div>
+
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const money = n => '£' + Math.round(n).toLocaleString('en-GB');
+const plus = n => n === 0 ? 'Included' : '+' + money(n);
+
+/* =============================== CATALOGUE =============================== */
+const BASE = { price: 58950, curb: 2650, gvwr: 3880 };
+const COLORS = [
+  { id:'basalt',  name:'Basalt Grey',   hex:'#4a4e4f', decal:'#e7dfcb', price:0,    kind:'Solid' },
+  { id:'glacier', name:'Glacier White', hex:'#e8e5dc', decal:'#55603e', price:0,    kind:'Solid' },
+  { id:'lichen',  name:'Lichen Green',  hex:'#7b8a5c', decal:'#f0e7d2', price:950,  kind:'Metallic' },
+  { id:'fjord',   name:'Fjord Blue',    hex:'#3e6074', decal:'#f0e7d2', price:950,  kind:'Metallic' },
+  { id:'ochre',   name:'Ochre Dune',    hex:'#c58940', decal:'#2a2a22', price:950,  kind:'Metallic' },
+  { id:'ember',   name:'Ember Rust',    hex:'#a4482b', decal:'#f2e4cb', price:1450, kind:'Matte ceramic' },
+];
+const ROOFS = [
+  { id:'low',  name:'Stealth Low Roof', short:'Low roof', price:0,    w:0,   desc:'The factory roof. Lowest height, quietest on the motorway and invisible in town.', tags:['1.62 m standing','Under 2.5 m'] },
+  { id:'pop',  name:'Pop-Top Sleeper',  short:'Pop-top',  price:5450, w:85,  desc:'Gas-strut lifting roof with a 2.0 × 1.2 m upstairs bed and three mesh windows.', tags:['+2 berths','2.15 m when raised'] },
+  { id:'high', name:'Composite High-Top', short:'High-top', price:7650, w:120, desc:'Insulated fixed high roof with skylight and full-height overhead lockers.', tags:['1.92 m standing','Rack-ready','4-season'] },
+];
+const DRIVES = [
+  { id:'rwd', name:'Trail RWD',      short:'RWD', price:0,     w:0,   desc:'2.0 L diesel, 170 hp, 9-speed auto. Efficient, refined and road-trip ready.', tags:['38 mpg','Hill-descent'] },
+  { id:'awd', name:'All-Road AWD',   short:'AWD', price:6200,  w:70,  desc:'On-demand all-wheel drive for snow, forest tracks and wet slipways.', tags:['Auto torque split','Snow mode'] },
+  { id:'x4',  name:'Expedition 4×4', short:'4×4', price:12900, w:140, desc:'Low-range transfer box, rear diff lock, 50 mm lift, flares and steel skid plates.', tags:['Low range','+50 mm lift','Diff lock'] },
+];
+const LAYOUTS = [
+  { id:'nomad',    name:'Nomad',    sub:'Rear bed + long galley', price:0,    sleeps:2, seats:2, w:260, desc:'Fixed 1.95 m rear bed over a bike-sized gear garage, long galley and 90 L fridge.' },
+  { id:'social',   name:'Social',   sub:'Dinette for four',       price:2750, sleeps:2, seats:4, w:290, desc:'Face-to-face dinette with a belted forward bench. Makes up into a 1.90 m bed.' },
+  { id:'basecamp', name:'Basecamp', sub:'Bunks for the crew',     price:4800, sleeps:4, seats:4, w:340, desc:'Stacked rear bunks plus a belted rock-and-roll bench. Needs a pop-top or high-top.' },
+  { id:'workshop', name:'Workshop', sub:'Desk + lift bed',        price:2100, sleeps:2, seats:3, w:250, desc:'Electric lift bed over a tall gear garage, a proper desk and compact galley.' },
+];
+const FINISHES = [
+  { id:'birch',  name:'Baltic Birch',  hex:'#d8b98b', price:0,    w:0 },
+  { id:'walnut', name:'Smoked Walnut', hex:'#6e4b33', price:1250, w:15 },
+  { id:'sage',   name:'Sage Laminate', hex:'#9aa78b', price:750,  w:0 },
+];
+const ADDONS = [
+  { id:'rack',     g:'Roof & exterior', name:'Expedition roof rack', price:1495, w:48, desc:'Low-profile alloy platform with two recovery boards and a lockable gear case.' },
+  { id:'awning',   g:'Roof & exterior', name:'3.2 m side awning',     price:1150, w:24, desc:'Wind-rated cassette awning over the sliding door. Deploys in under a minute.' },
+  { id:'ladder',   g:'Roof & exterior', name:'Rear door ladder',      price:595,  w:9,  desc:'Folding stainless ladder with roof grab handle.' },
+  { id:'lightbar', g:'Roof & exterior', name:'LED light bar',         price:420,  w:4,  desc:'102 cm combo-beam bar on the roof leading edge. Road-legal cover included.' },
+  { id:'at',       g:'Trail',           name:'All-terrain tyres',     price:1380, w:22, desc:'3PMSF-rated AT tyres, one size up, with reinforced sidewalls.' },
+  { id:'carrier',  g:'Trail',           name:'Swing-out rear carrier', price:1640, w:62, desc:'Carries a full-size spare and two 20 L jerry cans clear of the rear doors.' },
+  { id:'snorkel',  g:'Trail',           name:'Raised air intake',     price:620,  w:5,  desc:'A-pillar snorkel for dusty tracks and 600 mm wading.' },
+  { id:'solar',    g:'Off-grid power',  name:'400 W solar array',     price:2150, w:28, desc:'Two mono panels with MPPT controller. Flush-mounted to roof or pop-top lid.' },
+  { id:'lithium',  g:'Off-grid power',  name:'300 Ah lithium + inverter', price:3350, w:32, desc:'Triples the house battery to 3.6 kWh usable, with a 3 kW pure-sine inverter.' },
+  { id:'heater',   g:'Comfort',         name:'Diesel air heater',     price:1590, w:9,  desc:'4 kW thermostatic heater with altitude kit. Warm by morning at −15 °C.' },
+  { id:'shower',   g:'Comfort',         name:'Hot outdoor shower',    price:560,  w:6,  desc:'Rear-mounted mixer with 3 m hose, fed from the 90 L fresh tank.' },
+];
+const PRESETS = [
+  { name:'Weekender',      note:'from the coast to the crag', cfg:{ color:'fjord',  roof:'pop',  drive:'rwd', layout:'nomad',    finish:'birch',  addons:['awning','solar'] } },
+  { name:'Overlander',     note:'the long, long way',          cfg:{ color:'ochre',  roof:'high', drive:'x4',  layout:'nomad',    finish:'walnut', addons:['rack','solar','lithium','ladder','carrier','at','lightbar','snorkel','heater','awning'] } },
+  { name:'Family Basecamp',note:'four berths, one dog',        cfg:{ color:'lichen', roof:'pop',  drive:'awd', layout:'basecamp', finish:'birch',  addons:['awning','solar','lithium','heater','shower'] } },
+  { name:'Remote Office',  note:'Wi-Fi optional',              cfg:{ color:'basalt', roof:'high', drive:'awd', layout:'workshop', finish:'sage',   addons:['solar','lithium','heater','rack','ladder'] } },
+];
+const byId = (arr, id) => arr.find(o => o.id === id);
+const UPH = '#4f5a50', CUSH = '#c3683f';
+
+/* =============================== STATE =============================== */
+const state = { color:'basalt', roof:'low', drive:'rwd', layout:'nomad', finish:'birch', addons:new Set(), view:'ext', camp:false, step:0 };
+const fin = { dep:20, term:84, apr:7.9 };
+
+/* =============================== GEOMETRY =============================== */
+const BODY = 'M150 372 L150 190 Q150 166 174 166 L610 166 Q628 166 640 177 L716 251 Q723 258 734 260 L820 276 Q845 281 848 302 L853 352 Q854 380 834 380 L791 380 A58 58 0 0 0 679 380 L346 380 A58 58 0 0 0 234 380 L160 380 Q150 380 150 372 Z';
+const HIGH = 'M166 168 L166 120 Q166 100 188 100 L548 100 Q578 100 600 124 L636 168 Z';
+const LID  = 'M168 166 L168 158 Q168 152 176 152 L598 152 Q610 152 616 159 L621 166 Z';
+const TENT = 'M172 166 L604 166 L604 161 L172 76 Z';
+const I_LOW = 'M162 192 Q162 178 176 178 L588 178 L588 364 L162 364 Z';
+const I_HIGH = 'M162 126 Q162 112 176 112 L546 112 Q570 112 588 140 L588 364 L162 364 Z';
+const I_TENT = 'M174 179 L174 84 L602 163 L602 179 Z';
+
+const glassFill = u => `url(#${u}-glass)`;
+
+function galley(x, w) {
+  return `
+  <rect class="fin" x="${x}" y="292" width="${w}" height="66"/>
+  <path d="M${x + 6} 300 H${x + w - 46} M${x + 6} 322 H${x + w - 46}" stroke="rgba(0,0,0,.16)" stroke-width="1.5"/>
+  <path d="M${x + (w - 40) / 2} 322 V354" stroke="rgba(0,0,0,.16)" stroke-width="1.5"/>
+  <rect x="${x + 10}" y="309" width="16" height="3" rx="1.5" fill="rgba(0,0,0,.35)"/>
+  <rect x="${x + w - 40}" y="298" width="34" height="54" rx="3" fill="#dcd8cf" stroke="rgba(0,0,0,.18)"/>
+  <rect x="${x + w - 12}" y="306" width="3" height="18" rx="1.5" fill="#8b887f"/>
+  <rect x="${x - 4}" y="285" width="${w + 8}" height="8" rx="2" fill="#34352f"/>
+  <path d="M${x + 18} 285 V270 Q${x + 18} 263 ${x + 26} 263 H${x + 32}" fill="none" stroke="#a9a69c" stroke-width="3" stroke-linecap="round"/>
+  <rect x="${x + w - 46}" y="280" width="32" height="5" rx="1.5" fill="#1d1d1b"/>`;
+}
+const mattress = (x, y, w) => `<rect x="${x}" y="${y}" width="${w}" height="19" rx="7" fill="#f2ede2" stroke="#d3c8b2"/>`;
+
+function vanSVG(u) {
+  const wheel = (id, x) => `
+  <g data-pos="${id}" style="transform:translate(${x}px,394px) scale(1)">
+    <g data-show="!addon:at"><circle r="46" fill="#1b1c1a"/><circle r="40" fill="none" stroke="#2d2e2a" stroke-width="3"/></g>
+    <g data-show="addon:at"><circle r="46" fill="#1b1c1a"/><circle r="43" fill="none" stroke="#35362f" stroke-width="7" stroke-dasharray="6.5 4.8"/><circle r="35" fill="none" stroke="#2b2c28" stroke-width="2"/></g>
+    <g class="rim">
+      <circle r="27" class="rimc"/><circle r="27" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="2"/>
+      ${[0, 60, 120, 180, 240, 300].map(a => { const r = a * Math.PI / 180, cx = (Math.cos(r) * 16.5).toFixed(1), cy = (Math.sin(r) * 16.5).toFixed(1); return `<ellipse cx="${cx}" cy="${cy}" rx="4.6" ry="7" transform="rotate(${a + 90} ${cx} ${cy})" fill="rgba(0,0,0,.42)"/>`; }).join('')}
+      <circle r="7.5" fill="#85827a"/><circle r="2.6" fill="#2a2a28"/>
+    </g>
+  </g>`;
+  const rungs = (y0, y1, x0, x1) => { let s = ''; for (let y = y0; y <= y1; y += 22) s += `M${x0} ${y} H${x1} `; return s; };
+  return `
+<svg class="van" viewBox="70 30 860 440" role="img" aria-label="Camper van preview">
+<defs>
+  <linearGradient id="${u}-shade" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#fff" stop-opacity=".30"/><stop offset=".16" stop-color="#fff" stop-opacity=".07"/>
+    <stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".30"/>
+  </linearGradient>
+  <linearGradient id="${u}-glass" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#4c5d68"/><stop offset=".45" stop-color="#26323b"/><stop offset=".46" stop-color="#2f3d47"/><stop offset="1" stop-color="#1a232a"/>
+  </linearGradient>
+  <linearGradient id="${u}-glow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe3a3"/><stop offset="1" stop-color="#f39a3c"/></linearGradient>
+  <linearGradient id="${u}-beam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff6d8" stop-opacity=".85"/><stop offset="1" stop-color="#fff6d8" stop-opacity="0"/></linearGradient>
+  <radialGradient id="${u}-lamp"><stop offset="0" stop-color="#ffd27a" stop-opacity=".9"/><stop offset="1" stop-color="#ffb347" stop-opacity="0"/></radialGradient>
+  <pattern id="${u}-stripe" width="24" height="10" patternUnits="userSpaceOnUse"><rect width="12" height="10" fill="#efe6d2"/><rect x="12" width="12" height="10" fill="#55603e"/></pattern>
+  <pattern id="${u}-slat" width="20" height="10" patternUnits="userSpaceOnUse"><path d="M0 0 V10" stroke="rgba(0,0,0,.05)" stroke-width="1.5"/></pattern>
+  <clipPath id="${u}-bc"><path d="${BODY}"/></clipPath>
+  <clipPath id="${u}-hc"><path d="${HIGH}"/></clipPath>
+  <clipPath id="${u}-ic">
+    <path d="${I_LOW}" data-show="roof:low|pop"/>
+    <path d="${I_HIGH}" data-show="roof:high"/>
+    <path d="${I_TENT}" data-show="roof:pop"/>
+  </clipPath>
+  <filter id="${u}-soft" x="-20%" y="-200%" width="140%" height="500%"><feGaussianBlur stdDeviation="7"/></filter>
+</defs>
+
+<ellipse cx="500" cy="441" rx="390" ry="9" fill="rgba(20,22,18,.35)" filter="url(#${u}-soft)"/>
+<g data-show="camp&addon:awning"><path d="M190 446 L600 446 L640 470 L150 470 Z" fill="rgba(20,22,18,.18)"/></g>
+<g data-show="camp&addon:lightbar"><ellipse cx="880" cy="446" rx="90" ry="10" fill="#ffe9b0" opacity=".35" filter="url(#${u}-soft)"/></g>
+
+<!-- wheel wells -->
+<g data-pos="body"><path d="M791 380 A58 58 0 0 0 679 380 Z" fill="#121311"/><path d="M346 380 A58 58 0 0 0 234 380 Z" fill="#121311"/></g>
+
+${wheel('wr', 290)}
+${wheel('wf', 735)}
+
+<g data-pos="body"><g class="bob">
+  <!-- rear carrier (behind body) -->
+  <g data-show="addon:carrier" class="drop">
+    <rect x="128" y="200" width="7" height="176" rx="2" fill="#24261f"/>
+    <rect x="128" y="366" width="26" height="9" rx="2" fill="#24261f"/>
+    <rect x="102" y="262" width="27" height="104" rx="11" fill="#1b1c1a"/>
+    <path d="M106 272 V356 M115 268 V360 M124 272 V356" stroke="#33342f" stroke-width="3" stroke-dasharray="5 4"/>
+    <rect x="104" y="204" width="24" height="54" rx="3" fill="#5b6640"/>
+    <path d="M108 214 L124 246 M124 214 L108 246" stroke="rgba(0,0,0,.25)" stroke-width="2"/>
+    <rect x="108" y="198" width="12" height="7" rx="2" fill="#3d4430"/>
+  </g>
+
+  <!-- body -->
+  <path class="paint" d="${BODY}"/>
+  <g data-show="roof:high">
+    <path class="paint" d="${HIGH}"/>
+    <g clip-path="url(#${u}-hc)"><rect x="160" y="100" width="480" height="70" fill="url(#${u}-shade)"/><rect data-show="camp" x="160" y="96" width="480" height="80" fill="#14193a" opacity=".38"/></g>
+    <path d="M166 168 H636" stroke="rgba(0,0,0,.35)" stroke-width="1.5"/>
+    <path d="${HIGH}" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="1.5"/>
+    <rect x="232" y="112" width="250" height="17" rx="7" fill="${glassFill(u)}"/>
+    <rect data-show="camp" x="232" y="112" width="250" height="17" rx="7" fill="url(#${u}-glow)"/>
+  </g>
+  <g clip-path="url(#${u}-bc)">
+    <g fill="none" stroke-width="2" class="decal" opacity=".6">
+      <path d="M140 322 C 260 310, 360 336, 480 322 S 700 312, 870 330"/>
+      <path d="M140 332 C 260 320, 370 346, 490 332 S 700 324, 870 340"/>
+      <path d="M140 342 C 250 332, 380 354, 500 342 S 710 336, 870 350"/>
+    </g>
+    <text x="198" y="294" class="svg-d decal-t" font-size="25" letter-spacing="5">LONGWAY</text>
+    <text x="199" y="309" class="svg-m decal-t" font-size="8.5" letter-spacing="2.6" data-text="badge">V-SERIES · RWD</text>
+    <rect x="130" y="354" width="740" height="40" fill="#24261f"/>
+    <rect x="140" y="160" width="730" height="230" fill="url(#${u}-shade)"/>
+    <rect data-show="camp" x="130" y="150" width="740" height="250" fill="#14193a" opacity=".38"/>
+  </g>
+  <path d="M791 380 A58 58 0 0 0 679 380 M346 380 A58 58 0 0 0 234 380" fill="none" stroke="#24261f" stroke-width="7"/>
+
+  <!-- seams, glass, lights -->
+  <g fill="none" stroke="rgba(0,0,0,.3)" stroke-width="1.5">
+    <path d="M396 172 V374 M578 172 V374 M584 172 V374 M718 258 L721 334 M158 176 V374"/>
+    <path d="M160 258 H396" stroke="rgba(0,0,0,.22)"/>
+    <path d="M736 262 Q790 270 846 292" stroke="rgba(255,255,255,.22)"/>
+  </g>
+  <path d="M592 186 L628 186 L690 248 Q693 253 686 253 L598 253 Q592 253 592 247 Z" fill="${glassFill(u)}"/>
+  <path d="M606 253 L606 216 Q606 206 616 206 L626 206 Q634 206 634 216 L634 253 Z" fill="#161a17" opacity=".75"/>
+  <rect x="424" y="190" width="136" height="58" rx="8" fill="${glassFill(u)}"/>
+  <rect x="196" y="190" width="170" height="58" rx="8" fill="${glassFill(u)}"/>
+  <g data-show="camp">
+    <rect x="424" y="190" width="136" height="58" rx="8" fill="url(#${u}-glow)" opacity=".92"/>
+    <rect x="196" y="190" width="170" height="58" rx="8" fill="url(#${u}-glow)" opacity=".92"/>
+    <path d="M592 186 L628 186 L690 248 Q693 253 686 253 L598 253 Q592 253 592 247 Z" fill="url(#${u}-glow)" opacity=".35"/>
+  </g>
+  <path d="M694 236 L712 231 Q719 231 719 238 L717 256 Q716 263 708 263 L699 263 Q692 263 692 256 Z" fill="#1f2320"/>
+  <rect x="598" y="268" width="20" height="5" rx="2" fill="#1f2320"/>
+  <rect x="404" y="268" width="20" height="5" rx="2" fill="#1f2320"/>
+  <rect x="146" y="244" width="8" height="54" rx="3" fill="#b2331f"/>
+  <path d="M826 282 Q846 286 848 300 L849 309 L822 301 Q816 291 826 282 Z" fill="#f3efe4" stroke="#1f2320" stroke-width="1.5"/>
+  <circle data-show="camp" cx="840" cy="298" r="16" fill="#fff3cf" opacity=".55" filter="url(#${u}-soft)"/>
+  <rect x="839" y="313" width="13" height="27" rx="3" fill="#24261f"/>
+  <path d="M842 318 H850 M842 324 H850 M842 330 H850" stroke="#4a4c45" stroke-width="2"/>
+  <rect x="796" y="340" width="13" height="4" rx="2" fill="#e8a33a"/>
+  <path d="M798 350 H856 Q861 350 861 356 V376 Q861 385 852 385 H798 Z" fill="#24261f"/>
+  <rect x="142" y="356" width="36" height="27" rx="4" fill="#24261f"/>
+
+  <!-- 4x4 hardware -->
+  <g data-show="drive:x4">
+    <path d="M800 386 A66 66 0 0 0 670 386 M355 386 A66 66 0 0 0 225 386" fill="none" stroke="#1f211d" stroke-width="13"/>
+    <path d="M800 385 L858 385 L848 400 L808 400 Z" fill="#74766e"/>
+    <path d="M808 392 H848" stroke="#4c4e48" stroke-width="2"/>
+  </g>
+  <g data-show="addon:shower"><rect x="160" y="300" width="22" height="18" rx="3" fill="rgba(0,0,0,.2)" stroke="rgba(0,0,0,.3)"/><circle cx="171" cy="309" r="3" fill="rgba(255,255,255,.4)"/></g>
+  <g data-show="addon:heater"><path d="M262 380 V389 H274" fill="none" stroke="#2a2b27" stroke-width="4" stroke-linecap="round"/></g>
+
+  <!-- ===== INTERIOR CUTAWAY ===== -->
+  <g data-show="view:int">
+    <g clip-path="url(#${u}-ic)">
+      <rect x="150" y="60" width="460" height="320" fill="#ece3d1"/>
+      <path d="${TENT}" fill="#d6cba7" data-show="roof:pop"/>
+      <rect x="150" y="60" width="460" height="320" fill="url(#${u}-slat)"/>
+      <g data-show="!layout:workshop"><rect x="198" y="196" width="118" height="40" rx="8" fill="#9fb6bc"/><path d="M206 230 L240 202 M226 232 L262 202" stroke="rgba(255,255,255,.35)" stroke-width="5"/></g>
+      <path d="M200 183 H560" stroke="#fff4cf" stroke-width="2.5" data-show="roof:low|pop"/>
+      <path d="M200 117 H530" stroke="#fff4cf" stroke-width="2.5" data-show="roof:high"/>
+      <g data-show="roof:low|pop">
+        <rect class="fin" x="346" y="184" width="236" height="40" rx="2"/>
+        <path d="M405 186 V222 M464 186 V222 M523 186 V222" stroke="rgba(0,0,0,.18)" stroke-width="1.5"/>
+        <path d="M368 214 H384 M427 214 H443 M486 214 H502 M545 214 H561" stroke="rgba(0,0,0,.35)" stroke-width="3" stroke-linecap="round"/>
+      </g>
+      <g data-show="roof:high">
+        <rect class="fin" x="346" y="120" width="234" height="60" rx="2"/>
+        <path d="M404 122 V178 M462 122 V178 M520 122 V178" stroke="rgba(0,0,0,.18)" stroke-width="1.5"/>
+        <path d="M366 168 H384 M424 168 H442 M482 168 H500 M540 168 H558" stroke="rgba(0,0,0,.35)" stroke-width="3" stroke-linecap="round"/>
+        <g data-show="!layout:workshop"><rect class="fin" x="164" y="120" width="168" height="44" rx="2"/><path d="M220 122 V162 M276 122 V162" stroke="rgba(0,0,0,.18)" stroke-width="1.5"/></g>
+      </g>
+
+      <g data-show="layout:nomad">
+        <rect class="fin" x="162" y="268" width="172" height="92"/>
+        <rect x="178" y="284" width="140" height="62" rx="4" fill="none" stroke="rgba(0,0,0,.2)" stroke-width="1.5"/>
+        <text x="248" y="320" class="svg-m" font-size="8.5" letter-spacing="1.5" text-anchor="middle" fill="rgba(0,0,0,.42)">GEAR GARAGE</text>
+        ${mattress(164, 250, 168)}
+        <path d="M240 250 H326 Q333 250 333 257 V264 Q333 270 326 270 H240 Z" fill="#6f7a55"/>
+        <rect x="170" y="240" width="44" height="13" rx="6" fill="#fffaf0" stroke="#d3c8b2"/>
+        ${galley(408, 170)}
+      </g>
+      <g data-show="layout:social">
+        <rect class="fin" x="162" y="306" width="86" height="54"/>
+        <rect x="162" y="294" width="86" height="14" rx="5" fill="${UPH}"/>
+        <rect x="164" y="232" width="16" height="66" rx="6" fill="${UPH}"/>
+        <rect x="183" y="270" width="16" height="25" rx="5" fill="${CUSH}"/>
+        <rect class="fin" x="262" y="284" width="92" height="7" rx="2"/>
+        <rect x="304" y="291" width="6" height="68" fill="#5b5a55"/>
+        <rect x="278" y="273" width="9" height="11" rx="1.5" fill="${CUSH}"/>
+        <rect class="fin" x="366" y="306" width="62" height="54"/>
+        <rect x="366" y="294" width="62" height="14" rx="5" fill="${UPH}"/>
+        <rect x="413" y="228" width="16" height="70" rx="6" fill="${UPH}"/>
+        <rect x="411" y="208" width="20" height="17" rx="5" fill="${UPH}"/>
+        ${galley(448, 130)}
+      </g>
+      <g data-show="layout:basecamp">
+        <rect class="fin" x="162" y="304" width="172" height="56"/>
+        ${mattress(164, 286, 168)}
+        <rect x="170" y="277" width="40" height="12" rx="6" fill="#fffaf0" stroke="#d3c8b2"/>
+        <rect class="fin" x="162" y="226" width="172" height="8"/>
+        ${mattress(164, 208, 168)}
+        <path d="M240 208 H326 Q333 208 333 214 V221 Q333 227 326 227 H240 Z" fill="${CUSH}"/>
+        <path d="M262 196 H334 M270 196 V208 M326 196 V208" stroke="#5b5a55" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <path d="M342 226 V358 M354 226 V358 ${rungs(244, 340, 342, 354)}" stroke="#5b5a55" stroke-width="2.5" fill="none"/>
+        <rect class="fin" x="372" y="306" width="58" height="54"/>
+        <rect x="372" y="294" width="58" height="14" rx="5" fill="${UPH}"/>
+        <rect x="372" y="232" width="16" height="66" rx="6" fill="${UPH}"/>
+        <rect x="370" y="212" width="20" height="17" rx="5" fill="${UPH}"/>
+        ${galley(450, 128)}
+      </g>
+      <g data-show="layout:workshop">
+        <path d="M170 100 V208 M332 100 V208" stroke="#4d4d48" stroke-width="2"/>
+        <rect class="fin" x="162" y="208" width="178" height="8"/>
+        ${mattress(164, 190, 174)}
+        <rect x="170" y="181" width="40" height="12" rx="6" fill="#fffaf0" stroke="#d3c8b2"/>
+        <g fill="none" stroke="#2b2b28" stroke-width="4"><circle cx="202" cy="330" r="25"/><circle cx="290" cy="330" r="25"/></g>
+        <path d="M202 330 L232 296 L272 296 L290 330 M232 296 L248 330 L272 296 M248 330 L202 330 M268 284 L284 284 M272 296 L268 284 M228 288 L240 288" fill="none" stroke="${CUSH}" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+        <rect x="304" y="318" width="32" height="40" rx="2" fill="#7b6a4e"/><path d="M304 332 H336" stroke="rgba(0,0,0,.25)" stroke-width="2"/>
+        <rect class="fin" x="364" y="286" width="114" height="7" rx="2"/>
+        <rect class="fin" x="364" y="293" width="42" height="26"/>
+        <rect x="470" y="293" width="6" height="66" fill="#5b5a55"/>
+        <rect x="396" y="240" width="58" height="36" rx="3" fill="#232421"/>
+        <rect x="399" y="243" width="52" height="29" rx="1.5" fill="#6f9fb0"/>
+        <path d="M402 266 L418 254 L428 260 L446 248" stroke="#d8eef2" stroke-width="2" fill="none"/>
+        <rect x="422" y="276" width="6" height="10" fill="#333"/>
+        <rect x="386" y="308" width="42" height="9" rx="4" fill="${UPH}"/>
+        <rect x="378" y="262" width="11" height="50" rx="5" fill="${UPH}"/>
+        <rect x="404" y="317" width="5" height="34" fill="#333"/><path d="M388 356 H426" stroke="#333" stroke-width="4" stroke-linecap="round"/>
+        ${galley(494, 86)}
+      </g>
+
+      <g data-show="roof:pop">
+        <rect class="fin" x="174" y="164" width="420" height="6"/>
+        ${mattress(186, 146, 400)}
+        <rect x="196" y="137" width="46" height="12" rx="6" fill="#fffaf0" stroke="#d3c8b2"/>
+        <path d="M330 146 H580 Q586 146 586 152 V159 Q586 165 580 165 H330 Z" fill="#6f7a55"/>
+      </g>
+      <g data-show="addon:lithium" class="drop">
+        <rect x="172" y="330" width="46" height="26" rx="3" fill="#2c3328"/>
+        <rect x="177" y="325" width="9" height="5" fill="#2c3328"/><rect x="204" y="325" width="9" height="5" fill="#2c3328"/>
+        <path d="M198 333 L188 345 L196 345 L192 354 L204 340 L196 340 Z" fill="#f0a31c"/>
+      </g>
+      <g data-show="addon:heater" class="drop">
+        <rect x="224" y="332" width="36" height="24" rx="3" fill="#d3d0c7" stroke="#8d8a80"/>
+        <path d="M230 338 H254 M230 343 H254 M230 348 H254" stroke="#8d8a80" stroke-width="1.5"/>
+        <path d="M242 328 Q236 321 242 314 Q244 320 248 320 Q250 325 242 328 Z" fill="${CUSH}"/>
+      </g>
+      <rect x="150" y="356" width="460" height="12" fill="#7a5c40"/>
+      <rect data-show="camp" x="150" y="60" width="460" height="320" fill="#ffb347" opacity=".14"/>
+    </g>
+    <g fill="none">
+      <g data-show="roof:low"><path d="${I_LOW}" class="paint-s" stroke-width="8"/><path d="${I_LOW}" stroke="#1d201b" stroke-width="1.6"/></g>
+      <g data-show="roof:high"><path d="${I_HIGH}" class="paint-s" stroke-width="8"/><path d="${I_HIGH}" stroke="#1d201b" stroke-width="1.6"/></g>
+      <g data-show="roof:pop">
+        <path d="M174 179 L162 179 L162 364 L588 364 L588 179 L602 179" class="paint-s" stroke-width="8"/>
+        <path d="M174 179 L162 179 L162 364 L588 364 L588 179 L602 179" stroke="#1d201b" stroke-width="1.6"/>
+        <path d="${I_TENT}" stroke="#8d8263" stroke-width="2" stroke-dasharray="5 4"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- ===== ROOF & ADD-ONS ===== -->
+  <g data-show="roof:low"><rect x="300" y="160" width="44" height="7" rx="2" fill="#2a2d2a"/></g>
+  <g data-pos="lid" style="transform:translate(610px,160px) rotate(0deg) translate(-610px,-160px)">
+    <g data-show="roof:pop">
+      <path class="paint" d="${LID}"/>
+      <path d="${LID}" fill="url(#${u}-shade)"/>
+      <path data-show="camp" d="${LID}" fill="#14193a" opacity=".38"/>
+      <path d="${LID}" fill="none" stroke="rgba(0,0,0,.35)" stroke-width="1.5"/>
+      <g data-show="addon:solar" class="drop">
+        <rect x="214" y="146" width="150" height="7" rx="1" fill="#1d2b46"/><rect x="372" y="146" width="150" height="7" rx="1" fill="#1d2b46"/>
+        <path d="M214 146.5 H364 M372 146.5 H522" stroke="#7d98c9" stroke-width="1.2"/>
+      </g>
+    </g>
+  </g>
+  <g data-pos="canvas" style="transform:translate(0px,166px) scale(1,0.001) translate(0px,-166px)">
+    <g data-show="roof:pop&!view:int">
+      <path d="${TENT}" fill="#b8ab88"/>
+      <path d="M290 158 L430 158 L430 138 L290 113 Z" fill="#5e5744" opacity=".75"/>
+      <path d="M300 156 L420 156 M300 146 L420 146 M300 136 L420 136" stroke="rgba(255,255,255,.12)"/>
+      <path data-show="camp" d="M290 158 L430 158 L430 138 L290 113 Z" fill="url(#${u}-glow)" opacity=".85"/>
+      <path d="M172 166 L172 76 M604 166 V161" stroke="#8d8263" stroke-width="2"/>
+      <path d="M180 120 L230 162 M520 150 L560 162" stroke="rgba(0,0,0,.08)" stroke-width="1.5"/>
+    </g>
+  </g>
+  <g data-pos="solar" style="transform:translate(0px,0px)">
+    <g data-show="addon:solar&!roof:pop" class="drop">
+      <rect x="214" y="159" width="150" height="8" rx="1" fill="#1d2b46"/><rect x="372" y="159" width="150" height="8" rx="1" fill="#1d2b46"/>
+      <path d="M214 159.6 H364 M372 159.6 H522" stroke="#7d98c9" stroke-width="1.2"/>
+    </g>
+  </g>
+  <g data-pos="rack" style="transform:translate(0px,0px)">
+    <g data-show="addon:rack&!roof:pop" class="drop">
+      <path d="M206 150 V166 M300 150 V166 M400 150 V166 M500 150 V166 M560 150 V166" stroke="#1d1f1c" stroke-width="5"/>
+      <rect x="196" y="143" width="374" height="7" rx="2" fill="#1d1f1c"/>
+      <path d="M570 143 L588 150 L570 150 Z" fill="#1d1f1c"/>
+      <rect x="214" y="131" width="152" height="12" rx="3" fill="#e0592a"/>
+      <rect x="222" y="121" width="152" height="10" rx="3" fill="#f0a31c"/>
+      <path d="M232 137 H356 M240 126 H364" stroke="rgba(0,0,0,.28)" stroke-width="2.5" stroke-dasharray="4 6"/>
+      <rect x="438" y="110" width="112" height="33" rx="5" fill="#3d4433"/>
+      <path d="M438 122 H550" stroke="rgba(0,0,0,.3)" stroke-width="1.5"/>
+      <rect x="486" y="118" width="16" height="8" rx="2" fill="#9a9a8e"/>
+    </g>
+  </g>
+  <g data-pos="lightbar" style="transform:translate(0px,0px)">
+    <g data-show="addon:lightbar" class="drop">
+      <path data-show="camp" d="M612 156 L940 100 L940 270 Z" fill="url(#${u}-beam)" opacity=".55"/>
+      <path d="M576 162 L572 150 M604 162 L606 150" stroke="#1d1f1c" stroke-width="3"/>
+      <rect x="566" y="143" width="48" height="12" rx="3" fill="#1d1f1c"/>
+      <rect x="570" y="146" width="40" height="6" rx="2" fill="#f4ecd5"/>
+      <rect data-show="camp" x="570" y="146" width="40" height="6" rx="2" fill="#fffbe8"/>
+    </g>
+  </g>
+  <g data-show="addon:awning" class="drop">
+    <rect x="200" y="169" width="382" height="12" rx="6" fill="#cfccc2" stroke="#8d8a80" stroke-width="1.2"/>
+    <rect x="198" y="168" width="8" height="14" rx="2" fill="#4b4c47"/><rect x="576" y="168" width="8" height="14" rx="2" fill="#4b4c47"/>
+  </g>
+  <g data-show="camp&addon:awning&!view:int">
+    <path d="M204 178 L580 178 L604 222 L180 222 Z" fill="url(#${u}-stripe)" opacity=".95"/>
+    <path d="M180 222 L604 222" stroke="#3f4930" stroke-width="3"/>
+  </g>
+  <g data-show="addon:ladder" class="drop">
+    <path d="M134 168 V362 M146 168 V362 ${rungs(184, 356, 134, 146)}" stroke="#2a2c28" stroke-width="3" fill="none"/>
+    <path d="M146 210 H151 M146 330 H151" stroke="#2a2c28" stroke-width="3"/>
+    <g data-show="!roof:high"><path d="M134 170 Q134 158 146 158 H172 M146 168 Q146 162 154 162 H172" stroke="#2a2c28" stroke-width="3" fill="none"/></g>
+    <g data-show="roof:high"><path d="M134 168 V112 M146 168 V112 ${rungs(118, 162, 134, 146)} M134 114 Q134 94 152 94 H190 M146 112 Q146 104 156 104 H190" stroke="#2a2c28" stroke-width="3" fill="none"/></g>
+  </g>
+  <g data-show="addon:snorkel" class="drop">
+    <path d="M734 334 L729 268 L662 198 L662 176" fill="none" stroke="#1d1f1c" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="648" y="160" width="30" height="16" rx="5" fill="#1d1f1c"/>
+    <path d="M672 164 V172" stroke="#4a4c45" stroke-width="2"/>
+  </g>
+</g></g>
+
+<!-- awning legs (outside body so they reach the ground) -->
+<g data-show="camp&addon:awning&!view:int">
+  <line data-leg x1="182" y1="222" x2="182" y2="452" stroke="#3a3c36" stroke-width="3.5"/>
+  <line data-leg x1="602" y1="222" x2="602" y2="452" stroke="#3a3c36" stroke-width="3.5"/>
+</g>
+<g data-show="camp">
+  <circle cx="548" cy="432" r="34" fill="url(#${u}-lamp)"/>
+  <rect x="542" y="422" width="12" height="20" rx="3" fill="#2b2b27"/><rect x="544" y="426" width="8" height="10" rx="2" fill="#ffd98a"/>
+  <path d="M466 452 L496 416 M496 452 L466 416" stroke="#2a2a26" stroke-width="3"/>
+  <path d="M460 414 Q480 424 504 412 L506 405 Q482 416 458 407 Z" fill="${CUSH}"/>
+  <path d="M496 414 L510 372 Q515 366 520 372 L509 416 Z" fill="${CUSH}"/>
+</g>
+</svg>`;
+}
+
+function planSVG(u) {
+  const OUT = 'M172 112 L690 112 Q770 112 812 126 Q856 142 860 190 L860 250 Q856 298 812 314 Q770 328 690 328 L172 328 Q150 328 150 306 L150 134 Q150 112 172 112 Z';
+  const lab = (x, y, t, a = 'middle', s = 10) => `<text x="${x}" y="${y}" class="svg-m" font-size="${s}" letter-spacing="1.2" text-anchor="${a}" fill="rgba(28,32,27,.7)">${t}</text>`;
+  const seatsBench = (x, y, w, h, n) => { let s = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="7" fill="${UPH}"/>`; for (let i = 1; i < n; i++) s += `<path d="M${x + 4} ${y + h * i / n} H${x + w - 4}" stroke="rgba(255,255,255,.25)" stroke-width="1.5"/>`; return s; };
+  const galleyP = (x, w) => `<rect class="fin" x="${x}" y="124" width="${w}" height="50" rx="2"/>
+    <rect x="${x + 12}" y="133" width="36" height="30" rx="8" fill="#cfcdc5" stroke="#8d8a80"/><circle cx="${x + 30}" cy="128.5" r="2.5" fill="#666"/>
+    <circle cx="${x + w - 50}" cy="149" r="10" fill="none" stroke="#2a2a28" stroke-width="3"/><circle cx="${x + w - 22}" cy="149" r="10" fill="none" stroke="#2a2a28" stroke-width="3"/>`;
+  const fridge = x => `<rect x="${x}" y="124" width="56" height="50" rx="2" fill="#dcd8cf" stroke="#9c998f"/>${lab(x + 28, 153, '90 L')}`;
+  return `
+<svg class="plan" viewBox="70 40 900 420" role="img" aria-label="Floor plan">
+<defs>
+  <pattern id="${u}-hatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V10" stroke="rgba(28,32,27,.18)" stroke-width="3"/></pattern>
+  <pattern id="${u}-plank" width="60" height="16" patternUnits="userSpaceOnUse"><rect width="60" height="16" fill="#e2d6bd"/><path d="M0 15.5 H60 M30 0 V16" stroke="rgba(0,0,0,.06)"/></pattern>
+  <linearGradient id="${u}-pg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4c5d68"/><stop offset="1" stop-color="#1a232a"/></linearGradient>
+</defs>
+<g stroke="#1c201b" stroke-width="1.2" fill="none" opacity=".7">
+  <path d="M150 66 V84 M860 66 V84 M150 75 H860"/>
+  <path d="M904 112 H922 M904 328 H922 M913 112 V328"/>
+</g>
+<rect x="465" y="64" width="80" height="22" fill="#ece4d2"/>
+${lab(505, 79, '5.93 M', 'middle', 12)}
+<g transform="translate(913 220) rotate(-90)"><rect x="-34" y="-11" width="68" height="22" fill="#ece4d2"/>${lab(0, 4, '2.03 M', 'middle', 12)}</g>
+
+<g data-show="addon:awning" class="drop">
+  <rect x="196" y="334" width="388" height="88" rx="4" fill="rgba(85,96,62,.12)" stroke="#55603e" stroke-width="1.5" stroke-dasharray="7 5"/>
+  ${lab(390, 384, 'AWNING 3.2 × 2.5 M')}
+</g>
+<g data-show="addon:carrier" class="drop"><rect x="110" y="196" width="32" height="100" rx="10" fill="#1b1c1a"/><rect x="114" y="168" width="24" height="24" rx="3" fill="#5b6640"/></g>
+<g data-show="addon:ladder" class="drop"><path d="M140 128 V160 M147 128 V160 M140 134 H147 M140 142 H147 M140 150 H147" stroke="#2a2c28" stroke-width="2.5"/></g>
+<g data-show="addon:shower" class="drop"><circle cx="128" cy="314" r="9" fill="none" stroke="#3e6074" stroke-width="2"/><path d="M122 314 H134 M128 308 V320" stroke="#3e6074" stroke-width="1.5"/></g>
+
+<path class="paint" d="${OUT}"/>
+<path d="${OUT}" fill="none" stroke="#1c201b" stroke-width="1.6"/>
+<rect x="164" y="122" width="448" height="196" fill="url(#${u}-plank)"/>
+<path d="M612 122 L690 122 Q760 122 800 134 Q840 148 846 190 L846 250 Q840 292 800 306 Q760 318 690 318 L612 318 Z" fill="#d8ccb3"/>
+<path d="M758 124 Q812 134 836 172 L836 268 Q812 306 758 316 L748 298 Q792 288 806 260 L806 180 Q792 152 748 142 Z" fill="url(#${u}-pg)"/>
+<rect x="692" y="98" width="24" height="12" rx="3" fill="#1f2320"/><rect x="692" y="330" width="24" height="12" rx="3" fill="#1f2320"/>
+<path d="M728 140 Q740 220 728 300" stroke="#3a3f38" stroke-width="12" fill="none" stroke-linecap="round"/>
+<rect x="636" y="134" width="58" height="62" rx="12" fill="#3a3f38"/><rect x="626" y="136" width="14" height="58" rx="6" fill="#2b2f29"/>
+<rect x="636" y="244" width="58" height="62" rx="12" fill="#3a3f38"/><rect x="626" y="246" width="14" height="58" rx="6" fill="#2b2f29"/>
+<ellipse cx="708" cy="165" rx="5" ry="22" fill="none" stroke="#1d1f1c" stroke-width="4"/>
+<g data-show="layout:nomad|social|workshop" fill="none" stroke="#e0592a" stroke-width="2">
+  <path d="M616 210 A44 44 0 0 1 640 136"/><path d="M640 136 l-9 -1 l4 8" stroke-linejoin="round"/>
+  <path d="M616 232 A44 44 0 0 0 640 304"/><path d="M640 304 l-9 1 l4 -8" stroke-linejoin="round"/>
+</g>
+<rect x="400" y="316" width="178" height="14" fill="#ece4d2"/>
+<path d="M400 323 H578" stroke="#1c201b" stroke-width="1.2" stroke-dasharray="6 5"/>
+<rect x="150" y="136" width="16" height="168" fill="#ece4d2"/>
+<path d="M158 136 V304 M150 220 H166" stroke="#1c201b" stroke-width="1.2" stroke-dasharray="5 4"/>
+
+<g data-show="layout:nomad">
+  <rect x="166" y="124" width="140" height="192" rx="6" fill="#f2ede2" stroke="#cfc4ad"/>
+  <rect x="174" y="130" width="56" height="30" rx="8" fill="#fffaf0" stroke="#cfc4ad"/><rect x="242" y="130" width="56" height="30" rx="8" fill="#fffaf0" stroke="#cfc4ad"/>
+  <rect x="166" y="214" width="140" height="102" rx="6" fill="#6f7a55"/>
+  ${lab(236, 196, 'BED 1.95×1.40')}
+  ${galleyP(326, 208)}${fridge(536)}
+  <rect class="fin" x="322" y="266" width="70" height="50" rx="2"/>${lab(357, 295, 'WARDROBE', 'middle', 8.5)}
+  ${lab(430, 192, 'GALLEY')}
+</g>
+<g data-show="layout:social">
+  ${seatsBench(166, 124, 66, 192, 2)}
+  <rect class="fin" x="250" y="150" width="84" height="140" rx="6"/><circle cx="292" cy="190" r="8" fill="${CUSH}"/>
+  ${seatsBench(350, 124, 56, 170, 3)}
+  ${galleyP(424, 112)}${fridge(536)}
+  ${lab(292, 306, 'DINETTE → BED 1.90')}
+  ${lab(378, 284, '3 BELTED', 'middle', 8.5)}
+</g>
+<g data-show="layout:basecamp">
+  <rect x="166" y="124" width="140" height="192" rx="6" fill="#f2ede2" stroke="#cfc4ad"/>
+  <rect x="174" y="132" width="124" height="176" rx="5" fill="none" stroke="#9a8e74" stroke-dasharray="6 4"/>
+  <rect x="166" y="230" width="140" height="86" rx="6" fill="${CUSH}" opacity=".85"/>
+  ${lab(236, 196, 'BUNKS ×2 · 1.95')}
+  ${seatsBench(330, 124, 56, 172, 3)}
+  ${lab(358, 312, 'BENCH', 'middle', 8.5)}
+  ${galleyP(424, 112)}${fridge(536)}
+</g>
+<g data-show="layout:workshop">
+  <rect x="166" y="124" width="164" height="192" rx="4" fill="url(#${u}-hatch)" stroke="#9a8e74"/>
+  <rect x="172" y="130" width="152" height="180" rx="6" fill="none" stroke="#1c201b" stroke-width="1.4" stroke-dasharray="8 5"/>
+  ${lab(248, 212, 'GEAR GARAGE')}${lab(248, 228, 'LIFT BED ABOVE', 'middle', 8.5)}
+  <rect class="fin" x="350" y="124" width="124" height="48" rx="2"/><rect x="384" y="127" width="56" height="6" rx="2" fill="#232421"/>
+  <circle cx="412" cy="196" r="17" fill="${UPH}"/>
+  ${galleyP(474 + 6, 56).replace(/<circle[^>]*\/>/g, '')}${fridge(536)}
+  ${lab(412, 232, 'DESK')}
+  ${seatsBench(340, 262, 50, 52, 1)}${lab(365, 258, 'SEAT 3', 'middle', 8)}
+</g>
+
+<g data-show="roof:pop" class="drop">
+  <rect x="182" y="138" width="410" height="164" rx="10" fill="rgba(224,89,42,.05)" stroke="#e0592a" stroke-width="1.6" stroke-dasharray="9 6"/>
+  <rect x="300" y="290" width="176" height="18" rx="4" fill="#e0592a"/>
+  ${lab(388, 303, 'POP-TOP BED ABOVE', 'middle', 9).replace('rgba(28,32,27,.7)', '#fff8ec')}
+</g>
+<g data-show="roof:high" class="drop">
+  <rect x="332" y="126" width="270" height="20" rx="3" fill="none" stroke="#e0592a" stroke-width="1.5" stroke-dasharray="7 5"/>
+  <rect x="332" y="294" width="270" height="20" rx="3" fill="none" stroke="#e0592a" stroke-width="1.5" stroke-dasharray="7 5"/>
+  <rect x="404" y="98" width="130" height="16" rx="3" fill="#e0592a"/>${lab(469, 110, 'OVERHEAD LOCKERS', 'middle', 8.5).replace('rgba(28,32,27,.7)', '#fff8ec')}
+</g>
+<g data-show="addon:lithium" class="drop"><rect x="176" y="276" width="56" height="30" rx="4" fill="rgba(240,163,28,.18)" stroke="#c4801a" stroke-dasharray="4 3"/>${lab(204, 295, '300Ah', 'middle', 8.5)}</g>
+<g data-show="addon:heater" class="drop"><rect x="240" y="276" width="56" height="30" rx="4" fill="rgba(224,89,42,.15)" stroke="#e0592a" stroke-dasharray="4 3"/>${lab(268, 295, 'HEATER', 'middle', 8.5)}</g>
+<text id="${u}-roofnote" x="80" y="452" class="svg-m" font-size="10.5" letter-spacing="1.2" fill="rgba(28,32,27,.75)"></text>
+</svg>`;
+}
+
+/* =============================== SCENERY =============================== */
+function ridge(P, reps, base, terms, bottom, step = 8) {
+  let d = '';
+  for (let x = 0; x <= P * reps; x += step) {
+    let y = base;
+    for (const [a, k, ph, pw] of terms) { const s = 1 - Math.abs(Math.cos(Math.PI * k * x / P + ph)); y -= a * Math.pow(s, pw || 1); }
+    d += (x ? 'L' : 'M') + x + ' ' + y.toFixed(1) + ' ';
+  }
+  return d + `L${P * reps} ${bottom} L0 ${bottom} Z`;
+}
+function rng(seed) { return () => (seed = (seed * 16807) % 2147483647) / 2147483647; }
+function pines(P, reps, baseY, n, seed, hMin, hMax) {
+  const r = rng(seed), pts = [];
+  for (let i = 0; i < n; i++) pts.push([r() * P, hMin + r() * (hMax - hMin)]);
+  let d = '';
+  for (let k = 0; k < reps; k++) for (const [x0, h] of pts) {
+    const x = x0 + k * P, w = h * .32;
+    d += `M${(x - w).toFixed(1)} ${baseY} L${x.toFixed(1)} ${(baseY - h).toFixed(1)} L${(x + w).toFixed(1)} ${baseY} Z `;
+    d += `M${(x - w * .8).toFixed(1)} ${(baseY - h * .35).toFixed(1)} L${x.toFixed(1)} ${(baseY - h * 1.12).toFixed(1)} L${(x + w * .8).toFixed(1)} ${(baseY - h * .35).toFixed(1)} Z `;
+  }
+  return d;
+}
+function sceneSVG(u, animated) {
+  const reps = animated ? 2 : 1, P = 1200;
+  const r = rng(7); let stars = '';
+  for (let i = 0; i < 70; i++) stars += `<circle cx="${(r() * 1200).toFixed(0)}" cy="${(r() * 300).toFixed(0)}" r="${(r() * 1.4 + .4).toFixed(1)}" fill="#fff" opacity="${(r() * .6 + .3).toFixed(2)}"/>`;
+  return `<svg class="scenery" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+  <defs>
+    <linearGradient id="${u}-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bccfcc"/><stop offset=".6" stop-color="#e8dcc0"/><stop offset="1" stop-color="#f2d7a6"/></linearGradient>
+    <linearGradient id="${u}-gr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bba77d"/><stop offset="1" stop-color="#d8c7a0"/></linearGradient>
+    <radialGradient id="${u}-sun"><stop offset="0" stop-color="#fbe2a9"/><stop offset=".55" stop-color="#f4c47c" stop-opacity=".9"/><stop offset="1" stop-color="#f4c47c" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1200" height="600" fill="url(#${u}-sky)"/>
+  <g class="sun"><circle cx="880" cy="300" r="120" fill="url(#${u}-sun)"/><circle cx="880" cy="300" r="46" fill="#f8d695"/></g>
+  <g class="layer l-far"><path d="${ridge(P, reps, 420, [[150, 2, .3, 1.4], [70, 5, 1.1, 1], [30, 11, .2, 1]], 600)}" fill="#a9b6ae"/></g>
+  <g class="layer l-mid"><path d="${ridge(P, reps, 468, [[80, 3, 1.7, 1.2], [40, 7, .5, 1], [16, 16, 2.1, 1]], 600)}" fill="#7e8f78"/></g>
+  <g class="layer l-near"><path d="${pines(P, reps, 492, 46, 3, 30, 70)}" fill="#4b5944"/><rect x="0" y="488" width="${P * reps}" height="10" fill="#4b5944"/></g>
+  <rect x="0" y="494" width="1200" height="106" fill="url(#${u}-gr)"/>
+  <g class="layer l-road" opacity=".35">${animated ? Array.from({ length: 24 }, (_, i) => `<rect x="${i * 100}" y="560" width="48" height="4" rx="2" fill="#6d5f43"/>`).join('') : `<path d="M0 540 Q600 528 1200 546" stroke="#9a8761" stroke-width="2" fill="none" stroke-dasharray="2 10"/>`}</g>
+  <rect class="night" width="1200" height="600" fill="#121a36"/>
+  <g class="stars">${stars}<circle cx="300" cy="120" r="22" fill="#f4ecd2"/><circle cx="310" cy="114" r="20" fill="#2a3150" opacity=".6"/></g>
+</svg>`;
+}
+
+/* topo contour background */
+function smoothClosed(pts) {
+  const n = pts.length, f = v => v.toFixed(1);
+  let d = `M${f(pts[0][0])} ${f(pts[0][1])}`;
+  for (let i = 0; i < n; i++) {
+    const p0 = pts[(i - 1 + n) % n], p1 = pts[i], p2 = pts[(i + 1) % n], p3 = pts[(i + 2) % n];
+    d += `C${f(p1[0] + (p2[0] - p0[0]) / 6)} ${f(p1[1] + (p2[1] - p0[1]) / 6)} ${f(p2[0] - (p3[0] - p1[0]) / 6)} ${f(p2[1] - (p3[1] - p1[1]) / 6)} ${f(p2[0])} ${f(p2[1])}`;
+  }
+  return d + 'Z';
+}
+function topo(el, centers, seed) {
+  const r = rng(seed); let out = '';
+  for (const [cx, cy, rings, step] of centers) {
+    const ph = [r() * 6, r() * 6, r() * 6, r() * 6];
+    for (let k = 1; k <= rings; k++) {
+      const pts = [];
+      for (let i = 0; i < 48; i++) {
+        const t = i / 48 * Math.PI * 2;
+        const rr = k * step * (1 + .2 * Math.sin(3 * t + ph[0] + k * .05) + .1 * Math.sin(5 * t + ph[1] - k * .08) + .05 * Math.sin(9 * t + ph[2] + k * .2)) + 8 * Math.sin(2 * t + ph[3]);
+        pts.push([cx + Math.cos(t) * rr * 1.25, cy + Math.sin(t) * rr * .85]);
+      }
+      out += `<path class="${k % 5 === 0 ? 'ix' : ''}" d="${smoothClosed(pts)}"/>`;
+    }
+  }
+  el.innerHTML = out;
+}
+
+/* =============================== APPLY TO SVG =============================== */
+function evalShow(expr, c) {
+  return expr.split('&').every(term => {
+    const neg = term[0] === '!'; if (neg) term = term.slice(1);
+    const [k, v] = term.split(':'); let ok;
+    if (k === 'camp') ok = !!c.camp;
+    else if (k === 'addon') ok = v.split('|').some(a => c.addons.has(a));
+    else ok = v.split('|').includes(c[k]);
+    return neg ? !ok : ok;
+  });
+}
+function setPos(svg, key, t) { svg.querySelectorAll(`[data-pos="${key}"]`).forEach(el => el.style.transform = t); }
+function applyVan(svg, c) {
+  const col = byId(COLORS, c.color), fn = byId(FINISHES, c.finish);
+  svg.style.setProperty('--paint', col.hex);
+  svg.style.setProperty('--decal', col.decal);
+  svg.style.setProperty('--finish', fn.hex);
+  svg.style.setProperty('--rim', c.drive === 'x4' ? '#2b2d2a' : '#cbc7bc');
+  svg.querySelectorAll('[data-show]').forEach(el => {
+    const on = evalShow(el.dataset.show, c);
+    if (el.closest('clipPath')) el.setAttribute('display', on ? 'inline' : 'none');
+    else el.classList.toggle('off', !on);
+  });
+  const at = c.addons.has('at');
+  const lift = (c.drive === 'x4' ? 18 : c.drive === 'awd' ? 4 : 0) + (at ? 5 : 0);
+  const r = at ? 51 : 46;
+  setPos(svg, 'body', `translate(0px,${-lift}px)`);
+  setPos(svg, 'wr', `translate(290px,${440 - r}px) scale(${r / 46})`);
+  setPos(svg, 'wf', `translate(735px,${440 - r}px) scale(${r / 46})`);
+  const hi = c.roof === 'high';
+  setPos(svg, 'rack', `translate(0px,${hi ? -66 : 0}px)`);
+  setPos(svg, 'solar', `translate(0px,${hi ? -66 : 0}px)`);
+  setPos(svg, 'lightbar', hi ? 'translate(-46px,-66px)' : 'translate(0px,0px)');
+  const raised = c.roof === 'pop' && (c.camp || c.view === 'int');
+  setPos(svg, 'lid', `translate(610px,160px) rotate(${raised ? 12 : 0}deg) translate(-610px,-160px)`);
+  setPos(svg, 'canvas', `translate(0px,166px) scale(1,${raised ? 1 : 0.001}) translate(0px,-166px)`);
+  svg.querySelectorAll('[data-leg]').forEach(l => l.setAttribute('y1', 222 - lift));
+  const badge = svg.querySelector('[data-text="badge"]');
+  if (badge) badge.textContent = `V-SERIES · ${byId(DRIVES, c.drive).short}`;
+}
+function applyPlan(svg, c, u) {
+  applyVan(svg, c);
+  const roofItems = [];
+  if (c.roof !== 'low') roofItems.push(byId(ROOFS, c.roof).short);
+  ['solar', 'rack', 'lightbar'].forEach(a => c.addons.has(a) && roofItems.push(byId(ADDONS, a).name));
+  const t = svg.querySelector(`#${u}-roofnote`);
+  if (t) t.textContent = 'ON THE ROOF: ' + (roofItems.length ? roofItems.join(' · ').toUpperCase() : 'FACTORY ROOF + VENT');
+}
+
+/* =============================== DERIVED NUMBERS =============================== */
+function priceLines(c) {
+  const col = byId(COLORS, c.color), roof = byId(ROOFS, c.roof), dr = byId(DRIVES, c.drive), lay = byId(LAYOUTS, c.layout), fn = byId(FINISHES, c.finish);
+  const lines = [
+    { k:'Platform', v:'V-Series 5.9 m · 2.0 L 170 hp', p:BASE.price },
+    { k:'Colour', v:`${col.name} (${col.kind})`, p:col.price },
+    { k:'Roof', v:roof.name, p:roof.price },
+    { k:'Drivetrain', v:dr.name, p:dr.price },
+    { k:'Layout', v:`${lay.name} — ${lay.sub}`, p:lay.price },
+    { k:'Cabinetry', v:fn.name, p:fn.price },
+  ];
+  ADDONS.forEach(a => c.addons.has(a.id) && lines.push({ k:'Add-on', v:a.name, p:a.price }));
+  return lines;
+}
+const total = c => priceLines(c).reduce((s, l) => s + l.p, 0);
+function monthly(t, dep = fin.dep, term = fin.term) {
+  const P = t * (1 - dep / 100), r = fin.apr / 100 / 12;
+  return { P, m: P * r / (1 - Math.pow(1 + r, -term)) };
+}
+function specs(c) {
+  const lay = byId(LAYOUTS, c.layout), roof = byId(ROOFS, c.roof), dr = byId(DRIVES, c.drive), fn = byId(FINISHES, c.finish);
+  const sleeps = lay.sleeps + (c.roof === 'pop' && c.layout !== 'basecamp' ? 2 : 0) + (c.roof === 'pop' && c.layout === 'basecamp' ? 1 : 0);
+  let h = { low:2.38, pop:2.42, high:2.86 }[c.roof];
+  if (c.addons.has('rack') && c.roof !== 'pop') h += .13; else if (c.addons.has('solar')) h += .03;
+  h += c.drive === 'x4' ? .06 : c.drive === 'awd' ? .01 : 0;
+  if (c.addons.has('at')) h += .02;
+  const head = c.roof === 'high' ? 1.92 : 1.62;
+  let w = BASE.curb + roof.w + dr.w + lay.w + fn.w;
+  ADDONS.forEach(a => c.addons.has(a.id) && (w += a.w));
+  const payload = BASE.gvwr - w;
+  const use = 1.0 + (c.addons.has('heater') ? .35 : 0) + (c.layout === 'workshop' ? .6 : 0);
+  const cap = c.addons.has('lithium') ? 3.6 : 1.2;
+  const sun = c.addons.has('solar') ? 1.5 : 0;
+  const net = use - sun;
+  const grid = net <= 0 ? Infinity : cap / net;
+  let weeks = 14 + ({ low:0, pop:1, high:2 })[c.roof] + ({ rwd:0, awd:1, x4:3 })[c.drive] + (c.layout === 'basecamp' ? 1 : 0) + Math.floor(c.addons.size / 4);
+  const d = new Date(); d.setDate(d.getDate() + weeks * 7);
+  return { sleeps, seats: lay.seats, h, head, payload, grid, weeks, handover: d.toLocaleDateString('en-GB', { month:'long', year:'numeric' }), use, cap };
+}
+
+/* =============================== CODE / SHARE =============================== */
+function encode(c) {
+  const idx = [COLORS, ROOFS, DRIVES, LAYOUTS, FINISHES].map((arr, i) => arr.findIndex(o => o.id === [c.color, c.roof, c.drive, c.layout, c.finish][i]));
+  let mask = 0; ADDONS.forEach((a, i) => c.addons.has(a.id) && (mask |= 1 << i));
+  return idx.join('') + '-' + mask.toString(36).toUpperCase().padStart(3, '0');
+}
+function decode(s) {
+  const m = /^([0-9]{5})-([0-9A-Za-z]{1,4})$/.exec(s || ''); if (!m) return null;
+  const d = m[1].split('').map(Number), arrs = [COLORS, ROOFS, DRIVES, LAYOUTS, FINISHES];
+  if (d.some((v, i) => !arrs[i][v])) return null;
+  const mask = parseInt(m[2], 36); if (isNaN(mask)) return null;
+  return { color: COLORS[d[0]].id, roof: ROOFS[d[1]].id, drive: DRIVES[d[2]].id, layout: LAYOUTS[d[3]].id, finish: FINISHES[d[4]].id, addons: new Set(ADDONS.filter((a, i) => mask & (1 << i)).map(a => a.id)) };
+}
+function sanitize(c) {
+  if (c.layout === 'basecamp' && c.roof === 'low') c.roof = 'pop';
+  if (c.roof === 'pop') c.addons.delete('rack');
+  return c;
+}
+
+/* =============================== UI: STATIC BUILD =============================== */
+const STEPS = [
+  { key:'color',  label:'Colour',   title:'Body colour',  help:'Factory-applied paint with a satin-clear topo decal. Metallics add depth; matte ceramic hides trail scratches.', view:'ext' },
+  { key:'roof',   label:'Roof',     title:'Roof',         help:'The biggest decision for sleeping and standing room — and for overall height.', view:'ext' },
+  { key:'drive',  label:'Drive',    title:'Drivetrain',   help:'Pick for where the tarmac ends, not where it starts.', view:'ext' },
+  { key:'interior', label:'Interior', title:'Interior',   help:'Four floor plans, all built on the same insulated, wiring-ready shell.', view:'int' },
+  { key:'addons', label:'Add-ons',  title:'Add-ons',      help:'Factory-fitted kit, covered by the 5-year build warranty. Toggle to see it bolt on.', view:'ext' },
+  { key:'review', label:'Review',   title:'Review',       help:'Everything in one place. This is the price we build to.', view:'ext' },
+];
+const icoRoof = id => `<svg width="58" height="34" viewBox="0 0 58 34" fill="none" stroke="#1c201b" stroke-width="1.6">
+  ${id === 'pop' ? '<path class="a" d="M7 12 L7 3 L38 10 L38 12 Z"/>' : ''}${id === 'high' ? '<path d="M7 12 V6 Q7 4 9 4 H34 L41 12" stroke-linejoin="round"/>' : ''}
+  <path d="M4 27 V14 Q4 12 6 12 H40 L47 19 L54 21 V27 Z" stroke-linejoin="round"/><circle class="f" cx="15" cy="28" r="4"/><circle class="f" cx="45" cy="28" r="4"/></svg>`;
+const icoDrive = id => `<svg width="58" height="34" viewBox="0 0 58 34" fill="none" stroke="#1c201b" stroke-width="1.6">
+  <path d="M14 9 V25 M44 9 V25 M14 17 H44" />
+  ${[[14, 7], [14, 27], [44, 7], [44, 27]].map(([x, y], i) => `<rect x="${x - 5}" y="${y - 3.5}" width="10" height="7" rx="2" class="${(id !== 'rwd' || i < 2) ? 'f' : ''}"/>`).join('')}
+  ${id === 'x4' ? '<path d="M51 22 V10 M47 14 L51 10 L55 14" stroke-linecap="round" stroke-linejoin="round"/>' : ''}</svg>`;
+const icoLayout = id => {
+  const rect = (x, y, w, h, cls = 'f') => `<rect class="${cls}" x="${x}" y="${y}" width="${w}" height="${h}" rx="1.5"/>`;
+  const parts = {
+    nomad: rect(4, 4, 30, 34) + rect(40, 4, 50, 9, '') + rect(92, 4, 12, 9, ''),
+    social: rect(4, 4, 12, 34) + rect(22, 10, 18, 22, '') + rect(46, 4, 11, 28) + rect(64, 4, 40, 9, ''),
+    basecamp: rect(4, 4, 30, 34) + rect(7, 7, 24, 28, '') + rect(42, 4, 11, 30) + rect(64, 4, 40, 9, ''),
+    workshop: rect(4, 4, 32, 34, '') + `<path d="M4 38 L36 4 M14 38 L36 15 M4 26 L26 4" opacity=".5"/>` + rect(46, 4, 26, 8) + `<circle class="f" cx="59" cy="20" r="4"/>` + rect(76, 4, 28, 9, ''),
+  };
+  return `<svg width="100%" height="44" viewBox="0 0 132 42" preserveAspectRatio="xMidYMid meet" fill="none" stroke="#1c201b" stroke-width="1.4"><path d="M2 2 H106 Q124 2 128 12 V30 Q124 40 106 40 H2 Z"/>${parts[id]}</svg>`;
+};
+const check = '<svg width="13" height="13" viewBox="0 0 13 13"><path d="M2 7 L5.2 10 L11 3" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+function buildPanel() {
+  $('#stepper').innerHTML = STEPS.map((s, i) => `<button type="button" data-step="${i}"><span class="n">0${i + 1}</span><span class="l">${s.label}</span><span class="val" data-val="${s.key}"></span></button>`).join('');
+  const html = [];
+  html.push(`<section class="step" data-key="color"><div class="step-k">Step 01 of 06</div><h3>${STEPS[0].title}</h3><p class="help">${STEPS[0].help}</p>
+    <div class="colour-now"><b id="colName"></b><span class="mono" id="colMeta"></span></div>
+    <div class="swatches" role="radiogroup" aria-label="Body colour">${COLORS.map(c => `<button type="button" class="swatch" role="radio" data-g="color" data-id="${c.id}" style="--c:${c.hex}"><span class="ball"></span><span class="nm">${c.name}</span><span class="pr">${plus(c.price)}</span></button>`).join('')}</div></section>`);
+  html.push(`<section class="step" data-key="roof"><div class="step-k">Step 02 of 06</div><h3>${STEPS[1].title}</h3><p class="help">${STEPS[1].help}</p>
+    <div class="opts" role="radiogroup" aria-label="Roof">${ROOFS.map(r => `<button type="button" class="opt" role="radio" data-g="roof" data-id="${r.id}"><span class="ic">${icoRoof(r.id)}</span><span class="t">${r.name}</span><span class="p">${plus(r.price)}</span><span class="d">${r.desc}<span class="tags">${r.tags.map(t => `<span>${t}</span>`).join('')}</span><span class="why" data-why></span></span></button>`).join('')}</div></section>`);
+  html.push(`<section class="step" data-key="drive"><div class="step-k">Step 03 of 06</div><h3>${STEPS[2].title}</h3><p class="help">${STEPS[2].help}</p>
+    <div class="opts" role="radiogroup" aria-label="Drivetrain">${DRIVES.map(r => `<button type="button" class="opt" role="radio" data-g="drive" data-id="${r.id}"><span class="ic">${icoDrive(r.id)}</span><span class="t">${r.name}</span><span class="p">${plus(r.price)}</span><span class="d">${r.desc}<span class="tags">${r.tags.map(t => `<span>${t}</span>`).join('')}</span></span></button>`).join('')}</div></section>`);
+  html.push(`<section class="step" data-key="interior"><div class="step-k">Step 04 of 06</div><h3>${STEPS[3].title}</h3><p class="help">${STEPS[3].help}</p>
+    <div class="opts layouts" role="radiogroup" aria-label="Layout">${LAYOUTS.map(l => `<button type="button" class="opt" role="radio" data-g="layout" data-id="${l.id}"><span class="ic">${icoLayout(l.id)}</span><span class="t">${l.name}</span><span class="p">${plus(l.price)}</span><span class="d"><b>${l.sub}.</b> ${l.desc}<span class="tags"><span>Sleeps ${l.sleeps}</span><span>${l.seats} belted</span></span></span></button>`).join('')}</div>
+    <div class="sub-h"><b>Cabinetry</b><span class="mono" id="finName"></span></div>
+    <div class="woods" role="radiogroup" aria-label="Cabinetry finish">${FINISHES.map(f => `<button type="button" class="wood" role="radio" data-g="finish" data-id="${f.id}" style="--c:${f.hex}"><span class="chipw"></span><span class="nm">${f.name}</span><span class="pr">${plus(f.price)}</span></button>`).join('')}</div></section>`);
+  const groups = [...new Set(ADDONS.map(a => a.g))];
+  html.push(`<section class="step" data-key="addons"><div class="step-k">Step 05 of 06</div><h3>${STEPS[4].title}</h3><p class="help">${STEPS[4].help}</p>
+    ${groups.map(g => `<div class="agroup"><h4>${g}</h4>${ADDONS.filter(a => a.g === g).map(a => `<button type="button" class="addon" data-addon="${a.id}" aria-pressed="false"><span class="box">${check}</span><span class="nm">${a.name}</span><span class="pr">+${money(a.price)}</span><span class="ds">${a.desc} <span class="mono" style="font-size:10px">· ${a.w} kg</span></span><span class="why" data-why></span></button>`).join('')}</div>`).join('')}</section>`);
+  html.push(`<section class="step" data-key="review"><div class="step-k">Step 06 of 06</div><h3>${STEPS[5].title}</h3><p class="help">${STEPS[5].help}</p>
+    <ul class="rv" id="rvList"></ul>
+    <div class="rv-total"><span class="mono">Total</span><b id="rvTotal"></b></div>
+    <div class="mono" style="color:var(--muted)" id="rvMonthly"></div>
+    <div class="rv-actions"><a class="btn btn-primary" href="#summary">Build sheet, finance &amp; reserve →</a><button type="button" class="btn btn-ghost btn-sm" data-copy>Copy share link</button></div></section>`);
+  $('#steps').innerHTML = html.join('');
+
+  $('#presets').insertAdjacentHTML('beforeend', PRESETS.map((p, i) => `<button type="button" class="chip" data-preset="${i}">${p.name} <i>${money(total({ ...p.cfg, addons: new Set(p.cfg.addons) }))}</i></button>`).join('') +
+    `<button type="button" class="chip" data-preset="base">Base van <i>${money(BASE.price)}</i></button>`);
+  $('#marquee').innerHTML = Array(2).fill(['5-year build warranty', 'Four-season insulation to −20 °C', 'Handbuilt in Kendal, Cumbria', '14-week build slots', '£1,000 refundable deposit', 'Price you see = price you pay', '140+ service partners']).flat().map(t => `<span>${t}</span>`).join('');
+}
+
+/* =============================== RENDER / SYNC =============================== */
+let stageVan, planEl, sheetVan, heroVan;
+let lastTotal = null;
+
+function ctx(extra = {}) { return { color:state.color, roof:state.roof, drive:state.drive, layout:state.layout, finish:state.finish, addons:state.addons, view:state.view, camp:state.camp, ...extra }; }
+
+function animateNum(el, to, f = money, dur = 650) {
+  const from = el._v ?? to; el._v = to;
+  if (from === to) { el.textContent = f(to); return; }
+  const t0 = performance.now(); cancelAnimationFrame(el._raf);
+  const tick = now => { const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3); el.textContent = f(from + (to - from) * e); if (k < 1) el._raf = requestAnimationFrame(tick); };
+  el._raf = requestAnimationFrame(tick);
+}
+function flash(el, v) { if (el.textContent !== v) { el.textContent = v; el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); clearTimeout(el._ft); el._ft = setTimeout(() => el.classList.remove('flash'), 900); } }
+
+function sync() {
+  const c = ctx();
+  applyVan(stageVan, c);
+  applyPlan(planEl, c, 'p');
+  applyVan(sheetVan, ctx({ view:'ext', camp:false }));
+
+  const stage = $('#stage');
+  stage.dataset.view = state.view;
+  stage.classList.toggle('camp', state.camp);
+  $$('.seg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.view === state.view));
+  $('#campBtn').setAttribute('aria-pressed', state.camp);
+
+  // option selection states
+  $$('[data-g]').forEach(b => b.setAttribute('aria-checked', state[b.dataset.g] === b.dataset.id));
+  const lowRoof = $('[data-g="roof"][data-id="low"]');
+  const lowBlocked = state.layout === 'basecamp';
+  lowRoof.setAttribute('aria-disabled', lowBlocked);
+  lowRoof.querySelector('[data-why]').textContent = lowBlocked ? 'Not available with the Basecamp layout — the upper bunk needs headroom.' : '';
+  $$('[data-addon]').forEach(b => {
+    const id = b.dataset.addon, blocked = id === 'rack' && state.roof === 'pop';
+    b.setAttribute('aria-pressed', state.addons.has(id));
+    b.setAttribute('aria-disabled', blocked);
+    b.querySelector('[data-why]').textContent = blocked ? 'Can’t mount to a pop-top lid. Choose the High-Top for rack space.' : '';
+  });
+
+  const col = byId(COLORS, state.color), roof = byId(ROOFS, state.roof), dr = byId(DRIVES, state.drive), lay = byId(LAYOUTS, state.layout), fn = byId(FINISHES, state.finish);
+  $('#colName').textContent = col.name;
+  $('#colMeta').textContent = `${col.kind} · ${plus(col.price)}`;
+  $('#finName').textContent = `${fn.name} · ${plus(fn.price)}`;
+
+  const T = total(c), S = specs(c), M = monthly(T);
+  const vals = { color: col.name, roof: roof.short, drive: dr.name, interior: `${lay.name} · ${fn.name.split(' ')[1]}`, addons: state.addons.size ? `${state.addons.size} selected` : 'None yet', review: money(T) };
+  $$('[data-val]').forEach(el => el.textContent = vals[el.dataset.val]);
+
+  // specs
+  flash($('#spSleeps'), String(S.sleeps));
+  $('#spSleepsS').textContent = state.roof === 'pop' ? 'incl. pop-top bed' : (state.layout === 'basecamp' ? 'incl. 2 bunks' : 'adults');
+  flash($('#spSeats'), String(S.seats));
+  flash($('#spHead'), state.roof === 'pop' ? '2.15 m' : S.head.toFixed(2) + ' m');
+  $('#spHeadS').textContent = state.roof === 'pop' ? 'roof raised · 1.62 m down' : 'interior standing';
+  flash($('#spHeight'), S.h.toFixed(2) + ' m');
+  const hs = $('#spHeightS'); hs.textContent = S.h <= 2.5 ? '✓ under 2.5 m barriers' : 'over 2.5 m barriers'; hs.className = 's ' + (S.h <= 2.5 ? 'ok' : 'warn');
+  flash($('#spPayload'), S.payload + ' kg');
+  const pm = $('#spPayloadM'); pm.style.width = Math.max(6, Math.min(100, S.payload / 1000 * 100)) + '%'; pm.style.background = S.payload < 350 ? '#c4461b' : S.payload < 550 ? '#d99a2b' : 'var(--moss)';
+  flash($('#spGrid'), S.grid === Infinity ? 'Unlimited' : (S.grid < 10 ? S.grid.toFixed(1) : Math.round(S.grid)) + ' days');
+  $('#spGridS').textContent = S.grid === Infinity ? `${S.cap} kWh · solar covers use in summer` : `${S.cap} kWh house battery`;
+
+  $('#stageTag').textContent = `LW-${encode(c)} · ${col.name} · ${roof.short} · ${dr.short} · ${lay.name}`;
+
+  // price bar
+  $('#pbName').textContent = `${col.name} · ${roof.short} · ${dr.name} · ${lay.name} · ${state.addons.size} add-on${state.addons.size === 1 ? '' : 's'}`;
+  animateNum($('#pbTotal'), T);
+  animateNum($('#pbMonthly'), M.m, v => money(v));
+  if (lastTotal !== null && lastTotal !== T) {
+    const d = T - lastTotal, el = $('#pbDelta');
+    el.textContent = (d > 0 ? '+' : '−') + money(Math.abs(d));
+    el.classList.toggle('neg', d < 0);
+    el.classList.remove('go'); void el.offsetWidth; el.classList.add('go');
+    $('#live').textContent = `Total now ${money(T)}`;
+  }
+  lastTotal = T;
+
+  // review list
+  const lines = priceLines(c);
+  $('#rvList').innerHTML = lines.map(l => `<li><span><small>${l.k}</small>${l.v}</span><span>${l.k === 'Platform' ? money(l.p) : plus(l.p)}</span></li>`).join('');
+  animateNum($('#rvTotal'), T);
+  $('#rvMonthly').textContent = `or ${money(M.m)}/mo · ${fin.dep}% deposit · ${fin.term} months · ${fin.apr}% APR`;
+
+  // build sheet
+  const code = 'LW-' + encode(c);
+  $('#sheetCode').textContent = code;
+  $('#sheetMeta').innerHTML = `ISSUED ${new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }).toUpperCase()}<br>BUILD TIME ${S.weeks} WEEKS<br>HANDOVER ≈ ${S.handover.toUpperCase()}`;
+  $('#sheetRows').innerHTML = lines.map(l => `<div class="r"><dt>${l.k}</dt><dd>${l.v}</dd><dd class="amt">${l.k === 'Platform' ? money(l.p) : plus(l.p)}</dd></div>`).join('') +
+    `<div class="r"><dt>Spec</dt><dd>Sleeps ${S.sleeps} · ${S.seats} belted · ${S.h.toFixed(2)} m tall · ${S.payload} kg payload</dd><dd class="amt"></dd></div>`;
+  animateNum($('#sheetTotal'), T);
+  $('#slotDate').textContent = S.handover;
+  syncFinance(T);
+
+  try { history.replaceState(null, '', '#build=' + encode(c)); localStorage.setItem('longway-build', encode(c)); } catch (e) {}
+}
+
+function syncFinance(T = total(ctx())) {
+  const M = monthly(T);
+  $('#depOut').textContent = `${fin.dep}% · ${money(T * fin.dep / 100)}`;
+  animateNum($('#finMonthly'), M.m);
+  animateNum($('#finAmt'), M.P);
+  animateNum($('#finTotal'), M.m * fin.term + T * fin.dep / 100);
+  $$('#terms button').forEach(b => b.setAttribute('aria-pressed', +b.dataset.m === fin.term));
+}
+
+/* =============================== INTERACTION =============================== */
+let toastT;
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 4800); }
+let hintT;
+function hint(msg) { const h = $('#hint'); h.textContent = msg; h.classList.add('show'); clearTimeout(hintT); hintT = setTimeout(() => h.classList.remove('show'), 2600); }
+
+function choose(g, id) {
+  if (g === 'roof' && id === 'low' && state.layout === 'basecamp') { toast('The Basecamp layout needs a pop-top or high-top for the upper bunk. Pick another layout first to go low-roof.'); return; }
+  state[g] = id;
+  if (g === 'layout' && id === 'basecamp' && state.roof === 'low') { state.roof = 'pop'; toast(`Basecamp’s upper bunk needs headroom, so we’ve added the Pop-Top Sleeper (+${money(byId(ROOFS, 'pop').price)}).`); }
+  if (g === 'roof' && id === 'pop' && state.addons.has('rack')) { state.addons.delete('rack'); toast('Roof rack removed — it can’t mount to a pop-top lid. Your solar now sits flush on the lid.'); }
+  if ((g === 'layout' || g === 'finish') && state.view === 'ext') state.view = 'int';
+  if ((g === 'color' || g === 'drive') && state.view === 'int') state.view = 'ext';
+  if (g === 'roof' && id === 'pop' && state.view === 'ext' && !state.camp) hint('Tip: switch on Camp mode to raise the roof');
+  sync();
+}
+function toggleAddon(id) {
+  if (id === 'rack' && state.roof === 'pop') { toast('Roof racks can’t go on the pop-top lid. Switch to the High-Top roof for rack space.'); return; }
+  state.addons.has(id) ? state.addons.delete(id) : state.addons.add(id);
+  const a = byId(ADDONS, id);
+  if (state.addons.has(id)) {
+    if (['lithium', 'heater'].includes(id) && state.view !== 'plan') { state.view = 'int'; hint(`${a.name} shown in cutaway`); }
+    else if (id === 'awning' && !state.camp) hint('Turn on Camp mode to roll the awning out');
+    else if (id === 'lightbar' && !state.camp) hint('Camp mode lights it up');
+    else if (state.view === 'int' && !['lithium', 'heater'].includes(id)) state.view = 'ext';
+  }
+  sync();
+}
+function goStep(i) {
+  i = Math.max(0, Math.min(STEPS.length - 1, i));
+  state.step = i;
+  $$('.step').forEach((s, k) => s.classList.toggle('active', k === i));
+  $$('#stepper button').forEach((b, k) => { b.toggleAttribute('aria-current', false); if (k === i) b.setAttribute('aria-current', 'step'); b.classList.toggle('done', k < i); });
+  $('#prevBtn').disabled = i === 0;
+  const nb = $('#nextBtn');
+  nb.textContent = i === STEPS.length - 1 ? 'Reserve →' : `Next: ${STEPS[i + 1].label} →`;
+  if (state.view !== 'plan') state.view = STEPS[i].view;
+  sync();
+}
+function applyConfig(cfg, label) {
+  Object.assign(state, { color:cfg.color, roof:cfg.roof, drive:cfg.drive, layout:cfg.layout, finish:cfg.finish, addons:new Set(cfg.addons) });
+  sanitize(state);
+  if (label) hint(`${label} loaded — make it yours`);
+  sync();
+}
+async function copyLink() {
+  const url = location.href.split('#')[0] + '#build=' + encode(ctx());
+  try { await navigator.clipboard.writeText(url); toast('Share link copied. Anyone opening it sees this exact build and price.'); }
+  catch (e) { prompt('Copy this link:', url); }
+}
+
+function wire() {
+  document.addEventListener('click', e => {
+    const opt = e.target.closest('[data-g]'); if (opt) { if (opt.getAttribute('aria-disabled') === 'true') { choose(opt.dataset.g, opt.dataset.id); return; } choose(opt.dataset.g, opt.dataset.id); return; }
+    const ad = e.target.closest('[data-addon]'); if (ad) { toggleAddon(ad.dataset.addon); return; }
+    const st = e.target.closest('[data-step]'); if (st) { goStep(+st.dataset.step); return; }
+    const pr = e.target.closest('[data-preset]'); if (pr) {
+      if (pr.dataset.preset === 'base') applyConfig({ color:'basalt', roof:'low', drive:'rwd', layout:'nomad', finish:'birch', addons:[] }, 'Base van');
+      else { const p = PRESETS[+pr.dataset.preset]; applyConfig(p.cfg, p.name); }
+      return;
+    }
+    const vb = e.target.closest('.seg [data-view]'); if (vb) { state.view = vb.dataset.view; sync(); return; }
+    if (e.target.closest('[data-copy]')) copyLink();
+  });
+  // arrow keys inside radiogroups
+  document.addEventListener('keydown', e => {
+    const b = e.target.closest('[role="radio"]'); if (!b || !['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp'].includes(e.key)) return;
+    const items = $$('[role="radio"]', b.parentElement); const i = items.indexOf(b);
+    const n = items[(i + (e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length];
+    n.focus(); n.click(); e.preventDefault();
+  });
+  $('#campBtn').addEventListener('click', () => { state.camp = !state.camp; if (state.view === 'plan') state.view = 'ext'; sync(); });
+  $('#prevBtn').addEventListener('click', () => goStep(state.step - 1));
+  $('#nextBtn').addEventListener('click', () => { if (state.step === STEPS.length - 1) $('#summary').scrollIntoView({ behavior:'smooth' }); else goStep(state.step + 1); });
+  $('#copyBtn').addEventListener('click', copyLink);
+  $('#printBtn').addEventListener('click', () => window.print());
+  $('#dep').addEventListener('input', e => { fin.dep = +e.target.value; syncFinance(); animateNum($('#pbMonthly'), monthly(total(ctx())).m); });
+  $('#terms').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; fin.term = +b.dataset.m; syncFinance(); animateNum($('#pbMonthly'), monthly(total(ctx())).m); });
+
+  $('#resForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const name = $('#fName'), email = $('#fEmail');
+    const okN = name.value.trim().length > 1, okE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
+    name.closest('.field').classList.toggle('bad', !okN);
+    email.closest('.field').classList.toggle('bad', !okE);
+    if (!okN) { name.focus(); return; } if (!okE) { email.focus(); return; }
+    const S = specs(ctx());
+    $('#okText').innerHTML = `Thanks, ${name.value.trim().split(' ')[0]}. We’ve held build <b>LW-${encode(ctx())}</b> at <b>${money(total(ctx()))}</b> with an estimated handover in ${S.handover}. A builder will email ${email.value.trim()} within one working day. <br><small>(Demo site — nothing was sent or charged.)</small>`;
+    $('#reserve').classList.add('done');
+  });
+  $('#resetRes').addEventListener('click', () => $('#reserve').classList.remove('done'));
+
+  // price bar visibility
+  const vis = { cfg:false, sum:false };
+  const io = new IntersectionObserver(es => {
+    es.forEach(en => { if (en.target.id === 'configure') vis.cfg = en.isIntersecting; else vis.sum = en.isIntersecting; });
+    $('#pricebar').classList.toggle('show', vis.cfg && !vis.sum);
+  }, { threshold: 0, rootMargin: '-30% 0px -30% 0px' });
+  io.observe($('#configure')); io.observe($('#summary'));
+
+  window.addEventListener('hashchange', () => {
+    const m = /build=([^&]+)/.exec(location.hash); const d = m && decode(m[1]);
+    if (d && encode(d) !== encode(ctx())) applyConfig({ ...d, addons:[...d.addons] });
+  });
+}
+
+/* =============================== INIT =============================== */
+function init() {
+  buildPanel();
+  $('#stageSide').innerHTML = sceneSVG('ss', false) + `<div class="van-wrap">${vanSVG('sv')}</div>`;
+  $('#stagePlan').innerHTML = planSVG('p');
+  $('#sheetVan').innerHTML = vanSVG('sh');
+  $('#heroScene').insertAdjacentHTML('afterbegin', sceneSVG('hs', true) + `<div class="van-wrap">${vanSVG('hv')}</div>`);
+  stageVan = $('#stageSide .van'); planEl = $('#stagePlan .plan'); sheetVan = $('#sheetVan .van'); heroVan = $('#heroScene .van');
+  applyVan(heroVan, { color:'ochre', roof:'high', drive:'x4', layout:'nomad', finish:'walnut', addons:new Set(['rack', 'solar', 'ladder', 'carrier', 'at', 'lightbar', 'snorkel', 'awning']), view:'ext', camp:false });
+
+  topo($('#heroTopo'), [[1240, 260, 16, 26], [260, 760, 14, 30], [820, 980, 10, 34]], 11);
+  topo($('#footTopo'), [[1300, 500, 14, 30], [200, 100, 12, 28]], 5);
+
+  // restore from link or last session
+  const m = /build=([^&]+)/.exec(location.hash);
+  let saved = m && decode(m[1]);
+  if (!saved) { try { saved = decode(localStorage.getItem('longway-build')); } catch (e) {} }
+  if (saved) Object.assign(state, saved, { addons: saved.addons });
+  sanitize(state);
+
+  wire();
+  goStep(0);
+  // first render: avoid delta bubble
+  lastTotal = total(ctx());
+}
+init();
+})();
+</script>
+</body>
+</html>

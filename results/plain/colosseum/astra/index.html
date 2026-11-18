@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#242923"><title>The Colosseum · Forma Atlas</title>
+<style>
+:root{--ink:#292d25;--sub:#696b5d;--paper:#f5f3eb;--line:#d2cfc2;--accent:#ad5939;--mono:ui-monospace,"SFMono-Regular",Consolas,monospace;--serif:Georgia,"Times New Roman",serif}*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--paper);color:var(--ink)}body{font-family:"Helvetica Neue",Arial,sans-serif}button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}button:focus-visible,canvas:focus-visible{outline:2px solid #af5636;outline-offset:3px}svg{display:block;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}.icons{position:absolute;width:0;height:0;overflow:hidden}#app{height:100svh;min-height:570px;display:flex;flex-direction:column}header{height:64px;flex:none;background:#262b25;color:#f5f1e7;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(20px,3.6vw,60px)}.brand,.head-actions,.collection,.place,.tools,.help,.dockhead,.card,.note-head{display:flex;align-items:center}.brand{gap:14px}.brandmark{width:31px;height:33px;color:#daa97a}.wordmark{font-family:var(--serif);font-size:29px;letter-spacing:-1.4px}.collection{margin-left:5px;padding-left:20px;border-left:1px solid #62655a;height:23px;color:#cecfc2;font-size:12px;letter-spacing:.05em}.head-actions{gap:20px}.note-btn{background:none;border:0;display:flex;align-items:center;gap:9px;color:#e3e2d6;font-size:12px;padding:10px 0}.note-btn svg{width:17px;height:17px}.note-btn:hover{color:#e4b487}.stage{position:relative;isolation:isolate;flex:1;min-height:305px;overflow:hidden;background:#e7e4da}.scene{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}.scene.dragging{cursor:grabbing}.titleblock{position:absolute;left:clamp(20px,3.6vw,60px);top:clamp(23px,3.6vh,44px);pointer-events:none}.place,.mono{font-family:var(--mono);text-transform:uppercase;font-size:10px;line-height:1.4;letter-spacing:.124em;font-weight:550}.place{gap:10px;color:#76573f}.place::before{content:"";width:24px;height:2px;background:#a96840}.place i{height:3px;width:3px;border-radius:50%;background:#aa8c6f}.titleblock h1{font-family:var(--serif);font-size:clamp(47px,4.8vw,78px);font-weight:400;letter-spacing:-.058em;line-height:1.04;margin:9px 0 5px}.latin{margin:0;color:#646457;font-family:var(--serif);font-style:italic;font-size:clamp(15px,1.4vw,20px)}.compass{position:absolute;top:clamp(26px,4vh,46px);right:clamp(22px,3.6vw,60px);width:50px;display:grid;place-items:center;gap:2px;color:#606356;pointer-events:none}.compass .mono{font-size:10px}.compass svg{width:46px;height:46px;stroke-width:1}.maplabel{position:absolute;left:0;top:0;pointer-events:none;display:flex;align-items:center;transform-origin:left center;color:#534b40;white-space:nowrap;opacity:0;transition:opacity .22s}.maplabel.visible{opacity:1}.maplabel::before{content:"";width:5px;height:5px;border-radius:50%;background:#9e5737;border:1px solid #f1e5cc;box-shadow:0 0 0 1px #906846}.leader{width:clamp(26px,3.7vw,74px);height:1px;background:#916f52;transform:rotate(-25deg);transform-origin:left center}.labeltext{font:550 10px var(--mono);letter-spacing:.09em;text-transform:uppercase;background:#eeeadeed;border:1px solid #c3bca7;padding:6px 8px;position:relative;left:-5px;top:clamp(-30px,-1.6vw,-12px)}.maplabel.left{flex-direction:row-reverse;transform-origin:right center}.left .leader{transform:rotate(25deg);transform-origin:right center}.left .labeltext{left:5px}.stagefoot{position:absolute;bottom:19px;left:clamp(20px,3.6vw,60px);right:clamp(20px,3.6vw,60px);display:flex;align-items:end;justify-content:space-between;pointer-events:none}.help{gap:17px;color:#606257;font-size:11px;letter-spacing:.01em;padding-bottom:5px}.help span{display:flex;align-items:center;gap:7px}.help svg{width:16px;height:16px}.mobile-help{display:none!important}.tools{pointer-events:auto;background:#f7f5ecf2;border:1px solid #c9c6b9;border-radius:5px;box-shadow:0 2px 6px #3735270b;padding:3px}.iconbtn{border:0;background:transparent;width:36px;height:34px;display:grid;place-items:center;border-radius:3px}.iconbtn:hover{background:#e5e2d6}.iconbtn[aria-pressed=true]{color:var(--accent)}.iconbtn svg{width:17px;height:17px}.tooldiv{height:16px;width:1px;background:#d5d1c3;margin:0 3px}.dock{padding:19px clamp(20px,3.6vw,60px) 22px;background:var(--paper);border-top:1px solid #c7c4b7;flex:none}.dockhead{justify-content:space-between;margin:0 0 13px}.dockhead h2{font:400 24px/1.06 var(--serif);letter-spacing:-.035em;margin:0}.count{font:10px var(--mono);letter-spacing:.1em;color:#757668}.count b{font-weight:500;color:#a25b3e}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.card{gap:16px;padding:10px 32px 10px 10px;border:1px solid var(--line);border-radius:5px;min-width:0;position:relative;background:#f8f6ef;text-align:left;transition:background .2s,border-color .2s,transform .2s}.card:hover{border-color:#939281;transform:translateY(-2px)}.card[aria-pressed=true]{background:#30362d;color:#f8f5ea;border-color:#30362d}.card .thumb{flex:none;width:clamp(56px,5.8vw,105px);height:64px;border-radius:2px;overflow:hidden;background:#d9d4c6;position:relative}.thumb img{width:100%;height:100%;display:block;object-fit:cover;filter:saturate(.86)}.words{min-width:0}.card strong{font:400 clamp(17px,1.55vw,24px)/1.2 var(--serif);letter-spacing:-.025em;display:block;margin:0 0 5px}.desc{display:block;max-width:280px;font-size:clamp(11px,.88vw,14px);line-height:1.42;color:#66695e}.card[aria-pressed=true] .desc{color:#d0d1c4}.arrow{position:absolute;top:13px;right:12px;width:13px;height:13px;color:#888a7e}.card[aria-pressed=true] .arrow{color:#e7ba8d}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}dialog{width:min(410px,calc(100vw - 32px));border:1px solid #bdb6a6;border-radius:8px;background:var(--paper);padding:27px;color:var(--ink);box-shadow:0 15px 60px #191d2630}dialog::backdrop{background:#20251e68;backdrop-filter:blur(3px)}.note-head{justify-content:space-between}.note-head span{color:var(--accent)}dialog h2{font:400 35px/1.1 var(--serif);letter-spacing:-.045em;margin:15px 0 12px}dialog p,dialog li{font-size:14px;line-height:1.6;color:#5a5c50}dialog ul{padding-left:18px}dialog .keyhelp{border-top:1px solid var(--line);padding-top:14px;font-size:12px}.hidden{display:none}
+@media(min-width:1700px){.card .thumb{height:80px}.dock{padding-top:24px;padding-bottom:28px}}
+@media(max-width:850px){.card{gap:9px;padding:8px 17px 8px 8px}.card .thumb{width:48px;height:57px}.arrow{top:8px;right:6px;width:10px}.cards{gap:7px}.desc{font-size:10.5px}.dock{padding-top:15px;padding-bottom:16px}.help{gap:10px}.titleblock h1{font-size:48px}}
+@media(max-width:620px){#app{min-height:610px}header{height:54px}.brand{gap:9px}.wordmark{font-size:25px}.brandmark{width:25px;height:28px}.collection{font-size:10px;padding-left:12px;margin-left:2px}.note-btn{font-size:11px;gap:6px}.titleblock h1{font-size:45px}.titleblock{top:21px}.place{font-size:9px}.compass{width:34px;right:18px;top:25px}.compass svg{width:33px;height:33px}.stagefoot{bottom:11px;left:16px;right:16px;align-items:center}.help{padding:0;font-size:10px}.help span{display:none}.help .mobile-help{display:flex!important}.iconbtn{width:31px;height:30px}.maplabel .labeltext{font-size:8px;padding:4px 5px}.dock{padding:12px 15px 14px}.dockhead{margin-bottom:9px}.dockhead h2{font-size:22px}.cards{gap:6px}.card{display:flex;flex-direction:column;align-items:stretch;gap:6px;padding:6px;min-height:84px}.card .thumb{width:100%;height:43px}.card strong{font-size:15px;margin:0 0 1px}.card .desc{display:none}.arrow{display:none}.mobile-caption{font-size:11px;line-height:1.35;color:#67695e;margin:8px 0 0;min-height:15px}.help svg{width:15px}}
+@media(min-width:621px){.mobile-caption{display:none}}
+@media(max-height:580px) and (min-width:621px){#app{min-height:450px}header{height:46px}.dock{padding-top:9px;padding-bottom:10px}.dockhead{margin-bottom:6px}.card .thumb{height:45px}.stage{min-height:245px}.titleblock{top:14px}.titleblock h1{font-size:38px}.stagefoot{bottom:8px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.stage.closeup .titleblock{background:#f3f0e5ed;border:1px solid #c7c1ae;border-radius:4px;padding:10px 14px}
+.stage.closeup h1{font-size:clamp(25px,2.4vw,37px);margin:4px 0 0}
+.stage.closeup .latin{display:none}
+.stage.closeup .help{background:#f5f2e7e8;padding:7px 9px;border-radius:3px}
+</style></head><body>
+<svg class="icons" aria-hidden="true"><defs>
+<symbol id="mark" viewBox="0 0 36 36"><path d="M3 29.5h30M4.5 27V13.5l13.5-7 13.5 7V27M4.5 15h27M4.5 18h27M8 27v-5a2 2 0 0 1 4 0v5m4 0v-5a2 2 0 0 1 4 0v5m4 0v-5a2 2 0 0 1 4 0v5M10 12h16"/></symbol>
+<symbol id="book" viewBox="0 0 24 24"><path d="M3 5.5q4-1.8 9 1 5-2.8 9-1v14q-4-1.8-9 1-5-2.8-9-1zM12 6.5v14"/></symbol>
+<symbol id="orbit" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(-30 12 12)"/><circle cx="12" cy="12" r="5.5"/></symbol>
+<symbol id="wheel" viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="6"/><path d="M12 6v4"/></symbol>
+<symbol id="plus" viewBox="0 0 24 24"><path d="M5 12h14m-7-7v14"/></symbol>
+<symbol id="minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+<symbol id="reset" viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 1 7M4 4v6h6"/></symbol>
+<symbol id="tag" viewBox="0 0 24 24"><path d="m3 4 9 .1 9 9-8 8-10-10z"/><circle cx="8.1" cy="8.5" r="1.1"/></symbol>
+<symbol id="arrow" viewBox="0 0 20 20"><path d="M5 15 15 5M5 5h10v10"/></symbol>
+<symbol id="close" viewBox="0 0 24 24"><path d="m5 5 14 14M19 5 5 19"/></symbol>
+</defs></svg>
+<div id="app"><header><div class="brand"><svg class="brandmark" aria-hidden="true"><use href="#mark"/></svg><span class="wordmark">Forma</span><span class="collection">Monument Atlas</span></div><button class="note-btn" id="notes"><svg aria-hidden="true"><use href="#book"/></svg>Field notes</button></header>
+<main class="stage" id="stage">
+<canvas class="scene" id="scene" aria-label="Interactive 3D model of the Roman Colosseum. Use arrow keys to orbit, plus and minus to zoom, or choose a viewpoint." tabindex="0"></canvas>
+<div class="titleblock"><div class="place">Rome, Italy <i></i> AD 80</div><h1>The Colosseum</h1><p class="latin">Amphitheatrum Flavium</p></div>
+<div class="compass" aria-label="Compass"><span class="mono">N</span><svg viewBox="-24 -24 48 48" aria-hidden="true"><circle r="18.5" stroke="#a39f8d" stroke-dasharray="1 4"/><g id="needle"><path d="M0-18 4 4 0 1-4 4z" fill="#6e6d5c" stroke="none"/><path d="M0 17 4-3 0 0-4-3z" fill="#aaa794" stroke="none"/></g></svg></div>
+<div id="label0" class="maplabel left" aria-hidden="true"><i class="leader"></i><span class="labeltext">Outer arcade</span></div>
+<div id="label1" class="maplabel" aria-hidden="true"><i class="leader"></i><span class="labeltext">Hypogeum</span></div>
+<div class="stagefoot"><div class="help"><span><svg><use href="#orbit"/></svg>Drag to orbit</span><span><svg><use href="#wheel"/></svg>Scroll to zoom</span><span class="mobile-help"><svg><use href="#orbit"/></svg>Drag · Pinch to zoom</span></div>
+<div class="tools"><button class="iconbtn" id="tags" title="Toggle landmark labels" aria-label="Toggle landmark labels" aria-pressed="true"><svg><use href="#tag"/></svg></button><i class="tooldiv"></i><button class="iconbtn" id="out" title="Zoom out (−)" aria-label="Zoom out"><svg><use href="#minus"/></svg></button><button class="iconbtn" id="in" title="Zoom in (+)" aria-label="Zoom in"><svg><use href="#plus"/></svg></button><i class="tooldiv"></i><button class="iconbtn" id="resetView" title="Reset to aerial view" aria-label="Reset to aerial view"><svg><use href="#reset"/></svg></button></div></div>
+</main><section class="dock" aria-label="Camera viewpoints"><div class="dockhead"><h2>Viewpoints</h2><span class="count"><b id="current">01</b> &nbsp;/&nbsp; 03</span></div><div class="cards" id="cards"></div><p id="mobileCap" class="mobile-caption"></p><p id="announcement" class="sr" aria-live="polite"></p></section></div>
+<dialog id="fieldNotes"><div class="note-head"><span class="mono">Forma / Field notes</span><button id="closeNotes" class="iconbtn" aria-label="Close field notes"><svg><use href="#close"/></svg></button></div><h2>The Flavian Amphitheatre</h2><p>Look through the arcade and into the bowl. The stepped seating wraps around an elliptical arena, while the surviving outer wall rises above it.</p><p>The cutaway reveals the hypogeum, a network of service passages beneath the wooden arena floor. Follow the parallel corridors to see how much of the spectacle happened out of sight.</p><p class="keyhelp">Use the arrow keys to orbit, + and − to zoom, or 1–3 to visit a viewpoint. Press Home to return to the aerial view.</p></dialog>
+<script>
+// Architectural solids are built in metres at 1:10 scale. Each arcade opening
+// is empty space between its piers and a ring of wedge-shaped voussoirs.
+const vertices=[], normals=[], colors=[];
+const tau=Math.PI*2, bays=80, step=tau/bays, rx=9.4, rz=7.75;
+const sub=(a,b)=>a.map((v,i)=>v-b[i]), add=(a,b)=>a.map((v,i)=>v+b[i]);
+const mul=(a,s)=>a.map(v=>v*s), dot=(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0);
+const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+const unit=a=>mul(a,1/(Math.hypot(...a)||1)), clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const shade=(c,s)=>c.map(v=>Math.min(1,v*s)), stone=[.82,.735,.596], trim=[.89,.82,.69], brick=[.64,.498,.37], seat=[.79,.713,.58];
+let seed=73;
+function random(){seed=(Math.imul(1664525,seed)+1013904223)>>>0;return seed/4294967296}
+function face(a,b,c,d,color,center){
+  let n=unit(cross(sub(b,a),sub(c,a)));
+  if(center&&dot(n,sub(a,center))<0)n=mul(n,-1);
+  for(const p of (d?[a,b,c,a,c,d]:[a,b,c])){vertices.push(...p);normals.push(...n);colors.push(...color)}
+}
+function solid(front,back,color){
+  const count=front.length, center=[0,0,0];
+  for(const p of [...front,...back]) for(let i=0;i<3;i++) center[i]+=p[i]/(2*count);
+  face(front[0],front[1],front[2],front[3],color,center);
+  face(back[0],back[1],back[2],back[3],color,center);
+  for(let i=0;i<count;i++){let j=(i+1)%count;face(front[i],front[j],back[j],back[i],color,center)}
+}
+function polar(t,r,y){return [(rx-r)*Math.cos(t),y,(rz-r*.90)*Math.sin(t)]}
+function band(t0,t1,outer,inner,lo,hi,color){
+  solid([polar(t0,outer,lo),polar(t1,outer,lo),polar(t1,outer,hi),polar(t0,outer,hi)],
+        [polar(t0,inner,lo),polar(t1,inner,lo),polar(t1,inner,hi),polar(t0,inner,hi)],color)
+}
+function wall(t,r,points,depth,c){
+  const front=points.map(([u,y])=>polar(t+u*step,r,y));
+  const back=points.map(([u,y])=>polar(t+u*step,r+depth,y));
+  solid(front,back,c)
+}
+function rect(t,r,u0,u1,y0,y1,depth,c){
+  wall(t,r,[[u0,y0],[u1,y0],[u1,y1],[u0,y1]],depth,c)
+}
+function arcade(t,r,y,h,depth,decor){
+  const span=.335, spring=y+h*.485, radius=h*.29, ring=.075, archTop=radius+h*.077;
+  const c=shade(stone,.94+random()*.105);
+  // The flat spandrels above the arch follow its curved outer edge.
+  for(const s of [-1,1]){
+    const l=s<0?-.5:span, rr=s<0?-span:.5;
+    rect(t,r,l,rr,y,spring,depth,shade(c,.96+random()*.04));
+    rect(t,r,s<0?-.5:span+ring,s<0?-span-ring:.5,spring,y+h,depth,c)
+  }
+  for(let k=0;k<9;k++){
+    const a=k*Math.PI/9,b=(k+1)*Math.PI/9;
+    const p=(ang,w,z)=>[Math.cos(ang)*w,spring+Math.sin(ang)*z];
+    const o0=p(a,span+ring,archTop),o1=p(b,span+ring,archTop);
+    wall(t,r-.016,[p(a,span,radius),p(b,span,radius),o1,o0],depth+.016,shade(trim,.88+random()*.13));
+    wall(t,r,[o0,o1,[o1[0],y+h],[o0[0],y+h]],depth,c)
+  }
+  if(decor){
+    // Engaged columns, separate plinths, imposts and capital blocks.
+    rect(t,r-.064,-.555,-.445,y+.085,y+h-.1,.118,shade(trim,.95));
+    rect(t,r-.095,-.595,-.405,y+.025,y+.112,.16,trim);
+    rect(t,r-.10,-.60,-.40,y+h-.146,y+h-.067,.16,trim);
+    rect(t,r-.067,-.56,-.44,y+h-.073,y+h-.026,.13,stone)
+  }
+}
+function box(x0,x1,z0,z1,y0,y1,c){
+ solid([[x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0]],[[x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1]],c)
+}
+function buildMonument(){
+  const base=.16, h=1.12;
+  for(let i=0;i<bays;i++){
+    const t=(i+.5)*step,a=i*step,b=(i+1)*step;
+    // Two courses of travertine paving surround the foundations.
+    for(let j=0;j<2;j++){
+      const offset=j*.5*step;
+      band(a+offset+.00032,b+offset-.00032,-.82+j*.248,-.575+j*.248,.001,.018,shade(seat,.88+random()*.095));
+    }
+    band(a,b,-.32,.28,.003,.077,shade(seat,.92+random()*.08));
+    band(a,b,-.18,.65,.077,base,shade(trim,.92+random()*.08));
+    // The missing outer curtain reveals the internal masonry and seating bowl.
+    const arc=(i+10)%80, high=arc>=34&&arc<=74;
+    const levels=high?3:arc>=28&&arc<34?Math.ceil((arc-27)/2):arc>74?Math.max(1,3-Math.floor((arc-74)/1.7)):arc>=7&&arc<=31?2:1;
+    let inset=high||arc>=28||arc>74?0:.68;
+    band(a,b,.24,4.77,.022,.102,shade(seat,.80+random()*.07));
+    // Radial bearing walls carry the raked seating above the circulation passages.
+    const wallEnd=4.47,tHalf=.087*step;
+    solid([polar(a-tHalf,inset+1.20,.10),polar(a-tHalf,wallEnd,.10),polar(a-tHalf,wallEnd,.71),polar(a-tHalf,inset+1.20,high?3.15:2.01)],
+          [polar(a+tHalf,inset+1.20,.10),polar(a+tHalf,wallEnd,.10),polar(a+tHalf,wallEnd,.71),polar(a+tHalf,inset+1.20,high?3.15:2.01)],shade(brick,.87+random()*.13));
+    if(levels>=2)band(a,b,inset+.26,inset+1.28,base+h-.115,base+h-.043,shade(stone,.87));
+    if(inset>.1)band(a,b,.03,.65,base,base+.05,shade(stone,.88+random()*.12));
+    for(let k=0;k<levels;k++){
+      const y=base+k*h;
+      arcade(t,inset,y,h,.36,true);
+      band(a,b,inset-.04,inset+.48,y+h-.10,y+h-.036,shade(stone,.94+random()*.06));
+      band(a,b,inset-.10,inset+.48,y+h-.036,y+h+.023,shade(trim,.95+random()*.06));
+      if(k===0||high)arcade(t,inset+.78,y,h,.27,false);
+    }
+    if(!high&&((arc>=25&&arc<31)||(arc>=75&&arc<=78))){
+      // Short runs of surviving masonry interrupt the broken ends of the facade.
+      const y=base+levels*h+.027,remaining=.14+.15*(1+Math.cos(i*2.1));
+      rect(t,inset,-.5,-.18,y,y+remaining,.34,shade(stone,.91+random()*.11));
+      rect(t,inset,-.18,.27,y,y+remaining*.62,.34,shade(stone,.92+random()*.1));
+    }
+    if(high){
+      const y=base+3*h, top=y+.91;
+      rect(t,0,-.5,.5,y,y+.19,.34,stone);
+      // Rectangular attic windows alternate with blind panels.
+      if(i%2===0){
+        rect(t,0,-.5,-.145,y+.19,top,.34,stone);
+        rect(t,0,.145,.5,y+.19,top,.34,stone);
+        rect(t,0,-.145,.145,y+.57,top,.34,stone);
+      }else rect(t,0,-.5,.5,y+.19,top,.34,shade(stone,.96+random()*.07));
+      rect(t,-.045,-.56,-.44,y+.08,top,.1,trim);
+      band(a,b,-.082,.40,top,top+.082,trim);
+      band(a,b,-.125,.41,top+.082,top+.142,shade(trim,1.03));
+    }
+    // Lower retaining wall and continuous stepped cavea. Radial stair aisles
+    // interrupt the broad benches while tunnel mouths break the middle tier.
+    band(a,b,4.61,4.91,.065,.76,shade(brick,.92+random()*.13));
+    band(a,b,4.57,4.95,.73,.81,trim);
+    const maxRow=high?19:levels===2?14:12;
+    for(let j=0;j<maxRow;j++){
+      const r=4.59-j*.183, y=.79+j*.135, aisle=i%5===0;
+      if(i%8===2&&j>=8&&j<=10){
+        if(j===10)band(a,b,r-.15,r+.018,y+.03,y+.14,shade(brick,.90));
+        continue
+      }
+      const c=shade(aisle?stone:seat,.90+random()*.105);
+      band(a,b,r-.183,r+.011,y-.14,y+(aisle?-.036:0),c);
+      if(aisle)band(a,b,r-.183,r-.092,y-.05,y+.032,shade(c,1.045));
+    }
+    const inner=4.59-(maxRow-1)*.183;
+    const landing=.79+(maxRow-1)*.135;
+    band(a,b,inset+.39,inner-.16,landing-.13,landing,shade(stone,.90+random()*.09));
+    if(high){
+      // An upper ambulatory sits between the external wall and the last rows.
+      band(a,b,.38,1.26,base+3*h-.155,base+3*h-.048,shade(seat,.92+random()*.08));
+    }
+  }
+  // Elliptical basement with parallel service corridors and cross walls.
+  const ax=4.59,az=3.30;
+  for(let i=0;i<bays;i++){
+    const a=i*step,b=(i+1)*step;
+    face([0,.076,0],[ax*Math.cos(b),.076,az*Math.sin(b)],[ax*Math.cos(a),.076,az*Math.sin(a)],null,shade(brick,.72));
+  }
+  for(let j=-4;j<=4;j++){
+    const z=j*.64, lim=ax*Math.sqrt(Math.max(0,1-((Math.abs(z)+.14)/az)**2))-.09;
+    for(let x=-lim;x<lim-.04;x+=.57){
+      box(x,Math.min(lim,x+.56),z-.083,z+.083,.078,.54+random()*.055,shade(brick,.88+random()*.21));
+    }
+    if(j<4){
+      for(let x=-lim+.40+(j%2)*.2;x<lim-.3;x+=1.02){
+        if((x/1.02+j|0)%4===0)continue;
+        box(x,x+.14,z+.06,z+.59,.08,.45+random()*.10,shade(brick,.94+random()*.15))
+      }
+    }
+  }
+  // Surviving arena deck, constructed as a circular segment with a straight edge.
+  const cut=-1.52, end=Math.acos(cut/ax), left=[cut,.723,0];
+  for(let i=0;i<40;i++){
+    const a=end+(tau-2*end)*i/40,b=end+(tau-2*end)*(i+1)/40;
+    face(left,[ax*Math.cos(b),.723,az*Math.sin(b)],[ax*Math.cos(a),.723,az*Math.sin(a)],null,[.83,.682,.458]);
+  }
+  const span=az*Math.sqrt(1-(cut/ax)**2);
+  box(cut-.09,cut+.015,-span,span,.57,.723,shade(brick,1.02));
+}
+buildMonument();
+// Column-major camera transforms shared by the daylight and shadow passes.
+function product(a,b){
+ const m=new Float32Array(16);
+ for(let c=0;c<4;c++)for(let r=0;r<4;r++)for(let k=0;k<4;k++)m[c*4+r]+=a[k*4+r]*b[c*4+k];
+ return m
+}
+function look(eye,target){
+ const z=unit(sub(eye,target)),x=unit(cross([0,1,0],z)),y=cross(z,x);
+ return [x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,-dot(x,eye),-dot(y,eye),-dot(z,eye),1]
+}
+function perspective(aspect,fov,dx,dy){
+ const k=1/Math.tan(fov*Math.PI/360),n=.045,f=350;
+ return [k/aspect,0,0,0,0,k,0,0,-dx,-dy,(f+n)/(n-f),-1,0,0,2*f*n/(n-f),0]
+}
+const sun=unit([-9,15,8]),light=product([1/13,0,0,0,0,1/13,0,0,0,0,-1/30,0,0,0,-1.02,1],look(mul(sun,31),[0,0,0]));
+const modelVertexCount=vertices.length/3;
+face([-260,-.01,-260],[-260,-.01,260],[260,-.01,260],[260,-.01,-260],[.886,.868,.813]);
+const pos=new Float32Array(vertices),nor=new Float32Array(normals),col=new Float32Array(colors);
+vertices.length=normals.length=colors.length=0;
+function gpuRenderer(canvas){
+ const gl=canvas.getContext('webgl',{antialias:true,alpha:false,preserveDrawingBuffer:true});
+ if(!gl)throw Error('WebGL unavailable');
+ function program(vs,fs){
+   const shaders=[vs,fs].map((src,i)=>{
+     const s=gl.createShader(i?gl.FRAGMENT_SHADER:gl.VERTEX_SHADER);gl.shaderSource(s,src);gl.compileShader(s);
+     if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s
+   });
+   const p=gl.createProgram();shaders.forEach(s=>gl.attachShader(p,s));gl.linkProgram(p);
+   if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(p));return p
+ }
+ const shadow=program('attribute vec3 aP;uniform mat4 uL;void main(){gl_Position=uL*vec4(aP,1.);}',`
+ precision highp float;void main(){float z=gl_FragCoord.z*255.;gl_FragColor=vec4(floor(z)/255.,fract(z),0.,1.);}`);
+ const view=program(`attribute vec3 aP,aN,aC;uniform mat4 uVP,uL;varying vec3 vP,vN,vC,vL;
+ void main(){vP=aP;vN=aN;vC=aC;vL=(uL*vec4(aP,1.)).xyz*.5+.5;gl_Position=uVP*vec4(aP,1.);}`,`
+ precision highp float;
+ varying vec3 vP,vN,vC,vL;
+ uniform sampler2D uShadow;
+ uniform vec3 uSun,uEye;
+ uniform float uTexel;
+ float hash(vec2 p){vec3 p3=fract(vec3(p.xyx)*.1031);p3+=dot(p3,p3.yzx+33.33);return fract((p3.x+p3.y)*p3.z);}
+ float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+1.),f.x),f.y);}
+ float visibility(float bias){
+   if(vL.x<.002||vL.y<.002||vL.x>.998||vL.y>.998)return 1.;
+   float s=0.;for(int x=-1;x<=1;x++)for(int y=-1;y<=1;y++){
+     vec2 enc=texture2D(uShadow,vL.xy+vec2(float(x),float(y))*uTexel*1.5).rg;
+     s+=step(vL.z-bias,enc.x+enc.y/255.);
+   }return s/9.;
+ }
+ void main(){
+   bool ground=vP.y<-.004;
+   vec3 n=normalize(vN);if(dot(n,uEye-vP)<0.)n=-n;
+   float diffuse=max(0.,dot(n,uSun));
+   float vis=visibility(.00024+.00044*(1.-diffuse));
+   vec2 uv=vec2(vP.x+vP.z*.41,vP.y+vP.z*.73);
+   float weather=(noise(uv*3.)-.5)*.053+(noise(uv*22.)-.5)*.043;
+   float grain=(hash(gl_FragCoord.xy)-.5)*.012;
+   vec3 c;
+   if(ground){
+     float dist=length(vP.xz*vec2(.88,1.)), nearBase=1.-smoothstep(7.,11.2,dist);
+     c=mix(vec3(.904,.892,.855),vec3(.857,.828,.761),nearBase*.7);
+     c*=mix(.69,1.,vis);c+=weather*.23;
+   }else{
+     float ao=mix(.92,1.,smoothstep(.05,2.4,vP.y));
+     c=vC*(vec3(.605,.577,.539)+vec3(.56,.558,.542)*diffuse*vis+max(n.y,0.)*.025)*ao;
+     // Mortar joints and weathering are evaluated in local stone coordinates.
+     if(abs(n.y)<.62 && vC.r>.70){
+       float u=atan(vP.z/7.75,vP.x/9.4)*7.2;
+       float course=vP.y*7.4;
+       vec2 block=vec2(u*2.45+.5*mod(floor(course),2.),course);
+       vec2 edge=min(fract(block),1.-fract(block));
+       float mortar=1.-smoothstep(.009,.034,min(edge.x,edge.y));
+       float distanceFade=1.-smoothstep(10.,31.,length(uEye-vP));
+       c-=mortar*(.021+.023*distanceFade);
+       c+=(hash(floor(block))-.5)*.015;
+     }
+     c+=weather;
+   }
+   float fog=smoothstep(23.,90.,length(vP.xz));
+   gl_FragColor=vec4(mix(c,vec3(.904,.892,.855),fog)+grain,1.);
+ }`);
+ gl.getExtension('OES_standard_derivatives');
+ const buffers=[pos,nor,col].map(arr=>{const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,arr,gl.STATIC_DRAW);return b});
+ function bind(p,names){
+   gl.useProgram(p);names.forEach((name,i)=>{const loc=gl.getAttribLocation(p,name);gl.bindBuffer(gl.ARRAY_BUFFER,buffers[i]);gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,3,gl.FLOAT,false,0,0)})
+ }
+ const size=Math.min(2048,gl.getParameter(gl.MAX_TEXTURE_SIZE),gl.getParameter(gl.MAX_RENDERBUFFER_SIZE));
+ const tex=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,tex);
+ gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,size,size,0,gl.RGBA,gl.UNSIGNED_BYTE,null);
+ for(const k of [gl.TEXTURE_MIN_FILTER,gl.TEXTURE_MAG_FILTER])gl.texParameteri(gl.TEXTURE_2D,k,gl.NEAREST);
+ for(const k of [gl.TEXTURE_WRAP_S,gl.TEXTURE_WRAP_T])gl.texParameteri(gl.TEXTURE_2D,k,gl.CLAMP_TO_EDGE);
+ const fb=gl.createFramebuffer();gl.bindFramebuffer(gl.FRAMEBUFFER,fb);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,tex,0);
+ const depth=gl.createRenderbuffer();gl.bindRenderbuffer(gl.RENDERBUFFER,depth);gl.renderbufferStorage(gl.RENDERBUFFER,gl.DEPTH_COMPONENT16,size,size);gl.framebufferRenderbuffer(gl.FRAMEBUFFER,gl.DEPTH_ATTACHMENT,gl.RENDERBUFFER,depth);
+ if(gl.checkFramebufferStatus(gl.FRAMEBUFFER)!==gl.FRAMEBUFFER_COMPLETE)throw Error('Shadow target unavailable');
+ gl.enable(gl.DEPTH_TEST);gl.viewport(0,0,size,size);gl.clearColor(1,1,1,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+ bind(shadow,['aP']);gl.uniformMatrix4fv(gl.getUniformLocation(shadow,'uL'),false,light);gl.drawArrays(gl.TRIANGLES,0,modelVertexCount);
+ gl.bindFramebuffer(gl.FRAMEBUFFER,null);bind(view,['aP','aN','aC']);
+ gl.uniformMatrix4fv(gl.getUniformLocation(view,'uL'),false,light);
+ gl.uniform3fv(gl.getUniformLocation(view,'uSun'),sun);gl.uniform1f(gl.getUniformLocation(view,'uTexel'),1/size);
+ const vpLoc=gl.getUniformLocation(view,'uVP'), eyeLoc=gl.getUniformLocation(view,'uEye');
+ return (vp,eye)=>{
+   gl.viewport(0,0,canvas.width,canvas.height);gl.clearColor(.904,.892,.855,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+   gl.uniformMatrix4fv(vpLoc,false,vp);gl.uniform3fv(eyeLoc,eye);gl.drawArrays(gl.TRIANGLES,0,pos.length/3)
+ }
+}
+// Canvas fallback uses the same model and camera when a browser disables WebGL.
+function softwareRenderer(canvas){
+ const ctx=canvas.getContext('2d',{alpha:false});
+ const count=pos.length/3,ls=768,shadow=new Float32Array(ls*ls).fill(1);
+ function project(m,x,y,z){return [m[0]*x+m[4]*y+m[8]*z+m[12],m[1]*x+m[5]*y+m[9]*z+m[13],m[2]*x+m[6]*y+m[10]*z+m[14],m[3]*x+m[7]*y+m[11]*z+m[15]]}
+ const ldata=new Float32Array(count*3),pdata=new Float32Array(count*4);
+ for(let i=0;i<count;i++){const j=i*3,v=project(light,pos[j],pos[j+1],pos[j+2]);ldata[j]=(v[0]*.5+.5)*ls;ldata[j+1]=(v[1]*.5+.5)*ls;ldata[j+2]=v[2]}
+ let depth,image,width,height;
+ function raster(a,b,c,off,lighting,shadowPass=false){
+   const sizeX=shadowPass?ls:width,sizeY=shadowPass?ls:height;
+   const dx=b[0]-a[0],dy=b[1]-a[1],ex=c[0]-a[0],ey=c[1]-a[1],det=dx*ey-ex*dy;
+   if(Math.abs(det)<.0002)return;
+   const x0=Math.max(0,Math.ceil(Math.min(a[0],b[0],c[0])-.5)),x1=Math.min(sizeX-1,Math.floor(Math.max(a[0],b[0],c[0])-.5));
+   const y0=Math.max(0,Math.ceil(Math.min(a[1],b[1],c[1])-.5)),y1=Math.min(sizeY-1,Math.floor(Math.max(a[1],b[1],c[1])-.5));
+   const buf=shadowPass?shadow:depth;
+   for(let y=y0;y<=y1;y++){
+     const py=y+.5-a[1];
+     let u=((x0+.5-a[0])*ey-py*ex)/det,v=(dx*py-dy*(x0+.5-a[0]))/det;
+     for(let x=x0;x<=x1;x++,u+=ey/det,v-=dy/det){
+       const w=1-u-v;if(u<0||v<0||w<0)continue;
+       const z=w*a[2]+u*b[2]+v*c[2],idx=y*sizeX+x;if(z>=buf[idx])continue;
+       buf[idx]=z;if(shadowPass)continue;
+       const inv=1/(w*a[3]+u*b[3]+v*c[3]);
+       const lx=Math.floor((w*a[4]+u*b[4]+v*c[4])*inv),ly=Math.floor((w*a[5]+u*b[5]+v*c[5])*inv);
+       let vis=1;
+       if(lx>=0&&lx<ls&&ly>=0&&ly<ls){
+         const lz=(w*a[6]+u*b[6]+v*c[6])*inv;
+         vis=shadow[lx+ly*ls]+.003<lz?0:1
+       }
+       const grain=((Math.imul(x^Math.imul(y,1171),214013)>>>8)&7)*.25-.9;
+       const ground=off>=modelVertexCount*3, p=idx*4;
+       for(let k=0;k<3;k++){
+         image.data[p+k]=ground?[231,228,218][k]*(vis?.995:.735)+grain:col[off+k]*255*([.605,.577,.539][k]+lighting*vis*.57)+grain
+       }
+       image.data[p+3]=255
+     }
+   }
+ }
+ for(let j=0;j<modelVertexCount*3;j+=9)raster(ldata.subarray(j,j+3),ldata.subarray(j+3,j+6),ldata.subarray(j+6,j+9),j,0,true);
+ function screen(v){
+   const iw=1/v[3];return [(v[0]*iw*.5+.5)*width,(.5-v[1]*iw*.5)*height,v[2]*iw,iw,v[4]*iw,v[5]*iw,v[6]*iw]
+ }
+ return (vp,eye)=>{
+   width=canvas.width;height=canvas.height;
+   if(!image||image.width!==width||image.height!==height){image=ctx.createImageData(width,height);depth=new Float32Array(width*height)}
+   depth.fill(Infinity);new Uint32Array(image.data.buffer).fill(0xffdae4e7);
+   for(let j=0;j<count;j++){
+     const p=j*3,k=j*4,x=pos[p],y=pos[p+1],z=pos[p+2];
+     for(let v=0;v<4;v++)pdata[k+v]=vp[v]*x+vp[4+v]*y+vp[8+v]*z+vp[12+v]
+   }
+   for(let j=0;j<count;j+=3){
+     const off=j*3,i=j*4;
+     if((eye[0]-pos[off])*nor[off]+(eye[1]-pos[off+1])*nor[off+1]+(eye[2]-pos[off+2])*nor[off+2]<0)continue;
+     if(pdata[i+3]<.04&&pdata[i+7]<.04&&pdata[i+11]<.04)continue;
+     const pts=[];
+     for(let k=0;k<3;k++){const pi=i+4*k,li=off+3*k;pts.push([pdata[pi],pdata[pi+1],pdata[pi+2],pdata[pi+3],ldata[li],ldata[li+1],ldata[li+2]])}
+     let poly=pts;
+     if(pts.some(p=>p[3]<.045)){
+       poly=[];for(let k=0;k<3;k++){const a=pts[k],b=pts[(k+1)%3];if(a[3]>=.045)poly.push(a);if((a[3]>=.045)!==(b[3]>=.045)){const t=(.045-a[3])/(b[3]-a[3]);poly.push(a.map((n,v)=>n+(b[v]-n)*t))}}
+     }
+     const diffuse=Math.max(0,sun[0]*nor[off]+sun[1]*nor[off+1]+sun[2]*nor[off+2]);
+     const ps=poly.map(screen);for(let k=2;k<ps.length;k++)raster(ps[0],ps[k-1],ps[k],off,diffuse)
+   }
+   ctx.putImageData(image,0,0)
+ }
+}
+const $=s=>document.querySelector(s), stage=$('#stage');
+let canvas=$('#scene'),drawScene,software=false;
+try{drawScene=gpuRenderer(canvas)}catch(error){
+ const replacement=canvas.cloneNode(false);canvas.replaceWith(replacement);canvas=replacement;
+ drawScene=softwareRenderer(canvas);software=true;
+}
+const views=[
+ {name:'Aerial view',caption:'Trace the elliptical arcades around the open arena.',eye:[8,11.6,21.5],target:[0,1.4,0],fov:32},
+ {name:'Arena floor',caption:'Look across the exposed passages of the hypogeum.',eye:[-3.55,1.21,.58],target:[1.25,1.13,-1.74],fov:70},
+ {name:'Top tier',caption:'Look down from the highest rows of the cavea.',eye:[1.55,3.88,-6.42],target:[-.3,.68,1.65],fov:69}
+];
+let selected=0,labels=true,flight=null,queued=false,raf=0,cam,activeMatrix,dirty=true;
+const thumbViews=[
+ {eye:[11,10,17],target:[0,1.35,0],fov:44},
+ {eye:[-3.50,2,.1],target:[1.6,.65,-1.2],fov:67},
+ {eye:[2.4,4.65,-7.0],target:[0,.4,.5],fov:73}
+];
+function setSize(w,h){if(canvas.width!==w)canvas.width=w;if(canvas.height!==h)canvas.height=h}
+function cardMarkup(v,i){
+ return '<button class="card" type="button" aria-pressed="'+(i===0)+'"><span class="thumb"><img alt="" id="thumb'+i+'"></span><span class="words"><strong>'+v.name+'</strong><span class="desc">'+v.caption+'</span></span><svg class="arrow" aria-hidden="true"><use href="#arrow"/></svg></button>'
+}
+$('#cards').innerHTML=views.map(cardMarkup).join('');
+const cards=[...document.querySelectorAll('.card')];
+function makeThumbs(){
+ const stamp=document.createElement('canvas');stamp.width=240;stamp.height=150;
+ const ctx=stamp.getContext('2d');setSize(240,150);
+ thumbViews.forEach((v,i)=>{
+   drawScene(product(perspective(1.6,v.fov,0,0),look(v.eye,v.target)),v.eye);
+   ctx.drawImage(canvas,0,0);$('#thumb'+i).src=stamp.toDataURL('image/png')
+ });
+}
+function spherical(eye,target){
+ const d=sub(eye,target);return {target:target.slice(),r:Math.hypot(...d),az:Math.atan2(d[0],d[2]),el:Math.atan2(d[1],Math.hypot(d[0],d[2]))}
+}
+function cart(c){
+ return add(c.target,[c.r*Math.cos(c.el)*Math.sin(c.az),c.r*Math.sin(c.el),c.r*Math.cos(c.el)*Math.cos(c.az)])
+}
+function preset(i){
+ const v=views[i],c=spherical(v.eye,v.target),ratio=stage.clientWidth/stage.clientHeight;
+ c.fov=v.fov;c.dx=0;c.dy=0;
+ if(i===0){
+   c.r=Math.max(27.4,37.8/ratio);c.dx=ratio>1.4?.09:0;c.dy=ratio>1.4?-.115:-.10;
+ }else{c.fov=ratio<1?79:v.fov;c.dy=-.06}
+ return c
+}
+function resized(){
+ const ratio=software?Math.min(1,960/stage.clientWidth):Math.min(window.devicePixelRatio||1,1.7,2200/stage.clientWidth);
+ setSize(Math.max(1,Math.round(stage.clientWidth*ratio)),Math.max(1,Math.round(stage.clientHeight*ratio)));
+ if(selected>=0){cam=preset(selected);flight=null}
+ schedule()
+}
+function updateSelection(i){
+ selected=i;cards.forEach((card,k)=>card.setAttribute('aria-pressed',String(i===k)));
+ $('#current').textContent=i<0?'Free orbit':String(i+1).padStart(2,'0');
+ $('.count').style.fontStyle=i<0?'italic':'normal';
+ const text=i<0?'Explore freely, or choose a viewpoint below.':views[i].caption;
+ $('#mobileCap').textContent=text;$('#announcement').textContent=(i<0?'Free orbit':views[i].name)+'. '+text
+}
+function choose(i){
+ const to=preset(i),from={...cam,target:cam.target.slice()};updateSelection(i);
+ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ if(reduced){cam=to;flight=null}else{
+   let da=(to.az-from.az)%tau;if(da>Math.PI)da-=tau;if(da< -Math.PI)da+=tau;
+   flight={start:performance.now(),from,to,da,arc:Math.min(2.35,Math.abs(to.r-from.r)*.13),duration:1050}
+ }
+ schedule()
+}
+function schedule(){dirty=true;if(!queued){queued=true;raf=requestAnimationFrame(frame)}}
+function frame(now){
+ queued=false;if(!dirty&&!flight)return;dirty=false;
+ if(flight){
+   const {start,from,to,da,arc,duration}=flight,t=clamp((now-start)/duration,0,1),s=t*t*(3-2*t);
+   const lerp=(a,b)=>a+(b-a)*s;
+   cam={target:from.target.map((n,j)=>lerp(n,to.target[j])),r:lerp(from.r,to.r),az:from.az+da*s,el:lerp(from.el,to.el),fov:lerp(from.fov,to.fov),dx:lerp(from.dx,to.dx),dy:lerp(from.dy,to.dy)};
+   cam.target[1]+=Math.sin(Math.PI*s)*arc;
+   if(t===1){cam=to;flight=null}
+ }
+ const eye=cart(cam);activeMatrix=product(perspective(canvas.width/canvas.height,cam.fov,cam.dx,cam.dy),look(eye,cam.target));
+ stage.classList.toggle('closeup',cam.r<15);
+ drawScene(activeMatrix,eye);
+ $('#needle').setAttribute('transform','rotate('+(-cam.az*180/Math.PI)+')');
+ placeLabels();if(flight)schedule()
+}
+function placeLabels(){
+ const a=activeMatrix,w=stage.clientWidth,h=stage.clientHeight;
+ const anchors=[polar(Math.PI*.88,0,2.90),[2.55,.55,-.55]];
+ anchors.forEach((p,i)=>{
+   const el=$('#label'+i),[x,y,z]=p,k=a[3]*x+a[7]*y+a[11]*z+a[15];
+   const sx=((a[0]*x+a[4]*y+a[8]*z+a[12])/k+1)*.5*w,sy=(1-(a[1]*x+a[5]*y+a[9]*z+a[13])/k)*.5*h;
+   const left=sx-(i===0?el.offsetWidth:0), fits=left>=9&&left+el.offsetWidth<w-8&&sy>115&&sy<h-40;
+   const visible=labels&&!flight&&selected===0&&fits;
+   el.classList.toggle('visible',visible);el.style.left=left+'px';el.style.top=(sy-el.offsetHeight/2)+'px'
+ })
+}
+function free(){flight=null;if(selected!==-1)updateSelection(-1)}
+function orbit(dx,dy){
+ free();cam.az-=dx;cam.el=clamp(cam.el+dy,Math.asin(clamp((.16-cam.target[1])/cam.r,-.97,.97)),Math.PI*.493);schedule()
+}
+function zoom(scale){
+ free();cam.r=clamp(cam.r*scale,.48,75);
+ cam.el=Math.max(cam.el,Math.asin(clamp((.16-cam.target[1])/cam.r,-.97,.97)));schedule()
+}
+const fingers=new Map();
+function pinch(){const p=[...fingers.values()];return p.length>=2?Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y):0}
+canvas.addEventListener('pointerdown',e=>{
+ if(e.button!==0&&e.pointerType==='mouse')return;
+ canvas.setPointerCapture(e.pointerId);fingers.set(e.pointerId,{x:e.clientX,y:e.clientY});canvas.classList.add('dragging');canvas.focus({preventScroll:true})
+});
+canvas.addEventListener('pointermove',e=>{
+ const prev=fingers.get(e.pointerId);if(!prev)return;
+ const old=pinch();fingers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+ if(fingers.size>1){const next=pinch();if(old>1&&next>1)zoom(old/next)}
+ else{const dx=e.clientX-prev.x,dy=e.clientY-prev.y;if(dx||dy)orbit(dx*.006,dy*.005)}
+});
+function release(e){fingers.delete(e.pointerId);if(!fingers.size)canvas.classList.remove('dragging')}
+['pointerup','pointercancel','lostpointercapture'].forEach(name=>canvas.addEventListener(name,release));
+canvas.addEventListener('wheel',e=>{e.preventDefault();zoom(Math.exp(clamp(e.deltaY*(e.deltaMode===1?14:1),-160,160)*.00165))},{passive:false});
+cards.forEach((b,i)=>b.onclick=()=>choose(i));
+$('#in').onclick=()=>zoom(.82);$('#out').onclick=()=>zoom(1/.82);$('#resetView').onclick=()=>choose(0);
+$('#tags').onclick=()=>{labels=!labels;$('#tags').setAttribute('aria-pressed',String(labels));schedule()};
+const notes=$('#fieldNotes');$('#notes').onclick=()=>notes.showModal();$('#closeNotes').onclick=()=>notes.close();notes.addEventListener('click',e=>{if(e.target===notes){const r=notes.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)notes.close()}});
+document.addEventListener('keydown',e=>{
+ if(notes.open||e.altKey||e.ctrlKey||e.metaKey)return;
+ const actions={ArrowLeft:()=>orbit(.09,0),ArrowRight:()=>orbit(-.09,0),ArrowUp:()=>orbit(0,.065),ArrowDown:()=>orbit(0,-.065),'+':()=>zoom(.85),'=':()=>zoom(.85),'-':()=>zoom(1/.85),Home:()=>choose(0),'1':()=>choose(0),'2':()=>choose(1),'3':()=>choose(2)};
+ if(actions[e.key]){e.preventDefault();actions[e.key]()}
+});
+makeThumbs();cam=preset(0);updateSelection(0);resized();new ResizeObserver(resized).observe(stage);
+</script></body></html>
